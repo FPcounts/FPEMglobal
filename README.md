@@ -45,7 +45,7 @@ To install from source you will a build environment (e.g., the [Rtools](https://
 	R CMD build FPEMglobal
 	R CMD INSTALL FPEMglobal_1.0.0.9000.tar.gz
     ```
-	If you are on Windows and you get an error after a line of output containing "i396" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.0.0.9000.tar.gz`. If that does not work follow the instructions below to install from the .zip file.
+	If you are on Windows and you get an error after a line of output containing "i386" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.0.0.9000.tar.gz`. If that does not work follow the instructions below to install from the .zip file.
 	
 	
 ## Vignette
