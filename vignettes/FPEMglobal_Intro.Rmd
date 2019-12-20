@@ -1,0 +1,518 @@
+---
+title: "Introduction to FPEMglobal"
+author: "Mark Wheldon"
+date: |
+    | `r Sys.Date()`
+    | (`r paste0("_FPEMglobal_ version ", packageVersion("FPEMglobal"), ")")`
+output:
+    function(...) rmarkdown::html_vignette(..., css=c(system.file("rmarkdown", "templates", "html_vignette", "resources", "vignette.css", package = "rmarkdown"), "vignette2.css")):
+      toc: true
+bibliography: bibliography.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Introduction to FPEMglobal}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## set global chunk options
+options(formatR.arrow=TRUE,width=80)
+```
+
+<!-- 
+STYLE CONVENTIONS
+- Filenames: single quoted
+- Software: italics
+-->
+
+
+FPEMglobal (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level for all women of reproductive age (i.e., ages 15--49 years). There are submodels which produce estimates and projections for married and unmarried women. Together, these are used to produce results for all women. The married women model is described in @alkema_national_2013. Updates to the model are described in @cahill_modern_2017; these are included in _FPEMglobal_. The unmarried women model, and the process of producing estimates for all women regardless of marital status, is described in @kantorova18_contr. _FPEMglobal_ is a direct descendant of _ContraceptiveUse_ [@AlkemaContraceptiveUse2014].
+
+
+# Implementation
+
+## Overview
+
+Estimation and projection is done separately for married and unmarried women. The results of these separate runs are then combined to produce estimates for all women regardless of marital status. For each marital group, a Monte Carlo Markov chain (MCMC) sample from the joint posterior distribution is produced using _JAGS_. This is then transformed and summarized to yield estimates and projections of the indicators of interest. This procedure has the following structure:
+
+1. Run the model for married women
+    1. Generate MCMC sample
+    2. Transform and summarize
+2. Run the model for unmarried women
+    1. Generate MCMC sample
+    2. Transform and summarize
+3. Combine the married and unmarried women runs to get results for all women regardless of marital status.
+    1. Aggregate transformed MCMC samples for married and unmarried women
+    2. Summarize
+	
+	
+## User Functions
+	
+There are separate user functions for each of these steps. For example, `do_global_mcmc` implements steps 1a and 2a. There are also several wrapper functions that perform multiple steps and set defaults for the sub-functions. For example, `do_global_run` implements all of steps 1 and 2. The function `do_global_all_women_run` implements all steps from 1 to 3. The user-interface functions, and their actions, are summarized in the table below.
+
+| Level | Function                  | Action                                                                                                      |
+|-------+---------------------------+-------------------------------------------------------------------------------------------------------------|
+| 2     | `do_global_all_women_run` | Perform a complete  run for married, unmarried, and all women, post process results, create summary output. |
+| 1     | `do_global_run`           | Perform a  run for either married or unmarried women, post process results, create summary output.          |
+|       | `combine_runs`            | Combine married and unmarried women runs, as produced by `do_global_run`, to get all women MCMC output.     |
+| 0     | `do_global_mcmc`          | Run the  model for either married or unmarried women (generates MCMC output only).                          |
+|       | `add_global_mcmc`         | Run an additional MCMC chain; must run `do_global_mcmc` to get at least one chain first.                    |
+|       | `post_process_mcmc`       | Post-process MCMC output produced by `do_global_mcmc` (and `add_global_mcmc`).                              |
+|       | `make_results`            | Produce summary results from post-processed MCMC chains as produced by `post_process_mcmc`.                 |
+
+
+## Run Names
+
+Each run is given a default _run name_ which is used in the names of directories to hold outputs and the output files themselves. It is composed of the date-time the function was called (via `format(Sys.time(), "%y%m%d_%H%M%S")`), the marital subpopulation of the run ("married", "unmarried", or "all_women"), the age group ("15-49") and an optional annotation supplied via the `run_desc` argument accepted by all of the `do_...` functions. For example, a married women run name might be '180802_144802_married_15-49' with no annotation, or '180802_144802_test_married_15-49' with `run_desc = "test"`. The output of each function is a character string giving the run name for the run just performed. 
+
+For full all women runs done by `do_global_all_women_run`, the date-time part of the run names is set to the time the whole run was initiated. Therefore, it is the same for married, unmarried, and all women outputs. This means they sort together in the file explorer.
+
+
+## Multiple Chains and Parallel Processing {#sec:mult-chains-parallel}
+
+More than one MCMC chain is required per run. This is controlled by the argument `chain_nums` which is passed to the `do_...` functions. This must be a sequence, not a single number. For example, if two chains are wanted, write `chain_nums = 1:2`; if four are wanted, write `chain_nums = 1:4`^[The _R_ syntax '`1:4`' is short-hand for `1 2 3 4`.]:
+
+```{r chain-nums-ex, echo = TRUE, results = "hide", eval = FALSE, tidy=FALSE}
+## Example use of 'chain_nums' argument 
+
+do_global_all_women_run(...,    #other arguments
+                        chain_nums = 1:4,
+                        ...     #other arguments
+                        )
+```
+
+Each chain can take several hours (even days) so it is quicker to run as many of them as possible in parallel. You gain speed by running up to as many chains in parallel as there are cores on your computer. To use parallel running you must install the package [_doParallel_](https://cran.r-project.org/package=doParallel) [@corporation2017] on _Windows_, or  [_doMC_](https://cran.r-project.org/package=doMC) [@calaway2017], on _MacOS_ and _UNIX_/_Linux_. Parallel processing is controlled by the argument `run_in_parallel`. It is set to `TRUE` by default, however if you do not have `doParallel` or `doMC` installed, the package will automatically switch to running the chains in serial.
+
+```{r run-in-parallel-ex, echo = TRUE, results = "hide", eval = FALSE, tidy=FALSE}
+## Example use of 'run_in_parallel' argument 
+
+do_global_all_women_run(...,    #other arguments
+                        chain_nums = 1:4,
+                        run_in_parallel = FALSE,
+                        ...     #other arguments
+                        )
+```
+
+
+**Note for Windows Users:** If a run using parallel chains stalls or crashes, or you stop it manually, the 'child' processes may not terminate automatically. In such a situation it is recommended to check the _Windows_ _Task Manager_ for any stray 'Rscript.exe' processes. If present, they can be stopped manually. Alternatively, re-start the computer.
+
+
+## Input Data 
+
+### Survey Estimates and Classifications 
+
+Required and optional input data are listed in the table below. The required input data sets (for 2019) are supplied with the package as '.csv' files. Type 'Est.' (for 'Estimate') indicates an input that consists of survey-based estimates of a demographic indicator; type 'Class.' (for 'Classification') indicates an input that consists of definitions, or classifications, that group countries together or select subsets of countries for particular operations. To access the input files in _R_ see later. The arguments used in functions that require them are listed along with their defaults (second table).
+
+|          | Type   | Input                                      | Argument                                |
+|----------+--------+--------------------------------------------+-----------------------------------------|
+| Required | Est.   | Prevalence estimates from national surveys | `data_csv_filename`                     |
+|          | Est.   | Number of women by marital status and age  | `denominator_counts_csv_filename`       |
+|          | Class. | Country region information                 | `region_information_csv_filename`       |
+|          | Class. | Countries to include in aggregates         | `countries_for_aggregates_csv_filename` |
+| Optional | Class. | Definitions of special aggregates          | `special_aggregates_name`               |
+
+
+| Argument                                | Default                             |
+|-----------------------------------------|-------------------------------------|
+| `data_csv_filename`                     | data_cp_model_all_women_1549.csv    |
+| `denominator_counts_csv_filename`       | number_of_women_15-49.csv           |
+| `region_information_csv_filename`       | country_and_area_classification.csv |
+| `countries_for_aggregates_csv_filename` | countries_mwra_195.csv              |
+| `special_aggregates_name`               | varies                              |
+
+Sources and citations for the included files are in the next table. The default country region information file ('country-and-area-classification.csv') contains various columns that classify all countries according to certain criteria. These classifications are used during estimation and summarization.
+
+| Input                                      | Source                                                                                                                                                |
+|--------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Prevalence estimates from national surveys | _World Contraceptive Use by Marital Status and Age, 2017_ [@un_desa_pd_WCUMA_2017]                                                                    |
+| Number of women by marital status and age  | _Estimates and Projections of Women of Reproductive Age Who Are Married or in a Union: 2018 Revision_ [@undesa_pd2018_estim_projec_women_reprod_age]. |
+| Country region information                 | Areas and regions: _Standard Country or Area Codes for Statistical Use (M49)_ [@UN_M49]; sexual activity among unmarried women: [@kantorova18_contr]. |
+
+
+### Accessing Default Input Data 
+
+Default inputs included with the package can be accessed using the `system.file()` command. For example:
+
+```{r access-default-inputs, results="markup",echo=TRUE, eval = TRUE}
+
+ ## Find the file path in the package file tree 
+ data_csv_filename <-
+     system.file("extdata", "data_cp_model_all_women_15-49.csv",
+                 package = "FPEMglobal")
+
+ ## Read in the file
+ data_df <-
+     read.csv(data_csv_filename, header = TRUE, as.is = TRUE)
+
+ ## View the first few columns
+ str(data_df[1:5])
+   
+```
+
+To list all data files included with the package use the following code:
+
+```{r extract-all-def-data, echo = TRUE, results = "markup", eval = TRUE}
+
+ ## List of filenames (from table above)
+ list_all_files <- dir(system.file("extdata", package = "FPEMglobal"))
+
+ ## Compare with the table above
+ list_all_files
+
+```
+
+
+## Outputs
+
+The main output are files saved to disc. These include files created during model estimation and output files containing plots and tables. By default, these are stored in sub-directories of directory 'output'. For a full run, the sub-directories are named after the run name. For example, if a run is initiated on 17th July 2018 at 11:25:07AM, outputs for married women would be stored in the '20180717_112507_married_15-49' sub-directory of 'output'. 
+
+
+### Results Files 
+
+All plots are saved to the 'fig' subdirectory of the main output directory; all tables are saved to 'table'. The file names are constructed by appending a description of the figure or table to the run name. 
+
+The main results for family planning indicators are in the files:
+
+- 'output/[run-name]/fig/[run-name]CIs_nopar.pdf' 
+- 'output/[run-name]/fig/[run-name]CIsaggregate.pdf' 
+
+The indicators are split across multiple tables. For example, 'output/[run-name]/[run-name]_Country_perc_Modern.csv' contains results for contraceptive prevalence (any modern method) at the country level. 
+
+
+### Temporary Files 
+
+A number of temporary files are produced during a run that can be deleted once it is finished. Some of these take up considerable space. Files in directories named 'temp.JAGSobjects' can be deleted.
+
+| Name                    | Type      | When to Delete                                                                                                                                                             |
+|-------------------------+-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `temp.JAGSobjects`      | Directory | After `post_process_mcmc` has completed. _Ensure_ `mcmc.array.rda` has been created.                                                                                       |
+| `countrytrajectories`   | Directory | If country-level MCMC trajectories are not needed, this can be deleted after `make_results` has completed.                                                                 |
+| `aggregatetrajectories` | Directory | If all women aggregate-level MCMC trajectories are not needed, this can be deleted after `make_results` has completed. Only created when all women estimates are produced. |
+
+
+## File Handling and Logging Inputs
+
+The location of all input files is supplied via the `input_data_folder_path` argument. This directory must contain _all_ required input files; multiple input file directories are not supported. 
+
+After the runs are complete, the input files are logged by copying them to the directory 'output/`run_name`/data'. 
+
+The default value of `input_data_folder_path` is diffferent depending on the function. The `do_...` functions use the directory supplied with the package: `system.file("extdata", package = "FPEMglobal")`. However, `post_process_mcmc`, `combine_runs` and `make_results` use the directory 'output/[`run-name`]/data'. This ensures that post processing is done on the same inputs used to do the model run. You may need to change the defaults if you are re-processing outputs to, for example, add special aggregates (see below).
+
+
+# Example
+
+A full global run of the model can be done with just one wrapper function, `do_global_all_women_run`. Alternatively, several separate functions can be called in sequence if finer control over the inputs and outputs is desired. For default behaviour, it is easiest to use the main wrapper.
+
+The model is estimated using an MCMC algorithm. Defaults for the number of iterations, proportion to discard as burn-in, and how to thin the sample, are set in all functions that implement the MCMC. A full run takes several hours, typically 40--48 in our experience with a 30-core computer as at 2019. 
+
+
+## Autopilot: All Women Results
+
+A full run of the global model for using the default (built-in) input files can be done using a single function: `do_global_all_women_run`. 
+
+```{r autopilot-fn-doc, echo=FALSE,results="hide"} 
+
+ ## Read the documentation for 'do_global_all_women_run'  
+ ?FPEMglobal::do_global_all_women_run
+
+```
+
+```{r autopilot-example-all-wom-global,echo=TRUE,results="markup",cache=FALSE,eval = FALSE}
+
+ ## Do a global run for all women, including summarization.
+
+ ## Make sure you attach the package !!
+ library(FPEMglobal)
+
+ ## Call the main function
+ all_women_runs <-
+     do_global_all_women_run(## Describe the run
+         run_desc = "",
+         age_group = "15-49",
+         data_csv_filename = "data_cp_model_all_women_15-49.csv",
+         ## MCMC parameters. CHANGE FOR FULL RUN!
+         estimation_iterations = 2,
+         burn_in_iterations = 1,
+         steps_before_progress_report = 1,
+         thinning = 1,
+         chain_nums = 1:2,
+         run_in_parallel = FALSE#TRUE
+     )
+ 
+ ## See the run name !! All women, married women, and unmarried women output
+ ## folders have the same date-time in their names.
+ all_women_runs
+
+```
+
+The output of the function is the run name as a character string; the results are saved to disc.
+
+
+## Finer Control: By Marital Status
+
+To run the global model for each marrital group separately, use the function `do_global_run`. This function generates the MCMC samples, post-processes them, and produces output summaries.
+
+
+```{r unmarried-married-wom-run-finer,echo=TRUE, results="markup", cache=FALSE, eval = FALSE}
+
+ ### ----------------------------------------------------------------------------
+ ### Run for unmarried women only 
+ 
+ unmarried_run_name <-
+     do_global_run(## Describe the run
+     marital_group = "unmarried",
+     age_group = "15-49",
+         data_csv_filename = "data_cp_model_all_women_15-49.csv",
+     ## MCMC parameters. CHANGE FOR FULL RUN!
+     estimation_iterations = 2,
+     burn_in_iterations = 1,
+     steps_before_progress_report = 1,
+     thinning = 1,
+     chain_nums = 1:2,
+     run_in_parallel = TRUE,
+     )
+ 
+ ## See the run name
+  unmarried_run_name
+
+ ### ----------------------------------------------------------------------------
+ ### Run for married women only
+
+ married_run_name <-
+     do_global_run(## Describe the run
+     marital_group = "married",
+     age_group = "15-49",
+         data_csv_filename = "data_cp_model_all_women_15-49.csv",
+     ## MCMC parameters. CHANGE FOR FULL RUN!
+     estimation_iterations = 2,
+     burn_in_iterations = 1,
+     steps_before_progress_report = 1,
+     thinning = 1,
+     chain_nums = 1:2,
+     run_in_parallel = TRUE,
+ )
+
+ ## See the run name
+ married_run_name
+
+```
+
+To combine unmarried and married women runs to create all women results, use the funtion `combine_runs`. This produces MCMC trajectories for all women from the married and unmarried women outputs specified in the arguments `married_women_run_output_folder_path` and `unmarried_women_run_output_folder_path`.
+
+```{r combine-uw-mw-to-aw, echo = TRUE, results = "markup", cache=FALSE, eval = FALSE}
+ 
+ ### ----------------------------------------------------------------------------
+ ### Combine to make all women results
+ 
+all_women_run_name <- combine_runs(
+    ## Inputs
+    married_women_run_output_folder_path = file.path("output", married_run_name),
+    unmarried_women_run_output_folder_path = file.path("output", unmarried_run_name),
+    )
+
+## See the run name
+## !! This time, not the same date-time as married_run_name or
+## !! unmarried_run_name.
+ all_women_run_name
+ 
+ make_results(all_women_run_name)
+ 
+```
+
+## Base Level Control
+
+The lowest level of control over output generation is obtained by calling the Level 0 functions. 
+
+```{r uw-base-level, echo = TRUE, results = "markup", eval = FALSE}
+ ## Unmarried women MCMC only
+ unmarried_run_name <-
+    do_global_mcmc(marital_group = "unmarried",
+    age_group = "15-49", 
+         data_csv_filename = "data_cp_model_all_women_15-49.csv",
+     ## MCMC parameters. CHANGE FOR FULL RUN!
+     estimation_iterations = 2,
+     burn_in_iterations = 1,
+     steps_before_progress_report = 1,
+     thinning = 1,
+     chain_nums = 1:2,
+    run_in_parallel = TRUE
+    )
+
+ ## Look at the run name
+ unmarried_run_name
+
+ ## Post-process MCMC output
+ post_process_mcmc(run_name = unmarried_run_name)
+
+ ## Produce plots, tables
+ make_results(unmarried_run_name)
+ 
+```
+
+
+## Special Aggregates 
+ 
+Custom country aggregates can be requested if the ones produced by default are not adequate. Use the argument `special_aggregates_name`. This must be a name for the aggregate that can be used in the filenames of the output plots and tables. There must be a corresponding '.csv' file with the _same name_ as the aggregates describing the grouping of countries. It must have two columns: 'iso.country', and 'groupname'.  `special_aggregates_name` can be passed to `do_global_all_women_run` or `do_global_run` if a new run is being done. If a run has completed and special aggregates are desired, you must pass `special_aggregates_name` to `post_process_mcmc` and run it again on the output directory first, then run `make_results` (pass `special_aggregates_name` to `make_results` as well).
+
+The special aggregates '.csv' file must be in the same directory as all other input files and you must declare this directory using the argument `input_data_folder_path`. You can specify more than one '.csv' it there are multiple aggregation schemes you need results for.
+
+The first seven rows of a table that should be supplied to obtain special country aggregates are shown below. The first column ('A') lists country ISO codes, the second ('B') lists the group they belong to. The file should contain each ISO code only once and should be saved in '.csv' format.
+
+|   |           A | B                     |
+|---+-------------+-----------------------|
+| 1 | iso.country | groupname             |
+| 2 |           4 | Eastern Mediterranean |
+| 3 |           8 | Europe                |
+| 4 |          12 | Africa                |
+| 5 |          20 | Europe                |
+| 6 |          24 | Africa                |
+| 7 |          28 | Americas              |
+|   |      ...etc | ...etc                |
+
+The code below illustrates how special aggregates for the World Bank (WB) 2020 (fiscal year) income groups can be requested. The package comes with the file 'WB_Income_2020-w_middle.csv' (access this with `system.file("extdata", "WB_Income_2020-w_middle.csv", package = "FPEMglobal")`) which defines WB country aggregates. The name of the aggregate to be passed to the functions is "WB_Income_2020-w_middle".
+
+```{r other-aggregates-eg, echo = TRUE, results = "markup", eval = FALSE}
+
+ ## Special aggregates at model run time.
+ all_women_runs <-
+     do_global_all_women_run(## Describe the run
+         run_desc = "",
+         age_group = "15-49",
+         data_csv_filename = "data_cp_model_all_women_15-49.csv",
+         ## MCMC parameters. CHANGE FOR FULL RUN!
+         estimation_iterations = 2,
+         burn_in_iterations = 1,
+         steps_before_progress_report = 1,
+         thinning = 1,
+         chain_nums = 1:2,
+         run_in_parallel = TRUE,
+         ## Special aggregates name
+         special_aggregates_name = "WB_Income_2020-w_middle" #<<< no ".csv"; just the name
+     )
+ 
+``` 
+
+To add special aggregates to a completed run see the example at the end of the next section. You can omit the adjusted medians in that example if you do not want them. 
+
+ 
+## Adjusted Medians 
+
+The posterior joint distributions for the estimates and projections that are produced by default are summarized using marginal quantiles, such as medians, 0.025, and 0.975 quantiles. "Demographic identities", for example the sum of modern and traditional prevalences equalling prevalence of any method, will not necessarily be satisfied by medians (or any other quantiles) of this type. If desired, additional copies of the output tables can be produced such that the medians do satisfy demographic identities. Moreover, aggregates of country-level indicators also satisfy the condition that the sum of constituent country medians equals the aggregate medians. 
+
+Median adjustment is done at the stage outputs are summarized as plots and tables. They are controlled by the argument `adjust_medians` (default value is `FALSE`). You can pass `adjust_medians = TRUE` to `do_global_all_women_run`, or `do_global_run` if you are doing a new run. 
+
+```{r adjust-medians, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
+ 
+ ## Do a full global run, and produce adjusted medians
+ all_women_runs_adj_medians <-
+     do_global_all_women_run(## Describe the run
+         run_desc = "",
+         age_group = "15-49",
+         data_csv_filename = "data_cp_model_all_women_15-49.csv",
+         ## MCMC parameters. CHANGE FOR FULL RUN!
+         estimation_iterations = 2,
+         burn_in_iterations = 1,
+         steps_before_progress_report = 1,
+         thinning = 1,
+         chain_nums = 1:2,
+         run_in_parallel = TRUE,
+         ## Adjust medians
+         adjust_medians = TRUE
+     )
+ 
+```
+
+To get adjusted medians for a completed run you must re-create the outputs using `make_results` and pass `adjust_medians = TRUE`. The adjusted results will be in the subdirectory 'table/adj' of the output directory. Unadjusted results will be recreated in subdirectory 'table/orig'. Any exising results in 'table/' that are no longer needed will need to be deleted manually.
+
+To get adjusted medians for all women, you must re-run `combine_runs` with `adjust_medians = TRUE`. Adjusted medians for the married and unmarried runs must have been created.
+
+```{r adjust-medians-finished-run, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
+## Add adjusted medians to a completed run (note that all plots and tables will be
+## recreated). 
+ 
+make_results(all_women_runs$married_run_name,     #<<< Give the run name
+             ## Adjust medians
+             adjust_medians = TRUE
+        )
+
+make_results(all_women_runs$unmarried_run_name,     #<<< Give the run name
+             ## Adjust medians
+             adjust_medians = TRUE
+             )
+
+## All women
+## You must re-run `combine_runs()`. 
+## Use 'run_name_override' to get them in the existing output folder.
+all_women_adj_med <-
+    combine_runs(married_women_run_output_folder_path = file.path("output",
+                     all_women_runs$married_run_name),  
+                 unmarried_women_run_output_folder_path = file.path("output",
+                     all_women_runs$unmarried_run_name),
+             run_name_override = all_women_runs$all_women_run_name,
+             adjust_medians = TRUE)
+
+## The same
+all_women_adj_med
+all_women_runs$all_women_run_name
+        
+make_results(all_women_adj_med,     #<<< Give the run name
+             ## Adjust medians
+             adjust_medians = TRUE
+             )
+
+```
+
+
+You can also get adjusted medians for special aggregates. Remember to run `post_process_mcmc()` and `combine_runs()` before `make_results()`. Use `run_name_override` in `combine_runs` when creating the all women results, otherwise a new folder for all women will be created.
+
+```{r adjust-medians-all-women-spec-aggs, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
+
+## Adjusted medians maried and unmarried.
+## The special aggregates file will be searched for in
+## 'output/[run-name]/data'. Either copy it there or specify the
+## location.
+post_process_mcmc(all_women_runs$married_run_name,
+                  input_data_folder_path = system.file("extdata", package = "FPEMglobal"), 
+             special_aggregates_name = "WB_Income_2020-w_middle")
+make_results(all_women_runs$married_run_name,
+             special_aggregates_name = "WB_Income_2020-w_middle",
+             adjust_medians = TRUE)
+
+post_process_mcmc(all_women_runs$unmarried_run_name,
+                  input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
+             special_aggregates_name = "WB_Income_2020-w_middle")
+make_results(all_women_runs$unmarried_run_name,
+             special_aggregates_name = "WB_Income_2020-w_middle",
+             adjust_medians = TRUE)
+
+
+## Add adjusted medians to a completed run with special aggregates (note that
+## all plots and tables will be recreated).
+
+## You must re-run `combine_runs()`
+## Use 'run_name_override' to get them in the existing output folder,
+## otherwise a new folder for all women will be created.
+
+all_women_spec_agg <-
+    combine_runs(married_women_run_output_folder_path = file.path("output",
+                                     all_women_runs$married_run_name), 
+                 unmarried_women_run_output_folder_path = file.path("output",
+                                     all_women_runs$unmarried_run_name),
+                 run_name_override = all_women_runs$all_women_run_name,
+                 special_aggregates_name = "WB_Income_2020-w_middle",
+                 adjust_medians = TRUE)
+make_results(all_women_spec_agg,
+             special_aggregates_name = "WB_Income_2020-w_middle",
+             adjust_medians = TRUE, all_women = TRUE)
+
+```
+
+
+
+# References {-}

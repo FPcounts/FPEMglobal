@@ -1,0 +1,5 @@
+cuaw-vignette_cache/*
+output/*
+*.html
+*.pdf
+*.R
