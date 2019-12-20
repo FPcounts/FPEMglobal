@@ -1,7 +1,7 @@
 Package: FPEMglobal
 Type: Package
 Title: Global Family Planning Estimation Model 
-Version: 1.0.0.9000
+Version: 1.0.0
 Date: 2019-04-01
 Authors@R: c(person("Mark C.", "Wheldon", email = "wheldon@un.org", role = c("aut", "cre")),
              person("Jin Rou", "New", email = "newjinrou@gmail.com", role = "aut"),
@@ -48,4 +48,3 @@ Suggests:
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr
-GitHubSHA1LastCommit: -
