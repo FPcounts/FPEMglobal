@@ -19,13 +19,13 @@ Follow _one_ of the following options:
 You will need to install [remotes](https://cran.r-project.org/package=remotes). Then try 
 
 ```
-remotes::install_github("https://github.com/FPcounts/FPEMglobal-TESTING")
+remotes::install_github("https://github.com/FPcounts/FPEMglobal")
 ```
 
 
 ### From the .zip File (Windows Only)
 
-Download the file "FPEMglobal_1.0.0.zip" from the [release page](https://github.com/FPcounts/FPEMglobal-TESTING/releases/tag/v1.0.0) (click "Assets" if it is not shown). To install, launch _R_ and type:
+Download the file "FPEMglobal_1.0.0.zip" from the [release page](https://github.com/FPcounts/FPEMglobal/releases/tag/v1.0.0) (click "Assets" if it is not shown). To install, launch _R_ and type:
 
 ```
 install.packages("[path/to/FPEMglobal_1.0.0.zip]", repos = NULL)
