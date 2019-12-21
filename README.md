@@ -36,7 +36,7 @@ You will need to enter the correct file path to the zip file. You will also need
 
 ### From Source
 
-To install from source you will a build environment (e.g., the [Rtools](https://cran.r-project.org/index.html) suite).
+To install from source you will need a build environment (e.g., the [Rtools](https://cran.r-project.org/index.html) suite).
 
 1. Clone the repository to your local drive.
 2. Open a terminal or command prompt window in the directory containing the cloned repository.
@@ -45,7 +45,7 @@ To install from source you will a build environment (e.g., the [Rtools](https://
 	R CMD build FPEMglobal
 	R CMD INSTALL FPEMglobal_1.0.0.tar.gz
     ```
-	If you are on Windows and you get an error after a line of output containing "i386" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.0.0.tar.gz`. If that does not work follow the instructions below to install from the .zip file.
+	If you are on Windows and you get an error after a line of output containing "i386" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.0.0.tar.gz`. If that does not work follow the instructions above to install from the .zip file.
 	
 	
 ## Vignette
