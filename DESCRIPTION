@@ -11,7 +11,8 @@ Authors@R: c(person("Mark", "Wheldon", email = "wheldon@un.org", role = c("aut",
 	     person("Sara", "Hertog", email = "hertog@un.org", role = "aut"),
              person("Leontine", "Alkema", email = "lalkema@schoolph.umass.edu", role = c("aut")),
              person("ChuChu", "", email = "", role = "ctb"),
-             person("Kristin", "Bietsch", email = "KBietsch@avenirhealth.org", role = "ctb"))
+             person("Kristin", "Bietsch", email = "KBietsch@avenirhealth.org", role = "ctb"),	     
+             person("Marilou", "Vicente", email = "vicente@un.org", role = "ctb"))
 Description: Provides contraceptive use estimates for all (married/partnered and unmarried) women.
 URL: https://github.com/AvenirHealth/FPET-all-women
 BugReports: https://github.com/AvenirHealth/FPET-all-women/issues
