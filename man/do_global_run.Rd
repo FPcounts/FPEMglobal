@@ -239,7 +239,7 @@ produces plots and tables using \code{\link{make_results}}.
 \details{
 See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 }
-\section{References}{
+
 
 \references{
 Kettunen, J. et al. (2012) Genome-wide association
@@ -247,7 +247,7 @@ study identifies multiple loci influencing human serum metabolite
 levels. Nat Genet advance online publication.
 \url{http://dx.doi.org/10.1038/ng.1073.}
 }
-}
+
 
 \examples{
 vignette("cuaw-vignette")

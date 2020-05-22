@@ -128,12 +128,12 @@ in \code{input_data_folder_path}. The aggregate \dQuote{WHO_regions} is
 included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "cuaw")}
 for the required format. Assum all columns are required.
 }
-\section{References}{
+
  \references{ UN DESA Statistics Division,
 (2017) \emph{Standard Country or Area Codes for Statistical
 Use (M49)}. United Nations, Department of Economic and Social
 Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/} }
-}
+
 
 \examples{
 vignette("cuaw-vignette")

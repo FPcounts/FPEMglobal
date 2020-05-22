@@ -19,7 +19,7 @@ Follow _one_ of the following options:
 You will need to install [remotes](https://cran.r-project.org/package=remotes). Then try 
 
 ```
-remotes::install_github("https://github.com/FPcounts/FPEMglobal")
+remotes::install_github("https://github.com/FPcounts/FPEMglobal", build_vignettes = TRUE, dependencies = TRUE)
 ```
 
 
