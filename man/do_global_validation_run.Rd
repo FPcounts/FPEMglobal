@@ -167,7 +167,7 @@ separately. Validation of an all women run is undefined.
 }
 
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 }
 \author{
 Mark Wheldon

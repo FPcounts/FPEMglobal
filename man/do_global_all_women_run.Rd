@@ -268,7 +268,7 @@ how the country classification file should be formatted. Assume all columns
 are required.
 }
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 }
 \seealso{
 \code{\link{do_global_run}} for just married or unmarried women runs.

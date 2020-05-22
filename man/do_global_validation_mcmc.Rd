@@ -152,7 +152,7 @@ to \code{\link{do_global_validation_run}}. See the section \dQuote{See Also} bel
 See \dQuote{Details} in the help file for \code{\link{do_global_validation_run}}.
 }
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 }
 \seealso{
 \code{\link{do_global_validation_run}} which calls this function to

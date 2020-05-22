@@ -127,7 +127,7 @@ to \code{\link{do_global_run}} or \code{\link{do_global_all_women_run}}.
 See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 }
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 }
 \seealso{
 \code{\link{do_global_run}} (which calls this function)

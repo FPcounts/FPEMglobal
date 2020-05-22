@@ -170,7 +170,7 @@ respective directories. The file
 which married and unmarried women runs were combined.
 }
 \examples{
-vignette("cuaw-vignette").
+vignette("FPEMglobal_Intro").
 
 }
 \seealso{

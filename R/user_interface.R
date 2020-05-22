@@ -96,7 +96,7 @@
 ##'     \code{\link{do_global_all_women_run}} to do married,
 ##'     unmarried, \emph{and all women runs}, and produce results, all
 ##'     in one call.
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_mcmc <- function(run_desc = "",
                            run_name_override = NULL,
@@ -109,7 +109,7 @@ do_global_mcmc <- function(run_desc = "",
                            chain_nums = 1:3,
                            set_seed_chains = 1,
                            run_in_parallel = isTRUE(length(chain_nums) > 1),
-                           input_data_folder_path = system.file("extdata", package = "cuaw"),
+                           input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                            data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
                            region_information_csv_filename = "country_and_area_classification.csv",
                            output_folder_path = NULL,
@@ -249,7 +249,7 @@ do_global_mcmc <- function(run_desc = "",
 ##'     must also be passed to \code{\link{combine_runs}} to generate all
 ##'     women MCMC results.
 ##' @author Mark Wheldon, Andrew Tait
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 add_global_mcmc <- function(run_name,
                             chain_nums = 2,
@@ -312,7 +312,7 @@ add_global_mcmc <- function(run_name,
 ##' The counts of women by marital status, age, and year in
 ##' \code{denominator_counts_csv_filename} are used to convert prevalence
 ##' proportions to counts of women by contraceptive use status. See
-##' \code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package = "cuaw")}
+##' \code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package = "FPEMglobal")}
 ##' for an example of how the file should be formatted. Assume all columns are
 ##' required.
 ##'
@@ -323,13 +323,13 @@ add_global_mcmc <- function(run_name,
 ##' \code{special_aggregates_name} may be used. The argument takes the
 ##' \emph{name} of the aggregate. There must be a corresponding \file{.csv} file
 ##' in \code{input_data_folder_path}. The aggregate \dQuote{WHO_regions} is
-##' included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "cuaw")}
+##' included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")}
 ##' for the required format. Assum all columns are required.
 ##'
-##' @section References: \references{ UN DESA Statistics Division,
+##' @references UN DESA Statistics Division,
 ##'     (2017) \emph{Standard Country or Area Codes for Statistical
 ##'     Use (M49)}. United Nations, Department of Economic and Social
-##'     Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/} }
+##'     Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/}
 ##' @param run_name The name of the run to post-process.
 ##' @param output_folder_path
 ##' @param input_data_folder_path File path to folder containing
@@ -391,7 +391,7 @@ add_global_mcmc <- function(run_name,
 ##'     \code{\link{do_global_all_women_run}} to do married,
 ##'     unmarried, \emph{and all women runs}, and produce results, all
 ##'     in one call.
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 post_process_mcmc <- function(run_name,
                               output_folder_path = file.path("output", run_name),
@@ -775,7 +775,7 @@ post_process_mcmc <- function(run_name,
 ##'     \code{\link{do_global_all_women_run}} to do married, unmarried,
 ##'     \emph{and all women runs}, and produce results, all in one
 ##'     call.
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##'
 ##' @export
 make_results <- function(run_name,
@@ -1805,19 +1805,17 @@ make_results <- function(run_name,
 ##'     character string.
 ##' @author Mark Wheldon, Andrew Tait
 ##'
-##' @section References:
-##' \references{
+##' @references
 ##' Kettunen, J. et al. (2012) Genome-wide association
 ##' study identifies multiple loci influencing human serum metabolite
 ##' levels. Nat Genet advance online publication.
 ##' \url{http://dx.doi.org/10.1038/ng.1073.}
-##' }
 ##'
 ##' @seealso \code{\link{combine_runs}} to create all women
 ##'     results from married and unmarried women runs;
 ##'     \code{\link{do_global_all_women_run}} to do married, unmarried,
 ##'     \emph{and all women runs}, and produce results, all in one call.
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##'
 ##' @export
 do_global_run <- function(## Describe the run
@@ -1831,7 +1829,7 @@ do_global_run <- function(## Describe the run
                           chain_nums = 1:3,
                            set_seed_chains = 1,
                           run_in_parallel = isTRUE(length(chain_nums) > 1),
-                          input_data_folder_path = system.file("extdata", package = "cuaw"),
+                          input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                           data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
                           region_information_csv_filename = "country_and_area_classification.csv",
                           denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
@@ -2102,7 +2100,7 @@ do_global_run <- function(## Describe the run
 ##'     \emph{and all women runs}, and produce results, all in one
 ##'     call.
 ##' @examples
-##' vignette("cuaw-vignette").
+##' vignette("FPEMglobal_Intro").
 ##'
 ##' @export
 combine_runs <- function(## Describe the run
@@ -2594,7 +2592,7 @@ combine_runs <- function(## Describe the run
 ##'
 ##' @seealso \code{\link{do_global_run}} for just married or unmarried women runs.
 ##'
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_all_women_run <- function(## Describe the run
                                     run_desc = "",
@@ -2606,7 +2604,7 @@ do_global_all_women_run <- function(## Describe the run
                                     chain_nums = 1:3,
                                     set_seed_chains = 1,
                                     run_in_parallel = isTRUE(length(chain_nums) > 1),
-                                    input_data_folder_path = system.file("extdata", package = "cuaw"),
+                                    input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                     data_csv_filename = paste0("data_cp_model_all_women_",
                                                                age_group, ".csv"),
                                     region_information_csv_filename = "country_and_area_classification.csv",
@@ -3040,7 +3038,7 @@ do_global_all_women_run <- function(## Describe the run
 ##'     call.
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_validation_mcmc <-
     function(run_desc = "",
@@ -3251,7 +3249,7 @@ do_global_validation_mcmc <-
 ##' @return A name for the run returned invisibly as a character string. Results
 ##'     are saved to \file{\code{output_folder_path}}.
 ##' @author Mark Wheldon
-##' @examples vignette("cuaw-vignette")
+##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_validation_run <- function(run_desc = "",
                                      run_name_override = NULL,

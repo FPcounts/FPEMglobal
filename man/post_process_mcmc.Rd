@@ -136,7 +136,7 @@ Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/} }
 
 
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 }
 \seealso{
 \code{\link{do_global_run}} (which calls this function)

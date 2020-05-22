@@ -54,7 +54,7 @@ this function can be used to add them. There must be at least one chain
 already started (identified via \code{run_name}).
 }
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 }
 \author{
 Mark Wheldon, Andrew Tait

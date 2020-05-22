@@ -169,7 +169,7 @@ corresponding
 }
 
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 
 }
 \seealso{

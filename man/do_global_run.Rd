@@ -250,7 +250,7 @@ levels. Nat Genet advance online publication.
 
 
 \examples{
-vignette("cuaw-vignette")
+vignette("FPEMglobal_Intro")
 
 }
 \seealso{
