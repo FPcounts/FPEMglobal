@@ -41,7 +41,7 @@ PlotResults <- function(# Plot lots of results!
                        ,all.womenize.fig.name = isTRUE(all.women) #Make sure figure names have 'aw' at front if 'isTRUE(all.women)'.
                        ,hide.CP.tot.lt.1pc = FALSE
                        ,select.c.csv = NULL #MCW-2018-03-23:: CSV file with ISO codes of countries to be included in plots
-                        ) {
+                       ,verbose = TRUE ) {
 
     stopifnot(layout.style %in% c("orig", "UNPD", "diagnostic"))#[MCW-2016-06-13-9]
     if(identical(layout.style, "orig")) PlotDataAndEstimates <- PlotDataAndEstimatesORIG #[MCW-2017-01-30-3] :: 'layout.style == "orig"' now uses renamed function 'PlotDataAndEstimatesORIG'.
@@ -126,7 +126,7 @@ PlotResults <- function(# Plot lots of results!
     }# end validation results
 
     ##details<< Plot priors and posteriors using \code{\link{PlotPriorPost}}.
-    if (plot.prior.post)
+    if (plot.prior.post && !identical(layout.style, "diagnostic"))
         PlotPriorPost(run.name = run.name
                      ,output.dir = output.dir, fig.dir = fig.dir #[MCW-2016-04-07-1] Added these
                      ,disagg.RN.PMA = TRUE #[MCW-2016-05-16-3] Added so that variances are plotted
@@ -160,7 +160,7 @@ PlotResults <- function(# Plot lots of results!
             plotDE.country.info <- country.info
             plotDE.par.ciq <- NULL
 
-            cat("\n'CIs_nopar")
+            if(verbose) cat("\n'CIs_nopar")
 
             PlotDataAndEstimates(data.raw = plotDE.data.raw,
                                  country.info = plotDE.country.info,
@@ -196,7 +196,7 @@ PlotResults <- function(# Plot lots of results!
 
             ## if(!rate.model) { ##[MCW-2016-10-07-2] :: Don't do plots with logistic curve parameters if rate model.
 
-            cat("\n'CIs")
+            if(verbose) cat("\n'CIs")
 
             PlotDataAndEstimates(data.raw = plotDE.data.raw,
                                  country.info = plotDE.country.info,
@@ -225,7 +225,7 @@ PlotResults <- function(# Plot lots of results!
                                  ,age.group = age.group
                                  )
         ## }
-        cat("\n'CIs_nopar")
+        if(verbose) cat("\n'CIs_nopar")
         PlotDataAndEstimates(data.raw = plotDE.data.raw,
                              CI.Lg.Lcat.qt = res.country$CIprop.Lg.Lcat.qt,
                              CIratio.Lg.Lcat.qt = res.country$CIratio.Lg.Lcat.qt,
@@ -233,7 +233,7 @@ PlotResults <- function(# Plot lots of results!
                              end.year = end.year,
                              fig.name = file.path(fig.dir
                                                 , paste0(fig.run.name, filename.append
-                                                       , "CIs_nopar", fig.name.years, fp2020, ".pdf"))# change JR, 20140418
+                                                       , "CIs_nopar", fig.name.years, fp2020, diag, ".pdf"))# change JR, 20140418
                             ,sources.pal = sources.pal
                             ,add.info = add.info #[MCW-2016-04-08-5] Control
                                                  #'add.info' and size of
@@ -251,7 +251,7 @@ PlotResults <- function(# Plot lots of results!
         }
 
         ## to plot individual country results
-        if (plot.ind.country.results) {
+        if (plot.ind.country.results && !identical(layout.style, "diagnostic")) {
             PlotDataAndEstimates(data.raw = mcmc.meta$data.raw,
                                  CI.Lg.Lcat.qt = res.country$CIprop.Lg.Lcat.qt,
                                  CIratio.Lg.Lcat.qt = res.country$CIratio.Lg.Lcat.qt,
@@ -278,7 +278,7 @@ PlotResults <- function(# Plot lots of results!
         ##details<< Plot country overview plots for counts using
         ##\code{\link{PlotDataAndEstimates}}.
 
-        cat("\n'CIscountcountry")
+        if(verbose) cat("\n'CIscountcountry")
         PlotDataAndEstimates(
             CI.Lg.Lcat.qt = res.country$CIcount.Lg.Lcat.qt,
             plot.prop = FALSE,
@@ -286,7 +286,7 @@ PlotResults <- function(# Plot lots of results!
             end.year = end.year,
             fig.name = file.path(fig.dir
                                , paste0(fig.run.name, filename.append
-                                      , "CIscountcountry", fig.name.years, fp2020, ".pdf")) # change JR, 20140418
+                                      , "CIscountcountry", fig.name.years, fp2020, diag, ".pdf")) # change JR, 20140418
            ,sources.pal = sources.pal
            ,add.info = add.info #[MCW-2016-04-08-7] Control 'add.info' and size
                                 #of plotting characters.
@@ -307,13 +307,13 @@ PlotResults <- function(# Plot lots of results!
             ##details<< Plot UNDP aggregates overview plots for proportions and counts using
             ##\code{\link{PlotDataAndEstimates}}.
             if (!do.country.specific.run) {
-                cat("\n'CIsaggregate")
+                if(verbose) cat("\n'CIsaggregate")
                 PlotDataAndEstimates(CI.Lg.Lcat.qt = res.aggregate$CIprop.Lg.Lcat.qt,
                                      CIratio.Lg.Lcat.qt = res.aggregate$CIratio.Lg.Lcat.qt,
                                      start.year = start.year,
                                      end.year = end.year,
                                      fig.name = file.path(fig.dir, paste0(fig.run.name, filename.append
-                                                                        , "CIsaggregate", fig.name.years, ".pdf")) # change JR, 20140418
+                                                                        , "CIsaggregate", fig.name.years, diag, ".pdf")) # change JR, 20140418
                                     ,sources.pal = sources.pal
                                     ,add.info = add.info #[MCW-2016-04-08-8]
                                                          #Control 'add.info' and
@@ -330,7 +330,7 @@ PlotResults <- function(# Plot lots of results!
                                  ,age.group = age.group
                                      )
 
-                cat("\n'CIscountaggregate")
+                if(verbose) cat("\n'CIscountaggregate")
                 PlotDataAndEstimates(
                     CI.Lg.Lcat.qt = res.aggregate$CIcount.Lg.Lcat.qt,
                     plot.prop = FALSE,
@@ -338,7 +338,7 @@ PlotResults <- function(# Plot lots of results!
                     end.year = end.year,
                     fig.name = file.path(fig.dir
                                        , paste0(fig.run.name, "CIscountaggregate"
-                                              , fig.name.years, ".pdf")) # change JR, 20140418
+                                              , fig.name.years, diag, ".pdf")) # change JR, 20140418
                    ,sources.pal = sources.pal
                    ,add.info = add.info #[MCW-2016-04-08-9] Control 'add.info'
                                         #and size of plotting characters.
@@ -352,6 +352,7 @@ PlotResults <- function(# Plot lots of results!
                         ,select.c.csv = NULL #This is for country plots only.
                                  ,age.group = age.group
                 )
+if(!identical(layout.style, "diagnostic")) {
                 if (plot.ind.country.results){
                     PlotDataAndEstimates(CI.Lg.Lcat.qt = res.aggregate$CIprop.Lg.Lcat.qt,
                                          CIratio.Lg.Lcat.qt = res.aggregate$CIratio.Lg.Lcat.qt,
@@ -382,7 +383,6 @@ PlotResults <- function(# Plot lots of results!
                                  ,age.group = age.group
                                          )
                 }
-
                 PlotCountryEstimatesForAggregate(
                     CI.Lg.Lcat.qt = res.country$CIprop.Lg.Lcat.qt,
                     country.info = country.info,
@@ -392,11 +392,13 @@ PlotResults <- function(# Plot lots of results!
                    ,mcmc.meta = mcmc.meta
                     ,all.women = all.women
                 )
+                }
             }
         }  #HOTFIX [MCW-2016-02-26-5] (explained above)
     }
     ##------------------------------------------------------------------------------------------
-    cat("\n'Logistic paramters")
+    if(!identical(layout.style, "diagnostic")) {
+    if(verbose) cat("\n'Logistic paramters")
 
     if (plot.parameters && !all.women) {
         ##details<< Plot model parameters using \code{\link{PlotLogisticParameters}}.
@@ -538,6 +540,7 @@ PlotResults <- function(# Plot lots of results!
         ## summary.biases <-SummarizeBiases(winbugs.data) # 237 biases
         ## number of unique multipliers included (per composition):
         ## summary.multipliers <- SummarizeMultipliers(winbugs.data, data) # 214 sets
+    }
     }
     cat("\nAll results plotted and saved to ", fig.dir, "\n")
     ##value<< NULL

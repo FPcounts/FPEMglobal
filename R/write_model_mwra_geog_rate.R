@@ -198,6 +198,9 @@ unmet.intercept.c[C+1] <- 0
       q.ij[4,j] <- p.perturb.ij[4,j] - modposbias.j[j] + modnegbias.j[j]
       none.adj.j[j] <- max(0.01,q.ij[3,j]) + q.ij[4,j]
 
+      # Modern only observations
+      logit.ymodonly.hat.j[j] <- logit(q.ij[2,j])
+
       ####Means for the bivariate lognormal likelihood for trad and modern CP ratios
       mu.jn[j,1] <- log(max(0.01, q.ij[1,j])/none.adj.j[j])
       mu.jn[j,2] <- log(max(0.01, q.ij[2,j])/none.adj.j[j])
@@ -237,6 +240,12 @@ for(k in 1:N.unmet) {
 for (k in 1:n.training.breakdown){
 ratios.trad.modern.jn[getj.training.k[k],1:2] ~
 dmnorm(mu.jn[getj.training.k[k], ],T.j[getj.training.k[k],,])
+}
+
+# Modern only
+for(k in 1:n.training.modonly) {
+logit.ymodonly.j[getj.training.modonly.k[k]] ~
+  dnorm(logit.ymodonly.hat.j[getj.training.modonly.k[k]], tau.sourcemodonly)
 }
 
 # unmet training
@@ -417,6 +426,9 @@ mu.pos.m[1] <- mu.pos.m0[1]
 tau.sourcetot <- tau.sourcetot0
 sigma.sourcetot <- 1/sqrt(tau.sourcetot)
 
+tau.sourcemodonly <- tau.sourcemodonly0
+sigma.sourcemodonly <- 1/sqrt(tau.sourcemodonly)
+
 ## Andrew Tait (email 24/3/2018)
 ## Changed upper limit from 4 to 6
 for (s in 1:6){
@@ -538,6 +550,9 @@ mu.pos.m[1] ~ dnorm(-2, 0.64)#~ dnorm(-2, 0.01)#T(-10,) # in Bugs: use I()
 # Source variances
 tau.sourcetot ~ dgamma(0.5, halfsigma2.sourcetot0)
 sigma.sourcetot <- 1/sqrt(tau.sourcetot)
+
+tau.sourcemodonly ~ dgamma(0.5, halfsigma2.sourcemodonly0)
+sigma.sourcemodonly <- 1/sqrt(tau.sourcemodonly)
 
 for(s in 1:6){ ## MCW 2017-12-22 :: There are now six data sources, with PMA disaggregated and CP TOT < 1 percent.
 nonsample.se.trad.s[s]~dunif(0.01,2) #Change NC, 20170112

@@ -8,8 +8,8 @@ combine_runs(
   run_desc = "",
   married_women_run_name,
   married_women_run_output_folder_path = NULL,
-  unmarried_women_run_output_folder_path = NULL,
   unmarried_women_run_name,
+  unmarried_women_run_output_folder_path = NULL,
  
     unmarried_women_run_data_folder_path = file.path(unmarried_women_run_output_folder_path,
     "data"),
@@ -25,16 +25,24 @@ combine_runs(
   years_change2 = matrix(c(2005.5, 2010.5, 2015.5, 2000.5, 2005.5, 2010.5, 1995.5,
     2000.5, 2005.5, 1990.5, 1995.5, 2000.5, 1990.5, 2000.5, 2010.5, 2000.5, 2010.5,
     2019.5), ncol = 3, byrow = TRUE),
-  plot_years = c(2000, 2010, 2019),
   make_any_aggregates = TRUE,
   adjust_medians = FALSE,
+  age_ratios_age_total_unmarried_run_name = NULL,
+  age_ratios_age_total_married_run_name = NULL,
+  age_ratios_age_total_all_women_run_name = NULL,
+  age_ratios_age_total_unmarried_output_folder_path = NULL,
+  age_ratios_age_total_married_output_folder_path = NULL,
+  age_ratios_age_total_all_women_output_folder_path = NULL,
+  age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
+  age_ratios_age_total_denominator_counts_folder_path = NULL,
   run_name_override = NULL,
   verbose = FALSE
 )
 }
 \arguments{
-\item{run_desc}{Character. Brief note to be appended to the auto-generated
-\code{run_name}. Ignored if \code{run_name_override} is non-\code{NULL}.}
+\item{run_desc}{Character. Brief note to be appended to the
+auto-generated \code{run_name}. Ignored if
+\code{run_name_override} is non-\code{NULL}.}
 
 \item{married_women_run_name}{Run name of the married women run to
 be combined. Ignored if
@@ -45,10 +53,10 @@ be \code{file.path("output", married_women_run_name)}.}
 \item{married_women_run_output_folder_path}{Path to the folder
 containing results for the married women run to be combined.}
 
+\item{unmarried_women_run_name}{Same as \code{married_women_run_name} but for the unmarried women run.}
+
 \item{unmarried_women_run_output_folder_path}{Path to the folder
 containing results for the unmarried women run to be combined.}
-
-\item{unmarried_women_run_name}{Same as \code{married_women_run_name} but for the unmarried women run.}
 
 \item{unmarried_women_run_data_folder_path}{Path to the folder
 containing results for the unmarried women run to be
@@ -71,8 +79,7 @@ file containing estimates and projections of the number of
 women by marital status, age, and year. See \dQuote{Details}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in
-constructing country aggregates.}
+\file{.csv} file listing countries that will be used in constructing country aggregates.}
 
 \item{output_folder_path}{Filepath to directory where outputs
 should be saved. If \code{NULL}, defaults to
@@ -100,9 +107,41 @@ any kind (including default aggregates) be produced?}
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
 
-\item{run_name_override}{Character. User defined run name to override
-default generation. \code{run_desc} is ignored if this is
-non-\code{NULL}.}
+\item{age_ratios_age_total_unmarried_run_name}{Run name of the
+unmarried 15--49 run to use as the denominator for age ratios.}
+
+\item{age_ratios_age_total_married_run_name}{Run name of the
+married 15--49 run to use as the denominator for age ratios.}
+
+\item{age_ratios_age_total_all_women_run_name}{Run name of the all
+women 15--49 run to use as the denominator for age ratios.}
+
+\item{age_ratios_age_total_unmarried_output_folder_path}{File path
+to output directory of the unmarried 15--49 run to use to make
+age ratios.}
+
+\item{age_ratios_age_total_married_output_folder_path}{File path
+to output directory of the married 15--49 run to use to make
+age ratios.}
+
+\item{age_ratios_age_total_all_women_output_folder_path}{File path
+to output directory of the all women 15--49 run to use to make
+age ratios.}
+
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of
+the \file{.csv} file containing estimates and projections of
+the number of women by marital status, age, and year, for the
+age group 15--49. Only used if \code{make_age_ratios} is
+\code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.}
+
+\item{age_ratios_age_total_denominator_counts_folder_path}{Path to
+\code{age_ratios_age_total_denominator_counts_csv_filename}. If
+\code{NULL}, defaults to
+\code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
+
+\item{run_name_override}{Character. User defined run name to
+override default generation. \code{run_desc} is ignored if
+this is non-\code{NULL}.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
@@ -131,7 +170,7 @@ respective directories. The file
 which married and unmarried women runs were combined.
 }
 \examples{
-vignette("FPEMglobal").
+vignette("cuaw-vignette").
 
 }
 \seealso{

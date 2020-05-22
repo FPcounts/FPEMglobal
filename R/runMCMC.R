@@ -24,7 +24,7 @@ RunMCMC <- function(# Start MCMC sampling
                     change.priors.to.zerolower = FALSE, ##<< Logical: Change priors?
                     ## FALSE: use gammas on kappa.c's, TRUE: use uniform priors.
                     include.AR = TRUE , ##<< Logical: include AR(1)'s for total, modern/total and unmet?
-                    seed.MCMC = 1, ##<< seed for initializing MCMC, defaults to 1.
+                    seed.MCMC = 999, ##<< seed for initializing MCMC, defaults to 1.
                     output.dir = NULL, ##<< Directory where mcmc meta and raw MCMC output will be stored
                     ##either an existing directory, or if NULL, directory \code{output/run.name} is created
                     ## in current working directory
@@ -81,8 +81,8 @@ RunMCMC <- function(# Start MCMC sampling
                     ## Age group
                     ,age.group = "15-49"
                     ## Use 'sink' to write to logfile.txt?
- ,sink.seed.logfile = TRUE
-  ,verbose = TRUE
+                    ,sink.seed.logfile = TRUE
+  , verbose = TRUE
                     ){
 
     ## -------* SET-UP
@@ -130,20 +130,20 @@ RunMCMC <- function(# Start MCMC sampling
     ##if (is.null(seed.MCMC)) seed.MCMC <- as.numeric(Sys.Date())
     ## Note about Sys.Date, to reproduce it, use
     ## as.numeric(as.Date("2012-03-09"))
-    cat(paste("seed.MCMC is", seed.MCMC), "\n")
+    message("\nRandom seed passed to JAGS is '", seed.MCMC, "'. The random seed for each chain is '", seed.MCMC, "' multiplied by the chain number.")
 
       #######Argument for country specific RUNS!!!!
   ##Matching characters in the datsets to make sure ISO codes are correct
   if (!is.null(iso.select)) { # change JR, 20131104
     if (!(all(grepl("[[:alpha:]]", iso.select)) | all(grepl("[[:digit:]]", iso.select)))) {
-      error("iso.select: Must be NULL, else numeric or character ISO country code.")
+      stop("iso.select: Must be NULL, else numeric or character ISO country code.")
       return(invisible())
     }
   }
 
   if (!is.null(iso.country.select)) { # change JR, 20140404
     if (!(all(grepl("[[:alpha:]]", iso.country.select)) | all(grepl("[[:digit:]]", iso.country.select)))) {
-      error("iso.country.select: Must be NULL, else numeric or character ISO country code.")
+      stop("iso.country.select: Must be NULL, else numeric or character ISO country code.")
       return(invisible())
     }
   }
@@ -212,7 +212,7 @@ RunMCMC <- function(# Start MCMC sampling
     if(is.null(leave.iso.out)) leave.iso.out <- FALSE
 
     ## Analyze 'write.model.fun'.
-    message("\nUsing the function ", write.model.fun, " to write the BUGS model") #[MCW-2016-06-02-12]
+    if(verbose) message("\nUsing the function ", write.model.fun, " to write the BUGS model") #[MCW-2016-06-02-12]
     ModelFunctionCheck(write.model.fun)
 
     ## Checks for one country model runs.
@@ -326,6 +326,22 @@ RunMCMC <- function(# Start MCMC sampling
 
     ## -------** Read Data
 
+    file.copy(data.csv, file.path(output.dir, "dataCPmodel_input_raw.csv"))
+    data_csv_input_raw <- read.csv(file.path(output.dir, "dataCPmodel_input_raw.csv"),
+                                   stringsAsFactors = FALSE)
+    ## ------------------------------------------------------------
+    ## Check raw data
+    sapply(c("Start.year", "End.year"), CheckDataMissing,
+           data_frame = data_csv_input_raw,
+           data_frame_name = "dataCPmodel_input_raw.csv")
+    sapply(c("Contraceptive.use.MODERN",
+             "Contraceptive.use.TRADITIONAL",
+             "Unmet"), CheckDataRange,
+           data_frame = data_csv_input_raw,
+           data_frame_name = "dataCPmodel_input_raw.csv",
+           range = c(0, 100))
+    ## ------------------------------------------------------------
+
     if (is.null(iso.country.select)) { # change JR, 20140409
         name.country.select <- NULL
     } else {
@@ -390,8 +406,21 @@ RunMCMC <- function(# Start MCMC sampling
     filename.append <- ifelse(do.SS.run.first.pass, "_pre", "")
     ## save a copy of preprocessed data file for Shiny
 
-    write.csv(data.preprocessed, file = file.path(output.dir, paste0("dataCPmodel_input", filename.append, ".csv")), row.names = F)
-    cat(paste0("Pre-processed data saved to ", file.path(output.dir, paste0("dataCPmodel_input", filename.append, ".csv")), "\n"))
+    write.csv(data.preprocessed, file = file.path(output.dir, paste0("dataCPmodel_input_preprocessed", filename.append, ".csv")), row.names = F)
+    cat(paste0("Pre-processed data saved to ", file.path(output.dir, paste0("dataCPmodel_input_preprocessed", filename.append, ".csv")), "\n"))
+
+    ## ------------------------------------------------------------
+    ## Check preprocessed data
+    sapply(c("Start.year", "End.year"), CheckDataMissing,
+           data_frame = data.preprocessed,
+           data_frame_name = "dataCPmodel_input_preprocessed")
+    sapply(c("Contraceptive.use.MODERN",
+             "Contraceptive.use.TRADITIONAL",
+             "Unmet"), CheckDataRange,
+           data_frame = data.preprocessed,
+           data_frame_name = "dataCPmodel_input_preprocessed.csv",
+           range = c(0, 100))
+    ## ------------------------------------------------------------
 
     data.raw <- ReadDataAll(data.preprocessed = data.preprocessed,
                             regioninfo.csv = regioninfo.csv,
@@ -411,8 +440,8 @@ RunMCMC <- function(# Start MCMC sampling
                             ,do.country.specific.run = do.country.specific.run
                             )
 
-    write.csv(data.raw$data, file = file.path(output.dir, paste0("dataCPmodel_input_processed", filename.append, ".csv")), row.names = F)
-    cat(paste0("Processed data saved to ", file.path(output.dir, paste0("dataCPmodel_input_processed", filename.append, ".csv")), "\n"))
+    write.csv(data.raw$data, file = file.path(output.dir, paste0("dataCPmodel_input_to_model", filename.append, ".csv")), row.names = F)
+    cat(paste0("Model fitted to data saved to ", file.path(output.dir, paste0("dataCPmodel_input_to_model", filename.append, ".csv")), "\n"))
 
     if(ModelFunctionRateModel(write.model.fun)) {
         winbugs.data <- GetBugsData_Rate(data = data.raw$data,
@@ -442,7 +471,7 @@ RunMCMC <- function(# Start MCMC sampling
                               , include.c.no.data = include.c.no.data
                                 ,timing.world.priors = timing.world.priors
                                ,getj.training.k = data.raw$getj.training.k
-                             ,validation.at.random.no.data = data.raw$validation.at.random.no.data
+                               ,validation.at.random.no.data = data.raw$validation.at.random.no.data
                               ,verbose = verbose
                               )
         } else {
@@ -474,7 +503,7 @@ RunMCMC <- function(# Start MCMC sampling
                                ,getj.training.k = data.raw$getj.training.k
                                ,validation.at.random.no.data = data.raw$validation.at.random.no.data
                               ,verbose = verbose)
-    }
+        }
 
     ## save names of V parameters separately
     ## this function is used to find out which parameter was assigned to which country
@@ -619,7 +648,8 @@ InternalRunOneChain <- function(#Do MCMC sampling
   # in Jags version (July 21, 2012) jags.seed doesn't work, and inits need to be provided as a function
   # note that even with same Jags seed, as long as inits from R are different, any non-initialized pars will haev different starting values
   # and seed in Jags is consistent
-  mcmc.info <- list(set.seed.chain = set.seed.chain, chainNum = chainNum)
+    cat("Random seed for this chain is '", set.seed.chain, "'.\n")
+    mcmc.info <- list(set.seed.chain = set.seed.chain, chainNum = chainNum)
   filename.append <- ifelse(mcmc.meta$general$do.SS.run.first.pass, "_pre", "") # change JR, 20140414
   mcmc.info.file <- file.path(mcmc.meta$general$output.dir, paste0("mcmc.info", filename.append, ".", chainNum, ".rda")) # change JR, 20140414 # change JR, 20140418
   if (file.exists(mcmc.info.file)){
@@ -723,6 +753,7 @@ AddMCMCChain <- function(# Add additional MCMC chain to existing run.
  ,MCMCInits = NULL
   ## [MCW-2016-11-01-8] :: Add argument 'write.model.fun'.
   ,write.model.fun = "WriteModel"
+  ,run.on.server = TRUE ##<< Logical: run on server (in parallel?)
 ){
   ##details<< See \code{\link{RunMCMC}} for initial run.
   ## This function will crash if you specified a run for which mcmc.meta has not yet been constructed
@@ -739,7 +770,27 @@ AddMCMCChain <- function(# Add additional MCMC chain to existing run.
   # add chain info to mcmc.meta
 
   mcmc.meta$general$ChainNums <- unique(c(mcmc.meta$general$ChainNums, ChainNums))
-  save(mcmc.meta, file = file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda"))) # change JR, 20140418
+    save(mcmc.meta, file = file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda"))) # change JR, 20140418
+    if(run.on.server) {
+        foreach(chainNum=ChainNums, .packages = "FPEMglobal") %dopar% {
+                cat(paste("Start chain ID ", chainNum), "\n")
+    #tryCatch(
+      InternalRunOneChain(chainNum = chainNum, mcmc.meta = mcmc.meta
+                          ## [MCW-2016-11-01-7] :: Pass in value of 'write.model.fun'.
+                         ,write.model.fun = write.model.fun
+                          )
+    #              , warning=function(w, output.dir = mcmc.meta$general$output.dir){
+    #                file.w = file.path(output.dir, "warnings.txt");
+    #                cat(paste(w), file=file.w, append=T); return()},#;  close(file.w)},
+    #              error=function(e){#},  output.dir = mcmc.meta$general$output.dir){
+    #                file.e=file.path(output.dir, "errors.rda");
+    #                save(e, file = "file.e"); # does not give anything....
+    #                return()},
+    #              #cat(paste(unlist(e)), file = file.e,append=T); return()},#; close(file.e)},
+    #              #sink(file=file.path(mcmc.meta$general$output.dir, "errors.txt"),append=T);print("Errors:");print(e);sink();return(NULL)},
+    #              finally=function(j){ return()}) # does not do anything either...
+  } # end chainNums
+        } else {
   for (chainNum in ChainNums){
     #tryCatch(
       InternalRunOneChain(chainNum = chainNum, mcmc.meta = mcmc.meta
@@ -757,6 +808,7 @@ AddMCMCChain <- function(# Add additional MCMC chain to existing run.
     #              #sink(file=file.path(mcmc.meta$general$output.dir, "errors.txt"),append=T);print("Errors:");print(e);sink();return(NULL)},
     #              finally=function(j){ return()}) # does not do anything either...
   } # end chainNums
+  }
   cat("Any JAGS related errors/warnings are written to txt files in output.dir, but can usually be ignored.. (if there is something wrong, you'll find out soon enough in the next steps :))", "\n")
   cat("All additional chains have finished!")
   ##value<< NULL
@@ -1952,7 +2004,7 @@ GetBugsData <- function( # Construct winbugs.data object
                                  ,uwra.kappa.c.priors = uwra.kappa.c.priors
                                   ## [MCW-2016-10-05-2] :: Added to pass these through.
                                  ,mean.Tworld = timing.world.priors$mean.Tworld
-                                 ,mean.TOneLevel = timing.world.priors$mean.TOneLevel,
+                                      ,mean.TOneLevel = timing.world.priors$mean.TOneLevel,
                                   verbose = verbose
                                 )
   ##value<< One combined list that includes elements from
@@ -2115,7 +2167,7 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
     logratio.ytrad.j <- log(props.trad.j/(1-props.tot.j))
       logit.ytot.j <- log(props.tot.j/(1-props.tot.j))
       logitratio.yunmet.j <- logitSafer(props.unmet.j/(1-props.tot.j))
-
+      logit.ymodonly.j <- logitSafer(props.modern.j)
       y.modern.j <- props.modern.j # change JR, 20131120 # SS obs selected for in model using getj.training.modern.k
       se.modern.j <- rep(0.025, length(y.modern.j)) # change JR, 20140806
 
@@ -2307,7 +2359,7 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
     N.unmet <- sum(!is.na(props.unmet.j))
       getj.unmet.k <- seq(1,J)[!is.na(props.unmet.j)]
 
-
+      ## Classify observations for data model
       if(is.null(validation.list)) {
           getj.training.tot.k <- seq(1, J)[is.na(logratio.ymodern.j) & !is.na(props.tot.j)] # change JR, 20131120
           getj.training.k <- seq(1, J)[!is.na(logratio.ymodern.j) & !is.na(props.tot.j)] # change JR, 20131120
@@ -2319,6 +2371,11 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
           n.training.tot <- length(getj.training.tot.k)
           n.training.modern <- length(getj.training.modern.k) # change JR, 20131120
           n.training.unmet <- length(getj.training.unmet.k)
+          if(ModelFunctionModOnlyObs(write.model.fun)) {
+              getj.training.modonly.k <-
+                  seq(1, J)[!is.na(props.modern.j) & is.na(props.tot.j) & is.na(props.trad.j)]
+              n.training.modonly <- length(getj.training.modonly.k)
+          }
       }
 
 
@@ -2977,6 +3034,7 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
       pmid.for.unmet = 0.4, ##<< constant in model unmet
       logitratio.yunmet.j = logitratio.yunmet.j,  ##<< logit(unmet/1-total) observed
       ratios.trad.modern.jn = as.matrix(cbind(logratio.ytrad.j, logratio.ymodern.j)),##<< matrix, observed logit(trad/tot, mod/tot))
+      logit.ymodonly.j = logit.ymodonly.j,
       logit.ytot.j = logit.ytot.j,##<< logit(tot/none) observed
       se.logR.trad.impute=se.logR.trad.impute, #Change NC, 20170102
       se.logR.modern.impute=se.logR.modern.impute, #Change NC, 20170102
@@ -3177,16 +3235,6 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
                      ))
       }
   } else { #all, no validation
-      getj.training.tot.k <- seq(1, J)[is.na(logratio.ymodern.j) & !is.na(props.tot.j)] # change JR, 20131120
-      getj.training.k <- seq(1, J)[!is.na(logratio.ymodern.j) & !is.na(props.tot.j)] # change JR, 20131120
-      getj.test.k <- NULL
-      getj.training.modern.k <- seq(1, J)[data$source.j == "SS"] # change JR, 20140612
-      getj.training.unmet.k <- seq(1, J)[!is.na(props.unmet.j)]
-      getj.test.unmet.k <- NULL
-      n.training.breakdown <- length(getj.training.k)
-      n.training.tot <- length(getj.training.tot.k)
-      n.training.modern <- length(getj.training.modern.k) # change JR, 20131120
-      n.training.unmet <- length(getj.training.unmet.k)
       ##details<< If it is not a validation exercise, list.validation contains
       ##describe<<
       list.validation <- list(
@@ -3199,6 +3247,12 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
           getj.training.unmet.k  = getj.training.unmet.k, ##<< indices
           n.training.unmet = n.training.unmet ##<< count
       )
+      if(ModelFunctionModOnlyObs(write.model.fun)) {
+          list.validation <-
+              c(list.validation,
+                list(getj.training.modonly.k = getj.training.modonly.k,
+                     n.training.modonly = n.training.modonly))
+          }
       ##end<<
   }
 
@@ -3242,6 +3296,7 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
                                   ## [MCW-2016-10-05-2] :: Added to pass these through.
                                  ,mean.Tworld = timing.world.priors$mean.Tworld
                                  ,mean.TOneLevel = timing.world.priors$mean.TOneLevel
+                                  ,verbose = verbose
                                   )
 
 
@@ -3339,7 +3394,7 @@ GetBugsPriorSpecs <-
   ## an integer code (see examples below).
              ,uwra.kappa.c.priors = NULL
             ,write.model.fun = "WriteModel" ##[MCW-2016-06-02-4] pass in the 'WriteModel[suff]() function used.
-             ,verbose = TRUE
+            ,verbose = TRUE
              )
 {
     ## For different priors for Z model.
@@ -3394,6 +3449,7 @@ GetBugsPriorSpecs <-
                 rho.max.unmet = rho.max.unmet,
                 sigma.ar.max.unmet = sigma.ar.max.unmet,
                 halfsigma2.sourcetot0 = 0.5*sigma2.sourcetot0,
+                halfsigma2.sourcemodonly0 = 0.5*sigma2.sourcetot0,
                 R = R,
                 mean.RTworld = mean.RTworld,
                 sigmaTregsubreg.upper = sigmaTregsubreg.upper,
@@ -3486,6 +3542,7 @@ GetBugsPriorSpecs <-
                 sigma.pos0 = mcmc.post$sigma.pos,
                 mu.pos.m0 = c(mcmc.post[['mu.pos.m[1]']], mcmc.post[['mu.pos.m[2]']]),
                 tau.sourcetot0 = 1/(mcmc.post$sigma.sourcetot^2),
+                tau.sourcemodonly0 = 1/(mcmc.post$sigma.sourcetot^2),
                 T1.source.s0 = T1.source.s0, # [MCW-2016-04-04-4] altered to pick up pre-defined objects (MCW-2016-04-04-3)
                 T2.source.s0 = T2.source.s0,# [MCW-2016-04-04-4]
                 T12.source.s0 = T12.source.s0,# [MCW-2016-04-04-4]
@@ -3554,6 +3611,7 @@ GetBugsPriorSpecs <-
                 rho.max.unmet = rho.max.unmet,
                 sigma.ar.max.unmet = sigma.ar.max.unmet,
                 halfsigma2.sourcetot0 = 0.5*sigma2.sourcetot0,
+                halfsigma2.sourcemodonly0 = 0.5*sigma2.sourcetot0,
                 R = R,
                 mean.RTworld = mean.RTworld,
                 sigmaRTregsubreg.upper = sigmaRTregsubreg.upper,
@@ -3589,6 +3647,7 @@ GetBugsPriorSpecs <-
                            sigma.pos0 = mcmc.post$sigma.pos,
                            mu.pos.m0 = c(mcmc.post[['mu.pos.m[1]']], mcmc.post[['mu.pos.m[2]']]),
                            tau.sourcetot0 = 1/(mcmc.post$sigma.sourcetot^2),
+                           tau.sourcemodonly0 = 1/(mcmc.post$sigma.sourcetot^2),
                            ## MCW 2017-12-22 :: There are now six data sources, with PMA disaggregated and CP TOT < 1 percent.
                            nonsample.se.trad.s0 = c(mcmc.post[['nonsample.se.trad.s[1]']], mcmc.post[['nonsample.se.trad.s[2]']],
                                                     mcmc.post[['nonsample.se.trad.s[3]']], mcmc.post[['nonsample.se.trad.s[4]']],
@@ -3885,6 +3944,9 @@ GetParNames <- function(# Get list of parnames
       } else {
           parnames.h <- c(parnames.h, "lp.world")
       }
+      if(ModelFunctionModOnlyObs(write.model.fun)) {
+          parnames.h <- c(parnames.h, "sigma.sourcemodonly")
+          }
       parnames.h <- c(parnames.h, "lr.world", "sigma.lrc", "sigma.lpc",
                         "rho.tot", "sigma.tot", "rho.rat", "sigma.rat",
                         "sigma.geo.m[1]", "sigma.geo.m[2]",
@@ -4072,6 +4134,9 @@ GetParNames <- function(# Get list of parnames
                     "w.world", "Rw.world", "RT.world","S.world","Shigher","sigma.higherSc",
                     "sigma.wreg", "sigma.Rwreg", "sigma.RTreg","sigma.Sreg",
                     "sigma.wsubreg", "sigma.Rwsubreg", "sigma.RTsubreg","sigma.Ssubreg")
+      if(ModelFunctionModOnlyObs(write.model.fun)) {
+          parnames.h <- c(parnames.h, "sigma.sourcemodonly")
+          }
     parnames.reg <- c(parnames.reg, "w.reg","Rw.reg","RT.reg","S.reg")
     parnames.subreg <- c(parnames.subreg, "w.subreg","Rw.subreg","RT.subreg", "unmet.subreg","S.subreg")
   } else if (do.country.specific.run & do.country.specific.targets.run) { # for country-specific targets run # change JR, 20150301
@@ -4331,6 +4396,9 @@ ModelFunctionCheck <- function(x) {
 
     li <- ModelFunctionRateModel(x, return.functions = TRUE)
     if(x %in% li) message(x, " uses the RATE model")
+
+    li <- ModelFunctionModOnlyObs(x, return.functions = TRUE)
+    if(x %in% li) message(x, " models observations with only CP Modern")
 }
 
 ## [MCW-2017-02-07-7] :: Created this as part of managing the use of different
@@ -4683,110 +4751,21 @@ ModelFunctionOneCountry <- function(x, return.functions = FALSE) {
     return(out)
 }
 
-################################################################################
-## ADDED  MCW-2016-05-04-1
-### !!! NO. Not all parameters that are initialized are monitored...so haven't finished this.
-### !!! NO. Not all parameters that are initialized are monitored...so haven't finished this.
-### !!! NO. Not all parameters that are initialized are monitored...so haven't finished this.
+## 2020-01-24 :: Created to identify functions that model observations
+## with only CP Mod (no CP Trad) as their own data type.
+ModelFunctionModOnlyObs <- function(x, return.functions = FALSE) {
 
-## RestartMCMCChain(## Restart MCMC chain in case it needs to be run longer. Based on 'AddMCMCChain()'.
-##     run.name = "test", chain.num = 1
-##   ,seed.MCMC = 19991999 #Don't want this to accidentally be the same as a seed used for the first run.
-##   N.ITER = ifelse(!do.country.specific.run, 80000, 40000), ##<< Number of iterations, NOT including burn-in.
-##   N.STEPS = 4, ##<< For each N.ITER/N.STEPS iterations, the iterations will be saved.
-##   N.THIN = ifelse(!do.country.specific.run, 30, 15), ##<< Thinning factor.
-##   N.BURNIN = 20000, ##<< Burnin (excluded samples at start of chain).
-##   ChainNums = 6, ##<< IDs of additional chains to add, mcmc.meta is updated with additional chain info.
-##   ## If one or more of the IDs were already there, a message will be printed and no chains will be added.
-##   do.SS.run.first.pass = FALSE, ##<< is this for the first pass run with SS data?
-##   run.name.suff = "_restart"
-## )
-## {
-##     ## ------------------------------------------------------------
-##     ## DIRECTORIES
+    x <- as.character(x)
+    if(length(x) != 1) stop("'write.model.fun' must be of length 1")
 
-##     output.dir <- file.path(getwd(), "output", run.name)
+    li <- c("WriteModel_MWRA_Geog_Rate")
 
-##     ## ------------------------------------------------------------
-##     ## CHECKS
+    ## Return a list of the functions, or the result of the check?
+    if(return.functions) out <- li
+    else out <- isTRUE(x %in% li)
 
-##     ## if(!missing(do.SS.run.first.pass) | !is.null(do.SS.run.first.pass) |
-##     ##    isTRUE(do.SS.run.first.pass)) stop("'do.SS.run.first.pass' not implemented.")
-##     if(length(ChainNums != 1)) stop("'ChainNums' must have length 1.")
-##     if(!file.exists(file.path(output.dir, "mcmc.meta.rda")) |
-##                     !file.exists(file.path(output.dir, "mcmc.array.rda"))) {
-##                         stop("run ", run.name, " not found in "
-##                            , file.path(getwd(), "output", run.name
-##                                      , ". Must have 'mcmc.meta.rda' and 'mcmc.array.rda'."
-##                                        )
-##                              )
-##                     }
-
-##     ## ------------------------------------------------------------
-##     ## LOAD LAST RUN
-
-##     load(file.path(output.dir, "mcmc.meta.rda"))
-##     load(file.path(output.dir, "mcmc.array.rda"))
-##     ## Only keep last value
-##     mcmc.array <- mcmc.array[dim(mcmc.array)[1],ChainNums,]
-
-##     ## Get original initt values (just use existing function then write over the values)
-##     init.vals <-
-##         InternalMCMCinits(winbugs.data = mcmc.meta$winbugs.data
-##                          ,do.country.specific.run = mcmc.meta$general$do.country.specific.run
-##                          ,change.priors.to.zerolower = mcmc.meta$general$change.priors.to.zerolower
-##                           )
-
-##     ## ------------------------------------------------------------
-##     ## GET NAMES OF PARAMETERS THAT NEED INITIALIZING
-
-##     ## Parameter names in 'init.vals'
-##     init.pars.vec <- names(unlist(init.vals))
-##     ## Strip numbers
-##     init.pars.vec.alpha <-
-##         unique(gsub(pattern = "[0-9]", replacement = "", x = init.pars.vec))
-##     ## Escape full-stops
-##     init.pars.vec.alpha.esc <-
-##         sapply(init.pars.vec.alpha, "gsub", pattern = "\\.", replacement = "\\\\\\.")
-
-##     ## Parameter names in 'mcmc.array'
-##     mcmc.pars.vec <- dimnames(mcmc.array)[[3]]
-##     ## ## Strip off the index at the end of dimnames
-##     ## mcmc.pars.vec.alpha <-
-##     ##     unique(sapply(mcmc.pars.vec, "gsub", pattern = "\\[[0-9]+,?[0-9]*\\]$", replacement = ""))
-
-##     ## ------------------------------------------------------------
-##     ## SUBSTITUTE LAST VALUES IN INIT VALUES
-
-##     ## Substitute init vals with last values. 'init.vals' is a list, 'mcmc.array' is (now) a vector.
-##     for(i in 1:length(init.pars.vec.alpha)) {
-##         j <- init.pars.vec.alpha[i]
-##         init.vals[[1]][[j]] <-
-##             mcmc.array[grep(pattern = paste0("^", init.pars.vec.alpha.esc[i]), x = mcmc.pars.vec)]
-##     }
-
-##     ### !!! NO. Not all parameters that are initialized are monitored...so haven't finished this.
-
-## }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return(out)
+}
 
 #-----------------------------------------------------------------
 # The End!

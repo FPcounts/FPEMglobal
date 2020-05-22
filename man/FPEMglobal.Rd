@@ -4,6 +4,3 @@
 \name{FPEMglobal}
 \alias{FPEMglobal}
 \title{FPEMglobal: Contraceptive use package that provides estimates for all women. See vignette 'FPEMglobal-vignette' for explanation of use.}
-\description{
-FPEMglobal: Contraceptive use package that provides estimates for all women. See vignette 'FPEMglobal-vignette' for explanation of use.
-}

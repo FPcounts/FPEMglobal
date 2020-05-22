@@ -31,8 +31,10 @@ STYLE CONVENTIONS
 - Software: italics
 -->
 
+_You can access this vignette from the *R* console by typing `vignette("FPEMglobal_Intro", package = "FPEMglobal")`._
 
-FPEMglobal (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level for all women of reproductive age (i.e., ages 15--49 years). There are submodels which produce estimates and projections for married and unmarried women. Together, these are used to produce results for all women. The married women model is described in @alkema_national_2013. Updates to the model are described in @cahill_modern_2017; these are included in _FPEMglobal_. The unmarried women model, and the process of producing estimates for all women regardless of marital status, is described in @kantorova18_contr. _FPEMglobal_ is a direct descendant of _ContraceptiveUse_ [@AlkemaContraceptiveUse2014].
+
+FPEMglobal (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level. This vignette concerns the application to all women of reproductive age (i.e., ages 15--49 years); for application to adolescent women aged 15--19 see the vignette "FPEMglobal_Age_1519". There are submodels which produce estimates and projections for married and unmarried women. Together, these are used to produce results for all women. The married women model is described in @alkema_national_2013. Updates to the model are described in @cahill_modern_2017; these are included in _FPEMglobal_. The unmarried women model, and the process of producing estimates for all women regardless of marital status, is described in @kantorova18_contr. _FPEMglobal_ is a direct descendant of _ContraceptiveUse_ [@AlkemaContraceptiveUse2014].
 
 
 # Implementation
@@ -120,7 +122,7 @@ Required and optional input data are listed in the table below. The required inp
 
 | Argument                                | Default                             |
 |-----------------------------------------|-------------------------------------|
-| `data_csv_filename`                     | data_cp_model_all_women_1549.csv    |
+| `data_csv_filename`                     | data_cp_model_all_women_15-49.csv    |
 | `denominator_counts_csv_filename`       | number_of_women_15-49.csv           |
 | `region_information_csv_filename`       | country_and_area_classification.csv |
 | `countries_for_aggregates_csv_filename` | countries_mwra_195.csv              |
@@ -216,7 +218,7 @@ The model is estimated using an MCMC algorithm. Defaults for the number of itera
 
 A full run of the global model for using the default (built-in) input files can be done using a single function: `do_global_all_women_run`. 
 
-```{r autopilot-fn-doc, echo=FALSE,results="hide"} 
+```{r autopilot-fn-doc, echo=FALSE,results="hide",eval = FALSE} 
 
  ## Read the documentation for 'do_global_all_women_run'  
  ?FPEMglobal::do_global_all_women_run
@@ -242,7 +244,8 @@ A full run of the global model for using the default (built-in) input files can 
          steps_before_progress_report = 1,
          thinning = 1,
          chain_nums = 1:2,
-         run_in_parallel = FALSE#TRUE
+         run_in_parallel = TRUE,
+         set_seed_chains = 1
      )
  
  ## See the run name !! All women, married women, and unmarried women output
@@ -276,6 +279,7 @@ To run the global model for each marrital group separately, use the function `do
      thinning = 1,
      chain_nums = 1:2,
      run_in_parallel = TRUE,
+     set_seed_chains = 1
      )
  
  ## See the run name
@@ -296,6 +300,7 @@ To run the global model for each marrital group separately, use the function `do
      thinning = 1,
      chain_nums = 1:2,
      run_in_parallel = TRUE,
+     set_seed_chains = 1
  )
 
  ## See the run name
@@ -334,7 +339,7 @@ The lowest level of control over output generation is obtained by calling the Le
  unmarried_run_name <-
     do_global_mcmc(marital_group = "unmarried",
     age_group = "15-49", 
-         data_csv_filename = "data_cp_model_all_women_15-49.csv",
+    data_csv_filename = "data_cp_model_all_women_15-49.csv",
      ## MCMC parameters. CHANGE FOR FULL RUN!
      estimation_iterations = 2,
      burn_in_iterations = 1,
@@ -342,6 +347,7 @@ The lowest level of control over output generation is obtained by calling the Le
      thinning = 1,
      chain_nums = 1:2,
     run_in_parallel = TRUE
+    set_seed_chains = 1
     )
 
  ## Look at the run name
@@ -354,6 +360,45 @@ The lowest level of control over output generation is obtained by calling the Le
  make_results(unmarried_run_name)
  
 ```
+
+In the following sections two additional types of outputs are discussed: special aggregates and adjusted medians. The nature of these outputs is explained in the respective sections. The table below gives a summary of the function call sequences needed to produce various combinations of outputs from a completed model run, including these two additional types. The completed run could have been obtained from any of the `do_...` functions. In the example calls, default values of arguments are assumed and are not explicitly specified. It is further assumed that the appropriate `run_name`s are passed as the first argument to all functions.
+
++-----------------------+--------------------------------+---------------------------------------------------------------+
+| Marital Group         | Output                         | Function call sequence                                                         |
++=======================+================================+===============================================================+
+| Married and unmarried | Standard aggregates            | `post_process_mcmc` \                                                          |
+|                       |                                | `make_results`                                                                 |
++-----------------------+--------------------------------+--------------------------------------------------------------+
+|                       | Special aggregates             | `post_process_mcmc(..., special_aggregates_name = "[name]")` \                 |
+|                       |                                | `make_results(..., special_aggregates_name = "[name]")`                        |
++-----------------------+--------------------------------+--------------------------------------------------------------+
+|                       | Adj. medians, country level    | `post_process_mcmc` \                                                          |
+|                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
++-----------------------+--------------------------------+---------------------------------------------------------------+
+|                       | Adj. medians, std. aggregates  | `post_process_mcmc` \                                                          |
+|                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
++-----------------------+--------------------------------+--------------------------------------------------------------+
+|                       | Adj. medians, spec. aggregates | `post_process_mcmc(..., special_aggregates_name = "[name]")`  \                |
+|                       |                                | `make_results(..., adjust_medians = TRUE, special_aggregates_name = "[name]")` |
++-----------------------+--------------------------------+---------------------------------------------------------------+
+| All women             | Standard aggregates            | `combine_runs`       \                                                         |
+|                       |                                | `make_results`                                                                 |
++-----------------------+--------------------------------+---------------------------------------------------------------+
+|                       | Special aggregates             | `combine_runs(..., special_aggregates_name = "[name]")` \                      |
+|                       |                                | `make_results(..., special_aggregates_name = "[name]")`                        |
++-----------------------+--------------------------------+---------------------------------------------------------------+
+|                       | Adj. medians, country level    | Adj. medians for married and unmarried \                                       |
+|                       |                                | `combine_runs(..., adjust_medians = TRUE)` \                                   |
+|                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
++-----------------------+--------------------------------+---------------------------------------------------------------+
+|                       | Adj. medians, std. aggregates  | Adj. medians for married and unmarried   \                                     |
+|                       |                                | `combine_runs(..., adjust_medians = TRUE)` \                                   |
+|                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
++-----------------------+--------------------------------+--------------------------------------------------------------+
+|                       | Adj. medians, spec. aggregates | Adj. medians for married and unmarried   \                                     |
+|                       |                                | `combine_runs(..., adjust_medians = TRUE, special_aggregates_name = "[name]")` \ |
+|                       |                                | `make_results(..., adjust_medians = TRUE, special_aggregates_name = "[name]")` |
++-----------------------+--------------------------------+--------------------------------------------------------------+
 
 
 ## Special Aggregates 
@@ -375,7 +420,7 @@ The first seven rows of a table that should be supplied to obtain special countr
 | 7 |          28 | Americas              |
 |   |      ...etc | ...etc                |
 
-The code below illustrates how special aggregates for the World Bank (WB) 2020 (fiscal year) income groups can be requested. The package comes with the file 'WB_Income_2020-w_middle.csv' (access this with `system.file("extdata", "WB_Income_2020-w_middle.csv", package = "FPEMglobal")`) which defines WB country aggregates. The name of the aggregate to be passed to the functions is "WB_Income_2020-w_middle".
+The code below illustrates how special aggregates for the WHO regions can be requested. The package comes with the file 'WHO_regions.csv' (access this with `system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")`) which defines WB country aggregates. The name of the aggregate to be passed to the functions is "WHO_regions".
 
 ```{r other-aggregates-eg, echo = TRUE, results = "markup", eval = FALSE}
 
@@ -392,8 +437,9 @@ The code below illustrates how special aggregates for the World Bank (WB) 2020 (
          thinning = 1,
          chain_nums = 1:2,
          run_in_parallel = TRUE,
+         set_seed_chains = 1,
          ## Special aggregates name
-         special_aggregates_name = "WB_Income_2020-w_middle" #<<< no ".csv"; just the name
+         special_aggregates_name = "WHO_regions" #<<< no ".csv"; just the name
      )
  
 ``` 
@@ -405,7 +451,9 @@ To add special aggregates to a completed run see the example at the end of the n
 
 The posterior joint distributions for the estimates and projections that are produced by default are summarized using marginal quantiles, such as medians, 0.025, and 0.975 quantiles. "Demographic identities", for example the sum of modern and traditional prevalences equalling prevalence of any method, will not necessarily be satisfied by medians (or any other quantiles) of this type. If desired, additional copies of the output tables can be produced such that the medians do satisfy demographic identities. Moreover, aggregates of country-level indicators also satisfy the condition that the sum of constituent country medians equals the aggregate medians. 
 
-Median adjustment is done at the stage outputs are summarized as plots and tables. They are controlled by the argument `adjust_medians` (default value is `FALSE`). You can pass `adjust_medians = TRUE` to `do_global_all_women_run`, or `do_global_run` if you are doing a new run. 
+Median adjustment for married and unmarried women runs is done at the stage outputs are summarized as plots and tables. That is, `make_results` produces adjusted medians, not `post_process_mcmc`. For all women results, `combine_runs` is also involved. 
+
+Adjusted medians can be requested via the argument `adjust_medians` (default value is `FALSE`). You can pass `adjust_medians = TRUE` to `do_global_all_women_run`, or `do_global_run` if you are doing a new run, or `make_results` and `combine_runs` if you are adding them to a completed run. 
 
 ```{r adjust-medians, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
  
@@ -422,15 +470,16 @@ Median adjustment is done at the stage outputs are summarized as plots and table
          thinning = 1,
          chain_nums = 1:2,
          run_in_parallel = TRUE,
+         set_seed_chains = 1,
          ## Adjust medians
          adjust_medians = TRUE
      )
  
 ```
 
-To get adjusted medians for a completed run you must re-create the outputs using `make_results` and pass `adjust_medians = TRUE`. The adjusted results will be in the subdirectory 'table/adj' of the output directory. Unadjusted results will be recreated in subdirectory 'table/orig'. Any exising results in 'table/' that are no longer needed will need to be deleted manually.
+To get adjusted medians for a completed married or unmarried women run you must re-create the outputs using `make_results` and pass `adjust_medians = TRUE`. The adjusted results will be in the subdirectory 'table/adj' of the output directory. Unadjusted results will be recreated in subdirectory 'table/orig'. Any exising results in 'table/' that are no longer needed will need to be deleted manually.
 
-To get adjusted medians for all women, you must re-run `combine_runs` with `adjust_medians = TRUE`. Adjusted medians for the married and unmarried runs must have been created.
+To get adjusted medians for all women, you must first create them for the married and unmarried runs, re-run `combine_runs` with `adjust_medians = TRUE`, and finally re-generate the all women results with `make_results(..., all_women = TRUE)`.
 
 ```{r adjust-medians-finished-run, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
 ## Add adjusted medians to a completed run (note that all plots and tables will be
@@ -447,7 +496,7 @@ make_results(all_women_runs$unmarried_run_name,     #<<< Give the run name
              )
 
 ## All women
-## You must re-run `combine_runs()`. 
+## You must re-run `combine_runs(..., adjust_medians = TRUE)`. 
 ## Use 'run_name_override' to get them in the existing output folder.
 all_women_adj_med <-
     combine_runs(married_women_run_output_folder_path = file.path("output",
@@ -473,22 +522,22 @@ You can also get adjusted medians for special aggregates. Remember to run `post_
 
 ```{r adjust-medians-all-women-spec-aggs, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
 
-## Adjusted medians maried and unmarried.
+## Adjusted medians married and unmarried.
 ## The special aggregates file will be searched for in
 ## 'output/[run-name]/data'. Either copy it there or specify the
 ## location.
 post_process_mcmc(all_women_runs$married_run_name,
                   input_data_folder_path = system.file("extdata", package = "FPEMglobal"), 
-             special_aggregates_name = "WB_Income_2020-w_middle")
+             special_aggregates_name = "WHO_regions")
 make_results(all_women_runs$married_run_name,
-             special_aggregates_name = "WB_Income_2020-w_middle",
+             special_aggregates_name = "WHO_regions",
              adjust_medians = TRUE)
 
 post_process_mcmc(all_women_runs$unmarried_run_name,
                   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
-             special_aggregates_name = "WB_Income_2020-w_middle")
+             special_aggregates_name = "WHO_regions")
 make_results(all_women_runs$unmarried_run_name,
-             special_aggregates_name = "WB_Income_2020-w_middle",
+             special_aggregates_name = "WHO_regions",
              adjust_medians = TRUE)
 
 
@@ -505,10 +554,10 @@ all_women_spec_agg <-
                  unmarried_women_run_output_folder_path = file.path("output",
                                      all_women_runs$unmarried_run_name),
                  run_name_override = all_women_runs$all_women_run_name,
-                 special_aggregates_name = "WB_Income_2020-w_middle",
+                 special_aggregates_name = "WHO_regions",
                  adjust_medians = TRUE)
 make_results(all_women_spec_agg,
-             special_aggregates_name = "WB_Income_2020-w_middle",
+             special_aggregates_name = "WHO_regions",
              adjust_medians = TRUE, all_women = TRUE)
 
 ```

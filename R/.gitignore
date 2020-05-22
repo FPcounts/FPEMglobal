@@ -1,9 +1,7 @@
 # Ignore *.bug and *.jag because I just created them to get the 'WriteModel.R' scripts with syntax highlighting in emacs.
+
 *.bug
 *.jag
 
 *~
 .Rhistory
-
-write_model_mwra_TESTING.R
-write_model_uwra_TESTING.R

@@ -9,7 +9,8 @@ p {
 
 h1.title {
     text-align: center;
-    font-size: 45px;
+    font-size: 35px;
+    line-height: 40px;
     border-bottom: 0px;
 }
 

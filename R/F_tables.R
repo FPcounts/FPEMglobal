@@ -528,13 +528,13 @@ GetTablesChange <- function(# Save csv's with CIs for change in proportions and 
         fnm <- gsub("__", "_", fnm, fixed = TRUE)
 
       ##details<< Two csv-files (named \code{name.res_changes}) are saved: one with results for proportions, and one with results for counts.
-      write.csv(results.all
+      try(write.csv(results.all
                ,file = file.path(table.dir
                                 ,paste0(run.name,"_", name.res, "_changes_"
                                        ,c("perc", "count", "ratio")[j], "_"
                                       ,fnm
                                        ,fp2020,".csv")), # change JR, 20140418
-                row.names = FALSE)
+                row.names = FALSE))
     } # end i (cat) loop
   } # end j (prop or count) loop
   cat("Change tables written to", table.dir, "\n")

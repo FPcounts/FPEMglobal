@@ -8,6 +8,7 @@ add_global_mcmc(
   run_name,
   chain_nums = 2,
   output_folder_path = file.path("output", run_name),
+  run_in_parallel = isTRUE(length(chain_nums) > 1),
   verbose = FALSE
 )
 }
@@ -21,6 +22,18 @@ be the number identifying a chain already created. See \dQuote{Details}.}
 \item{output_folder_path}{Filepath to directory where outputs
 should be saved. If \code{NULL}, defaults to
 \code{file.path("output", run_name)}.}
+
+\item{run_in_parallel}{Logical. Determines if MCMC chains are run
+in parallel. Parallel running requires package
+#ifdef windows
+\pkg{doParallel}.
+#endif
+#ifndef windows
+
+\pkg{doMC}.
+#endif
+Defaults to serial running if \code{run_in_parallel = TRUE} but the package
+is not available.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
@@ -36,12 +49,12 @@ women MCMC results.
 }
 \description{
 At least two chains are required to post-process the results of a run of the
-FPEM model. Multiple chains can be run by \code{\link{do_global_mcmc}} but if additional chains are desired
+FPEM model. Multiple chains can be run by \code{\link{do_global_mcmc}} but, if additional chains are desired,
 this function can be used to add them. There must be at least one chain
 already started (identified via \code{run_name}).
 }
 \examples{
-vignette("FPEMglobal")
+vignette("cuaw-vignette")
 }
 \author{
 Mark Wheldon, Andrew Tait

@@ -238,5 +238,5 @@ logitSafer <- function(# Logit transform
         1 - 1e-6
     x[which(x <= 1 & x < 1e-6)] <-
         1e-6
-    logit.x <- log(x/(1-x))
+    log(x/(1-x))
 }
