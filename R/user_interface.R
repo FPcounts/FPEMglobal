@@ -186,6 +186,13 @@ do_global_mcmc <- function(run_desc = "",
     global_mcmc_args <- c(mget(names(formals(do_global_mcmc))), marital_group_param_set)
     save(global_mcmc_args, file = file.path(output_folder_path, "global_mcmc_args.RData"))
 
+    ##-----------------------------------------------------------------------------
+    ## Copy to Output
+
+    output_data_folder_path <- file.path(output_folder_path, "data")
+    copy_data_files(run_name = run_name, data_dir = input_data_folder_path,
+                    data_local = output_data_folder_path)
+
     ##---------------------------------------------------------------------
     ## Make MCMC chains
 
@@ -216,13 +223,6 @@ do_global_mcmc <- function(run_desc = "",
         sink.seed.logfile = FALSE,
         verbose = verbose
     )
-
-    ##-----------------------------------------------------------------------------
-    ## Copy to Output
-
-    output_data_folder_path <- file.path(output_folder_path, "data")
-    copy_data_files(run_name = run_name, data_dir = input_data_folder_path,
-                    data_local = output_data_folder_path)
 
     return(invisible(run_name))
 
@@ -3157,12 +3157,20 @@ do_global_validation_mcmc <-
             }
         }
 
-        message("This run has 'run_name': ", run_name, ". It validates ", run_name_to_validate, "'.")
-        cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": This run validates '", run_name_to_validate, "'.",
-            file = file.path(output_folder_path, "log.txt"), append = TRUE)
+        ##-----------------------------------------------------------------------------
+        ## Copy to Output
+
+        output_data_folder_path <- file.path(output_folder_path, "data")
+        copy_data_files(run_name = run_name,
+                        data_dir = file.path(run_name_to_validate_output_folder_path, "data"),
+                        data_local = output_data_folder_path)
 
         ## --------------------------------------------------------------------
         ## Make MCMC chains
+
+        message("This run has 'run_name': ", run_name, ". It validates ", run_name_to_validate, "'.")
+        cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": This run validates '", run_name_to_validate, "'.",
+            file = file.path(output_folder_path, "log.txt"), append = TRUE)
 
         RunMCMC(
             N.ITER = estimation_iterations,
@@ -3205,14 +3213,6 @@ do_global_validation_mcmc <-
             generate.new.set = generate_new_set,
             sink.seed.logfile = FALSE
         )
-
-        ##-----------------------------------------------------------------------------
-        ## Copy to Output
-
-        output_data_folder_path <- file.path(output_folder_path, "data")
-        copy_data_files(run_name = run_name,
-                        data_dir = file.path(run_name_to_validate_output_folder_path, "data"),
-                        data_local = output_data_folder_path)
 
         ##-----------------------------------------------------------------------------
         ## Return
