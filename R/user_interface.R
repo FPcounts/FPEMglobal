@@ -1757,47 +1757,9 @@ make_results <- function(run_name,
 ##'
 ##' See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 ##'
-##' @param run_desc
-##' @param marital_group
-##' @param age_group
-##' @param estimation_iterations
-##' @param burn_in_iterations
-##' @param steps_before_progress_report
-##' @param thinning
-##' @param chain_nums
-##' @param run_in_parallel
-##' @param input_data_folder_path
-##' @param data_csv_filename
-##' @param region_information_csv_filename
-##' @param denominator_counts_csv_filename
-##' @param countries_for_aggregates_csv_filename
-##' @param countries_in_CI_plots_csv_filename
-##' @param special_aggregates_name
-##' @param output_folder_path
-##' @param start_year
-##' @param end_year
-##' @param years_change
-##' @param ncol
-##' @param byrow
-##' @param years_change2
-##' @param ncol
-##' @param byrow
 ##' @param make_any_results Logical. Should tables and plots be produced? If
 ##'     \code{FALSE}, the arguments that pertain to specific plots or tables are
 ##'     ineffective.
-##' @param plot_barchart_years
-##' @param plot_CI_changes_years
-##' @param make_all_bar_charts
-##' @param plot_maps_shapefile_folder
-##' @param plot_maps_years
-##' @param adjust_medians
-##' @param age_ratios_age_total_run_name
-##' @param age_ratios_age_total_output_folder_path
-##' @param age_ratios_age_total_denominator_counts_csv_filename
-##' @param age_ratios_age_total_denominator_counts_folder_path
-##' @param run_name_override
-##' @param model_diagnostics
-##' @param include_AR
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
 ##' @inheritParams make_results
@@ -2053,7 +2015,6 @@ do_global_run <- function(## Describe the run
 ##' respective directories. The file
 ##' \file{\code{output_folder_path}/log.txt} provides a record of
 ##' which married and unmarried women runs were combined.
-##' @param run_desc
 ##' @param married_women_run_name Run name of the married women run to
 ##'     be combined. Ignored if
 ##'     \code{married_women_run_output_folder_path} is
@@ -2086,10 +2047,6 @@ do_global_run <- function(## Describe the run
 ##' @param age_ratios_age_total_all_women_output_folder_path File path
 ##'     to output directory of the all women 15--49 run to use to make
 ##'     age ratios.
-##' @param age_ratios_age_total_denominator_counts_csv_filename
-##' @param age_ratios_age_total_denominator_counts_folder_path
-##' @param run_name_override
-##' @param verbose
 ##' @inheritParams do_global_run
 ##' @inheritParams post_process_mcmc
 ##' @return A name for the run returned invisibly as a character
@@ -2534,53 +2491,11 @@ combine_runs <- function(## Describe the run
 ##' See \code{system.file("extdata", "country_and_area_classification.csv")} for
 ##' how the country classification file should be formatted. Assume all columns
 ##' are required.
-##' @param run_desc
-##' @param age_group
-##' @param estimation_iterations
-##' @param burn_in_iterations
-##' @param steps_before_progress_report
-##' @param thinning
-##' @param chain_nums
-##' @param run_in_parallel
-##' @param input_data_folder_path
-##' @param data_csv_filename
-##' @param region_information_csv_filename
 ##' @param denominator_counts_csv_filename File path. Filepath to \file{.csv}
 ##'     file with denominator counts (married and unmarried) for this
 ##'     \code{age_group}. If \code{NULL}, defaults to \code{paste0("women_",
 ##'     \code{age_group}, ".csv")}.
-##' @param countries_for_aggregates_csv_filename
-##' @param countries_in_CI_plots_csv_filename
-##' @param special_aggregates_name
-##' @param start_year
-##' @param end_year
-##' @param years_change
-##' @param ncol
-##' @param byrow
-##' @param years_change2
-##' @param ncol
-##' @param byrow
-##' @param plot_barchart_years
-##' @param plot_CI_changes_years
-##' @param make_any_aggregates
-##' @param make_all_bar_charts
-##' @param plot_maps_shapefile_folder
-##' @param plot_maps_years
-##' @param adjust_medians
-##' @param run_name_override_married
-##' @param run_name_override_unmarried
-##' @param run_name_override_all_women
-##' @param model_diagnostics
-##' @param include_AR
 ##' @param age_ratios_age_total_run_name_prefix Run name prefix for married, unmarried, and all women runs. Results will be searched for in \file{output/\code{age_ratios_age_total_run_name_prefix}_\var{[marital_group]}_15-49}.
-##' @param age_ratios_age_total_unmarried_run_name
-##' @param age_ratios_age_total_married_run_name
-##' @param age_ratios_age_total_all_women_run_name
-##' @param age_ratios_age_total_unmarried_output_folder_path
-##' @param age_ratios_age_total_married_output_folder_path
-##' @param age_ratios_age_total_all_women_output_folder_path
-##' @param age_ratios_age_total_denominator_counts_csv_filename
-##' @param age_ratios_age_total_denominator_counts_folder_path
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
 ##' @inheritParams make_results
@@ -2978,8 +2893,6 @@ do_global_all_women_run <- function(## Describe the run
 ##' to \code{\link{do_global_validation_run}}. See the section \dQuote{See Also} below.
 ##'
 ##' See \dQuote{Details} in the help file for \code{\link{do_global_validation_run}}.
-##' @param run_desc
-##' @param run_name_override
 ##' @param run_name_to_validate Name of completed global run to validate.
 ##' @param run_name_to_validate_output_folder_path
 ##' @param exclude_unmet_only Logical; do validtion exercise leaving out unmet
@@ -3015,13 +2928,6 @@ do_global_all_women_run <- function(## Describe the run
 ##' @param seed_validation Random seed used, among other things, in selection of
 ##'     countries to leave out.
 ##' @param generate_new_set Logical; generate a new training set in validation exercise?
-##' @param estimation_iterations
-##' @param burn_in_iterations
-##' @param steps_before_progress_report
-##' @param thinning
-##' @param chain_nums
-##' @param run_in_parallel
-##' @param output_folder_path
 ##' @param run_name_to_validate_output_folder File path to results of run
 ##'     \code{run_name_to_validate}.
 ##' @return A name for the run returned invisibly as a character string. MCMC chains are
