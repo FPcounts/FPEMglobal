@@ -9,14 +9,14 @@ The views expressed herein are those of the authors and do not necessarily refle
 
 ## Installation
 
-Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v3.6.1 (64 bit) and _JAGS_ v4.3.0. 
+Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v4.0.0 (64 bit) and _JAGS_ v4.3.0. 
 
 Follow _one_ of the following options:
 
 
 ### Straight from GitHub
 
-You will need to install [remotes](https://cran.r-project.org/package=remotes). Then try 
+You will need to install the _R_ package [remotes](https://cran.r-project.org/package=remotes). Then try 
 
 ```
 remotes::install_github("https://github.com/FPcounts/FPEMglobal", build_vignettes = TRUE, dependencies = TRUE)
@@ -36,7 +36,7 @@ You will need to enter the correct file path to the zip file. You will also need
 
 ### From Source
 
-To install from source you will need a build environment (e.g., the [Rtools](https://cran.r-project.org/index.html) suite).
+To install from source try
 
 1. Clone the repository to your local drive.
 2. Open a terminal or command prompt window in the directory containing the cloned repository.
