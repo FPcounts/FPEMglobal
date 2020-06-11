@@ -17,9 +17,12 @@ post_process_mcmc(
   years_change2 = matrix(c(2005.5, 2010.5, 2015.5, 2000.5, 2005.5, 2010.5, 1995.5,
     2000.5, 2005.5, 1990.5, 1995.5, 2000.5, 1990.5, 2000.5, 2010.5, 2000.5, 2010.5,
     2019.5), ncol = 3, byrow = TRUE),
-  plot_years = c(2000, 2010, 2019),
-  model_diagnostics = !dir.exists(file.path(output_folder_path, "convergence")),
+  model_diagnostics = TRUE,
   special_aggregates_name = NULL,
+  age_ratios_age_total_run_name = NULL,
+  age_ratios_age_total_output_folder_path = NULL,
+  age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
+  age_ratios_age_total_denominator_counts_folder_path = NULL,
   all_women = NULL,
   verbose = FALSE
 )
@@ -32,19 +35,17 @@ should be saved. If \code{NULL}, defaults to
 \code{file.path("output", run_name)}.}
 
 \item{input_data_folder_path}{File path to folder containing
-\emph{all} input data. If
+\emph{all} input data (except any map shapefiles). If
 \code{NULL} the value is taken from
 \code{file.path(output_folder_path, "global_mcmc_args.RData")}
-if that file exists, otherwise
-\code{file.path(output_folder_path, "data")}.}
+if that file exists, otherwise \code{file.path(output_folder_path, "data")}.}
 
 \item{denominator_counts_csv_filename}{Name of the \file{.csv}
 file containing estimates and projections of the number of
 women by marital status, age, and year. See \dQuote{Details}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in
-constructing country aggregates.}
+\file{.csv} file listing countries that will be used in constructing country aggregates.}
 
 \item{start_year}{Estimates and projections are produced for a
 specified time interval. This is the start year of that
@@ -63,7 +64,7 @@ indicators are desired.}
 change-in-changes.}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
-and WAIC be computed?}
+and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.}
 
 \item{special_aggregates_name}{Character vector of names
 (\emph{not} filenames) of any speical aggregates
@@ -71,6 +72,22 @@ desired. There must be a corresponding file with name
 \file{\code{special_aggregates_name}.csv} in
 \code{input_data_folder_path} that defines the special
 aggregates. See \dQuote{Details}.}
+
+\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.}
+
+\item{age_ratios_age_total_output_folder_path}{Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
+directory of the 15--49 run to use to make age ratios.}
+
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of
+the \file{.csv} file containing estimates and projections of
+the number of women by marital status, age, and year, for the
+age group 15--49. Only used if \code{make_age_ratios} is
+\code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.}
+
+\item{age_ratios_age_total_denominator_counts_folder_path}{Path to
+\code{age_ratios_age_total_denominator_counts_csv_filename}. If
+\code{NULL}, defaults to
+\code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
 
 \item{all_women}{Logical; is the run an all women run such as the
 kind produced by \code{\link{combine_runs}} or
@@ -86,7 +103,7 @@ The run name (invisibly). The function is mainly called
 for its side effects.
 }
 \description{
-MCMC chains from a global or one country run of FPEM (via
+MCMC chains from a global run of FPEM (via
 \code{\link{do_global_mcmc}}) must be
 post-processed before summary results (tables, plots) can be produced. This
 function does the post-processing and saves the results in
@@ -111,23 +128,21 @@ in \code{input_data_folder_path}. The aggregate \dQuote{WHO_regions} is
 included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")}
 for the required format. Assum all columns are required.
 }
-\section{References}{
-
+\examples{
+vignette("FPEMglobal_Intro")
+}
+\references{
 UN DESA Statistics Division,
 (2017) \emph{Standard Country or Area Codes for Statistical
 Use (M49)}. United Nations, Department of Economic and Social
 Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/}
 }
-
-\examples{
-vignette("FPEMglobal")
-}
 \seealso{
 \code{\link{do_global_run}} (which calls this function)
 to generate MCMC results for married or unmarried women,
 post-process, and produce results all in one call;
-\code{\link{combine_runs}} to create all women results from
-married and unmarried women runs;
+\code{\link{combine_runs}} to create all women results
+from married and unmarried women runs;
 \code{\link{do_global_all_women_run}} to do married,
 unmarried, \emph{and all women runs}, and produce results, all
 in one call.

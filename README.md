@@ -9,26 +9,26 @@ The views expressed herein are those of the authors and do not necessarily refle
 
 ## Installation
 
-Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v3.6.1 (64 bit) and _JAGS_ v4.3.0. 
+Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v4.0.0 (64 bit) and _JAGS_ v4.3.0. 
 
 Follow _one_ of the following options:
 
 
 ### Straight from GitHub
 
-You will need to install [remotes](https://cran.r-project.org/package=remotes). Then try 
+You will need to install the _R_ package [remotes](https://cran.r-project.org/package=remotes). Then try 
 
 ```
-remotes::install_github("https://github.com/FPcounts/FPEMglobal")
+remotes::install_github("https://github.com/FPcounts/FPEMglobal", build_vignettes = TRUE, dependencies = TRUE)
 ```
 
 
 ### From the .zip File (Windows Only)
 
-Download the file "FPEMglobal_1.0.0.zip" from the [release page](https://github.com/FPcounts/FPEMglobal/releases/tag/v1.0.0) (click "Assets" if it is not shown). To install, launch _R_ and type:
+Download the file "FPEMglobal_1.1.0.zip" from the [release page](https://github.com/FPcounts/FPEMglobal/releases/tag/v1.1.0) (click "Assets" if it is not shown). To install, launch _R_ and type:
 
 ```
-install.packages("[path/to/FPEMglobal_1.0.0.zip]", repos = NULL)
+install.packages("[path/to/FPEMglobal_1.1.0.zip]", repos = NULL)
 ```
 
 You will need to enter the correct file path to the zip file. You will also need to install any package depencencies according to the notices that come up.
@@ -36,16 +36,16 @@ You will need to enter the correct file path to the zip file. You will also need
 
 ### From Source
 
-To install from source you will need a build environment (e.g., the [Rtools](https://cran.r-project.org/index.html) suite).
+To install from source try
 
 1. Clone the repository to your local drive.
 2. Open a terminal or command prompt window in the directory containing the cloned repository.
 3. Issue the following commands:
     ```
 	R CMD build FPEMglobal
-	R CMD INSTALL FPEMglobal_1.0.0.tar.gz
+	R CMD INSTALL FPEMglobal_1.1.0.tar.gz
     ```
-	If you are on Windows and you get an error after a line of output containing "i386" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.0.0.tar.gz`. If that does not work follow the instructions above to install from the .zip file.
+	If you are on Windows and you get an error after a line of output containing "i386" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.1.0.tar.gz`. If that does not work follow the instructions above to install from the .zip file.
 	
 	
 ## Vignette

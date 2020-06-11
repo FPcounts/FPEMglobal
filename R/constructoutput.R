@@ -42,8 +42,8 @@ ConstructOutput <- function(# Construct output for MCMC run
   ## HOTFIX [MCW-2016-02-24-4] Need to be able to turn these off for datafiles
   ## with no, e.g., developing regions.
  ,make.any.aggregates = TRUE
- ,countries.to.include.in.aggregates.csv = NULL ##<< country ISO codes that should be used to form aggregates. NULL means all.
-  ,verbose = TRUE
+  ,countries.to.include.in.aggregates.csv = NULL ##<< country ISO codes that should be used to form aggregates. NULL means all.
+   ,verbose = TRUE
   ){
 
   nrepeatARsampling = 1 # Removed from set of input (July 2012), not to be changed.
@@ -124,8 +124,8 @@ ConstructOutput <- function(# Construct output for MCMC run
                                    output.dir = output.dir,
                                    years.change = years.change,
                                    years.change2 = years.change2
-                                  ,countries.to.include.in.aggregates.csv = countries.to.include.in.aggregates.csv,
-                                   verbose = verbose) # change JR, 20140317
+                                   ,countries.to.include.in.aggregates.csv = countries.to.include.in.aggregates.csv,
+                          verbose = verbose) # change JR, 20140317
     save(res.aggregate, file = file.path(output.dir, "res.aggregate.rda")) # change JR, 20140418
               } else {
                   warning("'", paste0("res.aggregate", filename.append, ".rda")
@@ -182,7 +182,8 @@ ConstructOutputAllWomen <-
                          ncol = 3, byrow = TRUE), ##<< Matrix with 3 columns, with column 1
             make.any.aggregates = TRUE,
             countries.to.include.in.aggregates.csv = NULL,
-            verbose = TRUE
+            verbose = TRUE,
+            output_exists_warnings = TRUE
              ) {
         if (is.null(awra.output.dir)) {
           awra.output.dir <- uwra.output.dir
@@ -415,7 +416,7 @@ ConstructOutputAllWomen <-
             if(length(uwra.denom.counts.li) > nrow(uwra.counts.iso)) {
                 idx <- !(names(uwra.denom.counts.li) %in% uwra.counts.iso$name.c)
                 not.in.mcmc <- names(uwra.denom.counts.li)[idx]
-                message(paste("The following countries are in the MCMC output for unmarried women but not in the population counts (denominators) file:\n    "
+                message(paste("\nThe following countries are in the MCMC output for unmarried women but not in the population counts (denominators) file:\n    "
                              ,paste(not.in.mcmc, collapse = ", ")
                              ,".\nThey will be removed."
                              ,sep = ""))
@@ -457,7 +458,7 @@ ConstructOutputAllWomen <-
             if(length(mwra.denom.counts.li) > nrow(mwra.counts.iso)) {
                 idx <- !(names(mwra.denom.counts.li) %in% mwra.counts.iso$name.c)
                 not.in.mcmc <- names(mwra.denom.counts.li)[idx]
-                message(paste("The following countries are in the MCMC output for married women but not in the population counts (denominators) file:\n    "
+                message(paste("\nThe following countries are in the MCMC output for married women but not in the population counts (denominators) file:\n    "
                              ,paste(not.in.mcmc, collapse = ", ")
                              ,".\nThey will be removed."
                              ,sep = ""))
@@ -851,7 +852,7 @@ ConstructOutputAllWomen <-
             save(res.country.all.women, file = file.path(awra.output.dir, "res.country.all.women.rda"))
 
         } else { ## END: countries
-            warning("'res.country.all.women.rda' already exists. All women country CIs not re-created.")
+            if(output_exists_warnings) warning("'res.country.all.women.rda' already exists. All women country CIs not re-created.")
         }
 
         ## -------* AGGREGATES
@@ -875,7 +876,7 @@ ConstructOutputAllWomen <-
             save(res.aggregate.all.women, file = file.path(awra.output.dir, "res.aggregate.all.women.rda"))
 
         } else {
-            warning("'res.aggregate.all.women.rda' already exists. All women aggregate CIs not re-created.")
+            if(output_exists_warnings) warning("'res.aggregate.all.women.rda' already exists. All women aggregate CIs not re-created.")
         }
             }
 
@@ -1046,7 +1047,8 @@ ConstructAgeRatios <-
                                       1990.5, 1995.5, 2000.5,
                                       1990.5, 2000.5, 2010.5,
                                       2000.5, 2010.5, 2017.5),
-                                    ncol = 3, byrow = TRUE) ##<< Matrix with 3 columns, with column 1
+                                    ncol = 3, byrow = TRUE), ##<< Matrix with 3 columns, with column 1
+             verbose = TRUE
              ) {
 
         ## -------* Sub functions
@@ -1596,12 +1598,13 @@ ConstructAgeRatiosAllWomen <-
                                       1990.5, 1995.5, 2000.5,
                                       1990.5, 2000.5, 2010.5,
                                       2000.5, 2010.5, 2017.5),
-                                    ncol = 3, byrow = TRUE) ##<< Matrix with 3 columns, with column 1
+                                    ncol = 3, byrow = TRUE), ##<< Matrix with 3 columns, with column 1
+             output_exists_warnings = TRUE
              ) {
 
        ## If actually need to make the age ratios
         if(file.exists(file.path(age.ratio.output.dir, "res.country.all.women.age.ratio.rda"))) {
-            warning("'res.country.all.women.age.ratio.rda' already exists. Age subset country CIs not re-created.")
+            if(output_exists_warnings) warning("'res.country.all.women.age.ratio.rda' already exists. Age subset country CIs not re-created.")
             return(invisible())
         }
 

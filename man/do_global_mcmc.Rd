@@ -14,52 +14,62 @@ do_global_mcmc(
   steps_before_progress_report = 4,
   thinning = 2,
   chain_nums = 1:3,
-  run_in_parallel = TRUE,
+  set_seed_chains = 1,
+  run_in_parallel = isTRUE(length(chain_nums) > 1),
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   region_information_csv_filename = "country_and_area_classification.csv",
   output_folder_path = NULL,
+  include_AR = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{run_desc}{Character. Brief note to be appended to the auto-generated
-\code{run_name}. Ignored if \code{run_name_override} is non-\code{NULL}.}
+\item{run_desc}{Character. Brief note to be appended to the
+auto-generated \code{run_name}. Ignored if
+\code{run_name_override} is non-\code{NULL}.}
 
-\item{run_name_override}{Character. User defined run name to override
-default generation. \code{run_desc} is ignored if this is
-non-\code{NULL}.}
+\item{run_name_override}{Character. User defined run name to
+override default generation. \code{run_desc} is ignored if
+this is non-\code{NULL}.}
 
-\item{marital_group}{Character. The marital group for which a run of the
-model is desired.}
+\item{marital_group}{Character. The marital group for which a run
+of the model is desired.}
 
-\item{age_group}{Character. The age group for which a run of the model is
-desired, specified in the format \dQuote{xx-yy}, where \dQuote{xx} is
-the start age, \dQuote{yy} is the end age, e.g., \code{"15-49"} or
-\code{"15-19"}. This is used to form the run name if
-\code{run_name_override} is \code{NULL}, to name of the file containing
-prevalence data if \code{data_csv_filename} is \code{NULL}, and to
-select rows from the denominator counts file if post-processing is done
-(see \code{\link{post_process_mcmc}}). Only "15-49" is currently supported.}
+\item{age_group}{Character. The age group for which a run of the
+model is desired, specified in the format \dQuote{xx-yy},
+where \dQuote{xx} is the start age, \dQuote{yy} is the end
+age, e.g., \code{"15-49"} or \code{"15-19"}. This is used to
+form the run name if \code{run_name_override} is \code{NULL},
+to name of the file containing prevalence data if
+\code{data_csv_filename} is \code{NULL}, and to select rows
+from the denominator counts file if post-processing is done
+(see \code{\link{post_process_mcmc}}).}
 
-\item{estimation_iterations}{Numeric. Number of MCMC iterations that should
-be \emph{saved}. This is \emph{before} \code{thinning}.}
+\item{estimation_iterations}{Numeric. Number of MCMC iterations
+that should be \emph{saved}. This is \emph{before}
+\code{thinning}.}
 
-\item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
-run as burn-in before starting to save them.}
+\item{burn_in_iterations}{Numeric. Number of MCMC iterations that
+should be run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times progress
-should reported during MCMC sampling.}
+\item{steps_before_progress_report}{Numeric. The number of times
+progress should reported during MCMC sampling.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
 
-\item{chain_nums}{Numeric. The number of MCMC chains to run, \emph{as a
-sequence}. E.g., for three chains use \code{1:3}. You need to run at
-least two chains for post-processing to be successful.}
+\item{chain_nums}{Numeric. The number of MCMC chains to run,
+\emph{as a sequence}. E.g., for three chains use
+\code{1:3}. You need to run at least two chains for
+post-processing to be successful.}
 
-\item{run_in_parallel}{Logical. Determines if MCMC chains are run in
-parallel. Parallel running requires package
+\item{set_seed_chains}{Set the random seed passed to
+\code{JAGS}. For multiple chains, the seed for each is
+\code{set_seed_chains} multiplied by the chain number.}
+
+\item{run_in_parallel}{Logical. Determines if MCMC chains are run
+in parallel. Parallel running requires package
 #ifdef windows
 \pkg{doParallel}.
 #endif
@@ -71,7 +81,7 @@ Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
 \item{input_data_folder_path}{File path to folder containing
-\emph{all} input data. If
+\emph{all} input data (except any map shapefiles). If
 \code{NULL} the value of \code{data_csv_filename}, etc., will
 be passed to \code{\link{file.path}} as-is. Otherwise,
 \code{file.path(input_data_folder_path, data_csv_filename)}
@@ -89,6 +99,9 @@ regions, etc. See \dQuote{Details}.}
 \item{output_folder_path}{Filepath to directory where outputs
 should be saved. If \code{NULL}, defaults to
 \code{file.path("output", run_name)}.}
+
+\item{include_AR}{Logical; should the auto-regressive component of
+the model be estimated. Used mainly for testing.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
@@ -114,7 +127,7 @@ to \code{\link{do_global_run}} or \code{\link{do_global_all_women_run}}.
 See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 }
 \examples{
-vignette("FPEMglobal")
+vignette("FPEMglobal_Intro")
 }
 \seealso{
 \code{\link{do_global_run}} (which calls this function)

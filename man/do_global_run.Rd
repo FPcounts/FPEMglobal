@@ -13,13 +13,14 @@ do_global_run(
   steps_before_progress_report = 4,
   thinning = 2,
   chain_nums = 1:3,
-  run_in_parallel = TRUE,
+  set_seed_chains = 1,
+  run_in_parallel = isTRUE(length(chain_nums) > 1),
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   region_information_csv_filename = "country_and_area_classification.csv",
   denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-  countries_in_CI_plots_csv_filename = NULL,
+  countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
   special_aggregates_name = NULL,
   output_folder_path = NULL,
   start_year = 1970.5,
@@ -30,47 +31,66 @@ do_global_run(
     2000.5, 2005.5, 1990.5, 1995.5, 2000.5, 1990.5, 2000.5, 2010.5), ncol = 3, byrow =
     TRUE),
   make_any_results = TRUE,
+  plot_barchart_years = c(floor(start_year), floor(median(c(start_year, end_year))),
+    floor(end_year)),
   plot_CI_changes_years = c(floor(start_year), floor(end_year)),
+  make_all_bar_charts = TRUE,
+  plot_maps_shapefile_folder = NULL,
+  plot_maps_years = floor(median(c(start_year, end_year))),
+  data_info_plot_years = c(1990, 2000, 2010),
   adjust_medians = FALSE,
+  age_ratios_age_total_run_name = NULL,
+  age_ratios_age_total_output_folder_path = NULL,
+  age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
+  age_ratios_age_total_denominator_counts_folder_path = NULL,
   run_name_override = NULL,
   model_diagnostics = TRUE,
+  include_AR = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{run_desc}{Character. Brief note to be appended to the auto-generated
-\code{run_name}. Ignored if \code{run_name_override} is non-\code{NULL}.}
+\item{run_desc}{Character. Brief note to be appended to the
+auto-generated \code{run_name}. Ignored if
+\code{run_name_override} is non-\code{NULL}.}
 
-\item{marital_group}{Character. The marital group for which a run of the
-model is desired.}
+\item{marital_group}{Character. The marital group for which a run
+of the model is desired.}
 
-\item{age_group}{Character. The age group for which a run of the model is
-desired, specified in the format \dQuote{xx-yy}, where \dQuote{xx} is
-the start age, \dQuote{yy} is the end age, e.g., \code{"15-49"} or
-\code{"15-19"}. This is used to form the run name if
-\code{run_name_override} is \code{NULL}, to name of the file containing
-prevalence data if \code{data_csv_filename} is \code{NULL}, and to
-select rows from the denominator counts file if post-processing is done
-(see \code{\link{post_process_mcmc}}). Only "15-49" is currently supported.}
+\item{age_group}{Character. The age group for which a run of the
+model is desired, specified in the format \dQuote{xx-yy},
+where \dQuote{xx} is the start age, \dQuote{yy} is the end
+age, e.g., \code{"15-49"} or \code{"15-19"}. This is used to
+form the run name if \code{run_name_override} is \code{NULL},
+to name of the file containing prevalence data if
+\code{data_csv_filename} is \code{NULL}, and to select rows
+from the denominator counts file if post-processing is done
+(see \code{\link{post_process_mcmc}}).}
 
-\item{estimation_iterations}{Numeric. Number of MCMC iterations that should
-be \emph{saved}. This is \emph{before} \code{thinning}.}
+\item{estimation_iterations}{Numeric. Number of MCMC iterations
+that should be \emph{saved}. This is \emph{before}
+\code{thinning}.}
 
-\item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
-run as burn-in before starting to save them.}
+\item{burn_in_iterations}{Numeric. Number of MCMC iterations that
+should be run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times progress
-should reported during MCMC sampling.}
+\item{steps_before_progress_report}{Numeric. The number of times
+progress should reported during MCMC sampling.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
 
-\item{chain_nums}{Numeric. The number of MCMC chains to run, \emph{as a
-sequence}. E.g., for three chains use \code{1:3}. You need to run at
-least two chains for post-processing to be successful.}
+\item{chain_nums}{Numeric. The number of MCMC chains to run,
+\emph{as a sequence}. E.g., for three chains use
+\code{1:3}. You need to run at least two chains for
+post-processing to be successful.}
 
-\item{run_in_parallel}{Logical. Determines if MCMC chains are run in
-parallel. Parallel running requires package
+\item{set_seed_chains}{Set the random seed passed to
+\code{JAGS}. For multiple chains, the seed for each is
+\code{set_seed_chains} multiplied by the chain number.}
+
+\item{run_in_parallel}{Logical. Determines if MCMC chains are run
+in parallel. Parallel running requires package
 #ifdef windows
 \pkg{doParallel}.
 #endif
@@ -82,7 +102,7 @@ Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
 \item{input_data_folder_path}{File path to folder containing
-\emph{all} input data. If
+\emph{all} input data (except any map shapefiles). If
 \code{NULL} the value of \code{data_csv_filename}, etc., will
 be passed to \code{\link{file.path}} as-is. Otherwise,
 \code{file.path(input_data_folder_path, data_csv_filename)}
@@ -102,8 +122,7 @@ file containing estimates and projections of the number of
 women by marital status, age, and year. See \dQuote{Details}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in
-constructing country aggregates.}
+\file{.csv} file listing countries that will be used in constructing country aggregates.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
@@ -146,6 +165,12 @@ change-in-changes.}
 \code{FALSE}, the arguments that pertain to specific plots or tables are
 ineffective.}
 
+\item{plot_barchart_years}{Vector of years for which bar
+charts should be produced. These are saved to
+\file{\code{output_folder_path}/fig/barchart}. These must be in
+the range of \code{start_year} and \code{end_year} passed to
+\code{\link{post_process_mcmc}}.}
+
 \item{plot_CI_changes_years}{Vector of length two (if longer, only
 the first and last elements are used). Declares the years to
 be used to make the \dQuote{fish bone} plots, i.e., the plots
@@ -155,15 +180,49 @@ appearing in files
 the range of \code{start_year} and \code{end_year} passed to
 \code{\link{post_process_mcmc}}.}
 
+\item{make_all_bar_charts}{Logical. Produce barcharts? If
+\code{NULL} but \code{plot_barchart_years} is
+non-\code{NULL}, is reset to \code{TRUE}.}
+
+\item{plot_maps_shapefile_folder}{Path to directory containing
+shapefiles for maps. Only needed if \code{plot_maps} is
+\code{TRUE}. This is \emph{not} looked for in
+\code{input_data_folder_path}; it should be a full path to the
+shape files.}
+
+\item{plot_maps_years}{Vector of years for which maps are
+desired; the full set of maps are produced for each of the
+years listed. These must be in the range of \code{start_year}
+and \code{end_year} passed to \code{\link{post_process_mcmc}}.}
+
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
 
-\item{run_name_override}{Character. User defined run name to override
-default generation. \code{run_desc} is ignored if this is
-non-\code{NULL}.}
+\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.}
+
+\item{age_ratios_age_total_output_folder_path}{Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
+directory of the 15--49 run to use to make age ratios.}
+
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of
+the \file{.csv} file containing estimates and projections of
+the number of women by marital status, age, and year, for the
+age group 15--49. Only used if \code{make_age_ratios} is
+\code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.}
+
+\item{age_ratios_age_total_denominator_counts_folder_path}{Path to
+\code{age_ratios_age_total_denominator_counts_csv_filename}. If
+\code{NULL}, defaults to
+\code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
+
+\item{run_name_override}{Character. User defined run name to
+override default generation. \code{run_desc} is ignored if
+this is non-\code{NULL}.}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
-and WAIC be computed?}
+and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.}
+
+\item{include_AR}{Logical; should the auto-regressive component of
+the model be estimated. Used mainly for testing.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
@@ -173,24 +232,22 @@ A name for the run, \code{run_name}, returned invisibly as a
 character string.
 }
 \description{
-This function generates the MCMC chains using \code{\link{do_global_mcmc}},
+This generates the MCMC chains using \code{\link{do_global_mcmc}},
 post-processes them using \code{\link{post_process_mcmc}} and
 produces plots and tables using \code{\link{make_results}}.
 }
 \details{
 See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 }
-\section{References}{
+\examples{
+vignette("FPEMglobal_Intro")
 
+}
+\references{
 Kettunen, J. et al. (2012) Genome-wide association
 study identifies multiple loci influencing human serum metabolite
 levels. Nat Genet advance online publication.
 \url{http://dx.doi.org/10.1038/ng.1073.}
-}
-
-\examples{
-vignette("FPEMglobal")
-
 }
 \seealso{
 \code{\link{combine_runs}} to create all women

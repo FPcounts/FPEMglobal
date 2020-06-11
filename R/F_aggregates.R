@@ -63,8 +63,7 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         country_name <- iso.Ptp3s.key.df[c, "name.c"]
         country_ISO <- iso.Ptp3s.key.df[c, "iso.c"]
         country_rda_fname <- iso.Ptp3s.key.df[c, "filename"]
-
-    if(verbose) message("\t", which(select.c %in% c), " ", country_name, " (ISO ", country_ISO, "), ", country_rda_fname)
+        if(verbose) message("\t", which(select.c %in% c), " ", country_name, " (ISO ", country_ISO, "), ", country_rda_fname)
         if(!country_name %in% names(W.Lc.t) || identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
             stop("No denominator counts with country name '", country_name, "'.")
             }
@@ -231,8 +230,7 @@ GetAggregates <- function(# Construct aggregate estimates
   winbugs.data = NULL, ##<< Object of class \code{winbugs.data}, needed only for UNDP aggregates
   region.info = NULL,##<< Object of class \code{region.info}, needed only for UNDP aggregates.
   countries.to.include.in.aggregates.csv = NULL ##<< country ISO codes that should be used to form aggregates. NULL means all.
-  ,verbose = TRUE
-  ){
+  ,verbose = TRUE){
 
 if (is.null(output.dir)){
     output.dir <- file.path(getwd(), "output", run.name, "/")
@@ -314,7 +312,7 @@ if (is.null(output.dir)){
                                              dir.traj = output.dir.countrytrajectories,
                                              years.change = years.change,
                                              years.change2 = years.change2
-                                            ,iso.Ptp3s.key.df = iso.Ptp3s.key.df,
+                              ,iso.Ptp3s.key.df = iso.Ptp3s.key.df,
                                              verbose = verbose)
     }
     # For regs
@@ -494,7 +492,7 @@ GetAggregatesAllWomen <-
   ## Mid-point years closest to the given \code{years.change} are used for calculations.
   ## Compress RData files created during aggregate creation? If FALSE, files not compressed during calculation but final files are always compressed using 'resaveRdaFiles()'.
  compress.RData = FALSE,
- countries.to.include.in.aggregates.csv = NULL,
+  countries.to.include.in.aggregates.csv = NULL,
  verbose = TRUE) {
 
         ## -------* Sub-functions
@@ -1429,7 +1427,9 @@ GetAggregatesAgeRatios <-
                                       1990.5, 2000.5, 2010.5,
                                       2000.5, 2010.5, 2017.5),
                                     ncol = 3, byrow = TRUE) ##<< Matrix with 3 columns, with column 1
-             ,verbose = TRUE) {
+            ,verbose = TRUE
+            ,output_exists_messages = TRUE
+             ) {
 
         ## -------* Sub functions
 
@@ -1491,7 +1491,7 @@ GetAggregatesAgeRatios <-
 
         for(marr in c("uwra", "mwra", "awra")) {
 
-            message("\nMaking aggregate age ratios for ", toupper(marr))
+            if(verbose) message("\nMaking aggregate age ratios for ", toupper(marr))
 
             ## -------** Directories
 
@@ -1500,7 +1500,7 @@ GetAggregatesAgeRatios <-
 
             ## Make sure results do not already exist
             if(file.exists(file.path(age.subset.output.dir, agg.rda.filename))) {
-                message("'", age.subset.output.dir, "' already exists for ", toupper(marr), ". It will NOT be re-created.")
+                if(output_exists_messages) message("'", age.subset.output.dir, "' already exists for ", toupper(marr), ". It will NOT be re-created.")
                 next()
             }
 
@@ -1551,7 +1551,7 @@ GetAggregatesAgeRatios <-
                 age.subset.region.info$name.reg %in% age.subset.region.info$name.subreg
             reg.dup <- age.subset.region.info$name.reg[reg.dup]
             for(i in seq_along(reg.dup)) {
-                message("NOTE: ", reg.dup[i], " is also a subregion and will not be stored or plotted separately.")
+                if(verbose) message("NOTE: ", reg.dup[i], " is also a subregion and will not be stored or plotted separately.")
             }
             aggregates <- aggregates[!duplicated(aggregates)]
 
@@ -1775,7 +1775,7 @@ GetAggregatesAgeRatios <-
                                             )
 
             save(res.aggregate.age.ratio, file = file.path(age.subset.output.dir, agg.rda.filename))
-            message("Posterior quantiles of aggregate age ratios for ", toupper(marr), " saved to ", age.subset.output.dir)
+            message("\nPosterior quantiles of aggregate age ratios for ", toupper(marr), " saved to ", age.subset.output.dir)
 
         }
     }
@@ -1920,7 +1920,7 @@ InternalAllWomenAggregateCounts <-
              ,iso.both.j, CP.counts.j, uwra.denom.counts,
              uwra.country.info, uwra.region.info, mwra.denom.counts,
              verbose = FALSE, aggregates.from.file.df = NULL, aggregates.names.df
-            ,reg.dup, compress.RData = FALSE) {
+             ,reg.dup, compress.RData = FALSE) {
 
         ## -------* Main Body
 
@@ -2241,7 +2241,7 @@ make.aggregatesAllWomen <- function(file.agg, name.agg,
                                      mwra.output.dir = mwra.output.dir,
                                      WRA.csv = WRA.csv,
                                      file.aggregates = file.agg,
-                                     verbose = verbose)
+                             verbose = verbose)
 
     res.fname <- file.path(output.dir, paste0(name.agg, ".all.women.rda"))
 

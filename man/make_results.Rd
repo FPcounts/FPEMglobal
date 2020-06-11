@@ -2,21 +2,27 @@
 % Please edit documentation in R/user_interface.R
 \name{make_results}
 \alias{make_results}
-\title{Summarize a post-processed global or one-country run of FPEM}
+\title{Summarize a post-processed global run of FPEM}
 \usage{
 make_results(
   run_name,
   output_folder_path = file.path("output", run_name),
   input_data_folder_path = NULL,
-  denominator_counts_csv_filename = NULL,
-  countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-  region_information_csv_filename = "country_and_area_classification.csv",
+  countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+  plot_diagnostic_CI_plots = FALSE,
+  make_all_bar_charts = NULL,
+  plot_barchart_years = NULL,
   data_info_plot_years = c(1990, 2000, 2010),
   plot_CI_changes_years = NULL,
-  countries_in_CI_plots_csv_filename = NULL,
+  plot_maps_shapefile_folder = NULL,
+  plot_maps_years = NULL,
   adjust_medians = FALSE,
   special_aggregates_name = NULL,
-  all_women = NULL
+  make_age_ratios = NULL,
+  validation_keep_all = TRUE,
+  validation_return_res_as_df = FALSE,
+  all_women = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -27,33 +33,12 @@ should be saved. If \code{NULL}, defaults to
 \code{file.path("output", run_name)}.}
 
 \item{input_data_folder_path}{File path to folder containing
-\emph{all} input data. If
+\emph{all} input data (except any map shapefiles). If
 \code{NULL} the value of \code{data_csv_filename}, etc., will
 be passed to \code{\link{file.path}} as-is. Otherwise,
 \code{file.path(input_data_folder_path, data_csv_filename)}
 will be passed. The default value points to the data directory
 supplied with the package.}
-
-\item{denominator_counts_csv_filename}{Name of the \file{.csv}
-file containing estimates and projections of the number of
-women by marital status, age, and year. See \dQuote{Details}.}
-
-\item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in
-constructing country aggregates.}
-
-\item{region_information_csv_filename}{Filename of the \file{.csv}
-file containing classifications of countries in sub-regions,
-regions, etc. See \dQuote{Details}.}
-
-\item{plot_CI_changes_years}{Vector of length two (if longer, only
-the first and last elements are used). Declares the years to
-be used to make the \dQuote{fish bone} plots, i.e., the plots
-appearing in files
-\file{\code{output_folder_path}/fig/\var{[run
-    name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
-the range of \code{start_year} and \code{end_year} passed to
-\code{\link{post_process_mcmc}}.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
@@ -65,6 +50,39 @@ looked for in \code{input_data_folder_path}. Countries appear
 in the \file{.pdf} in the same order as they are listed in
 \code{countries_in_CI_plots_csv_filename}.}
 
+\item{plot_diagnostic_CI_plots}{Logical. Produce diagnostic versions of the main
+country-level indicator plots. These have zoomed y-axes.}
+
+\item{make_all_bar_charts}{Logical. Produce barcharts? If
+\code{NULL} but \code{plot_barchart_years} is
+non-\code{NULL}, is reset to \code{TRUE}.}
+
+\item{plot_barchart_years}{Vector of years for which bar
+charts should be produced. These are saved to
+\file{\code{output_folder_path}/fig/barchart}. These must be in
+the range of \code{start_year} and \code{end_year} passed to
+\code{\link{post_process_mcmc}}.}
+
+\item{plot_CI_changes_years}{Vector of length two (if longer, only
+the first and last elements are used). Declares the years to
+be used to make the \dQuote{fish bone} plots, i.e., the plots
+appearing in files
+\file{\code{output_folder_path}/fig/\var{[run
+    name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
+the range of \code{start_year} and \code{end_year} passed to
+\code{\link{post_process_mcmc}}.}
+
+\item{plot_maps_shapefile_folder}{Path to directory containing
+shapefiles for maps. Only needed if \code{plot_maps} is
+\code{TRUE}. This is \emph{not} looked for in
+\code{input_data_folder_path}; it should be a full path to the
+shape files.}
+
+\item{plot_maps_years}{Vector of years for which maps are
+desired; the full set of maps are produced for each of the
+years listed. These must be in the range of \code{start_year}
+and \code{end_year} passed to \code{\link{post_process_mcmc}}.}
+
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
 
@@ -75,14 +93,33 @@ corresponding file named
 \file{\code{special_aggregates_name}.csv} must be present in
 \code{input_data_folder_path}.}
 
+\item{validation_keep_all}{Logical. Should validation results be
+saved? If \code{TRUE}, a list with elements \code{CI.df} and
+\code{Error.df} is saved to
+\file{\code{output_folder_path}/validn_repts/validation.results.rda}.}
+
+\item{validation_return_res_as_df}{Logical; should the validation
+results be returned as a data frame? If \code{FALSE} the
+function returns the \code{run_name} invisibly as a character
+string.}
+
 \item{all_women}{Logical; is the run an all women run such as the
 kind produced by \code{\link{combine_runs}} or
 \code{\link{do_global_all_women_run}}? If \code{NULL} an
 attempt is made to determine this automatically from
 \file{mcmc.meta.rda} in the output folder of the run.}
 
+\item{verbose}{Logical; print lots and lots of messages about
+progress?}
+
 \item{married_women_run_name}{Run name of a married women
-run.}
+run. Relevant if \code{\link{make_results}} is being run on an
+all women run and age ratios for country aggregates are
+wanted. If this argument is \code{NULL} (default), and
+\code{all_women} is \code{TRUE} (explicitly or implicitly), an
+attempt is made to find this folder by substituting
+\dQuote{all_women} with \dQuote{married} in the
+\code{run_name}.}
 
 \item{unmarried_women_run_name}{Run name of a unmarried women
 run. See \code{married_women_run_name}.}
@@ -94,10 +131,12 @@ containing outputs for a married women run. See \code{married_women_run_name}.}
 containing outputs for a unmarried women run. See \code{married_women_output_folder_path}.}
 }
 \value{
-\code{run_name} invisibly as a character string.
+Either \code{run_name} invisibly as a character string or,
+if \code{isTRUE(validation_return_res_as_df)}, a data frame
+(non-invisibly) containing validation results.
 }
 \description{
-Once post-processed, a global or one-country model can be used to generate
+Once post-processed, a global model can be used to generate
 results in the form of summary figures and tables of key
 indicators. Summaries are in the form of quantiles of posterior marginal
 distributions, and means for some indicators.
@@ -117,8 +156,20 @@ country and country aggregate, by year:
 \item Probability that met demand for modern methods is greater than 75 percent
 }
 }
+\section{Age ratios for aggregates}{
+
+\code{\link{post_process_mcmc}} generates trajectories for the
+age ratios for countries for married, unmarried, and all
+women. However, \code{\link{combine_runs}}, not
+\code{\link{post_process_mcmc}}, produces the trajectories for
+age ratios for country aggregates, including those for married
+and unmarried women. When \code{\link{make_results}} is
+applied to an all women run, an attempt is made to find the
+corresponding
+}
+
 \examples{
-vignette("FPEMglobal")
+vignette("FPEMglobal_Intro")
 
 }
 \seealso{

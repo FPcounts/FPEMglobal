@@ -1151,6 +1151,514 @@ PlotLogisticParameters <- function (# Plot overview of country parameters of the
   return(invisible())
 }
 ##----------------------------------------------------------------------
+##' Plot the probability that demand satisfied is greater than 75 percent on a map.
+##'
+##' .. content for \description{} (no empty lines) ..
+##'
+##' .. content for \details{} ..
+##' @param run.name
+##' @param output.dir
+##' @param indicator
+##' @param est.year The year to be plotted. This is matched to the output after
+##'     adding 0.5.
+##' @param categories
+##' @param fig.dir
+##' @param res
+##' @param name.res
+##' @param rev.col
+##' @param map.name
+##' @param shapefile.dir
+##' @param UWRA
+##' @param all.women
+##' @param all.womenize.fig.name
+##' @param adj.medians Use adjusted medians instead of original
+##'     medians? If \code{TRUE}, and \code{all.women == FALSE}, it is
+##'     assumed that the adjusted medians an object named
+##'     \code{res_country_adj}, saved in \code{file.path(output.dir,
+##'     "res.country.adj-mod_tot_unmet.rda")}. If \code{all.women ==
+##'     TRUE}, it is assumed that the object is called
+##'     \code{res_country_all_women_adj} and it is saved in a file
+##'     called \code{file.path(output.dir,
+##'     "res.country.all.women.adj-mod_tot_unmet.rda")}.
+##' @param out.formats \code{NULL} or character vector with elements from "pdf",
+##'     "LowRes_png", "HighRes_png", "LowRes_tiff", "HighRes_tiff", "eps". "eps"
+##'     files tend to be quite large so are not produced by default. Use
+##'     "LowRes_png" for web displays, "HighRes_png" for Word documents, "eps"
+##'     for publications going through the Graphic Design Unit. If \code{NULL},
+##'     no device is called explicitly.
+##' @param main.title
+##' @param legend.title
+##' @param source.text
+##' @param disclaimer.text
+##' @param brewer.pal Name of \pkg{RColorBrewer} palette to use.
+##' @param par.list Passed to \code{\link{par}}.
+##' @param map.dir Directory with the map shape files.
+##' @return
+##' @author Original by Sara Hertog, modified for use here by Mark Wheldon and
+##'     Philipp Ueffing. Other code taken from other \pkg{FPCounts} functions.
+MapCPIndicator <-
+    function(run.name = "test",
+             output.dir = NULL,
+             indicator = "Met Demand with Modern Methods >= 75%",
+             est.year = 2017,
+             categories = c(0, 5, 20, 80, 95, 100),
+             fig.dir = NULL,
+             res = NULL,
+             name.res = "Country",
+             rev.col = FALSE,
+             map.name = NULL,
+             shapefile.dir = NULL,
+             UWRA = FALSE,
+             all.women = FALSE,
+             all.womenize.fig.name = isTRUE(all.women),
+             adj.medians = FALSE,
+             out.formats = c("pdf", "LowRes_png", "HighRes_png"),
+             main.title = paste(indicator, est.year, sep = " "),
+             legend.title = "",
+             source.text = "",
+             disclaimer.text = "The boundaries and names shown and the designations used on this map do not imply official endorsement or acceptance by the United Nations.\nDotted line represents approximately the Line of Control in Jammu and Kashmir agreed upon by India and Pakistan. The final status of Jammu and Kashmir has not yet been agreed upon by the parties.\nFinal boundary between the Republic of Sudan and the Republic of South Sudan has not yet been determined.",
+             brewer.pal = "RdYlBu",
+             par.list = list(oma = c(0,0,0,0)),
+             verbose = TRUE) {
+
+        ## -------* Set-up
+
+        if(!(requireNamespace("sp", quietly = TRUE) &&
+             requireNamespace("rgdal", quietly = TRUE))) {
+            stop("Packages 'sp' and 'rgdal' are required to produce maps but at least some are not installed.")
+        }
+
+        if(UWRA && all.women) warning("'UWRA' and 'all.women' are both TRUE; mapping 'all.women' estimates only.")
+
+        if (is.null(output.dir)){
+            output.dir <- file.path(getwd(), "output", run.name)
+        }
+
+        if (is.null(fig.dir)){
+            fig.dir <- file.path(output.dir, "fig", "maps")
+        }
+
+        if (!dir.exists(fig.dir)) {
+          dir.create(fig.dir, recursive = TRUE, showWarnings = FALSE)
+        }
+
+        if(indicator %in% c("mCP", "Modern")) {
+            map.name.ind <- "modern"
+        } else if(indicator %in% "Total") {
+            map.name.ind <- "total"
+        } else if(indicator %in% "Unmet") {
+            map.name.ind <- "unmet"
+        } else if(indicator %in% c("Met Demand with Modern Methods >= 75%")) {
+            map.name.ind <- "metDemGT_modMeth75pc"
+        } else if(indicator %in% c("Total Demand", "TotalPlusUnmet")) {
+            map.name.ind <- "TotalPlusUnmet"
+        } else {
+            stop("'indicator' not yet implemented.")
+        }
+
+        if(is.null(map.name)) {
+            if(all.women) {
+                ## Ensure filenames have "aw" in them, even if ~run.name~ does
+                ## not have "umw" or "mw" in it.
+                if(all.womenize.fig.name) {
+                    aw.run.name <- makeAWFileName(run.name)
+                    } else aw.run.name <- run.name
+                map.name <- paste0(aw.run.name, "_", name.res, "_", map.name.ind, "_", est.year)
+            } else {
+                map.name <- paste0(run.name, "_", name.res, "_", map.name.ind, "_", est.year)
+            }
+            if(adj.medians) {
+                map.name <- paste0(map.name, "_adj")
+            }
+        }
+
+        if(!is.numeric(categories)) stop("'categories' must be numeric.")
+
+        ## -------* Prepare Data
+
+        ## -------** Load mcmc output
+
+        if (is.null(res)){
+            if(!all.women) {
+                if (name.res == "Country"){
+                    load(file.path(output.dir, "res.country.rda"))
+                    if(adj.medians) {
+                        ## Replace orig medians with adj
+                        load(file.path(output.dir, "res.country.adj-mod_tot_unmet.rda"))
+                        res <- ReplaceMediansWAdj(res.country, res_country_adj)
+                    } else {
+                        res <- res.country
+                    }
+                }
+                if (name.res == "UNPDaggregate"){
+                    stop("'name.res == UNPDaggregate' not implemented.")
+                    ## load(file.path(output.dir, "res.aggregate.rda"))
+                    ## res <- res.aggregate
+                }
+            } else {
+                if (name.res == "Country"){
+                    load(file.path(output.dir, "res.country.all.women.rda"))
+                    if(adj.medians) {
+                        ## Replace orig medians with adj
+                        load(file.path(output.dir, "res.country.all.women.adj-mod_tot_unmet.rda"))
+                        res <- ReplaceMediansWAdj(res.country.all.women, res_country_adj_all_women)
+                    } else {
+                        res <- res.country.all.women
+                    }
+                }
+                if (name.res == "UNPDaggregate"){
+                    stop("'name.res == UNPDaggregate' not implemented.")
+                    ## load(file.path(output.dir, "res.aggregate.all.women.rda"))
+                    ## res <- res.aggregate.all.women
+                }
+            }
+        }
+
+        ## -------** Make data frame for mapping
+
+        if(map.name.ind == "metDemGT_modMeth75pc") {
+
+            data.in <-
+                data.frame(ISO.Code = rep(res$iso.g
+                                         ,each = length(res$metDemGT.Lg.Lcat.pr[[1]][[1]])
+                                          )
+                          ,Probability = unlist(lapply(res$metDemGT.Lg.Lcat.pr
+                                                      ,"[[", "Met Demand with Modern Methods >= 75%"))
+                          ,est.years = as.numeric(unlist(lapply(res$metDemGT.Lg.Lcat.pr
+                                                               ,function(z) {
+                                                                   colnames <-
+                                                                       colnames(z[["Met Demand with Modern Methods >= 75%"]])
+                                                                   if(is.null(colnames)) {
+                                                                       colnames <- names(z[["Met Demand with Modern Methods >= 75%"]])
+                                                                   }
+                                                                   return(colnames)
+                                                               })))
+                          ,stringsAsFactors = FALSE, row.names = NULL)
+
+        } else if(map.name.ind == "TotalPlusUnmet") {
+
+            ## Keep only medians
+            res2 <- lapply(res$CIprop.Lg.Lcat.qt, function(z) {
+                list(TotalPlusUnmet = z[["TotalPlusUnmet"]]["0.5", ,drop = FALSE])
+            })
+
+            data.in <-
+                data.frame(ISO.Code = rep(res$iso.g
+                                         ,each = length(res2[[1]][[1]])
+                                          )
+                          ,Probability = unlist(lapply(res2
+                                                      ,"[[", "TotalPlusUnmet"))
+                          ,est.years = as.numeric(unlist(lapply(res2
+                                                               ,function(z) {
+                                                                   colnames <-
+                                                                       colnames(z[["TotalPlusUnmet"]])
+                                                                   if(is.null(colnames)) {
+                                                                       colnames <- names(z[["TotalPlusUnmet"]])
+                                                                   }
+                                                                   return(colnames)
+                                                               })))
+                          ,stringsAsFactors = FALSE, row.names = NULL)
+
+        } else if(map.name.ind == "modern") {
+
+            ## Keep only medians
+            res2 <- lapply(res$CIprop.Lg.Lcat.qt, function(z) {
+                list(Modern = z[["Modern"]]["0.5", ,drop = FALSE])
+            })
+
+            data.in <-
+                data.frame(ISO.Code = rep(res$iso.g
+                                         ,each = length(res2[[1]][[1]])
+                                          )
+                          ,Probability = unlist(lapply(res2
+                                                      ,"[[", "Modern"))
+                          ,est.years = as.numeric(unlist(lapply(res2
+                                                               ,function(z) {
+                                                                   colnames <-
+                                                                       colnames(z[["Modern"]])
+                                                                   if(is.null(colnames)) {
+                                                                       colnames <- names(z[["Modern"]])
+                                                                   }
+                                                                   return(colnames)
+                                                               })))
+                          ,stringsAsFactors = FALSE, row.names = NULL)
+
+        } else if(map.name.ind == "total") {
+
+            ## Keep only medians
+            res2 <- lapply(res$CIprop.Lg.Lcat.qt, function(z) {
+                list(Total = z[["Total"]]["0.5", ,drop = FALSE])
+            })
+
+            data.in <-
+                data.frame(ISO.Code = rep(res$iso.g
+                                         ,each = length(res2[[1]][[1]])
+                                          )
+                          ,Probability = unlist(lapply(res2
+                                                      ,"[[", "Total"))
+                          ,est.years = as.numeric(unlist(lapply(res2
+                                                               ,function(z) {
+                                                                   colnames <-
+                                                                       colnames(z[["Total"]])
+                                                                   if(is.null(colnames)) {
+                                                                       colnames <- names(z[["Total"]])
+                                                                   }
+                                                                   return(colnames)
+                                                               })))
+                          ,stringsAsFactors = FALSE, row.names = NULL)
+
+        } else if(map.name.ind == "unmet") {
+
+            ## Keep only medians
+            res2 <- lapply(res$CIprop.Lg.Lcat.qt, function(z) {
+                list(Unmet = z[["Unmet"]]["0.5", ,drop = FALSE])
+            })
+
+            data.in <-
+                data.frame(ISO.Code = rep(res$iso.g
+                                         ,each = length(res2[[1]][[1]])
+                                          )
+                          ,Probability = unlist(lapply(res2
+                                                      ,"[[", "Unmet"))
+                          ,est.years = as.numeric(unlist(lapply(res2
+                                                               ,function(z) {
+                                                                   colnames <-
+                                                                       colnames(z[["Unmet"]])
+                                                                   if(is.null(colnames)) {
+                                                                       colnames <- names(z[["Unmet"]])
+                                                                   }
+                                                                   return(colnames)
+                                                               })))
+                          ,stringsAsFactors = FALSE, row.names = NULL)
+
+        } else {
+
+            stop("'indicator' not yet implemented.")
+
+        }
+
+        ## Keep only the year 'est.year'
+        data.in <- data.in[data.in$est.years == est.year + 0.5,]
+
+        ## -------* Generate the Map
+
+        ## -------** Aesthetics
+
+        NoDataColor <- "#e6e8ed" # color for polygons with no data
+        boundary.color <- "black" # color for country boundaries
+        background.color <- "white" # color for oceans, seas and lakes
+
+        NumOfCategories <- length(categories) - 1 # Number of categories into which to split data, not including No data
+                                # break points from highest to
+                                # lowest. Categorical variable. The variable to
+                                # be mapped needs to take values in this range.
+
+        data.in$prob.to.map <- NA
+
+        for(i in seq_len(NumOfCategories)) {
+            this.cat <-
+                data.in$Probability * 100 >= categories[i] &
+                data.in$Probability * 100 < categories[i + 1]
+            data.in$prob.to.map[this.cat] <- NumOfCategories - i + 1
+        }
+
+        if(!is.null(main.title) && !identical(main.title, "")) {
+        if(all.women) {
+            main.title <- paste0(main.title, " --- All Women")
+        } else if(UWRA) {
+            main.title <- paste0(main.title, " --- Unmarried")
+        } else {
+            main.title <- paste0(main.title, " --- Married")
+        }
+        }
+        legend.labels <-
+            rev(paste0(paste(head(categories, -1), tail(categories, -1), sep = "-"), rep("%", length.out = NumOfCategories)))
+        legend.labels <- c(legend.labels,
+                           "No estimates")
+
+        plot.coastlines <- TRUE # outline the coastlines with the same color as country boundaries? (TRUE or FALSE)
+        plot.lakes <- TRUE # show lakes polygons for the 21 large lakes (TRUE or FALSE)
+        plot.antarctica <- FALSE # show antarctica polygon (TRUE or FALSE)
+
+        ## -------** Make the Map
+
+        if(verbose) message("Creating maps...")
+
+        suppressWarnings(suppressMessages({
+            ## Read in the UN cartography polygon shapefile (includes antarctica)
+            world.un <- rgdal::readOGR(shapefile.dir, "BNDA50_Update_201706", verbose = verbose) # (requires rgdal package) # This line is used with the 28 June files
+            ## convert to Robinson projection (the projection preferred by UN Cartography)
+            sp::proj4string(world.un) <- sp::CRS("+proj=longlat +ellps=WGS84") # (requires sp package)
+            world.robin <- sp::spTransform(world.un, sp::CRS("+proj=robin")) # (requires rgdal package)
+
+            ## associate areas with countries where necessary.
+            world.robin$M49Code[which(world.robin$ROMNAM=="Christmas Island")]<-world.robin$M49Code[which(world.robin$ROMNAM=="Australia")]
+            world.robin$M49Code[which(world.robin$ROMNAM=="Norfolk Island")]<-world.robin$M49Code[which(world.robin$ROMNAM=="Australia")]
+            world.robin$M49Code[which(world.robin$ROMNAM=="Cocos (Keeling) Islands")]<-world.robin$M49Code[which(world.robin$ROMNAM=="Australia")]
+            world.robin$M49Code[which(world.robin$M49Code==248)]<-246 # Assign Aaland Islands to Finland
+            world.robin$M49Code[which(world.robin$M49Code==652)]<-312 # Assign Saint Barthelemy to Guadeloupe
+            world.robin$M49Code[which(world.robin$ROMNAM=="Saint Martin (French Part)")]<-world.robin$M49Code[which(world.robin$ROMNAM=="Guadeloupe")]
+            world.robin$M49Code[which(world.robin$ROMNAM %in% c("Guernsey","Jersey"))]<-830 # Channel Islands
+            world.robin$M49Code[which(world.robin$ROMNAM=="Svalbard and Jan Mayen Islands")]<-world.robin$M49Code[which(world.robin$ROMNAM=="Norway")]
+            world.robin$M49Code[which(world.robin$ROMNAM=="Arunachal Pradesh")]<-world.robin$M49Code[which(world.robin$ROMNAM=="India")] # Using India's color for Assign Arunachal Pradesh
+            world.robin$M49Code[which(world.robin$M49Code==334)]<-36 # Assign Heard Island and McDonald Islands to Australia
+            world.robin$M49Code[which(world.robin$M49Code==74)]<-578 # Assign Bouvet Island to Norway
+            world.robin$M49Code[which(world.robin$M49Code==744)]<-578 # Assign Svalbard and Jan Mayen Islands to Norway
+            world.robin$M49Code[which(world.robin$M49Code==239)]<-826 # Assign South Georgia and the South Sandwich Islands to UK
+            world.robin$M49Code[which(world.robin$M49Code==612)]<-826 # Assign Pitcairn to UK
+            world.robin$M49Code[which(world.robin$M49Code==581)]<-840 # Assign United States Minor Outlying Islands to USA
+            world.robin$M49Code[which(world.robin$M49Code==260)]<-250 # Assign French Southern Territories to France
+            world.robin$M49Code[which(world.robin$ROMNAM=="Hala'ib triangle")]<-world.robin$M49Code[which(world.robin$ROMNAM=="Egypt")] # Assign area between Sudan and Egypt to Egypt
+            world.robin$M49Code[which(world.robin$ROMNAM=="Ma'tan al-Sarra")]<-world.robin$M49Code[which(world.robin$ROMNAM=="Sudan")] # Assign area between Sudan and Egypt to Sudan
+            world.robin$M49Code[which(world.robin$ROMNAM=="Ilemi triangle")]<-world.robin$M49Code[which(world.robin$ROMNAM=="South Sudan")] # Assign area between South Sudan and Kenya to South Sudan
+
+            ## Read in the Un Cartography shapefile with country/area boundaries
+            bnd.un <- rgdal::readOGR(shapefile.dir, "BNDL50_Update_201706", verbose = verbose) # This line is used with 28 June files
+
+            ## convert to Robinson projection
+            sp::proj4string(bnd.un) <- sp::CRS("+proj=longlat +ellps=WGS84")
+            bnd <- sp::spTransform(bnd.un, sp::CRS("+proj=robin"))
+
+            if (plot.antarctica==FALSE){
+                world.robin<-world.robin[world.robin$GEOREG != "Antarctica",]
+                bnd<-bnd[bnd$Name1 != "Antarctica",]
+            }
+
+            ## Read in the Un Cartography shapefile with lakes
+            lakes.un <- rgdal::readOGR(shapefile.dir, "WBYA10_Lake", verbose = verbose)
+
+            ## convert to Robinson projection
+            sp::proj4string(lakes.un) <- sp::CRS("+proj=longlat +ellps=WGS84")
+            lakes <- sp::spTransform(lakes.un, sp::CRS("+proj=robin"))
+            lakes<-lakes[lakes$Shape_Area>0.5,] # restrict to large lakes
+            lks.df<-ggplot2::fortify(lakes)
+
+            ## Read in continuous variable to be mapped (csv file with LocID in second column and continuous var to be mapped in third column)
+            indata <- data.in
+            names(indata)[names(indata) == 'ISO.Code'] <- "M49Code"
+                                # change locid field name to M49Code to merge with the polygon shapefile
+            indata$vartomap <- indata$prob.to.map
+            indata <- subset(indata,select = c("M49Code","vartomap"))
+
+            ## Attach the continuous variable to be mapped to the polygon shapefile
+            world.robin <- sp::merge(world.robin,indata,by="M49Code",all.x=TRUE,all.y=FALSE) #attach the variable to be mapped to the polygon shapefile
+
+            ## assign colors to each category to be mapped
+            colors <- RColorBrewer::brewer.pal(NumOfCategories,brewer.pal) # (requires RColorBrewer package)
+            ## colors <- colors[2:length(colors)] # eliminate the lightest hue as it tends not to map well (looks white in many palettes)
+            if(!rev.col) colors <- rev(colors) # put the darkest hues first
+            ## colors <- c("#dd1c77", "#c994c7")
+
+            world.robin$colorcode<-NA
+            for (i in 1:NumOfCategories){
+                world.robin$colorcode[which(!is.na(world.robin$vartomap) & world.robin$vartomap==i)]<-colors[i]
+            }
+            world.robin$colorcode[which(is.na(world.robin$vartomap))]<-NoDataColor
+
+            ## UN Cartography requires that the Askai Chin region be striped half in the color of China and half in the color of
+            ## Jammu-Kashmir (no data for most of UNPD purposes)
+            ## to do that, we create a separate polygon file that contains only the single region Aksai Chin and assign it the color of China for now
+            ## it will be layered on top of the map in a separate step
+            ac<-world.robin[world.robin$ROMNAM=="Aksai Chin",]
+            acf<-ggplot2::fortify(ac) # transform to data frame for more plotting options
+            acf$colorcode<-world.robin$colorcode[which(world.robin$ROMNAM=="China")]
+
+            ## three styles of boundaries should be mapped: standard solid line, dashed line for undetermined boundaries, dotted for selected disputed boundaries
+            ## to do that, we create a separate dataframe with each containing boundaries of the same type
+            bnd.line<-bnd[bnd$Type %in% c(0,1),] # 0 is coastlines; 1 is international boundaries;
+            bnd.dash<-bnd[bnd$Type %in% c(3),] # Undetermined boundary lines (e.g. Sudan and South Sudan, State of Palestine)
+            bnd.dot<-bnd[bnd$Type %in% c(4),] # Jammu and Kashmir line of control
+        }))
+
+        ## write the map function
+        unpd.map<-function(){
+            sp::plot(world.robin,border=NA,col=world.robin$colorcode,bg=background.color) # plot country/area polygons
+            polygon(acf$long,acf$lat,col=acf$colorcode[1],border=NA, density=130,angle=45,lwd=0.4) # plot Aksai Chin as striped region per UN Cartography requirements
+            lines(bnd.line, col=boundary.color, lwd=0.15, lty=1) # plot solid boundaries
+            lines(bnd.dash, col=boundary.color, lwd=0.15, lty=2) # plot dashed boundaries
+            lines(bnd.dot, col=boundary.color, lwd=0.15, lty=3) # plot dotted boundaries
+
+            if (plot.lakes==TRUE) {
+                lks.grp<-unique(lks.df$group)
+                for (gp in lks.grp) {
+                    lk<-lks.df[lks.df$group==gp,]
+                    polygon(lk$long,lk$lat,col=background.color,border=boundary.color,lty=1,lwd=0.1) # plot lakes as background color
+                }
+            }
+
+
+            text(0,10000000,main.title,cex=0.8) # main title
+
+            legend(-16820000,-4500000,col=c(colors,NoDataColor),pch=15,pt.cex=1,cex=0.6,
+                                # legend(-16820000,-2900000,col=c(colors,NoDataColor),pch=15,pt.cex=1,cex=0.6,
+                                # legend("bottomleft",col=c(colors,NoDataColor),pch=15,pt.cex=0.5,cex=0.6,  # If the disclaimer is produced outside the map (e.g. in Word), this legend's position can be used (bottom left)
+                                # legend(-16820000,-285000,col=c(colors,NoDataColor),pch=15,pt.cex=1,cex=0.6,
+                   legend=c(legend.labels),
+                   title=legend.title, box.lty=0, box.lwd=NULL)
+
+            ## UN Cartography required disclaimers
+            mtext(paste(source.text,"\n",disclaimer.text,sep=""),
+                  side=1,line=0,adj=0,cex=0.5)
+        }
+
+        if(is.null(out.formats)) {
+            par(par.list)
+            unpd.map()
+        } else {
+
+            if("pdf" %in% out.formats) {
+                ## Create the maps and save them to pdf and png output files
+                ## Use the pdf file for pubs going through the Graphic Design Unit
+                pdf(file = paste(file.path(fig.dir,map.name),".pdf",sep = ""),width = 10,height = 7)
+                par(par.list)
+                unpd.map()
+                dev.off() # close the pdf
+            }
+
+            if("LowRes_png" %in% out.formats) {
+                ## Use this low resolution png file for web displays
+                png(file = paste(file.path(fig.dir,map.name),"_LowRes.png",sep = ""),width = 10,height = 7,units = "in",res = 100)
+                par(par.list)
+                unpd.map()
+                dev.off() # close the png
+            }
+
+            if("HighRes_png" %in% out.formats) {
+                ## Use this higher resolution png file for inserting into Word documents
+                png(file = paste(file.path(fig.dir,map.name),"_HighRes.png",sep = ""),width = 10,height = 7,units = "in",res = 1000)
+                par(par.list)
+                unpd.map()
+                dev.off() # close the png
+            }
+
+            if("LowRes_tiff" %in% out.formats) {
+                ## Use this low resolution tif file for web displays
+                tiff(file = paste(file.path(fig.dir,map.name),"_LowRes.tif",sep = ""),width = 10,height = 7,units = "in",res = 100)
+                par(par.list)
+                unpd.map()
+                dev.off() # close the tif
+            }
+
+            if("HighRes_tiff" %in% out.formats) {
+                ## Use this higher resolution tif file for inserting into Word documents
+                tiff(file = paste(file.path(fig.dir,map.name),"_HighRes.tif",sep = ""),width = 10,height = 7,units = "in",res = 1000)
+                par(par.list)
+                unpd.map()
+                dev.off() # close the tif
+            }
+
+            if("eps" %in% out.formats) {
+                ## Use the eps file for pubs going through the Graphic Design Unit
+                setEPS()
+                postscript(file = paste(file.path(fig.dir,map.name),".eps",sep = ""),width = 10,height = 7)
+                par(par.list)
+                unpd.map()
+                dev.off() # close the eps
+            }
+        message("Maps saved to ", file.path(fig.dir))
+        }
+    }
+##----------------------------------------------------------------------
 PlotCountryEstimatesForAggregate <- function (# Create overview country estimates for aggregates
   ### Create overview plots of estimates of proportions/counts over time for
   ### countries within aggregates.

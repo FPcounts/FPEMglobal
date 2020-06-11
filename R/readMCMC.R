@@ -3,7 +3,7 @@
 # Leontine Alkema, 2011
 #--------------------------------------------------------------------------
 ConstructMCMCArray <- function(# Read in JAGS objects
-  ###  Read in JAGS objects and constructs \code{mcmc.array}, 
+  ###  Read in JAGS objects and constructs \code{mcmc.array},
   ### which is saved to \code{output.dir}.
   ### This function can only be run after finising the mcmc sampling (after function \code{\link{RunMCMC}} has completed).
   run.name = "test", ##<< Run name
@@ -11,12 +11,12 @@ ConstructMCMCArray <- function(# Read in JAGS objects
   n.steps = NULL, ##<< Optional: specify no of steps to read (to use when all steps have not finished yet).
   ChainIDs = NULL, ##<< Optional: specify which chains to include
   ## (to use when you want to exclude a chain that crashed, or which has not finished yet).
-  n.samplestot.max = 15000, ##<< Maximum number of posterior samples to save
-  output.dir = NULL ##<< Directory where MCMC output was stored and will be stored. 
+  n.samplestot.max = 1e9, ##<< Maximum number of posterior samples to save (across all chains, before thinning).
+  output.dir = NULL ##<< Directory where MCMC output was stored and will be stored.
   ##If NULL, it's in \code{output/run.name/}, the default from \code{runMCMC}.
 ){
   if (is.null(output.dir)){
-    output.dir <- file.path(getwd(), "output", run.name) # change JR, 20140418 
+    output.dir <- file.path(getwd(), "output", run.name) # change JR, 20140418
   }
   filename.append <- ifelse(do.SS.run.first.pass, "_pre", "")
   if (!file.exists(file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda")))){
@@ -38,7 +38,7 @@ ConstructMCMCArray <- function(# Read in JAGS objects
   }
   if (is.null(n.steps)) n.steps <- mcmc.meta$general$N.STEPS
   n.sample.max <- n.samplestot.max/n.chains
-  
+
   jags.dir <- file.path(output.dir, "temp.JAGSobjects/")
   cat("Reading in JAGS output files from", jags.dir, "\n")
   chain  <- ifelse(length(ChainNums)==1,ChainNums,ChainNums[1])
@@ -62,12 +62,13 @@ ConstructMCMCArray <- function(# Read in JAGS objects
     }
   }
   if (n.sim > n.sample.max){
-    mcmc.array <- mcmc.array[seq(1, n.sample.max, length.out = n.sample.max), , ]  
+      mcmc.array <- mcmc.array[seq(1, n.sample.max, length.out = n.sample.max), , ]
+      warning("MCMC array truncated at ", n.sample.max, " trajectories per chain.")
   }
   save(mcmc.array, file = file.path(output.dir, paste0("mcmc.array", filename.append, ".rda"))) # change JR, 20140418
   cat("mcmc.array saved to", output.dir, "\n")
   ##value<< NULL; adds mcmc.array to \code{output.dir}.
   return(invisible())
 }
-#----------------------------------------------------------------------   
+#----------------------------------------------------------------------
 # The End!

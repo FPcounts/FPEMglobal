@@ -17,7 +17,7 @@ make_run_name <- function(marital_group, age_group, run_note = NULL,
         run_name <- run_name_override
     }
     if(isTRUE(nchar(run_note) > 0)) run_name <- paste(run_name, run_note, sep = "_")
-    run_name <- paste(run_name, marital_group, age_group, sep = "_")
+    run_name <- paste(run_name, age_group, marital_group, sep = "_")
     return(run_name)
 }
 
@@ -102,7 +102,19 @@ copy_uwra_mwra_files <-
 marital_age_group_param_defaults <- function(marital_group, age_group, model_family, model_name) {
     if(marital_group == "married") {
         if(is.null(model_name)) {
-            write_model_fun <- "WriteModel_MWRA_Geog_Rate"
+            if(age_group == "15-19") {
+                if(model_family == "rate") {
+                    write_model_fun <- "WriteModel_MWRA_Geog_Rate_1519_InclNoData"
+                } else {        #level model
+                    write_model_fun <- "WriteModel_MWRA_geog_1519_InclNoData"
+                }
+            } else {            #other age groups
+                if(model_family == "rate") {
+                    write_model_fun <- "WriteModel_MWRA_Geog_Rate"
+                } else {        #level model
+                    write_model_fun  <-  "WriteModel_MWRA_Geog"
+                }
+            }
         } else {
             write_model_fun <- model_name
         }
@@ -114,7 +126,11 @@ marital_age_group_param_defaults <- function(marital_group, age_group, model_fam
         HW_bias_negative <- FALSE
     } else if(marital_group == "unmarried") {
         if(is.null(model_name))  {
-            write_model_fun <- "WriteModel_InclNoData_SA1SubIndia_Rate"
+            if(model_family == "rate") {
+                write_model_fun <- "WriteModel_InclNoData_SA1SubIndia_Rate"
+            } else {            #level model
+                write_model_fun <- "WriteModel_InclNoData_SA1SubIndia"
+            }
         } else {
             write_model_fun <- model_name
         }
@@ -135,24 +151,3 @@ marital_age_group_param_defaults <- function(marital_group, age_group, model_fam
                 EA_bias_negative = EA_bias_negative,
                 HW_bias_negative = HW_bias_negative))
 }
-
-
-##' Define Default Values for MCMC Parameters for One-Country Runs
-##'
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
-##' @param marital_group
-##' @param model_name
-##' @return
-##' @author
-one_country_defaults <- function(marital_group, model_name) {
-
-    if(marital_group == "married") {
-        if(model_name == "WriteModel_MWRA_Geog") {
-            ## This model has a different function for one-country runs.
-            model_name <- "WriteModel_MWRA_Geog_Country"
-        }
-        }
-        return(list(model_name = model_name))
-    }

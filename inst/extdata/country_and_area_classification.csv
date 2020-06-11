@@ -1,4 +1,7 @@
-Country.or.area,ISO.Code,Country.Letter.Code,Region.Code,Region,Major.area.Code,Major.area,Developed.region,Less.Developed.Regions,Least.developed.country,Less.developed.regions..excluding.least.developed.countries,Total.population.of.less.than.90.000.by.mid.2015,FP2020.country,Sexual.activity.among.unmarried,Sub.SaharanAfrica,WPP.small.country,WCU.data,Land.Locked.Developing.Countries..LLDC.,Small.Island.Developing.States..SIDS.
+Country or area,ISO Code,"Country
+Letter Code",Region Code,Region,Major area Code,Major area,"Developed
+region",Less Developed Regions,"Least developed
+country","Less developed regions, excluding least developed countries","Total population of less than 90,000 by mid-2015",FP2020 country,Sexual activity among unmarried,Sub SaharanAfrica,WPP small country,WCU data,Land Locked Developing Countries (LLDC),Small Island Developing States (SIDS)
 Afghanistan,4,AFG,34,Southern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,Yes,No
 Albania,8,ALB,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Algeria,12,DZA,15,Northern Africa,2,Africa,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
@@ -35,12 +38,13 @@ Chad,148,TCD,17,Middle Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Chile,152,CHL,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 China,156,CHN,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 "China, Hong Kong Special Administrative Region",344,HKG,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
+"China, Taiwan Province of China",158,TWN,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Colombia,170,COL,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Comoros,174,COM,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,Yes
 Congo,178,COG,17,Middle Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
 Cook Islands,184,COK,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Costa Rica,188,CRI,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
-Côte d’Ivoire,384,CIV,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
+Cote d'Ivoire,384,CIV,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
 Croatia,191,HRV,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Cuba,192,CUB,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Czechia,203,CZE,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
@@ -139,7 +143,7 @@ Puerto Rico,630,PRI,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Y
 Qatar,634,QAT,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Republic of Korea,410,KOR,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Republic of Moldova,498,MDA,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,Yes,No
-Réunion,638,REU,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
+Reunion,638,REU,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
 Romania,642,ROU,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Russian Federation,643,RUS,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Rwanda,646,RWA,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No

@@ -1209,7 +1209,8 @@ CompareAdjMedians <- function(run.name = "test",
                               table.dir = NULL,
                               return.res = FALSE,
                               all.women = FALSE,
-                              all.womenize.table.name = TRUE) {
+                              all.womenize.table.name = TRUE,
+                              verbose = TRUE) {
 
     ## -------* SET UP
 
@@ -1370,7 +1371,7 @@ CompareAdjMedians <- function(run.name = "test",
 
     if(isTRUE(length(c.in.both) > 0)) {
 
-    message(paste0("Original and adjusted results have "
+    if(verbose) message(paste0("Original and adjusted results have "
                   ,length(c.in.both)
                   ," countries or aggregates in common."))
 
@@ -1405,9 +1406,11 @@ CompareAdjMedians <- function(run.name = "test",
             }, a, b, SIMPLIFY = FALSE)
         }, col.names.orig, col.names.adj, SIMPLIFY = FALSE)
 
+    if(verbose) {
     message("Original and adjusted results have the following indicators in common: ")
     for(i in seq_along(col.names.in.both)) {
         message("\t", paste(col.names.in.both[[i]][[1]], collapse = ", "))
+    }
     }
 
     ## Order Adj and Orig
