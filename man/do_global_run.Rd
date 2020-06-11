@@ -15,7 +15,7 @@ do_global_run(
   chain_nums = 1:3,
   set_seed_chains = 1,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
-  input_data_folder_path = system.file("extdata", package = "cuaw"),
+  input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   region_information_csv_filename = "country_and_area_classification.csv",
   denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
@@ -239,19 +239,15 @@ produces plots and tables using \code{\link{make_results}}.
 \details{
 See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 }
+\examples{
+vignette("FPEMglobal_Intro")
 
-
+}
 \references{
 Kettunen, J. et al. (2012) Genome-wide association
 study identifies multiple loci influencing human serum metabolite
 levels. Nat Genet advance online publication.
 \url{http://dx.doi.org/10.1038/ng.1073.}
-}
-
-
-\examples{
-vignette("FPEMglobal_Intro")
-
 }
 \seealso{
 \code{\link{combine_runs}} to create all women

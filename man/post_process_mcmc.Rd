@@ -114,7 +114,7 @@ to work.
 The counts of women by marital status, age, and year in
 \code{denominator_counts_csv_filename} are used to convert prevalence
 proportions to counts of women by contraceptive use status. See
-\code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package = "cuaw")}
+\code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package = "FPEMglobal")}
 for an example of how the file should be formatted. Assume all columns are
 required.
 
@@ -125,18 +125,17 @@ For additional aggregates, argument
 \code{special_aggregates_name} may be used. The argument takes the
 \emph{name} of the aggregate. There must be a corresponding \file{.csv} file
 in \code{input_data_folder_path}. The aggregate \dQuote{WHO_regions} is
-included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "cuaw")}
+included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")}
 for the required format. Assum all columns are required.
 }
-
- \references{ UN DESA Statistics Division,
-(2017) \emph{Standard Country or Area Codes for Statistical
-Use (M49)}. United Nations, Department of Economic and Social
-Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/} }
-
-
 \examples{
 vignette("FPEMglobal_Intro")
+}
+\references{
+UN DESA Statistics Division,
+(2017) \emph{Standard Country or Area Codes for Statistical
+Use (M49)}. United Nations, Department of Economic and Social
+Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/}
 }
 \seealso{
 \code{\link{do_global_run}} (which calls this function)

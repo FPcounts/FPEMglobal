@@ -16,7 +16,7 @@ do_global_mcmc(
   chain_nums = 1:3,
   set_seed_chains = 1,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
-  input_data_folder_path = system.file("extdata", package = "cuaw"),
+  input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   region_information_csv_filename = "country_and_area_classification.csv",
   output_folder_path = NULL,
