@@ -2204,7 +2204,7 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
     #Would be ok for the global data because the range would insure the inclusion of 1990
     #Due to range being different for country specifc runs need to specify range
     date.current<-Sys.Date()
-    year.current<-as.numeric(format(date.current,'%Y'))+0.5
+    year.current<-as.numeric(format(date.current,'%Y')) + 1.5
     totestyears<-seq(1950.5,year.current) #Change NC, 20160807
     iso.j<-data$iso.j #Change NC, 20160602
 
