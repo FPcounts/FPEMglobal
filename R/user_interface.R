@@ -828,8 +828,13 @@ make_results <- function(run_name,
         countries_in_CI_plots_csv_filename <-
             file.path(input_data_folder_path, countries_in_CI_plots_csv_filename)
     }
-    if(!file.exists(countries_in_CI_plots_csv_filename))
-        stop("can't find ", countries_in_CI_plots_csv_filename)
+    if(!file.exists(countries_in_CI_plots_csv_filename)) {
+        msg <- paste0("can't find 'countries_in_CI_plots_csv_filename' (",
+                      countries_in_CI_plots_csv_filename, ")")
+        if (all_women)
+            msg <- paste0(msg, ". Has it been copied from the married or unmarried output's 'data' directory?")
+        stop(msg)
+        }
 
     ## Years to plot
     if(any(sapply(list(plot_barchart_years, plot_CI_changes_years, plot_maps_years),
@@ -2024,7 +2029,8 @@ do_global_run <- function(## Describe the run
 ##'     containing results for the married women run to be combined.
 ##' @param unmarried_women_run_output_folder_path Path to the folder
 ##'     containing results for the unmarried women run to be combined.
-##' @param unmarried_women_run_name Same as \code{married_women_run_name} but for the unmarried women run.
+##' @param unmarried_women_run_name Same as
+##'     \code{married_women_run_name} but for the unmarried women run.
 ##' @param unmarried_women_run_data_folder_path Path to the folder
 ##'     containing results for the unmarried women run to be
 ##'     combined. (Only used if \code{special_aggregates_name} is
@@ -2032,6 +2038,12 @@ do_global_run <- function(## Describe the run
 ##' @param make_any_aggregates Logical. Should country aggregates of
 ##'     any kind (including default aggregates) be produced?
 ##' @param adjust_medians
+##' @param countries_in_CI_plots_csv_filename Name of \file{.csv} file
+##'     that lists the countries to be included in the main
+##'     country-level indicator plots. See \code{\link{make_results}}
+##'     for further details. \code{combine_runs} will copy this file
+##'     to \file{\code{output_folder_path}/data} so it is available
+##'     for \code{make_results}.
 ##' @param age_ratios_age_total_unmarried_run_name Run name of the
 ##'     unmarried 15--49 run to use as the denominator for age ratios.
 ##' @param age_ratios_age_total_married_run_name Run name of the
@@ -2071,6 +2083,7 @@ combine_runs <- function(## Describe the run
                          special_aggregates_name = NULL,
                          denominator_counts_csv_filename = NULL,
                          countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                          output_folder_path = NULL,
                          start_year = 1970.5,
                          end_year = 2030.5,
@@ -2230,6 +2243,11 @@ combine_runs <- function(## Describe the run
     }
     if(!is.null(countries_for_aggregates_csv_filename)) {
         copy_uwra_mwra_files(countries_for_aggregates_csv_filename,
+                             data_folder_path,
+                             file.path(unmarried_women_run_output_folder_path, "data"))
+    }
+    if(!is.null(countries_in_CI_plots_csv_filename)) {
+        copy_uwra_mwra_files(countries_in_CI_plots_csv_filename,
                              data_folder_path,
                              file.path(unmarried_women_run_output_folder_path, "data"))
     }

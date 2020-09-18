@@ -17,6 +17,7 @@ combine_runs(
   special_aggregates_name = NULL,
   denominator_counts_csv_filename = NULL,
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+  countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
   output_folder_path = NULL,
   start_year = 1970.5,
   end_year = 2030.5,
@@ -53,7 +54,8 @@ be \code{file.path("output", married_women_run_name)}.}
 \item{married_women_run_output_folder_path}{Path to the folder
 containing results for the married women run to be combined.}
 
-\item{unmarried_women_run_name}{Same as \code{married_women_run_name} but for the unmarried women run.}
+\item{unmarried_women_run_name}{Same as
+\code{married_women_run_name} but for the unmarried women run.}
 
 \item{unmarried_women_run_output_folder_path}{Path to the folder
 containing results for the unmarried women run to be combined.}
@@ -80,6 +82,13 @@ women by marital status, age, and year. See \dQuote{Details}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
 \file{.csv} file listing countries that will be used in constructing country aggregates.}
+
+\item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
+that lists the countries to be included in the main
+country-level indicator plots. See \code{\link{make_results}}
+for further details. \code{combine_runs} will copy this file
+to \file{\code{output_folder_path}/data} so it is available
+for \code{make_results}.}
 
 \item{output_folder_path}{Filepath to directory where outputs
 should be saved. If \code{NULL}, defaults to
