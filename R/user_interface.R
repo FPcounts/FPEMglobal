@@ -160,9 +160,23 @@ do_global_mcmc <- function(run_desc = "",
             message("Running with ", foreach::getDoParWorkers(), " core(s)")
         } else {
             if (requireNamespace("doParallel", quietly = TRUE)) {
-                cl <- parallel::makeCluster(min(parallel::detectCores(), length(chain_nums)))
+                conn_tries <- 0
+                ## Try to handle non-stoppage of older clusters that might have used up all available cores.
+                while(conn_tries < 5) {
+                    conn_tries <- conn_tries + 1
+                    try_cl <- try(cl <- parallel::makeCluster(min(parallel::detectCores(), length(chain_nums))))
+                    if (identical(class(try_cl), "try-error")) {
+                        message("'parallel::makeCluster' failed at try ", conn_tries, " of 5:\n\t",
+                                paste(try_cl), "\n\n")
+                        if (conn_tries < 5) {
+                            message("Date-time is ", format(System.time()), "\n",
+                                    "Sleeping for 30 minutes; will retry at ", format(System.time()) + (30 * 60))
+                        }
+                        else message("Tried 5 times; quitting.")
+                    } else break()
+                }
                 doParallel::registerDoParallel(cl)
-                on.exit(parallel::stopCluster(cl), add = TRUE)
+                on.exit(try(parallel::stopCluster(cl), silent = TRUE), add = TRUE)
                 message("Running with ", foreach::getDoParWorkers(), " core(s)")
             } else {
                 warning("Package 'doMC' not installed; chains will be run in serial.")
