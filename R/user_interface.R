@@ -1855,7 +1855,7 @@ do_global_run <- function(## Describe the run
     ## Set-up
 
     if (identical(length(chain_nums), 1L))
-        warning("Only a single chain has been requested; post-processing will *not* be done and results will *not* be produced.")
+        message("Only a single chain has been requested; post-processing will *not* be done and results will *not* be produced.")
 
     marital_group <- match.arg(marital_group)
 
@@ -1879,7 +1879,8 @@ do_global_run <- function(## Describe the run
 
     if((is.null(plot_maps_shapefile_folder) && !is.null(plot_maps_years)) ||
        (!is.null(plot_maps_shapefile_folder) && is.null(plot_maps_years))) {
-        warning("Both 'plot_maps_shapefile_folder' and 'plot_maps_years' must be supplied to produced maps.")
+        message("Both 'plot_maps_shapefile_folder' and 'plot_maps_years' must be supplied to produced maps. Maps will *not* be produced.")
+        warning("Maps not produced.")
 
     } else {
 
@@ -1890,7 +1891,8 @@ do_global_run <- function(## Describe the run
                  requireNamespace("rgdal", quietly = TRUE) &&
                  requireNamespace("RColorBrewer", quietly = TRUE))) {
                 plot_maps <- FALSE
-                warning("Packages 'RColorBrewer', 'sp' and 'rgdal' are required to produce maps but at least some are not installed. Maps are not produced.")
+                message("Packages 'RColorBrewer', 'sp' and 'rgdal' are required to produce maps but at least some are not installed. Maps will *not* be produced.")
+                warning("Maps not produced.")
             }
         }
         if(plot_maps) {
@@ -2617,7 +2619,7 @@ do_global_all_women_run <- function(## Describe the run
     ## Run Names with Common Time Stamp
 
     if (identical(length(chain_nums), 1L)) {
-        warning("Only a single chain has been requested; all women results will *not* be created.")
+        message("Only a single chain has been requested; all women results will *not* be created.")
     }
 
     systime <- format(Sys.time(), "%y%m%d_%H%M%S")
