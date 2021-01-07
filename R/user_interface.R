@@ -1854,6 +1854,9 @@ do_global_run <- function(## Describe the run
     ##-----------------------------------------------------------------------------
     ## Set-up
 
+    if (identical(length(chain_nums), 1L))
+        warning("Only a single chain has been requested; post-processing will *not* be done and results will *not* be produced.")
+
     marital_group <- match.arg(marital_group)
 
     if(!is.null(run_name_override)) run_name <- run_name_override
@@ -1958,6 +1961,19 @@ do_global_run <- function(## Describe the run
                        output_folder_path = output_folder_path,
                        include_AR = include_AR,
                        verbose = verbose)
+
+    ##-----------------------------------------------------------------------------
+    ## STOP if only one chain
+
+    if (identical(length(chain_nums), 1L)) {
+        warning("Post-processing and results *not* available with a single chain.")
+        return(invisible())
+    }
+
+    ##
+    ##-----------------------------------------------------------------------------
+
+    ## More than one chain >> continue >>
 
     ##-----------------------------------------------------------------------------
     ## Post-Process
@@ -2230,7 +2246,7 @@ combine_runs <- function(## Describe the run
     }
 
     ##---------------------------------------------------------------------
-    ## Save the values of function arguments for making results
+    ## Save the values of function arguments for make_results()
     ##----------------------------------------------------------------------------
 
     combine_runs_args <- mget(names(formals(combine_runs)))
@@ -2600,6 +2616,10 @@ do_global_all_women_run <- function(## Describe the run
     ##---------------------------------------------------------------------
     ## Run Names with Common Time Stamp
 
+    if (identical(length(chain_nums), 1L)) {
+        warning("Only a single chain has been requested; all women results will *not* be created.")
+    }
+
     systime <- format(Sys.time(), "%y%m%d_%H%M%S")
 
     if(is.null(run_name_override_married)) {
@@ -2815,6 +2835,19 @@ do_global_all_women_run <- function(## Describe the run
                               model_diagnostics = model_diagnostics,
             include_AR = include_AR,
             verbose = verbose)
+
+    ##-----------------------------------------------------------------------------
+    ## STOP if only one chain
+
+    if (identical(length(chain_nums), 1L)) {
+        warning("All women results *not* available with a single chain.")
+        return(invisible())
+    }
+
+    ##
+    ##-----------------------------------------------------------------------------
+
+    ## More than one chain >> continue >>
 
     ## --------------------------------------------------------------------
     ## All Women

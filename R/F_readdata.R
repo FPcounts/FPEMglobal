@@ -97,36 +97,10 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     cat(names(data.raw), "\n")
     cat("no. rows in dataset: ", nrow(data.raw), "\n")
 
-    ## Filter the correct marital group
-    if(is.null(marital.group)) {
-        marital.group <- "MWRA"
-        warning("'marital.group' is 'NULL', setting 'marital.group' to 'MWRA'.")
-    }
-    if(!("In.union" %in% colnames(data.raw))) {
-        stop("'In.union' is not a column in the input data but is required.")
-    } else {
-        idx_iu <- !(data.raw$In.union %in% c(0, 1))
-        if(sum(idx_iu) > 0) {
-            stop("'In.union' must only have values '0', or '1'. The following rows are not compliant:\n",
-                 paste(which(idx_iu), collapse = ", "))
-        }
-    }
-    if (!is.null(marital.group) && any(names(data.raw) == "In.union")) {
-      if (marital.group == "MWRA") {
-        data.raw <- data.raw[data.raw$In.union == 1,]
-      } else if (marital.group == "UWRA") {
-        data.raw <- data.raw[data.raw$In.union == 0,]
-      } else {
-        stop("marital group must be NULL, 'MWRA' or 'UWRA'")
-      }
-    }
-
-    cat("no. rows in dataset matching marital group ", marital.group, ": ", nrow(data.raw), "\n", sep = "")
-
-    ## -------* Column Name and Value Checks
+    ## -------* Column Names
 
     ## Create column name regexps and cell value regexps
-    data.col.names <- InternalRegExpsInputCols()
+    data.col.names <- InternalRegExpsInputCols(write.model.fun = write.model.fun)
     data.cell.vals <- InternalRegExpsInputCells()
 
     ## Check for duplicates in column names
@@ -149,21 +123,99 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
         stop("The following required columns are not in the input data file: ", miss.cols)
     }
 
+    ## 'data.raw' column names used in the remainder
+    country_col_name <-
+        InternalGetDFColNames("country",
+                              df = data.raw, regexp.list = data.col.names)
+    iso_code_col_name <-
+        InternalGetDFColNames("iso.code",
+                              df = data.raw, regexp.list = data.col.names)
+    abs_probe_col_name <-
+        InternalGetDFColNames("absence.of.probing.questions.bias.1.",
+                              df = data.raw, regexp.list = data.col.names)
+    start_year_col_name <-
+        InternalGetDFColNames("start.year",
+                              df = data.raw, regexp.list = data.col.names)
+    end_year_col_name <-
+        InternalGetDFColNames("end.year",
+                              df = data.raw, regexp.list = data.col.names)
+    in_union_col_name <-
+        InternalGetDFColNames("in.union",
+                              df = data.raw, regexp.list = data.col.names)
+    cp_mod_col_name <-
+        InternalGetDFColNames("contraceptive.use.modern",
+                              df = data.raw, regexp.list = data.col.names)
+    cp_trad_col_name <-
+        InternalGetDFColNames("contraceptive.use.traditional",
+                              df = data.raw, regexp.list = data.col.names)
+    cp_any_col_name <-
+        InternalGetDFColNames("contraceptive.use.any",
+                              df = data.raw, regexp.list = data.col.names)
+    unmet_col_name <-
+        InternalGetDFColNames("unmet",
+                              df = data.raw, regexp.list = data.col.names)
+    age_range_col_name <-
+        InternalGetDFColNames("age.range",
+                              df = data.raw, regexp.list = data.col.names)
+    se_logr_mod_no_use_col_name <-
+        InternalGetDFColNames("se.logr.modern.nouse",
+                              df = data.raw, regexp.list = data.col.names)
+    se_logr_trad_no_use_col_name <-
+        InternalGetDFColNames("se.logr.trad.nouse",
+                              df = data.raw, regexp.list = data.col.names)
+    se_logr_unmet_no_need_col_name <-
+        InternalGetDFColNames("se.logr.unmet.noneed",
+                              df = data.raw, regexp.list = data.col.names)
+    note_on_methods_col_name <-
+        InternalGetDFColNames("note.on.methods",
+                              df = data.raw, regexp.list = data.col.names)
+    exclude_1_is_yes_col_name <-
+        InternalGetDFColNames("exclude.1.is.yes",
+                              df = data.raw, regexp.list = data.col.names)
+    data_series_type_col_name <-
+        InternalGetDFColNames("data.series.type",
+                              df = data.raw, regexp.list = data.col.names)
+    catalog_id_col_name <-
+        InternalGetDFColNames("catalog.id",
+                              df = data.raw, regexp.list = data.col.names)
+
+    ## -------* Value Checks
+
     ## Absence of probing questions must be 0 or 1
-    colnm_apqb <-
-        grep("absence.of.probing.questions.bias.1*", colnames(data.raw), value = TRUE, ignore.case = TRUE)
-    if(!isTRUE(all(data.raw[,colnm_apqb] %in% c(0,1))))
-        stop("Column '", colnm_apqb, "' in the input file must contain only 0s and 1s.")
+    if(!isTRUE(all(data.raw[,abs_probe_col_name] %in% c(0,1))))
+        stop("Column '", abs_probe_col_name, "' in the input file must contain only 0s and 1s.")
 
     ## Start.year and End.year must not be missing
-    sapply(c("Start.year", "End.year"), CheckDataMissing,
+    sapply(c(start_year_col_name, end_year_col_name),
+           FUN = CheckDataMissing,
            data_frame = data.raw,
            data_frame_name = data.csv)
 
+    ## -------* Filter the correct marital group
+
+    if(is.null(marital.group)) {
+        marital.group <- "MWRA"
+        warning("'marital.group' is 'NULL', setting 'marital.group' to 'MWRA'.")
+    }
+    idx_iu <- !(data.raw[,in_union_col_name] %in% c(0, 1))
+        if(sum(idx_iu) > 0) {
+            stop("'In.union' must only have values '0', or '1'. The following rows are not compliant:\n",
+                 paste(which(idx_iu), collapse = ", "))
+        }
+
+    if (marital.group == "MWRA") {
+        data.raw <- data.raw[data.raw[, in_union_col_name] == 1,]
+      } else if (marital.group == "UWRA") {
+        data.raw <- data.raw[data.raw[, in_union_col_name] == 0,]
+      } else {
+        stop("marital group must be NULL, 'MWRA' or 'UWRA'")
+      }
+
+    cat("no. rows in dataset matching marital group ", marital.group, ": ", nrow(data.raw), "\n", sep = "")
 
     ## -------* Delete rows with no ISO and country name
 
-    idx.keep <- !(is.na(data.raw$Country) | is.na(data.raw$ISO.code))
+    idx.keep <- !(is.na(data.raw[, country_col_name]) | is.na(data.raw[, iso_code_col_name]))
     if(sum(!idx.keep, na.rm = TRUE) > 0) {
         if(print.messages) message("Deleting row with no ISO and country name:\nThe following rows in '", data.csv, "' removed because 'ISO.code' or 'Country' missing: ", paste0((1:nrow(data.raw))[!idx.keep], collapse = ", "), "\n")
         }
@@ -171,8 +223,8 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
 
     if (!is.null(iso.select)) {
         if (all(grepl("[[:digit:]]", iso.select))) {
-            if(sum(as.numeric(data.raw$ISO.code) %in% iso.select) > 0) {
-                data.raw <- data.raw[as.numeric(data.raw$ISO.code) %in% iso.select, ]
+            if(sum(as.numeric(data.raw[, iso_code_col_name]) %in% iso.select) > 0) {
+                data.raw <- data.raw[as.numeric(data.raw[, iso_code_col_name]) %in% iso.select, ]
             } else {
                 stop("One country model cannot be run for ISO ", iso.select, " because there are not observations for it in '", data.csv, "'.")
             }
@@ -181,14 +233,13 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
         }
 
     if(print.messages) message(paste0("Note: Only data for ISO ", paste(iso.select, collapse = ", ")
-             ," (", data.raw[as.numeric(data.raw$ISO.code) %in% iso.select, "Country"][1], ") is read in.\n"))
+             ," (", data.raw[as.numeric(data.raw[, iso_code_col_name]) %in% iso.select, "Country"][1], ") is read in.\n"))
   }
 
     ## -------* Process CP Values
 
-    sapply(c("Contraceptive.use.MODERN",
-             "Contraceptive.use.TRADITIONAL",
-             "Unmet"), CheckDataRange,
+    sapply(c(cp_mod_col_name, cp_trad_col_name, unmet_col_name),
+           CheckDataRange,
            data_frame = data.raw,
            data_frame_name = data.csv,
            range = c(0, 100))
@@ -197,12 +248,12 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
 
     ## -------** Round to 9 DPs
 
-    data.raw$Contraceptive.use.MODERN <-
-        round(as.numeric(data.raw$Contraceptive.use.MODERN), 9)
-    data.raw$Contraceptive.use.TRADITIONAL <-
-        round(as.numeric(data.raw$Contraceptive.use.TRADITIONAL), 9)
-    data.raw$Contraceptive.use.ANY <-
-        round(as.numeric(data.raw$Contraceptive.use.ANY), 9)
+    data.raw[, cp_mod_col_name] <-
+        round(as.numeric(data.raw[, cp_mod_col_name]), 9)
+    data.raw[, cp_trad_col_name] <-
+        round(as.numeric(data.raw[, cp_trad_col_name]), 9)
+    data.raw[, cp_any_col_name] <-
+        round(as.numeric(data.raw[, cp_any_col_name]), 9)
 
     ## -------** Only Mod or Only Trad
 
@@ -212,29 +263,29 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     ## the observed minus 0.001 (0.1%), set CP Trad to 0.001.
 
     ## Mark NAs
-    trad.na <- is.na(data.raw$Contraceptive.use.TRADITIONAL) | is.nan(data.raw$Contraceptive.use.TRADITIONAL)
-    mod.na <- is.na(data.raw$Contraceptive.use.MODERN) | is.nan(data.raw$Contraceptive.use.MODERN)
-    any.na <- is.na(data.raw$Contraceptive.use.ANY) | is.nan(data.raw$Contraceptive.use.ANY)
+    trad.na <- is.na(data.raw[, cp_trad_col_name]) | is.nan(data.raw[, cp_trad_col_name])
+    mod.na <- is.na(data.raw[, cp_mod_col_name]) | is.nan(data.raw[, cp_mod_col_name])
+    any.na <- is.na(data.raw[, cp_any_col_name]) | is.nan(data.raw[, cp_any_col_name])
 
     if(ModelFunctionModOnlyObs(write.model.fun)) {
         ## 1)
         mod.only <- any.na & trad.na & !mod.na
         if(sum(mod.only) > 0) {
-            data.raw$Contraceptive.use.TRADITIONAL[mod.only] <- NA
-            data.raw$Contraceptive.use.ANY[mod.only] <- NA
+            data.raw[, cp_trad_col_name][mod.only] <- NA
+            data.raw[, cp_any_col_name][mod.only] <- NA
         }
     } else {
         ## 2)
         mod.only <- rep(FALSE, nrow(data.raw)) #need this for 'Exclusions'
         trad.round <- trad.na & !mod.na
         if(sum(trad.round) > 0) {
-            data.raw$Contraceptive.use.TRADITIONAL[trad.round] <- 0.1
+            data.raw[, cp_trad_col_name][trad.round] <- 0.1
             data.raw$rounded.up <- trad.round | data.raw$rounded.up
             message(paste0("There are ", sum(trad.round, na.rm = TRUE), " observations with missing prevalence for CP Traditional but non-missing for modern. In the input data file, these are in rows (ignoring header):\n", paste(which(trad.round), collapse = " "), "\nThese will be ROUNDED UP to 0.1 percent."))
         }
         mod.round <- mod.na & !trad.na
         if(sum(mod.round) > 0) {
-            data.raw$Contraceptive.use.MODERN[mod.round] <- 0.1
+            data.raw[, cp_mod_col_name][mod.round] <- 0.1
             data.raw$rounded.up <- mod.round | data.raw$rounded.up
             message(paste0("There are ", sum(mod.round, na.rm = TRUE), " observations with missing prevalence for CP Modern but non-missing for traditional. In the input data file, these are in rows (ignoring header):\n", paste(which(mod.round), collapse = " "), "\nThese will be ROUNDED UP to 0.1 percent."))
         }
@@ -243,28 +294,28 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     ## -------** Round Small Values UP to 0.1 percent
 
     modern.zero <-
-        !is.na(data.raw$Contraceptive.use.MODERN) &
-        (round(data.raw$Contraceptive.use.MODERN, 9) < 0.1)
+        !is.na(data.raw[, cp_mod_col_name]) &
+        (round(data.raw[, cp_mod_col_name], 9) < 0.1)
     if(sum(modern.zero, na.rm = TRUE) > 0) {
-        data.raw$Contraceptive.use.MODERN[modern.zero] <- 0.1
+        data.raw[, cp_mod_col_name][modern.zero] <- 0.1
         data.raw$rounded.up <- modern.zero | data.raw$rounded.up
         message(paste0("There are ", sum(modern.zero, na.rm = TRUE), " observations with modern prevalence of zero. In the input data file, these are in rows (ignoring header):\n", paste(which(modern.zero), collapse = " "), "\nThese will be ROUNDED UP to 0.1 percent."))
     }
 
     trad.zero <-
-        !is.na(data.raw$Contraceptive.use.TRADITIONAL) &
-        (round(data.raw$Contraceptive.use.TRADITIONAL, 9)  < 0.1)
+        !is.na(data.raw[, cp_trad_col_name]) &
+        (round(data.raw[, cp_trad_col_name], 9)  < 0.1)
     if(sum(trad.zero, na.rm = TRUE) > 0) {
-        data.raw$Contraceptive.use.TRADITIONAL[trad.zero] <- 0.1
+        data.raw[, cp_trad_col_name][trad.zero] <- 0.1
         data.raw$rounded.up <- trad.zero | data.raw$rounded.up
         message(paste0("There are ", sum(trad.zero, na.rm = TRUE), " observations with traditional prevalence of zero. In the input data file, these are in rows (ignoring header):\n", paste(which(trad.zero), collapse = " "), "\nThese will be ROUNDED UP to 0.1 percent."))
     }
 
     any.zero <-
-        !is.na(data.raw$Contraceptive.use.ANY) &
-        (round(data.raw$Contraceptive.use.ANY, 9)  < 0.1)
+        !is.na(data.raw[, cp_any_col_name]) &
+        (round(data.raw[, cp_any_col_name], 9)  < 0.1)
     if(sum(any.zero, na.rm = TRUE) > 0) {
-        data.raw$Contraceptive.use.ANY[any.zero] <- 0.1
+        data.raw[, cp_any_col_name][any.zero] <- 0.1
         data.raw$rounded.up <- any.zero | data.raw$rounded.up
         message(paste0("There are ", sum(any.zero, na.rm = TRUE), " observations with prevalence (any method) of zero. In the input data file, these are in rows (ignoring header):\n", paste(which(any.zero), collapse = " "), "\nThese will be ROUNDED UP to 0.1 percent."))
     }
@@ -273,8 +324,8 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
 
     ## If there are values for CP Any and CP Mod, not equal, but CP
     ## Trad is missing, set CP Trad to CP Any - CP Mod.
-    mod.neq.any <- (is.na(data.raw$Contraceptive.use.TRADITIONAL) | is.nan(data.raw$Contraceptive.use.TRADITIONAL)) & !is.na(data.raw$Contraceptive.use.MODERN) & !is.na(data.raw$Contraceptive.use.ANY) &
-        (round(data.raw$Contraceptive.use.MODERN, 9) != round(data.raw$Contraceptive.use.ANY, 9))
+    mod.neq.any <- (is.na(data.raw[, cp_trad_col_name]) | is.nan(data.raw[, cp_trad_col_name])) & !is.na(data.raw[, cp_mod_col_name]) & !is.na(data.raw[, cp_any_col_name]) &
+        (round(data.raw[, cp_mod_col_name], 9) != round(data.raw[, cp_any_col_name], 9))
     if(sum(mod.neq.any, na.rm = TRUE) > 0) {
         message(paste0("There are ", sum(mod.neq.any, na.rm = TRUE), " observations with traditional prevalence missing but Modern and Any are not. In the input data file, these are in rows (ignoring header):\n", paste(which(mod.neq.any), collapse = " "), "\nTRADITIONAL prevalences for these observations HAVE BEEN SET TO 'ANY' - 'MODERN' and these observations WILL contribute to estimates of the modern/traditional breakdown."))
         data.raw[mod.neq.any,]$Contraceptive.use.TRADITIONAL <-
@@ -284,7 +335,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     ##  -------** Blank out Modern
 
     ## If 'TRADITIONAL' is blank AND 'MODERN' = 'ANY' after rounding, set 'MODERN' to blank as well
-    trad.blank <- (is.na(data.raw$Contraceptive.use.TRADITIONAL) | is.nan(data.raw$Contraceptive.use.TRADITIONAL)) & !is.na(data.raw$Contraceptive.use.MODERN) & !is.na(data.raw$Contraceptive.use.ANY) & (round(data.raw$Contraceptive.use.MODERN, 9) == round(data.raw$Contraceptive.use.ANY, 9))
+    trad.blank <- (is.na(data.raw[, cp_trad_col_name]) | is.nan(data.raw[, cp_trad_col_name])) & !is.na(data.raw[, cp_mod_col_name]) & !is.na(data.raw[, cp_any_col_name]) & (round(data.raw[, cp_mod_col_name], 9) == round(data.raw[, cp_any_col_name], 9))
     if(sum(trad.blank, na.rm = TRUE) > 0) {
         message(paste0("There are ", sum(trad.blank, na.rm = TRUE), " observations with traditional prevalence missing. In the input data file, these are in rows (ignoring header):\n", paste(which(trad.blank), collapse = " "), "\nMODERN prevalences for these observations HAVE ALSO BEEN SET TO MISSING and these observations will NOT contribute to estimates of the modern/traditional breakdown."))
         data.raw[trad.blank,]$Contraceptive.use.MODERN <- NA
@@ -292,21 +343,21 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
 
     ## -------** Clean Mod/Trad Breakdown Obs
 
-    bdown <- !is.na(data.raw$Contraceptive.use.MODERN) & !is.na(data.raw$Contraceptive.use.TRADITIONAL)
+    bdown <- !is.na(data.raw[, cp_mod_col_name]) & !is.na(data.raw[, cp_trad_col_name])
 
     ## Fill in: CP Any = CP Mod + CP Trad
     ## This version requires CP Any to be non-missing for mod/trad breakdown obs
-    data.raw$Contraceptive.use.ANY[bdown] <-
-                 data.raw$Contraceptive.use.MODERN[bdown] + data.raw$Contraceptive.use.TRADITIONAL[bdown]
+    data.raw[, cp_any_col_name][bdown] <-
+                 data.raw[, cp_mod_col_name][bdown] + data.raw[, cp_trad_col_name][bdown]
 
     ## -------* Process Unmet Values
 
-    data.raw$Unmet <- round(as.numeric(data.raw$Unmet), 9)
+    data.raw[, unmet_col_name] <- round(as.numeric(data.raw[, unmet_col_name]), 9)
 
-    unmet.zero <- !is.na(data.raw$Unmet) & (data.raw$Unmet == 0)
+    unmet.zero <- !is.na(data.raw[, unmet_col_name]) & (data.raw[, unmet_col_name] == 0)
     if(sum(unmet.zero, na.rm = TRUE) > 0) {
-        data.raw$Unmet[unmet.zero] <-
-            sapply(100 - data.raw$Contraceptive.use.ANY[unmet.zero],
+        data.raw[, unmet_col_name][unmet.zero] <-
+            sapply(100 - data.raw[, cp_any_col_name][unmet.zero],
                    function(z) min(0.1, z))
         warning(paste0("There are ", sum(unmet.zero, na.rm = TRUE), " observations with unmet need of zero. In the input data file, these are in rows (ignoring header):\n", paste(which(modern.zero), collapse = " "), "\nThese will be ROUNDED UP to 0.1 percent."))
     }
@@ -328,12 +379,12 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     ## Move this here
     ## 1. Fix age groups that excel made into dates
     ## change JR, 20140409
-    data.raw$Age..range <-
-        InternalFixRange(gsub(" ", "", data.raw$Age..range))
+    data.raw[, age_range_col_name] <-
+        InternalFixRange(gsub(" ", "", data.raw[, age_range_col_name]))
 
     ## Move this here.
     ## [MCW-2016-03-11-2]: Fix end year
-    data.raw$End.year <- InternalFixEndYear(data.raw$End.year)
+    data.raw[, end_year_col_name] <- InternalFixEndYear(data.raw[, end_year_col_name])
 
     ## -------* Standard Error Columns
 
@@ -344,60 +395,60 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     include.unmet.ses<-rep(NA,nrow(data.raw))
 
     ##Indicator if modern ratios ses are available
-    if(is.null(data.raw$SE.logR.modern.nouse))
+    if(is.null(data.raw[, se_logr_mod_no_use_col_name]))
     {
         include.modern.ses<-rep(0,length(include.modern.ses))
     }
-    if(!is.null(data.raw$SE.logR.modern.nouse))
+    if(!is.null(data.raw[, se_logr_mod_no_use_col_name]))
     {
-        if(any(is.na(data.raw$SE.logR.modern.nouse)))
+        if(any(is.na(data.raw[, se_logr_mod_no_use_col_name])))
         {
             ## Take care of 'NaN's/'Infs' [MCW-2018-01-02]
-            include.modern.ses[which(!is.finite(data.raw$SE.logR.modern.nouse))]<-0
-            ## include.modern.ses[which(is.na(data.raw$SE.logR.modern.nouse))]<-0
-            include.modern.ses[which(!is.na(data.raw$SE.logR.modern.nouse))]<-1
+            include.modern.ses[which(!is.finite(data.raw[, se_logr_mod_no_use_col_name]))]<-0
+            ## include.modern.ses[which(is.na(data.raw[, se_logr_mod_no_use_col_name]))]<-0
+            include.modern.ses[which(!is.na(data.raw[, se_logr_mod_no_use_col_name]))]<-1
         }
-        if(all(!is.na(data.raw$SE.logR.modern.nouse)))
+        if(all(!is.na(data.raw[, se_logr_mod_no_use_col_name])))
         {
             include.modern.ses<-rep(1,length(include.modern.ses))
         }
     }
 
     ##Indicator if traditional ratios ses are available
-    if(is.null(data.raw$SE.logR.trad.nouse))
+    if(is.null(data.raw[, se_logr_trad_no_use_col_name]))
     {
         include.trad.ses<-rep(0,length(include.trad.ses))
     }
-    if(!is.null(data.raw$SE.logR.trad.nouse))
+    if(!is.null(data.raw[, se_logr_trad_no_use_col_name]))
     {
-        if(any(is.na(data.raw$SE.logR.trad.nouse)))
+        if(any(is.na(data.raw[, se_logr_trad_no_use_col_name])))
         {
             ## Take care of 'NaN's/'Infs' [MCW-2018-01-02]
-            include.trad.ses[which(!is.finite(data.raw$SE.logR.trad.nouse))]<-0
-            ## include.trad.ses[which(is.na(data.raw$SE.logR.trad.nouse))]<-0
-            include.trad.ses[which(!is.na(data.raw$SE.logR.trad.nouse))]<-1
+            include.trad.ses[which(!is.finite(data.raw[, se_logr_trad_no_use_col_name]))]<-0
+            ## include.trad.ses[which(is.na(data.raw[, se_logr_trad_no_use_col_name]))]<-0
+            include.trad.ses[which(!is.na(data.raw[, se_logr_trad_no_use_col_name]))]<-1
         }
-        if(all(!is.na(data.raw$SE.logR.trad.nouse)))
+        if(all(!is.na(data.raw[, se_logr_trad_no_use_col_name])))
         {
             include.trad.ses<-rep(1,length(include.trad.ses))
         }
     }
 
     ##Indicator if unmet ratios ses are available
-    if(is.null(data.raw$SE.logR.unmet.noneed))
+    if(is.null(data.raw[, se_logr_unmet_no_need_col_name]))
     {
         include.unmet.ses<-rep(0,length(include.unmet.ses))
     }
-    if(!is.null(data.raw$SE.logR.unmet.noneed))
+    if(!is.null(data.raw[, se_logr_unmet_no_need_col_name]))
     {
-        if(any(is.na(data.raw$SE.logR.unmet.noneed)))
+        if(any(is.na(data.raw[, se_logr_unmet_no_need_col_name])))
         {
             ## Take care of 'NaN's/'Infs' [MCW-2018-01-02]
-            include.unmet.ses[which(!is.finite(data.raw$SE.logR.unmet.noneed))]<-0
-            ## include.unmet.ses[which(is.na(data.raw$SE.logR.unmet.noneed))]<-0
-            include.unmet.ses[which(!is.na(data.raw$SE.logR.unmet.noneed))]<-1
+            include.unmet.ses[which(!is.finite(data.raw[, se_logr_unmet_no_need_col_name]))]<-0
+            ## include.unmet.ses[which(is.na(data.raw[, se_logr_unmet_no_need_col_name]))]<-0
+            include.unmet.ses[which(!is.na(data.raw[, se_logr_unmet_no_need_col_name]))]<-1
         }
-        if(all(!is.na(data.raw$SE.logR.unmet.noneed)))
+        if(all(!is.na(data.raw[, se_logr_unmet_no_need_col_name])))
         {
             include.unmet.ses<-rep(1,length(include.unmet.ses))
         }
@@ -420,17 +471,17 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     ## or "Data pertain to past or current use.".
     ## Observations are excluded if total use is missing, unless they are from service statistics.
     ## (one survey in Bhutan with modern only)
-    if (is.null(data.raw$Note.on.methods)) data.raw$Note.on.methods <- rep(NA, nrow(data.raw))
+    if (is.null(data.raw[, note_on_methods_col_name])) data.raw[, note_on_methods_col_name] <- rep(NA, nrow(data.raw))
 
     remove <-
-        (!is.na(data.raw$EXCLUDE1isyes) & data.raw$EXCLUDE1isyes == 1) |
-        (is.na(data.raw$Contraceptive.use.ANY) &
-         !grepl(data.cell.vals$service.statistic, data.raw$Data.series.type) &
+        (!is.na(data.raw[, exclude_1_is_yes_col_name]) & data.raw[, exclude_1_is_yes_col_name] == 1) |
+        (is.na(data.raw[, cp_any_col_name]) &
+         !grepl(data.cell.vals$service.statistic, data.raw[, data_series_type_col_name]) &
          !mod.only #<< keep obs if have only CP Modern.
         ) |
-        (!is.na(data.raw$Note.on.methods) &
-         (grepl(data.cell.vals$data.pertain.to.methods.used.since.the.last.pregnancy, data.raw$Note.on.methods) |
-          grepl(data.cell.vals$data.pertain.to.past.or.current.use, data.raw$Note.on.methods)
+        (!is.na(data.raw[, note_on_methods_col_name]) &
+         (grepl(data.cell.vals$data.pertain.to.methods.used.since.the.last.pregnancy, data.raw[, note_on_methods_col_name]) |
+          grepl(data.cell.vals$data.pertain.to.past.or.current.use, data.raw[, note_on_methods_col_name])
          )
         )
 
@@ -442,9 +493,9 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
 
     ## AFTER fixing all column headings and cells: Make sure only one
     ## observation per catalogue ID, age-group, marital status.
-    if(!is.null(data.raw$Catalog.ID)) {
-        if(sum(is.na(data.raw$Catalog.ID)) > 0) {
-            if(print.warnings) message("Checking for duplicate rows:\nThere are missing 'Catalog.ID's in row(s) (assuming header is row 1):\n", paste0(which(is.na(data.raw$Catalog.ID)) + 1, collapse = ", "))
+    if(!is.null(data.raw[, catalog_id_col_name])) {
+        if(sum(is.na(data.raw[, catalog_id_col_name])) > 0) {
+            if(print.warnings) message("Checking for duplicate rows:\nThere are missing 'Catalog.ID's in row(s) (assuming header is row 1):\n", paste0(which(is.na(data.raw[, catalog_id_col_name])) + 1, collapse = ", "))
         }
         dup.row <-
             as.data.frame(with(data.raw, table(Catalog.ID, Age..range, Population.type)))
@@ -1285,7 +1336,7 @@ InternalFixRange <- function(# Fix range character vector that got converted to 
 ### regexps. (Another option is to consider them as 'internal data' and put them
 ### in 'R/sysdata.rda'.)
 ###
-InternalRegExpsInputCols <- function() {
+InternalRegExpsInputCols <- function(write.model.fun = NULL) {
     ##
     ##  General Notes:
     ##
@@ -1372,7 +1423,8 @@ InternalRegExpsInputCols <- function() {
                                ## supplied).
                               ,"iso.country"
                               ,"groupname"
-                               ,"iso.group"
+                              ,"iso.group"
+                               ,"in.union"
                                )
 
     ## Vector of the names of the data frame columns that are created after reading in
@@ -1428,7 +1480,8 @@ InternalRegExpsInputCols <- function() {
                                ## supplied).
                               ,"iso.country"
                               ,"groupname"
-                               ,"iso.group")
+                            ,"iso.group"
+                            ,"In.union")
     ## Check that names is same length as list
     stopifnot(all.equal(length(df.names.input.cols)
                        ,length(list.names.input.cols)
@@ -1471,17 +1524,34 @@ InternalRegExpsInputCols <- function() {
          ,"Data.series.type"
          ,"Source.name"
          ,"Absence.of.probing.questions.bias"
-         #,"SE.logR.modern.nouse"
-         #,"SE.logR.trad.nouse"
-         #,"SE.logR.unmet.noneed"
-          )
+         ,"In.union")
+    if (!is.null(write.model.fun) &&
+        ModelFunctionRateModel(write.model.fun))
+        name.required <- c(name.required
+                          ,"SE.logR.modern.nouse"
+                          ,"SE.logR.trad.nouse"
+                          ,"SE.logR.unmet.noneed")
     required <- which(df.names.input.cols %in% name.required)
 
     ## -------* END
 
-    return(list(regex = out.input.cols, df.names = df.names.input.cols,
+    return(list(std.names = names(out.input.cols),
+                regex = out.input.cols, df.names = df.names.input.cols,
                 required = required))
 }
+
+## A helper function to retrieve actual column names from a data frame
+## given 'standard' names
+InternalGetDFColNames <- function(std.names, df, regexp.list = NULL,
+                                 write.model.fun = NULL) {
+    if (is.null(regexp.list)) regexp.list <- InternalRegExpsInputCols(write.model.fun = write.model.fun)
+    if (!all(std.names %in% regexp.list$std.names))
+        stop("The following 'std.names' are not proper standard names:\n",
+             toString(std.names[!std.names %in% regexp.list$std.names]))
+
+    return(regexp.list$df.names[regexp.list$std.names %in% std.names])
+}
+
 
 ###----------------------------------------------------------------------------------
 # Regular expressions for cell values in input files.
