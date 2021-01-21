@@ -191,6 +191,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
            data_frame = data.raw,
            data_frame_name = data.csv)
 
+    ## Cell values
     sapply(c(cp_mod_col_name, cp_trad_col_name, unmet_col_name),
            CheckDataRange,
            data_frame = data.raw,
