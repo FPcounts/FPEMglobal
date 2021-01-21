@@ -4,6 +4,53 @@
 ###
 ################################################################################
 
+##' Validate input file for a global run of FPEM
+##'
+##' The main input file for \code{\link{do_global_run}} and friends
+##' must meet certain requirements to be valid. These include correct
+##' column names and valid cell values. This function can be used to
+##' check that a candidate \file{.csv} files satisfies these
+##' requirements.
+##'
+##' See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
+##'
+##' @inheritParams do_global_mcmc
+##' @return The processed input file is returned \emph{invisibly} as a data frame.
+##' @author Mark Wheldon
+##' @export
+validate_input_file <- function(age_group = "15-49",
+                                input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
+                                data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
+                                marital_group = c("married", "unmarried")) {
+
+    if(!is.null(input_data_folder_path)) {
+        data_csv_filename <- file.path(input_data_folder_path, data_csv_filename)
+    }
+    if(!file.exists(data_csv_filename)) stop("'data_csv_filename' does not exist.")
+
+    model_family <- "rate"
+    model_name <- NULL
+
+    marital_group <- match.arg(marital_group, several.ok = TRUE)
+
+    out_df <- data.frame()
+    for (mg in marital_group) {
+        message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
+
+        marital_group_param_set <-
+            marital_age_group_param_defaults(marital_group = mg, age_group, model_family,
+                                             model_name)
+        out_df <- rbind(out_df,
+                        PreprocessData(data.csv = data_csv_filename,
+                                       write.model.fun = marital_group_param_set$write_model_fun,
+                                       print.messages = TRUE,
+                                       print.warnings = TRUE,
+                                       return.processed.data.frame = TRUE,
+                                       marital.group = switch(mg, "married" = "MWRA", "unmarried" = "UWRA")))
+    }
+    return(invisible(out_df))
+}
+
 
 ##' Generate MCMC chains for global run of FPEM
 ##'

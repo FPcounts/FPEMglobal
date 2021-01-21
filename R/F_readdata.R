@@ -55,7 +55,7 @@ CheckDataMissing <- function(col_name, data_frame, data_frame_name) {
         if(col_name %in% colnames(data_frame)) {
             miss.vals <- is.na(data_frame[, col_name])
             if(any(miss.vals)) {
-                stop("There are missing values in '", data_frame_name, "' column '", col_name, "' at row(s) : ", paste0(which(miss.vals), collapse = ", "))
+                stop("There are missing values in '", data_frame_name, "' column '", col_name, "' at row(s) (ignoring header): ", paste0(which(miss.vals), collapse = ", "))
             }
         }
         return(invisible())
@@ -66,7 +66,7 @@ CheckDataRange <- function(col_name, data_frame, data_frame_name, range = c(0, 1
             outside.range <- data_frame[, col_name] < range[1] | data_frame[, col_name] > range[2]
             if(any(outside.range, na.rm = TRUE)) {
                 stop("Values in '", data_frame_name, "' column '", col_name, "' fall outside the range '[",
-                     paste(range, collapse = ", "), "]' at row(s) : ",
+                     paste(range, collapse = ", "), "]' at row(s) (ignoring header): ",
                      paste0(which(outside.range), collapse = ", "))
             }
         }
@@ -191,6 +191,12 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
            data_frame = data.raw,
            data_frame_name = data.csv)
 
+    sapply(c(cp_mod_col_name, cp_trad_col_name, unmet_col_name),
+           CheckDataRange,
+           data_frame = data.raw,
+           data_frame_name = data.csv,
+           range = c(0, 100))
+
     ## -------* Filter the correct marital group
 
     if(is.null(marital.group)) {
@@ -237,12 +243,6 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
   }
 
     ## -------* Process CP Values
-
-    sapply(c(cp_mod_col_name, cp_trad_col_name, unmet_col_name),
-           CheckDataRange,
-           data_frame = data.raw,
-           data_frame_name = data.csv,
-           range = c(0, 100))
 
     data.raw$rounded.up <- rep(FALSE, nrow(data.raw))
 

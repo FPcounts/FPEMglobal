@@ -170,6 +170,21 @@ To list all data files included with the package use the following code:
 ```
 
 
+### Validating User Data
+
+New input files can be validated using the `validate_input_file` function. By default, the input file included with the package will be validated. 
+
+```{r validate-input-file, echo = TRUE, eval = TRUE}
+## Make sure you attach the package !!
+ library(FPEMglobal)
+
+## By default, the input file included with the package will be
+## validated. Change 'input_data_folder_path' and 'data_csv_filename'
+## to validate a user-supplied file.
+validate_input_file(marital_group = c("married", "unmarried")) # Both will be checked by default
+```
+
+
 ## Outputs
 
 The main output are files saved to disc. These include files created during model estimation and output files containing plots and tables. By default, these are stored in sub-directories of directory 'output'. For a full run, the sub-directories are named after the run name. For example, if a run is initiated on 17th July 2018 at 11:25:07AM, outputs for married women would be stored in the '20180717_112507_married_15-49' sub-directory of 'output'. 
@@ -339,14 +354,14 @@ The lowest level of control over output generation is obtained by calling the Le
  unmarried_run_name <-
     do_global_mcmc(marital_group = "unmarried",
     age_group = "15-49", 
-    data_csv_filename = "data_cp_model_all_women_15-49.csv",
+    #data_csv_filename = "data_cp_model_all_women_15-49.csv",
      ## MCMC parameters. CHANGE FOR FULL RUN!
      estimation_iterations = 2,
      burn_in_iterations = 1,
      steps_before_progress_report = 1,
      thinning = 1,
      chain_nums = 1:2,
-    run_in_parallel = TRUE
+    run_in_parallel = TRUE,
     set_seed_chains = 1
     )
 
