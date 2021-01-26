@@ -2,6 +2,7 @@
 
 export(add_global_mcmc)
 export(combine_runs)
+export(compare_runs_CI_plots)
 export(do_global_all_women_run)
 export(do_global_mcmc)
 export(do_global_run)

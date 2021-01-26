@@ -101,7 +101,7 @@ validate_input_file <- function(age_group = "15-49",
 ##' #endif
 ##' #ifndef windows
 ##'
-##' \pkg{doMC}.
+##' \pkg{doParallel} or \pkg{doMC}.
 ##' #endif
 ##' Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 ##' is not available.
@@ -226,7 +226,7 @@ do_global_mcmc <- function(run_desc = "",
                 on.exit(try(parallel::stopCluster(cl), silent = TRUE), add = TRUE)
                 message("Running with ", foreach::getDoParWorkers(), " core(s)")
             } else {
-                warning("Package 'doMC' not installed; chains will be run in serial.")
+                warning("Package 'doParallel' not installed; chains will be run in serial.")
             }
         }
     }
@@ -3501,3 +3501,105 @@ rename_global_run <- function(run_name,
 
 }
 
+
+##' Compare two global runs by plotting
+##'
+##' Generates \dQuote{CI} (credible interval) line plots that compare
+##' the results of two global model runs. Country- and aggregate-level
+##' (if \code{compare_aggregates} is \code{TRUE}) plots are available.
+##'
+##' @param run_1_name The name of the first run to compare.
+##' @param run_2_name The name of the second run to compare.
+##' @param run_1_output_folder_path Filepath to directory where
+##'     outputs for \code{run_1_name} are saved.
+##' @param run_1_plot_label The label to use for \dQuote{run_1} in the
+##'     plots. Defaults to \code{run_1_name}.
+##' @param run_2_output_folder_path See
+##'     \code{run_1_output_folder_path}, but for \dQuote{run_2}.
+##' @param run_2_plot_label See \code{run_2_plot_label}, but for
+##'     \dQuote{run_2}.
+##' @param output_folder_path Filepath to the directory in which the
+##'     comparison plots will be saved.
+##' @param plot_data Logical; should available input data be plotted?
+##'     Defaults to \code{TRUE} unless either \code{all_women} is
+##'     \code{TRUE} or \dQuote{run_1} and \dQuote{run_2} are from
+##'     different marital groups.
+##' @param all_women Logical; is the run an all women run such as the
+##'     kind produced by \code{\link{combine_runs}} or
+##'     \code{\link{do_global_all_women_run}}? If \code{NULL} an
+##'     attempt is made to determine this automatically from
+##'     \file{mcmc.meta.rda} in the output folder of
+##'     \dQuote{run_1}. Note that either both or neither must be
+##'     either all women runs.
+##' @param compare_aggregates Logical; should comparison plots be made
+##'     for the aggregates as well as the countries? If \code{FALSE}
+##'     only plots for countries are produced.
+##' @return Called for the side effect of producing plots.
+##' @author Mark Wheldon (wrapper) based on underlying function by Jin
+##'     Rou New and Leontine Alkema.
+##' @seealso \code{\link{compare_runs_fishbone_plots}}.
+##' @export
+compare_runs_CI_plots <- function(run_name_1, run_name_2,
+                               run_1_output_folder_path = file.path("output", run_name_1),
+                               run_1_plot_label = run_name_1,
+                               run_2_output_folder_path = file.path("output", run_name_2),
+                               run_2_plot_label = run_name_2,
+                               output_folder_path = file.path(run_1_output_folder_path, "fig", "compare_runs_plots"),
+                               plot_data = NULL,
+                               all_women = NULL,
+                               compare_aggregates = TRUE) {
+
+    message("Plotting comparison of ", run_name_1, " and ", run_name_2)
+
+    ##----------------------------------------------------------------------------
+    ## Meta Info
+
+    load(file.path(run_1_output_folder_path, "mcmc.meta.rda"))
+    run_1_mcmc_meta <- mcmc.meta
+
+    load(file.path(run_2_output_folder_path, "mcmc.meta.rda"))
+    run_2_mcmc_meta <- mcmc.meta
+
+    ## All women run?
+    if (!identical(run_1_mcmc_meta$general$all.women.run.copy,
+                   run_2_mcmc_meta$general$all.women.run.copy))
+        stop("Both runs must be either 'all women' runs or not.")
+    if (!is.logical(all_women)) all_women <- isTRUE(run_1_mcmc_meta$general$all.women.run.copy)
+
+    ##----------------------------------------------------------------------------
+    ## Set values
+
+    ## Directories
+    if (!dir.exists(output_folder_path)) stopifnot(dir.create(output_folder_path))
+
+    ## Marital group
+    if (!all_women && identical(run_1_mcmc_meta$general$marital.group,
+                                run_2_mcmc_meta$general$marital.group))
+        UWRA <- identical(run_1_mcmc_meta$general$marital.group, "UWRA")
+    else UWRA <- FALSE
+
+
+    ## Plot data?
+    if (!is.logical(plot_data)) {
+        if (all_women || !identical(run_1_mcmc_meta$general$marital.group,
+                                    run_2_mcmc_meta$general$marital.group)) plot_data <- FALSE
+        else plot_data <- TRUE
+    } else if (plot_data && !identical(run_1_mcmc_meta$general$marital.group,
+                                       run_2_mcmc_meta$general$marital.group)) {
+        message("Data from 'run_1' ('", run_name_1, "') will be plotted.")
+        warning("Plots will be labelled as 'married' women results.")
+    }
+
+    ##----------------------------------------------------------------------------
+    ## Plots
+
+    PlotComparison(run.name2 = run_2_plot_label,
+                   output.dir2 = paste0(run_2_output_folder_path, "/"),
+                   run.name = run_1_plot_label,
+                   output.dir = paste0(run_1_output_folder_path, "/"),
+                   fig.dir = output_folder_path,
+                   plot.for.aggregates = compare_aggregates,
+                   all.women = all_women,
+                   UWRA = UWRA,
+                   plot_data = plot_data)
+}

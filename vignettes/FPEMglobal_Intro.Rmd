@@ -68,6 +68,12 @@ There are separate user functions for each of these steps. For example, `do_glob
 |       | `post_process_mcmc`       | Post-process MCMC output produced by `do_global_mcmc` (and `add_global_mcmc`).                              |
 |       | `make_results`            | Produce summary results from post-processed MCMC chains as produced by `post_process_mcmc`.                 |
 
+The following utility functions are also available:
+
+| Function                | Action                                                |
+|-------------------------+-------------------------------------------------------|
+| `validate_input_file`   | Checks input data file for invalid entries            |
+| `compare_runs_CI_plots` | Produces plots that compares two different model runs |
 
 ## Run Names
 
