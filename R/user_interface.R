@@ -2588,6 +2588,14 @@ combine_runs <- function(## Describe the run
 ##' See \code{system.file("extdata", "country_and_area_classification.csv")} for
 ##' how the country classification file should be formatted. Assume all columns
 ##' are required.
+##'
+##' Typical values of the \acronym{MCMC} control parameters for a
+##' \dQuote{full} model run are: \describe{
+##' \item{\code{estimation_iterations}}{\code{ceiling(5e5 / \var{nchains})}, where \var{nchains} is the number of chains (i.e., \code{length(chain_nums)}).}
+##' \item{\code{burn_in_iterations}}{2e4}
+##' \item{\code{thinning}}{30}
+##' }
+##'
 ##' @param denominator_counts_csv_filename File path. Filepath to \file{.csv}
 ##'     file with denominator counts (married and unmarried) for this
 ##'     \code{age_group}. If \code{NULL}, defaults to \code{paste0("women_",

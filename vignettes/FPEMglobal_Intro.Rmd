@@ -232,7 +232,7 @@ The default value of `input_data_folder_path` is diffferent depending on the fun
 
 A full global run of the model can be done with just one wrapper function, `do_global_all_women_run`. Alternatively, several separate functions can be called in sequence if finer control over the inputs and outputs is desired. For default behaviour, it is easiest to use the main wrapper.
 
-The model is estimated using an MCMC algorithm. Defaults for the number of iterations, proportion to discard as burn-in, and how to thin the sample, are set in all functions that implement the MCMC. A full run takes several hours, typically 40--48 in our experience with a 30-core computer as at 2019. 
+The model is estimated using an MCMC algorithm. Recommended values for the number of iterations (total), the number to discard as burn-in, and how to thin the sample, are given in the help file for `do_global_all_women_run`. As at 2021, in our experience, a full run comprising 20 chains run in parallel on a 20 core machine takes 36--48 hours. 
 
 
 ## Autopilot: All Women Results
