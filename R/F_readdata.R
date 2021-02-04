@@ -370,7 +370,8 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
         data.raw[, unmet_col_name][unmet.zero] <-
             sapply(100 - data.raw[, cp_any_col_name][unmet.zero],
                    function(z) min(0.1, z))
-        warning(paste0("There are ", sum(unmet.zero, na.rm = TRUE), " observations with unmet need of zero. In the input data file, these are in rows (ignoring header):\n", paste(which(modern.zero), collapse = ", "), "\nThese will be ROUNDED UP to 0.1 percent."))
+        message(paste0("There are ", sum(unmet.zero, na.rm = TRUE), " observations with unmet need of zero. In the input data file, these are in rows (ignoring header):\n",
+                       paste(rows_in_orig_input[unmet.zero], collapse = ", "), "\nThese will be ROUNDED UP to 0.1 percent."))
     }
 
     ## -------* Replace NAs with '""' for CHARACTER columns
