@@ -2810,6 +2810,12 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
           n.training.modern <- length(getj.training.modern.k) # change JR, 20131120
 
           N.unmet.test <- n.test.unmet #UWRA JAGS code uses this exclusively
+
+          if(ModelFunctionModOnlyObs(write.model.fun)) {
+              getj.training.modonly.k <-
+                  seq(1, J)[!is.na(props.modern.j) & is.na(props.tot.j) & is.na(props.trad.j)]
+              n.training.modonly <- length(getj.training.modonly.k)
+          }
       }
 
       ##----------------------------------------------------------------------
@@ -2831,6 +2837,12 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
           n.training.modern <- length(getj.training.modern.k) # change JR, 20131120
 
           N.unmet.test <- n.test.unmet #UWRA model JAGS code uses this exclusively
+
+          if(ModelFunctionModOnlyObs(write.model.fun)) {
+              getj.training.modonly.k <-
+                  seq(1, J)[!is.na(props.modern.j) & is.na(props.tot.j) & is.na(props.trad.j)]
+              n.training.modonly <- length(getj.training.modonly.k)
+          }
       }
 
       ##----------------------------------------------------------------------
@@ -2865,6 +2877,12 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
               se.logR.trad.impute.test<-validation.at.random.no.data$se.info.j.test$se.logR.trad.impute
               se.logR.modern.impute.test<-validation.at.random.no.data$se.info.j.test$se.logR.modern.impute
               se.logR.unmet.impute.test<-validation.at.random.no.data$se.info.j.test$se.logR.unmet.impute
+          }
+
+          if(ModelFunctionModOnlyObs(write.model.fun)) {
+              getj.training.modonly.k <-
+                  seq(1, J)[!is.na(props.modern.j) & is.na(props.tot.j) & is.na(props.trad.j)]
+              n.training.modonly <- length(getj.training.modonly.k)
           }
 
           round.years.j.test <- floor(data.test$years.j) + 0.5
@@ -3185,6 +3203,12 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
           N.unmet.test = N.unmet.test,
           n.test.unmet = n.test.unmet
       )
+      if(ModelFunctionModOnlyObs(write.model.fun)) {
+          list.validation <-
+              c(list.validation,
+                list(getj.training.modonly.k = getj.training.modonly.k,
+                     n.training.modonly = n.training.modonly))
+          }
       if(!validation.list$exclude.unmet.only) {
           ## Not needed for 'exclude.unmet.only'
           list.validation <-
@@ -3298,7 +3322,6 @@ GetBugsData_Rate <- function( # Construct winbugs.data object
                                  ,mean.TOneLevel = timing.world.priors$mean.TOneLevel
                                   ,verbose = verbose
                                   )
-
 
   ##value<< One combined list that includes elements from
                                 #  ##describe<<
