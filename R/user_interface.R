@@ -3467,19 +3467,19 @@ rename_global_run <- function(run_name,
     ## Functions
 
     crawl_and_rename <- function(dir_path, run_name = run_name,
-                             new_run_name = new_run_name, ignore = ignore) {
-        info <- file.info(dir(dir_path, full.names = TRUE) #<need this
-                          )
-        for(i in 1:nrow(info)) {
-            fn <- basename(rownames(info)[i])
-            if(info[i, "isdir"]) {
-                crawl_and_rename(dir_path = file.path(dir_path, fn),
-                             run_name = run_name,
-                             new_run_name = new_run_name,
-                             ignore = ignore)
-            }
-            ## should still rename subdirectories (except 'ignore') so no 'else'.
-            if(grepl(run_name, fn, fixed = TRUE) && !grepl(pattern = ignore, x = fn)) {
+                                 new_run_name = new_run_name, ignore = ignore) {
+        info <- file.info(dir(dir_path, full.names = TRUE))
+        if (nrow(info)) {
+            for(i in 1:nrow(info)) {
+                fn <- basename(rownames(info)[i])
+                if(info[i, "isdir"]) {
+                    crawl_and_rename(dir_path = file.path(dir_path, fn),
+                                     run_name = run_name,
+                                     new_run_name = new_run_name,
+                                     ignore = ignore)
+                }
+                ## should still rename subdirectories (except 'ignore') so no 'else'.
+                if(grepl(run_name, fn, fixed = TRUE) && !grepl(pattern = ignore, x = fn)) {
                     new_fn <- gsub(run_name, new_run_name, fn, fixed = TRUE)
                     check <-
                         try(file.rename(from = file.path(dir_path, fn),
@@ -3488,6 +3488,7 @@ rename_global_run <- function(run_name,
                         warning("'", x,
                                 "' was unable to be renamed. 'file.rename' returned: ",
                                 paste(check))
+                }
             }
         }
     }
@@ -3499,8 +3500,16 @@ rename_global_run <- function(run_name,
     global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
     if(file.exists(global_args_fn)) {
         load(global_args_fn)
-        global_mcmc_args$run_desc <- ""
-        global_mcmc_args$run_name_override <- new_run_name
+        global_mcmc_args$renamed <- TRUE
+        global_mcmc_args$rename_list <- c(new_run_name, global_mcmc_args$rename_list)
+        save(global_mcmc_args, file = global_args_fn)
+    }
+    combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
+    if(file.exists(combine_args_fn)) {
+        load(combine_args_fn)
+        combine_runs_args$renamed <- TRUE
+        combine_runs_args$rename_list <- c(new_run_name, combine_runs_args$rename_list)
+        save(combine_runs_args, file = combine_args_fn)
     }
 
     crawl_and_rename(output_folder_path, run_name, new_run_name, ignore = ignore)
