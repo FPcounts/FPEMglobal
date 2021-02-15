@@ -3347,6 +3347,19 @@ do_global_validation_run <- function(run_desc = "",
         stop("'", global_mcmc_meta_filepath, "' does not exist. Cannot do validation without this information.")
     }
 
+    ## Load post-process args
+    post_process_mcmc_args_filepath <-
+        file.path(run_name_to_validate_output_folder_path, "post_process_args.RData")
+    if(file.exists(post_process_mcmc_args_filepath)) {
+        post_process_mcmc_args <- get(load(post_process_mcmc_args_filepath))
+    if(!file.exists(file.path(input_data_folder_path,
+                              basename(post_process_mcmc_args$denominator_counts_csv_filename))))
+        stop("Denominator counts file in 'post_process_args.Rdata' not found.")
+    if(!file.exists(file.path(input_data_folder_path,
+                              basename(post_process_mcmc_args$countries_for_aggregates_csv_filename))))
+        stop("Country aggregates file in 'post_process_args.Rdata' not found.")
+    }
+
     ## --------------------------------------------------------------------
     ## Run name and output paths
 
@@ -3417,6 +3430,19 @@ do_global_validation_run <- function(run_desc = "",
     post_process_mcmc(run_name = run_name_valid,
                       output_folder_path = output_folder_path,
                       input_data_folder_path = input_data_folder_path,
+                      denominator_counts_csv_filename = basename(post_process_mcmc_args$denominator_counts_csv_filename),
+                      countries_for_aggregates_csv_filename = basename(post_process_mcmc_args$countries_for_aggregates_csv_filename),
+                      start_year = post_process_mcmc_args$start_year,
+                      end_year = post_process_mcmc_args$end_year,
+                      years_change = post_process_mcmc_args$years_change,
+                      years_change2 = post_process_mcmc_args$years_change2,
+                      model_diagnostics = TRUE,
+                      special_aggregates_name = NULL,
+                      age_ratios_age_total_run_name = NULL,
+                      age_ratios_age_total_output_folder_path = NULL,
+                      age_ratios_age_total_denominator_counts_csv_filename = NULL,
+                      age_ratios_age_total_denominator_counts_folder_path = NULL,
+                      all_women = post_process_mcmc_args$all_women,
                       verbose = verbose)
 
     ##-----------------------------------------------------------------------------
