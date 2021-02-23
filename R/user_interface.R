@@ -2778,24 +2778,25 @@ do_global_all_women_run <- function(## Describe the run
                     file.path(age_ratios_age_total_unmarried_output_folder_path, "data")
             }
 
-        if(!dir.exists(age_ratios_age_total_married_output_folder_path))
-            stop("'age_ratios_age_total_married_output_folder_path' does not exist ('",
-             age_ratios_age_total_married_output_folder_path,
-             "')")
-        if(!dir.exists(age_ratios_age_total_unmarried_output_folder_path))
-            stop("'age_ratios_age_total_unmarried_output_folder_path' does not exist ('",
-             age_ratios_age_total_unmarried_output_folder_path,
-             "')")
-        if(!dir.exists(age_ratios_age_total_all_women_output_folder_path))
-            stop("'age_ratios_age_total_all_women_output_folder_path' does not exist ('",
-             age_ratios_age_total_all_women_output_folder_path,
-             "')")
-    if(!file.exists(file.path(age_ratios_age_total_denominator_counts_folder_path,
-                              age_ratios_age_total_denominator_counts_csv_filename)))
-        stop("'age_ratios_age_total_output_folder_path' does not exist ('",
-             age_ratios_age_total_output_folder_path,
-             "')")
-            }
+            if(!dir.exists(age_ratios_age_total_married_output_folder_path))
+                stop("'age_ratios_age_total_married_output_folder_path' does not exist ('",
+                     age_ratios_age_total_married_output_folder_path,
+                     "')")
+            if(!dir.exists(age_ratios_age_total_unmarried_output_folder_path))
+                stop("'age_ratios_age_total_unmarried_output_folder_path' does not exist ('",
+                     age_ratios_age_total_unmarried_output_folder_path,
+                     "')")
+            if(!dir.exists(age_ratios_age_total_all_women_output_folder_path))
+                stop("'age_ratios_age_total_all_women_output_folder_path' does not exist ('",
+                     age_ratios_age_total_all_women_output_folder_path,
+                     "')")
+            if(!file.exists(file.path(age_ratios_age_total_denominator_counts_folder_path,
+                                      age_ratios_age_total_denominator_counts_csv_filename)))
+                stop("'age_ratios_age_total_denominator_counts_folder_path/age_ratios_age_total_denominator_counts_csv_filename' does not exist ('",
+                     file.path(age_ratios_age_total_denominator_counts_folder_path,
+                                      age_ratios_age_total_denominator_counts_csv_filename),
+                     "')")
+        }
     }
 
     ## --------------------------------------------------------------------
