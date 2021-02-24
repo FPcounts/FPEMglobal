@@ -53,6 +53,7 @@
 ##'
 ##' @author Mark Wheldon, based on \code{\link{GetTablesRes}}.
 ##'
+##' @noRd
 AdjustMedians <- function(run.name = "test",
                           name.res = "country",
                                  output.dir,
@@ -399,6 +400,7 @@ AdjustMedians <- function(run.name = "test",
 ##' @param uwra.adj.med Output of \code{\link{AdjustMedians}} for unmarried women. If a character string, assumed to be filepath to saved version which is passed to \code{\link{load}}.
 ##' @param mwra.adj.med See 'uwra.adj.med' (but for married women output).
 ##' @author Mark Wheldon.
+##' @noRd
 ConstructAdjMediansAllWomen <-
     function(uwra.adj.med,
              mwra.adj.med
@@ -670,6 +672,7 @@ ConstructAdjMediansAllWomen <-
 ##' @param select.c
 ##' @return
 ##' @author Mark Wheldon, based on \code{\link{InternalGetAggregates}}.
+##' @noRd
 InternalAggregateMedians <- function(counts.df, W.Lc.t
                                     ,select.iso, est.years) {
 
@@ -793,6 +796,7 @@ InternalAggregateMedians <- function(counts.df, W.Lc.t
 ##' @return
 ##' @author Mark Wheldon, with great swathes copied from \code{\link{GetAggregates}} and
 ##'     \code{\link{InternalGetAggregates}}.
+##' @noRd
 AggregateMedians <- function(res,
                              file.aggregates = NULL,
                              output.dir,
@@ -1197,6 +1201,7 @@ AggregateMedians <- function(res,
 ##'     is TRUE, comparison plots are saved in 'plot.dir'. If 'tabulate' is
 ##'     true, comparison tables are saved in 'table.dir'.
 ##' @author Mark Wheldon.
+##' @noRd
 CompareAdjMedians <- function(run.name = "test",
                               output.dir = NULL,
                               res.orig = NULL,
@@ -2116,6 +2121,7 @@ CompareAdjMedians <- function(run.name = "test",
 ##'
 ##' @return \code{res.orig} but with medians replaced with adjusted medians.
 ##' @author Mark Wheldon
+##' @noRd
 ReplaceMediansWAdj <- function(res.orig, res.adj) {
     for(x in c("CIprop.Lg.Lcat", "CIratio.Lg.Lcat", "CIcount.Lg.Lcat")) {
         x.qt <- paste0(x, ".qt")

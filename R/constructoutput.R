@@ -159,6 +159,7 @@ ConstructOutput <- function(# Construct output for MCMC run
 ##' @param years.change2
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 ConstructOutputAllWomen <-
     function(run.name = "test",
              uwra.output.dir,
@@ -902,6 +903,7 @@ ConstructOutputAllWomen <-
 ##' @param ratios.ar Array in which ratios will be put.
 ##' @return
 ##' @author
+##' @noRd
 InternalMakeRatios <- function(ratios.names, counts.ar, tot.counts.mat,
                                uwra.counts.ar, mwra.counts.ar) {
 
@@ -984,6 +986,7 @@ InternalMakeRatios <- function(ratios.names, counts.ar, tot.counts.mat,
 ##' @param counts.ar
 ##' @return
 ##' @author
+##' @noRd
 InternalMakeProbs <-
     function(probs.names = probs.names
             ,counts.ar = awra.CP.counts.j) {
@@ -1026,6 +1029,7 @@ InternalMakeProbs <-
 ##' @param years.change
 ##' @return Saves quantiles in 'res.country.age.ratio.rda'.
 ##' @author Mark Wheldon
+##' @noRd
 ConstructAgeRatios <-
     function(age.subset.output.dir,
              age.total.output.dir,
@@ -1579,6 +1583,7 @@ ConstructAgeRatios <-
 ##' @param byrow
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 ConstructAgeRatiosAllWomen <-
     function(age.subset.output.dir,
              age.total.output.dir,

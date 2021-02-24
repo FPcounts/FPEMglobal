@@ -459,6 +459,7 @@ SelectCountriesInRegion <- function(# Select countries in a particular region
 ##' @param changes.years.names
 ##' @return
 ##' @author
+##' @noRd
 GetAggregatesAllWomen <-
     function(# Construct aggregate estimates
   ### Estimate the proportion/number of MWRA in various categories for aggregates.
@@ -1401,6 +1402,7 @@ GetAggregatesAllWomen <-
 ##' @param years.change
 ##' @return Saves quantiles in the respective directories.
 ##' @author Mark Wheldon.
+##' @noRd
 GetAggregatesAgeRatios <-
     function(age.subset.uwra.output.dir = NULL,
              age.subset.mwra.output.dir = NULL,
@@ -1796,6 +1798,7 @@ GetAggregatesAgeRatios <-
 ##'     "Z", "UnmarriedOverAll", "MarriedOverAll")'.
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 InternalMakeAggLists <- function(filename = NULL, output.dir = NULL, aggregates, n.iters,
                               years.names, d2.names) {
 
@@ -1855,6 +1858,7 @@ InternalMakeAggLists <- function(filename = NULL, output.dir = NULL, aggregates,
 ##' @param compress.RData
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 InternalMakeIndividualAggLists <- function(filename = NULL, output.dir = NULL
                                , n.iters,
                               years.names, d2.names
@@ -1915,6 +1919,7 @@ InternalMakeIndividualAggLists <- function(filename = NULL, output.dir = NULL
 ##' @param verbose
 ##' @return
 ##' @author
+##' @noRd
 InternalAllWomenAggregateCounts <-
     function(filename, output.dir, file.aggregates = NULL
              ,iso.both.j, CP.counts.j, uwra.denom.counts,
@@ -2169,6 +2174,7 @@ InternalAllWomenAggregateCounts <-
 ##' @param adj.method Character. One of c("modelp", "topdown", "bottomup"). Default is "modelp".
 ##' @return Nothing. Called for side effects, namely saving tables as \code{.csv} files.
 ##' @author Mark Wheldon
+##' @noRd
 make.aggregates <- function(file.agg, name.agg, output.dir,
                             run.name, table.dir.orig = NULL,
                             do.adjustments = TRUE,
@@ -2291,6 +2297,7 @@ make.aggregatesAllWomen <- function(file.agg, name.agg,
 ##' @return List of aggregates, named according to aggregate display labels.
 ##' @seealso \code{\link{get_aggregate_names}}
 ##' @author Mark Wheldon
+##' @noRd
 make_country_aggregates_internal <-
     function(family = c("UNPD", "World Bank"), C,
              iso.Ptp3s.key.df,
@@ -2343,6 +2350,7 @@ make_country_aggregates_internal <-
 ##'     \emph{internal names} of aggregates, the names of which give
 ##'     the \emph{display labels}.
 ##' @author
+##' @noRd
 get_aggregate_names <-
     function(family = c("UNPD", "World Bank")) {
 
@@ -2384,6 +2392,7 @@ get_aggregate_names <-
 ##' @param file Not yet used.
 ##' @return \emph{Character} vector of ISO codes.
 ##' @author Mark Wheldon
+##' @noRd
 get_aggregate_ISOs <-
     function(name,
              family = c("UNPD", "World Bank"),

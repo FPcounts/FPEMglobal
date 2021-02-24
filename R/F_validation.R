@@ -986,6 +986,7 @@ PlotValidationResults <- function(# Plot lots of results!
 ##' @param output.dir
 ##' @return
 ##' @author Mark Wheldon with lots taken from other ContraceptiveUse functions
+##' @noRd
 PlotPredDens <- function(run.name = "test", ##<< Run name
                          output.dir = NULL,
                          fig.dir = NULL ##<< Directory where MCMC array and meta are stored.
@@ -1171,15 +1172,17 @@ PlotPredDens <- function(run.name = "test", ##<< Run name
 
 }
 ##----------------------------------------------------------------------
-##' Compute information criteria (AIC, WAIC, BIC).
-##'
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
-##' @param run.name
-##' @param output.dir
-##' @return
-##' @author Mark Wheldon with lots taken from other ContraceptiveUse functions
+
+## Compute information criteria (AIC, WAIC, BIC).
+##
+## .. content for \description{} (no empty lines) ..
+##
+## .. content for \details{} ..
+## @param run.name
+## @param output.dir
+## @return
+## @author Mark Wheldon with lots taken from other ContraceptiveUse functions
+## @noRd
 ComputeInformationCriteria <-
     function(run.name = "test", ##<< Run name
              output.dir = NULL
@@ -1251,9 +1254,9 @@ ComputeInformationCriteria <-
         ## WAIC Correction version 2
         pWAIC2 <- sum(apply(mcmc.array[,,c(unmet.idx, bdown.idx, tot.idx)], 3
                           , function(z) var(as.numeric(z))))
-                                #'as.numeric' because z is a matrix;
-                                #'var' would then return a var-covar
-                                #matrix
+                                # 'as.numeric' because z is a matrix;
+                                # 'var' would then return a var-covar
+                                # matrix
 
         ## WAICs
         WAIC1 <- -2 * sum(lppd) + 2 * pWAIC1

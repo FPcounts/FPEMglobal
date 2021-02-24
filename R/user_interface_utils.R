@@ -99,6 +99,7 @@ copy_uwra_mwra_files <-
 ##' @param model_name
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 marital_age_group_param_defaults <- function(marital_group, age_group, model_family, model_name) {
     if(marital_group == "married") {
         if(is.null(model_name)) {

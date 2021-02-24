@@ -21,6 +21,7 @@
 ##' @param return.processed.data.frame
 ##' @return
 ##' @author
+##' @noRd
 PrecheckData <- function(# Pre-check contraceptive prevalence data
   ### Pre-process contraceptive prevalence data
   data.csv = NULL, ##<< If \code{NULL}, data set included in package is used.
@@ -616,6 +617,7 @@ PreprocessClassification <-
 ##'     only be included once (can only be part of one grouping).
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 ReadFileAggregates <- function(file.aggregates) {
 
     ## -------* SET UP

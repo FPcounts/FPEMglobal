@@ -151,7 +151,7 @@ GetTablesRes <- function(# Save csv's with CIs for proportions and counts
       } else {
           iso.col.means <- NA        #keep it because renaming, etc. below expects this column.
       }
-      if(j == 1) {                      #'Prop' outputs
+      if(j == 1) {                      # 'Prop' outputs
           mean.Lg.Lcat <- res[["meanProp.Lg.Lcat"]]
           means.i <- lapply(mean.Lg.Lcat, "[[", i)
           means.all <- data.frame(names(mean.Lg.Lcat), iso.col.means
@@ -169,7 +169,7 @@ GetTablesRes <- function(# Save csv's with CIs for proportions and counts
                                   )
           colnames(means.all) <- colnames(results.all)
           results.all <- rbind(results.all, means.all)
-      } else if(j == 3) {               #'Ratio' outputs
+      } else if(j == 3) {               # 'Ratio' outputs
           mean.Lg.Lcat <- res[["meanRatio.Lg.Lcat"]]
           means.i <- lapply(mean.Lg.Lcat, "[[", i)
           means.all <- data.frame(names(mean.Lg.Lcat), iso.col.means
@@ -687,6 +687,7 @@ GetTablesChangeAllWomen <- function(# Save csv's with CIs for change in proporti
 ##' @return
 ##' @author Mark C. Wheldon with most of it stolen from GetTablesRes
 ##'     and GetTablesChange.
+##' @noRd
 GetLancetBigTable <- function(run.name = "test",
                               output.dir = "test",
                               table.dir = file.path(output.dir, "table"),
@@ -866,6 +867,7 @@ GetLancetBigTable <- function(run.name = "test",
 ##' @return
 ##' @author Mark C. Wheldon with most of it stolen from GetTablesRes
 ##'     and GetTablesChange.
+##' @noRd
 GetLancetBigTableAllWomen <- function(run.name = "test",
                               output.dir = NULL,
                               table.dir = file.path(output.dir, "table"),
@@ -1521,6 +1523,7 @@ InternalGetLancetBigTable <-
 ##'     separate tables.
 ##' @return
 ##' @author
+##' @noRd
 InternalLancetBigTable2Latex <-
     function(tbl,
              before.major.area = "\\hspace{2ex}",
@@ -1649,6 +1652,7 @@ InternalLancetBigTable2Latex <-
 ##' @param name.res
 ##' @return Saves \file{.csv} files.
 ##' @author Mark Wheldon
+##' @noRd
 GetTablesAgeRatios <-
     function(run.name = "test",
              output.dir = NULL,
@@ -1803,6 +1807,7 @@ GetTablesAgeRatios <-
 ##' @param fp2020.69.only
 ##' @param adjusted.medians
 ##' @param adj.method
+##' @noRd
 GetTablesChangeAgeRatios <-
     function(run.name = "test",
              output.dir,

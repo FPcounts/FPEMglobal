@@ -57,7 +57,7 @@ RunMCMC <- function(# Start MCMC sampling
                    ,uwra.z.priors = NULL #[MCW-2016-06-02-5] Added to allow different priors for
                                 #z model. Set to an integer code and define in body of GetBusPriorSpecs().
                    ,write.model.fun = "WriteModel" #[MCW-2016-06-02-6] pass in the
-                    #'WriteModel[suff]() function used. *MUST* be
+                    ## WriteModel[suff]() function used. *MUST* be
                                 #the name of the function as a character
                                 #string.
                     ## [MCW-2016-06-14-7] Added to control priors for Omega variance
@@ -1858,7 +1858,7 @@ GetBugsData <- function( # Construct winbugs.data object
                                 #row j in 'data.test' corresponds to
                                 #which chronologically ordered
                                 #observation for that country (rows of
-                                                 #'data.test' not in chronological order
+                                                 # 'data.test' not in chronological order
                                 #within countries)
                 }
             }

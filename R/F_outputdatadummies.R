@@ -157,6 +157,7 @@ PlotSourceSigmasUnmet <- function (# Plot posteriors of unmet/none by source
 ##' @param return.res
 ##' @return TODO.
 ##' @author Mark Wheldon, based on \code{\link{PlotSourceSigmas}}.
+##' @noRd
 PlotDataModelSEs <- function(run.name, output.dir, mcmc.array,
                              col_pxmr = c("red","purple", "green", "brown")
                             ,percentiles = c(0.025, 0.5, 0.975)

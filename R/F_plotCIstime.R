@@ -1919,10 +1919,10 @@ PlotDataAndEstimatesDIAG <- function (# Create overview country/aggregate plots
       InternalPlotDataLegend(TIFF = ind.country.overviewplot,
                              add.info = add.info, include.SS = include.SS,
                              cex.adj.factor = cex.adj.factor, sources.pal = sources.pal
-                            ,non.std.symbol = non.std.symbol #[MCW-2016-04-12-23]
-                                                             #Added to pass
-                                                             #through value of
-                                                             #'non.std.symbol'.
+                            ,non.std.symbol = non.std.symbol # [MCW-2016-04-12-23]
+                                                             # Added to pass
+                                                             # through value of
+                                                             # 'non.std.symbol'.
                                    ,UWRA = UWRA
                                    ,hide.CP.tot.lt.1pc = hide.CP.tot.lt.1pc
                              )}
@@ -2494,10 +2494,10 @@ PlotDataAndEstimatesORIG <- function (# Create overview country/aggregate plots
         pdf(file.path(figdir.indcountries, paste0("legend", fig.name.years, "_diag.pdf"))
           , width = 12, height = 12, useDingbats = pdf.useDingbats) # change JR, 20140418
         InternalPlotDataLegend(add.info = add.info, include.SS = include.SS, cex.adj.factor = cex.adj.factor, sources.pal = sources.pal
-                              ,non.std.symbol = non.std.symbol #[MCW-2016-04-12-24]
-                                        #Added to pass
-                                        #through value of
-                               #'non.std.symbol'.
+                              ,non.std.symbol = non.std.symbol # [MCW-2016-04-12-24]
+                                        # Added to pass
+                                        # through value of
+                               # 'non.std.symbol'.
                                    ,UWRA = UWRA
                                    ,hide.CP.tot.lt.1pc = hide.CP.tot.lt.1pc
                                )
