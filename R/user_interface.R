@@ -2392,7 +2392,7 @@ combine_runs <- function(## Describe the run
     ## LOG
     ##----------------------------------------------------------------------------
 
-    msg <- paste0("Combining runs ", married_women_run_name, " and ", unmarried_women_run_name)
+    msg <- paste0("Combining runs in ", married_women_run_output_folder_path, " and ", unmarried_women_run_output_folder_path)
     message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -2539,12 +2539,6 @@ combine_runs <- function(## Describe the run
                             output_exists_warnings = FALSE
                             )
 
-    msg <- paste0("Combined married run from '", married_women_run_output_folder_path,
-                  "' with unmarried run from '", unmarried_women_run_output_folder_path, "'.")
-    message(msg)
-    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
-        msg, file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
-
     ##--------------------------------------------------------------------------
     ## Special aggregates
     ##--------------------------------------------------------------------------
@@ -2656,7 +2650,7 @@ combine_runs <- function(## Describe the run
     ## LOG
     ##----------------------------------------------------------------------------
 
-    msg <- paste0("Finished combining runs ", married_women_run_name, " and ", unmarried_women_run_name)
+    msg <- paste0("Finished combining runs ", married_women_run_output_folder_path, " and ", unmarried_women_run_output_folder_path)
     message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
