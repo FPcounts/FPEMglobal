@@ -266,6 +266,13 @@ required.
 See \code{system.file("extdata", "country_and_area_classification.csv")} for
 how the country classification file should be formatted. Assume all columns
 are required.
+
+Typical values of the \acronym{MCMC} control parameters for a
+\dQuote{full} model run are: \describe{
+\item{\code{estimation_iterations}}{\code{ceiling(5e5 / \var{nchains})}, where \var{nchains} is the number of chains (i.e., \code{length(chain_nums)}).}
+\item{\code{burn_in_iterations}}{2e4}
+\item{\code{thinning}}{30}
+}
 }
 \examples{
 vignette("FPEMglobal_Intro")

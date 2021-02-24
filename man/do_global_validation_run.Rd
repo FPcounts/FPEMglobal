@@ -44,7 +44,8 @@ auto-generated \code{run_name}. Ignored if
 override default generation. \code{run_desc} is ignored if
 this is non-\code{NULL}.}
 
-\item{run_name_to_validate}{Name of completed global run to validate.}
+\item{run_name_to_validate}{Name of completed global run to
+validate.}
 
 \item{input_data_folder_path}{File path to folder containing
 \emph{all} input data (except any map shapefiles). If
@@ -54,53 +55,58 @@ be passed to \code{\link{file.path}} as-is. Otherwise,
 will be passed. The default value points to the data directory
 supplied with the package.}
 
-\item{exclude_unmet_only}{Logical; do validtion exercise leaving out unmet
-need observations? See details.}
+\item{exclude_unmet_only}{Logical; do validtion exercise leaving
+out unmet need observations? See details.}
 
-\item{exclude_unmet_only_test_prop}{Numeric; the proportion of observations
-to be left out for an unmet need validation run.}
+\item{exclude_unmet_only_test_prop}{Numeric; the proportion of
+observations to be left out for an unmet need validation run.}
 
-\item{at_random}{Logical; do validtion exercise leaving out observations at
-random? See details.}
+\item{at_random}{Logical; do validtion exercise leaving out
+observations at random? See details.}
 
-\item{at_random_min_c}{Minimum number of data points per country to ensure
-are left in training set.}
+\item{at_random_min_c}{Minimum number of data points per country
+to ensure are left in training set.}
 
-\item{at_random_test_prop}{Proportion of obs used for test set when
-\code{at_random} is \code{TRUE}.}
+\item{at_random_test_prop}{Proportion of obs used for test set
+when \code{at_random} is \code{TRUE}.}
 
-\item{at_end}{Logical; do validtion exercise leaving out all observations
-after \code{year_cutoff}. See details.}
+\item{at_end}{Logical; do validtion exercise leaving out all
+observations after \code{year_cutoff}. See details.}
 
-\item{at_end_not_1_obs_c}{Logical; should obs that are the only one for
-their particular country be retained in the training set?}
+\item{at_end_not_1_obs_c}{Logical; should obs that are the only
+one for their particular country be retained in the training
+set?}
 
 \item{at_random_no_data}{Logical; do validation exercise where all
-observations for a randomly selected set of countries are left out at
-random?}
+observations for a randomly selected set of countries are left
+out at random?}
 
-\item{at_random_no_data_strata}{Column in the country classifications file
-(used in the run being validated) to stratify on if
-\code{at_random_no_data = TRUE}. If \code{NULL} (default) do not
-stratify.}
+\item{at_random_no_data_strata}{Column in the country
+classifications file (used in the run being validated) to
+stratify on if \code{at_random_no_data = TRUE}. If \code{NULL}
+(default) do not stratify.}
 
-\item{at_random_no_data_test_prop}{Numeric; the proportion of observations
-to be left out when \code{at_random_no_data = TRUE}.}
-
-\item{leave_iso_out}{Logical; do validation exercise where all data for only
-one country is left out?}
-
-\item{leave_iso_out_iso_test}{Three-digit country ISO code, numeric or
-character, designating the country to leave out if \code{leave_iso_out =
+\item{at_random_no_data_test_prop}{Numeric; the proportion of
+observations to be left out when \code{at_random_no_data =
     TRUE}.}
 
-\item{year_cutoff}{The cut-off year to use to separate test from training
-set if \code{at_end = TRUE}.}
+\item{leave_iso_out}{Logical; do validation exercise where all
+data for only one country is left out?}
 
-\item{seed_validation}{Random seed used, among other things, in selection of
-countries to leave out.}
+\item{leave_iso_out_iso_test}{Three-digit country ISO code,
+numeric or character, designating the country to leave out if
+\code{leave_iso_out = TRUE}.}
 
-\item{generate_new_set}{Logical; generate a new training set in validation exercise?}
+\item{year_cutoff}{The cut-off year to use to separate test from
+training set if \code{at_end = TRUE}. All observations with
+observation year equal to or greater than \code{year_cutoff}
+are put in the test set.}
+
+\item{seed_validation}{Random seed used, among other things, in
+selection of countries to leave out.}
+
+\item{generate_new_set}{Logical; generate a new training set in
+validation exercise?}
 
 \item{estimation_iterations}{Numeric. Number of MCMC iterations
 that should be \emph{saved}. This is \emph{before}

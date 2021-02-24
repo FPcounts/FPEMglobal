@@ -242,6 +242,16 @@ do_global_mcmc <- function(run_desc = "",
                                          model_name)
 
     ##---------------------------------------------------------------------
+    ## Log
+
+    msg <- paste0("Starting MCMC sampler for run ", run_name)
+    message(msg)
+
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##---------------------------------------------------------------------
     ## Save the values of function arguments so same arguments can be used for validations
 
     global_mcmc_args <- c(mget(names(formals(do_global_mcmc))), marital_group_param_set)
@@ -285,6 +295,17 @@ do_global_mcmc <- function(run_desc = "",
         verbose = verbose
     )
 
+    ## LOG
+    msg <- paste0("MCMC sampling completed for run ", run_name)
+    message(msg)
+
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##---------------------------------------------------------------------
+    ## Return
+
     return(invisible(run_name))
 
 }
@@ -320,6 +341,7 @@ add_global_mcmc <- function(run_name,
 
     ##---------------------------------------------------------------------
     ## Meta Info
+
     load(file.path(output_folder_path, "mcmc.meta.rda"))
 
     if (sum(is.element(chain_nums, mcmc.meta$general$ChainNums))>0){
@@ -329,6 +351,16 @@ add_global_mcmc <- function(run_name,
                 ," already exist(s)!", "\n")
         }
     }
+
+    ##---------------------------------------------------------------------
+    ## LOG
+
+    msg <- paste0("Adding MCMC chains to run ", run_name)
+    message(msg)
+
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
     ##---------------------------------------------------------------------
     ## Parallelization mechanism
@@ -357,6 +389,12 @@ add_global_mcmc <- function(run_name,
                  write.model.fun = mcmc.meta$general$write.model.fun,
                  run.on.server = run_in_parallel
                  )
+    ## LOG
+    msg <- paste0("Finished adding MCMC chains to run ", run_name)
+    message(msg)
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
     return(invisible(run_name))
 }
@@ -485,7 +523,13 @@ post_process_mcmc <- function(run_name,
                               all_women = NULL,
                               verbose = FALSE) {
 
-    message("Post-processing run: ", run_name)
+    msg <- paste0("Post-processing run ", run_name)
+    message(msg)
+
+    ## LOG
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
     ##----------------------------------------------------------------------------
     ## Meta Info
@@ -714,6 +758,18 @@ post_process_mcmc <- function(run_name,
             )
         }
     }
+
+    ##----------------------------------------------------------------------------
+    ## LOG
+
+    msg <- paste0("Finished post-processing run ", run_name)
+    message(msg)
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##----------------------------------------------------------------------------
+    ## Return
 
     return(invisible(run_name))
 
@@ -1061,6 +1117,16 @@ make_results <- function(run_name,
     }
 
     ##----------------------------------------------------------------------------
+    ## Log
+    ##----------------------------------------------------------------------------
+
+    msg <- paste0("Making results for run ", run_name)
+    message(msg)
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##----------------------------------------------------------------------------
     ## Validation Run
     ##----------------------------------------------------------------------------
 
@@ -1077,6 +1143,13 @@ make_results <- function(run_name,
                                           ,keep.all = validation_keep_all,
                                            UWRA = unmarried
                                            )
+
+        ## LOG
+        msg <- paste0("Finihsed making results for run ", run_name)
+        message(msg)
+        cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+            msg,
+            file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
         if(validation_return_res_as_df) {
             return(res_as_df)
@@ -1796,12 +1869,26 @@ make_results <- function(run_name,
                                                  adjusted.medians = FALSE, #Not yet implemented
                                                  )
 
-            if(all_women) message("\nYou can now re-run 'make_results' for married and unmarried women to get age ratios for special aggregates.")
+                        if(all_women) message("\nYou can now re-run 'make_results' for married and unmarried women to get age ratios for special aggregates.")
 
                     } else message("'", file.path(output_folder_path, paste0(name.agg, ".age.ratio.rda")), "' does not exist: age ratios for special aggregates not created.\n**Note: `combine_runs()` must be run before any age ratios for aggregates can be made.")
                 }
             }
         }
+
+        ##----------------------------------------------------------------------------
+        ## Log
+        ##----------------------------------------------------------------------------
+
+        msg <- paste0("Finihsed making results for run ", run_name)
+        message(msg)
+        cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+            msg,
+            file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+        ##----------------------------------------------------------------------------
+        ## Return
+        ##----------------------------------------------------------------------------
 
         return(invisible(run_name))
     }
@@ -2302,6 +2389,16 @@ combine_runs <- function(## Describe the run
     save(combine_runs_args, file = file.path(output_folder_path, "combine_runs_args.RData"))
 
     ##----------------------------------------------------------------------------
+    ## LOG
+    ##----------------------------------------------------------------------------
+
+    msg <- paste0("Combining runs ", married_women_run_name, " and ", unmarried_women_run_name)
+    message(msg)
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##----------------------------------------------------------------------------
     ## Copy files needed by plotting and tabulation functions.
     ##----------------------------------------------------------------------------
 
@@ -2554,6 +2651,20 @@ combine_runs <- function(## Describe the run
     }
 
     ## if(!interactive()) copy_Rout_files(run_name = run_name)
+
+    ##----------------------------------------------------------------------------
+    ## LOG
+    ##----------------------------------------------------------------------------
+
+    msg <- paste0("Finished combining runs ", married_women_run_name, " and ", unmarried_women_run_name)
+    message(msg)
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##----------------------------------------------------------------------------
+    ## Return
+    ##----------------------------------------------------------------------------
 
     return(invisible(run_name))
 }
@@ -3548,6 +3659,18 @@ rename_global_run <- function(run_name,
     }
 
     crawl_and_rename(output_folder_path, run_name, new_run_name, ignore = ignore)
+
+    ##----------------------------------------------------------------------------
+    ## LOG
+
+    msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name)
+    message(msg)
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##----------------------------------------------------------------------------
+    ## Return
 
     return(invisible())
 
