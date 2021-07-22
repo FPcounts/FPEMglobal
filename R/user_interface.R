@@ -14,6 +14,8 @@
 ##'
 ##' See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 ##'
+##' @seealso \code{link{validate_denominator_counts_file}}, \code{\link{do_global_all_women_run}}
+##'
 ##' @inheritParams do_global_mcmc
 ##' @return The processed input file is returned \emph{invisibly} as a data frame.
 ##' @author Mark Wheldon
@@ -21,7 +23,8 @@
 validate_input_file <- function(age_group = "15-49",
                                 input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                 data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-                                marital_group = c("married", "unmarried")) {
+                                marital_group = c("married", "unmarried")
+                                ) {
 
     if(!is.null(input_data_folder_path)) {
         data_csv_filename <- file.path(input_data_folder_path, data_csv_filename)
@@ -46,10 +49,74 @@ validate_input_file <- function(age_group = "15-49",
                                        print.messages = TRUE,
                                        print.warnings = TRUE,
                                        return.processed.data.frame = TRUE,
-                                       marital.group = switch(mg, "married" = "MWRA", "unmarried" = "UWRA")))
+                                       marital.group = switch(mg, "married" = "MWRA", "unmarried" = "UWRA")),
+                        check.names = FALSE)
     }
     return(invisible(out_df))
 }
+
+
+##' Validate denominator counts file for a global run of FPEM
+##'
+##' The denominator counts file for \code{\link{do_global_run}} and friends
+##' must meet certain requirements to be valid. These include correct
+##' column names and valid cell values. This function can be used to
+##' check that a candidate \file{.csv} files satisfies these
+##' requirements.
+##'
+##' See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
+##'
+##' @seealso \code{link{validate_input_file}}, \code{\link{do_global_all_women_run}}
+##'
+##' @inheritParams do_global_mcmc
+##' @return The processed denominator counts file is returned \emph{invisibly} as a data frame.
+##' @author Mark Wheldon
+##' @export
+validate_denominator_counts_file <- function(age_group = "15-49",
+                                             input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
+                                             denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
+                                             marital_group = c("married", "unmarried"),
+                                countries_for_aggregates_csv_filename = "countries_mwra_195.csv") {
+
+    if(!is.null(input_data_folder_path)) {
+        denominator_counts_csv_filename <- file.path(input_data_folder_path, denominator_counts_csv_filename)
+    }
+    if(!file.exists(denominator_counts_csv_filename)) stop("'denominator_counts_csv_filename' does not exist.")
+
+    model_family <- "rate"
+    model_name <- NULL
+
+    marital_group <- match.arg(marital_group, several.ok = TRUE)
+
+    out_df <- data.frame()
+    for (mg in marital_group) {
+        message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
+        out_df <- rbind(out_df,
+                        extractDenominators(denominator_counts_csv_filename,
+                                            in_union =
+                                                as.numeric(sapply(marital_group,
+                                                                  function(z)
+                                                                      switch(z, married = 1, unmarried = 0)))),
+                        check.names = FALSE)
+    }
+    if (is.character(countries_for_aggregates_csv_filename)) {
+        if(!is.null(input_data_folder_path)) {
+            countries_for_aggregates_csv_filename <-
+                file.path(input_data_folder_path, countries_for_aggregates_csv_filename)
+        }
+        if(!file.exists(countries_for_aggregates_csv_filename))
+            stop("'countries_for_aggregates_csv_filename' does not exist.")
+        countries_for_aggregates <- read.csv(countries_for_aggregates_csv_filename, row.names = NULL)
+        isos_not_in_data <-
+            countries_for_aggregates$ISO.Code[!countries_for_aggregates$ISO.Code %in% out_df$ISO.code]
+        if (length(isos_not_in_data))
+            stop("ISOs ",
+                    toString(isos_not_in_data),
+                    " are listed in 'countries_for_aggregates_csv_filename' but are not in denominator counts file.")
+    }
+    return(invisible(out_df))
+}
+
 
 
 ##' Generate MCMC chains for global run of FPEM
@@ -194,9 +261,13 @@ do_global_mcmc <- function(run_desc = "",
         region_information_csv_filename <-
             file.path(input_data_folder_path, region_information_csv_filename)
     }
-    if(!file.exists(data_csv_filename)) stop("'data_csv_filename' does not exist.")
+    if(!file.exists(data_csv_filename)) stop("'data_csv_filename' ",
+                                             data_csv_filename,
+                                             " does not exist.")
     if(!file.exists(region_information_csv_filename))
-        stop("'region_information_csv_filename' does not exist.")
+        stop("'region_information_csv_filename' ",
+             region_information_csv_filename,
+             " does not exist.")
 
     ##---------------------------------------------------------------------
     ## Parallelization mechanism
@@ -2006,8 +2077,38 @@ do_global_run <- function(## Describe the run
     ## Check input files
 
     ## Denominators
-    verifyDenominators(x = file.path(input_data_folder_path, denominator_counts_csv_filename),
-                       in_union = which(c("unmarried", "married") == marital_group) - 1)
+    if (!is.null(input_data_folder_path)) {
+        verifyDenominators(x = file.path(input_data_folder_path, denominator_counts_csv_filename),
+                           in_union = which(c("unmarried", "married") == marital_group) - 1)
+    } else {
+        verifyDenominators(x = file.path(denominator_counts_csv_filename),
+                           in_union = which(c("unmarried", "married") == marital_group) - 1)
+    }
+
+    ## If model does not handle missing data must not have missing inputs.
+    tmp_model_name <- marital_age_group_param_defaults(marital_group = marital_group,
+                                                   age_group = age_group, model_family = "rate",
+                                                   model_name = NULL)$write_model_fun
+    if (!ModelFunctionInclNoData(tmp_model_name)) {
+        if (!is.null(input_data_folder_path)) {
+            denom_isos <-
+                unique(read.csv(file = file.path(input_data_folder_path, countries_for_aggregates_csv_filename))$ISO.Code)
+            num_isos <-
+                unique(read.csv(file = file.path(input_data_folder_path, data_csv_filename))$ISO.code)
+        } else {
+            denom_isos <-
+                unique(read.csv(file = countries_for_aggregates_csv_filename)$ISO.Code)
+            num_isos <-
+                unique(read.csv(file = data_csv_filename)$ISO.code)
+        }
+        not_in_num <- setdiff(denom_isos, num_isos)
+        if (length(not_in_num))
+            stop("File 'countries_for_aggregates_csv_filename' ('",
+                 countries_for_aggregates_csv_filename,
+                 "') contains countries not in the main input file ('",
+                 data_csv_filename,
+                 "'), but model '", tmp_model_name, "' does not produce estimates for countries with no data.")
+    }
 
     ## Maps
 
@@ -2103,7 +2204,7 @@ do_global_run <- function(## Describe the run
 
     if (identical(length(chain_nums), 1L)) {
         warning("Post-processing and results *not* available with a single chain.")
-        return(invisible())
+        return(invisible(run_name))
     }
 
     ##
