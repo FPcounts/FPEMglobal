@@ -887,11 +887,12 @@ post_process_mcmc <- function(run_name,
 ##'     looked for in \code{input_data_folder_path}. Countries appear
 ##'     in the \file{.pdf} in the same order as they are listed in
 ##'     \code{countries_in_CI_plots_csv_filename}.
-##' @param plot_diagnostic_CI_plots Logical. Produce diagnostic versions of the main
-##'     country-level indicator plots. These have zoomed y-axes.
+##' @param plot_diagnostic_CI_plots Logical. Produce diagnostic
+##'     versions of the main country-level indicator plots. These have
+##'     zoomed y-axes.
 ##' @param make_all_bar_charts Logical. Produce barcharts? If
-##'     \code{NULL} but \code{plot_barchart_years} is
-##'     non-\code{NULL}, is reset to \code{TRUE}.
+##'     \code{NULL} but \code{plot_barchart_years} is non-\code{NULL},
+##'     is reset to \code{TRUE}.
 ##' @param plot_CI_changes_years Vector of length two (if longer, only
 ##'     the first and last elements are used). Declares the years to
 ##'     be used to make the \dQuote{fish bone} plots, i.e., the plots
@@ -900,20 +901,20 @@ post_process_mcmc <- function(run_name,
 ##'     name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
 ##'     the range of \code{start_year} and \code{end_year} passed to
 ##'     \code{\link{post_process_mcmc}}.
-##' @param plot_barchart_years Vector of years for which bar
-##'     charts should be produced. These are saved to
-##'     \file{\code{output_folder_path}/fig/barchart}. These must be in
-##'     the range of \code{start_year} and \code{end_year} passed to
-##'     \code{\link{post_process_mcmc}}.
+##' @param plot_barchart_years Vector of years for which bar charts
+##'     should be produced. These are saved to
+##'     \file{\code{output_folder_path}/fig/barchart}. These must be
+##'     in the range of \code{start_year} and \code{end_year} passed
+##'     to \code{\link{post_process_mcmc}}.
 ##' @param plot_maps_shapefile_folder Path to directory containing
 ##'     shapefiles for maps. Only needed if \code{plot_maps} is
 ##'     \code{TRUE}. This is \emph{not} looked for in
 ##'     \code{input_data_folder_path}; it should be a full path to the
 ##'     shape files.
-##' @param plot_maps_years Vector of years for which maps are
-##'     desired; the full set of maps are produced for each of the
-##'     years listed. These must be in the range of \code{start_year}
-##'     and \code{end_year} passed to \code{\link{post_process_mcmc}}.
+##' @param plot_maps_years Vector of years for which maps are desired;
+##'     the full set of maps are produced for each of the years
+##'     listed. These must be in the range of \code{start_year} and
+##'     \code{end_year} passed to \code{\link{post_process_mcmc}}.
 ##' @param adjust_medians Logical. Should adjusted medians outputs be
 ##'     produced in addition to unadjusted outputs?
 ##' @param special_aggregates_name \emph{name} for special aggregates,
@@ -922,7 +923,11 @@ post_process_mcmc <- function(run_name,
 ##'     corresponding file named
 ##'     \file{\code{special_aggregates_name}.csv} must be present in
 ##'     \code{input_data_folder_path}.
-##' @param make_age_ratios
+##' @param make_age_ratios Logical. Should results for age-ratios be
+##'     made? If \code{NULL} this is set based on the presence of
+##'     files \dQuote{res.country.age.ratio.rda} or
+##'     \dQuote{res.country.all.women.age.ratio.rda} in
+##'     \code{output_folder_path}.
 ##' @param validation_keep_all Logical. Should validation results be
 ##'     saved? If \code{TRUE}, a list with elements \code{CI.df} and
 ##'     \code{Error.df} is saved to
@@ -943,9 +948,11 @@ post_process_mcmc <- function(run_name,
 ##' @param unmarried_women_run_name Run name of a unmarried women
 ##'     run. See \code{married_women_run_name}.
 ##' @param married_women_output_folder_path Path to directory
-##'     containing outputs for a married women run. See \code{married_women_run_name}.
+##'     containing outputs for a married women run. See
+##'     \code{married_women_run_name}.
 ##' @param unmarried_women_output_folder_path Path to directory
-##'     containing outputs for a unmarried women run. See \code{married_women_output_folder_path}.
+##'     containing outputs for a unmarried women run. See
+##'     \code{married_women_output_folder_path}.
 ##' @param verbose
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
