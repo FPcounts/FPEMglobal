@@ -676,8 +676,9 @@ GetAggregatesAllWomen <-
                     ,winbugs.data = uwra.mcmc.meta$winbugs.data
                     ,country.info = uwra.country.info
                     ,WRA.csv = WRA.csv
-                    ,return.iso = TRUE,
-                     in_union = 0)
+                    ,return.iso = TRUE
+                   ,in_union = 0
+                    ,verbose = verbose)
         uwra.counts.iso <- uwra.denom.counts.li[[2]]
         uwra.denom.counts.li <- uwra.denom.counts.li[[1]]
 
@@ -707,8 +708,9 @@ GetAggregatesAllWomen <-
                                          ,winbugs.data = mwra.mcmc.meta$winbugs.data
                                          ,country.info = mwra.country.info
                                          ,WRA.csv = WRA.csv
-                                         ,return.iso = TRUE,
-                                         in_union = 1
+                                         ,return.iso = TRUE
+                                        ,in_union = 1
+                                         ,verbose = verbose
                                           )
         mwra.counts.iso <- mwra.denom.counts.li[[2]]
         mwra.denom.counts.li <- mwra.denom.counts.li[[1]]

@@ -377,8 +377,9 @@ ConstructOutputAllWomen <-
                         ,winbugs.data = uwra.mcmc.meta$winbugs.data
                         ,country.info = uwra.c.info
                         ,WRA.csv = WRA.csv
-                        ,return.iso = TRUE,
-                        in_union = 0
+                        ,return.iso = TRUE
+                       ,in_union = 0
+                        ,verbose = verbose
                          )
             uwra.counts.iso <- uwra.denom.counts.li[[2]]
             uwra.denom.counts.li <- uwra.denom.counts.li[[1]]
@@ -449,8 +450,9 @@ ConstructOutputAllWomen <-
                                              ,winbugs.data = mwra.mcmc.meta$winbugs.data
                                              ,country.info = mwra.c.info
                                              ,WRA.csv = WRA.csv
-                                             ,return.iso = TRUE,
-                                             in_union = 1
+                                             ,return.iso = TRUE
+                                            ,in_union = 1
+                                             ,verbose = verbose
                                               )
             mwra.counts.iso <- mwra.denom.counts.li[[2]]
             mwra.denom.counts.li <- mwra.denom.counts.li[[1]]
@@ -1223,8 +1225,9 @@ ConstructAgeRatios <-
                        ,winbugs.data = age.subset.mcmc.meta$winbugs.data
                        ,country.info = age.subset.c.info
                        ,WRA.csv = age.subset.WRA.csv
-                       ,return.iso = TRUE,
-                        in_union = as.numeric(!UWRA)
+                       ,return.iso = TRUE
+                       ,in_union = as.numeric(!UWRA)
+                        ,verbose = verbose
                         )
             age.subset.counts.iso <- age.subset.denom.counts.li[[2]]
             age.subset.denom.counts.li <- age.subset.denom.counts.li[[1]]
@@ -1295,8 +1298,9 @@ ConstructAgeRatios <-
                                                  ,winbugs.data = age.total.mcmc.meta$winbugs.data
                                                  ,country.info = age.total.c.info
                                                  ,WRA.csv = age.total.WRA.csv
-                                                 ,return.iso = TRUE,
-                                                  in_union = as.numeric(!UWRA)
+                                                 ,return.iso = TRUE
+                                                 ,in_union = as.numeric(!UWRA)
+                                                  ,verbose = verbose
                                                   )
             age.total.counts.iso <- age.total.denom.counts.li[[2]]
             age.total.denom.counts.li <- age.total.denom.counts.li[[1]]
