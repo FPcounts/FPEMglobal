@@ -92,13 +92,13 @@ validate_denominator_counts_file <- function(age_group = "15-49",
     for (mg in marital_group) {
         message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
         out_df <- rbind(out_df,
-                        extractDenominators(denominator_counts_csv_filename,
+                        data.frame(extractDenominators(denominator_counts_csv_filename,
                                             in_union =
-                                                as.numeric(sapply(marital_group,
-                                                                  function(z)
-                                                                      switch(z, married = 1, unmarried = 0)))),
+                                                as.numeric(switch(mg, married = 1, unmarried = 0))),
+                                  In.union = as.numeric(switch(mg, married = 1, unmarried = 0))),
                         check.names = FALSE)
     }
+    message("\n\n--------------------\n", rep(" ", 20 - nchar("aggregates")), "aggregates", "\n")
     if (is.character(countries_for_aggregates_csv_filename)) {
         if(!is.null(input_data_folder_path)) {
             countries_for_aggregates_csv_filename <-
@@ -108,7 +108,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
             stop("'countries_for_aggregates_csv_filename' does not exist.")
         countries_for_aggregates <- read.csv(countries_for_aggregates_csv_filename, row.names = NULL)
         isos_not_in_data <-
-            countries_for_aggregates$ISO.Code[!countries_for_aggregates$ISO.Code %in% out_df$ISO.code]
+            unique(countries_for_aggregates$ISO.Code)[!unique(countries_for_aggregates$ISO.Code) %in% out_df$ISO.code]
         if (length(isos_not_in_data))
             stop("ISOs ",
                     toString(isos_not_in_data),
@@ -635,6 +635,16 @@ post_process_mcmc <- function(run_name,
     ## All women run?
     if(is.null(all_women)) all_women <- isTRUE(mcmc.meta$general$all.women.run.copy)
 
+    ## Validate denominators
+    suppressMessages(validate_denominator_counts_file(age_group = NULL,
+                                     input_data_folder_path = NULL,
+                                     denominator_counts_csv_filename = denominator_counts_csv_filename,
+                                     marital_group = switch(mcmc.meta$general$marital.group,
+                                                            "MWRA" = "married",
+                                                            "UWRA" = "unmarried",
+                                                            "AWRA" = c("married", "unmarried")),
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
+
     ## Age ratios
     if(!is.null(age_ratios_age_total_run_name) || !is.null(age_ratios_age_total_output_folder_path)) {
         if(identical(mcmc.meta$general$age.group, "15-49")) {
@@ -936,7 +946,6 @@ post_process_mcmc <- function(run_name,
 ##'     results be returned as a data frame? If \code{FALSE} the
 ##'     function returns the \code{run_name} invisibly as a character
 ##'     string.
-##' @param all_women
 ##' @param married_women_run_name Run name of a married women
 ##'     run. Relevant if \code{\link{make_results}} is being run on an
 ##'     all women run and age ratios for country aggregates are
@@ -2092,6 +2101,16 @@ do_global_run <- function(## Describe the run
                            in_union = which(c("unmarried", "married") == marital_group) - 1)
     }
 
+    ## Validate denominators. Checks that denominators needed for aggregates are present.
+    suppressMessages(validate_denominator_counts_file(age_group = age_group,
+                                     input_data_folder_path = input_data_folder_path,
+                                     denominator_counts_csv_filename = denominator_counts_csv_filename,
+                                     marital_group = switch(marital_group,
+                                                            "MWRA" = "married",
+                                                            "UWRA" = "unmarried",
+                                                            "AWRA" = c("married", "unmarried")),
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
+
     ## If model does not handle missing data must not have missing inputs.
     tmp_model_name <- marital_age_group_param_defaults(marital_group = marital_group,
                                                    age_group = age_group, model_family = "rate",
@@ -2308,7 +2327,7 @@ do_global_run <- function(## Describe the run
 ##' @param unmarried_women_run_data_folder_path Path to the folder
 ##'     containing results for the unmarried women run to be
 ##'     combined. (Only used if \code{special_aggregates_name} is
-##'     non-\code{NULL}.
+##'     non-\code{NULL}).
 ##' @param make_any_aggregates Logical. Should country aggregates of
 ##'     any kind (including default aggregates) be produced?
 ##' @param adjust_medians
@@ -2348,6 +2367,7 @@ do_global_run <- function(## Describe the run
 ##' @export
 combine_runs <- function(## Describe the run
                          run_desc = "",
+                         output_folder_path = NULL,
                          married_women_run_name,
                          married_women_run_output_folder_path = NULL,
                          unmarried_women_run_name,
@@ -2358,7 +2378,6 @@ combine_runs <- function(## Describe the run
                          denominator_counts_csv_filename = NULL,
                          countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
                           countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
-                         output_folder_path = NULL,
                          start_year = 1970.5,
                          end_year = 2030.5,
                          years_change = matrix(c(
@@ -2620,6 +2639,16 @@ combine_runs <- function(## Describe the run
             }
         }
     }
+
+    ##----------------------------------------------------------------------------
+    ## Validate denominators. Checks that denominators needed for aggregates are present.
+    ##----------------------------------------------------------------------------
+
+    suppressMessages(validate_denominator_counts_file(age_group = age_group,
+                                     input_data_folder_path = data_folder_path,
+                                     denominator_counts_csv_filename = denominator_counts_csv_filename,
+                                     marital_group = c("married", "unmarried"),
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
 
     ##--------------------------------------------------------------------------
     ## Construct output for all women
