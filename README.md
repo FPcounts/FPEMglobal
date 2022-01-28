@@ -25,10 +25,10 @@ remotes::install_github("https://github.com/FPcounts/FPEMglobal", build_vignette
 
 ### From the .zip File (Windows Only)
 
-Download the file "FPEMglobal_1.1.0.zip" from the [release page](https://github.com/FPcounts/FPEMglobal/releases/tag/v1.1.0) (click "Assets" if it is not shown). To install, launch _R_ and type:
+Download the file "FPEMglobal_1.2.0.zip" from the [release page](https://github.com/FPcounts/FPEMglobal/releases/tag/v1.2.0) (click "Assets" if it is not shown). To install, launch _R_ and type:
 
 ```
-install.packages("[path/to/FPEMglobal_1.1.0.zip]", repos = NULL)
+install.packages("[path/to/FPEMglobal_1.2.0.zip]", repos = NULL)
 ```
 
 You will need to enter the correct file path to the zip file. You will also need to install any package depencencies according to the notices that come up.
@@ -43,9 +43,9 @@ To install from source try
 3. Issue the following commands:
     ```
 	R CMD build FPEMglobal
-	R CMD INSTALL FPEMglobal_1.1.0.tar.gz
+	R CMD INSTALL FPEMglobal_1.2.0.tar.gz
     ```
-	If you are on Windows and you get an error after a line of output containing "i386" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.1.0.tar.gz`. If that does not work follow the instructions above to install from the .zip file.
+	If you are on Windows and you get an error after a line of output containing "i386" , try `R CMD INSTALL --no-multiarch FPEMglobal_1.2.0.tar.gz`. If that does not work follow the instructions above to install from the .zip file.
 	
 	
 ## Vignette
