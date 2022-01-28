@@ -6,6 +6,7 @@
 \usage{
 combine_runs(
   run_desc = "",
+  output_folder_path = NULL,
   married_women_run_name,
   married_women_run_output_folder_path = NULL,
   unmarried_women_run_name,
@@ -18,7 +19,6 @@ combine_runs(
   denominator_counts_csv_filename = NULL,
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
   countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
-  output_folder_path = NULL,
   start_year = 1970.5,
   end_year = 2030.5,
   years_change = matrix(c(1990.5, 2000.5, 2000.5, 2019.5, 2019.5, 2030.5, 2012.5,
@@ -45,6 +45,10 @@ combine_runs(
 auto-generated \code{run_name}. Ignored if
 \code{run_name_override} is non-\code{NULL}.}
 
+\item{output_folder_path}{Filepath to directory where outputs
+should be saved. If \code{NULL}, defaults to
+\code{file.path("output", run_name)}.}
+
 \item{married_women_run_name}{Run name of the married women run to
 be combined. Ignored if
 \code{married_women_run_output_folder_path} is
@@ -63,7 +67,7 @@ containing results for the unmarried women run to be combined.}
 \item{unmarried_women_run_data_folder_path}{Path to the folder
 containing results for the unmarried women run to be
 combined. (Only used if \code{special_aggregates_name} is
-non-\code{NULL}.}
+non-\code{NULL}).}
 
 \item{region_information_csv_filename}{Filename of the \file{.csv}
 file containing classifications of countries in sub-regions,
@@ -89,10 +93,6 @@ country-level indicator plots. See \code{\link{make_results}}
 for further details. \code{combine_runs} will copy this file
 to \file{\code{output_folder_path}/data} so it is available
 for \code{make_results}.}
-
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
 
 \item{start_year}{Estimates and projections are produced for a
 specified time interval. This is the start year of that
