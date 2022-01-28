@@ -118,7 +118,7 @@ in parallel. Parallel running requires package
 #endif
 #ifndef windows
 
-\pkg{doMC}.
+\pkg{doParallel} or \pkg{doMC}.
 #endif
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}

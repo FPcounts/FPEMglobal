@@ -4,6 +4,53 @@
 ###
 ################################################################################
 
+##' Validate input file for a global run of FPEM
+##'
+##' The main input file for \code{\link{do_global_run}} and friends
+##' must meet certain requirements to be valid. These include correct
+##' column names and valid cell values. This function can be used to
+##' check that a candidate \file{.csv} files satisfies these
+##' requirements.
+##'
+##' See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
+##'
+##' @inheritParams do_global_mcmc
+##' @return The processed input file is returned \emph{invisibly} as a data frame.
+##' @author Mark Wheldon
+##' @export
+validate_input_file <- function(age_group = "15-49",
+                                input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
+                                data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
+                                marital_group = c("married", "unmarried")) {
+
+    if(!is.null(input_data_folder_path)) {
+        data_csv_filename <- file.path(input_data_folder_path, data_csv_filename)
+    }
+    if(!file.exists(data_csv_filename)) stop("'data_csv_filename' does not exist.")
+
+    model_family <- "rate"
+    model_name <- NULL
+
+    marital_group <- match.arg(marital_group, several.ok = TRUE)
+
+    out_df <- data.frame()
+    for (mg in marital_group) {
+        message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
+
+        marital_group_param_set <-
+            marital_age_group_param_defaults(marital_group = mg, age_group, model_family,
+                                             model_name)
+        out_df <- rbind(out_df,
+                        PreprocessData(data.csv = data_csv_filename,
+                                       write.model.fun = marital_group_param_set$write_model_fun,
+                                       print.messages = TRUE,
+                                       print.warnings = TRUE,
+                                       return.processed.data.frame = TRUE,
+                                       marital.group = switch(mg, "married" = "MWRA", "unmarried" = "UWRA")))
+    }
+    return(invisible(out_df))
+}
+
 
 ##' Generate MCMC chains for global run of FPEM
 ##'
@@ -54,7 +101,7 @@
 ##' #endif
 ##' #ifndef windows
 ##'
-##' \pkg{doMC}.
+##' \pkg{doParallel} or \pkg{doMC}.
 ##' #endif
 ##' Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 ##' is not available.
@@ -160,12 +207,26 @@ do_global_mcmc <- function(run_desc = "",
             message("Running with ", foreach::getDoParWorkers(), " core(s)")
         } else {
             if (requireNamespace("doParallel", quietly = TRUE)) {
-                cl <- parallel::makeCluster(min(parallel::detectCores(), length(chain_nums)))
+                conn_tries <- 0
+                ## Try to handle non-stoppage of older clusters that might have used up all available cores.
+                while(conn_tries < 5) {
+                    conn_tries <- conn_tries + 1
+                    try_cl <- try(cl <- parallel::makeCluster(min(parallel::detectCores(), length(chain_nums))))
+                    if (identical(class(try_cl), "try-error")) {
+                        message("'parallel::makeCluster' failed at try ", conn_tries, " of 5:\n\t",
+                                paste(try_cl), "\n\n")
+                        if (conn_tries < 5) {
+                            message("Date-time is ", format(System.time()), "\n",
+                                    "Sleeping for 30 minutes; will retry at ", format(System.time()) + (30 * 60))
+                        }
+                        else message("Tried 5 times; quitting.")
+                    } else break()
+                }
                 doParallel::registerDoParallel(cl)
-                on.exit(parallel::stopCluster(cl), add = TRUE)
+                on.exit(try(parallel::stopCluster(cl), silent = TRUE), add = TRUE)
                 message("Running with ", foreach::getDoParWorkers(), " core(s)")
             } else {
-                warning("Package 'doMC' not installed; chains will be run in serial.")
+                warning("Package 'doParallel' not installed; chains will be run in serial.")
             }
         }
     }
@@ -828,8 +889,13 @@ make_results <- function(run_name,
         countries_in_CI_plots_csv_filename <-
             file.path(input_data_folder_path, countries_in_CI_plots_csv_filename)
     }
-    if(!file.exists(countries_in_CI_plots_csv_filename))
-        stop("can't find ", countries_in_CI_plots_csv_filename)
+    if(!file.exists(countries_in_CI_plots_csv_filename)) {
+        msg <- paste0("can't find 'countries_in_CI_plots_csv_filename' (",
+                      countries_in_CI_plots_csv_filename, ")")
+        if (all_women)
+            msg <- paste0(msg, ". Has it been copied from the married or unmarried output's 'data' directory?")
+        stop(msg)
+        }
 
     ## Years to plot
     if(any(sapply(list(plot_barchart_years, plot_CI_changes_years, plot_maps_years),
@@ -1835,6 +1901,9 @@ do_global_run <- function(## Describe the run
     ##-----------------------------------------------------------------------------
     ## Set-up
 
+    if (identical(length(chain_nums), 1L))
+        message("Only a single chain has been requested; post-processing will *not* be done and results will *not* be produced.")
+
     marital_group <- match.arg(marital_group)
 
     if(!is.null(run_name_override)) run_name <- run_name_override
@@ -1857,7 +1926,8 @@ do_global_run <- function(## Describe the run
 
     if((is.null(plot_maps_shapefile_folder) && !is.null(plot_maps_years)) ||
        (!is.null(plot_maps_shapefile_folder) && is.null(plot_maps_years))) {
-        warning("Both 'plot_maps_shapefile_folder' and 'plot_maps_years' must be supplied to produced maps.")
+        message("Both 'plot_maps_shapefile_folder' and 'plot_maps_years' must be supplied to produced maps. Maps will *not* be produced.")
+        warning("Maps not produced.")
 
     } else {
 
@@ -1868,7 +1938,8 @@ do_global_run <- function(## Describe the run
                  requireNamespace("rgdal", quietly = TRUE) &&
                  requireNamespace("RColorBrewer", quietly = TRUE))) {
                 plot_maps <- FALSE
-                warning("Packages 'RColorBrewer', 'sp' and 'rgdal' are required to produce maps but at least some are not installed. Maps are not produced.")
+                message("Packages 'RColorBrewer', 'sp' and 'rgdal' are required to produce maps but at least some are not installed. Maps will *not* be produced.")
+                warning("Maps not produced.")
             }
         }
         if(plot_maps) {
@@ -1939,6 +2010,19 @@ do_global_run <- function(## Describe the run
                        output_folder_path = output_folder_path,
                        include_AR = include_AR,
                        verbose = verbose)
+
+    ##-----------------------------------------------------------------------------
+    ## STOP if only one chain
+
+    if (identical(length(chain_nums), 1L)) {
+        warning("Post-processing and results *not* available with a single chain.")
+        return(invisible())
+    }
+
+    ##
+    ##-----------------------------------------------------------------------------
+
+    ## More than one chain >> continue >>
 
     ##-----------------------------------------------------------------------------
     ## Post-Process
@@ -2024,7 +2108,8 @@ do_global_run <- function(## Describe the run
 ##'     containing results for the married women run to be combined.
 ##' @param unmarried_women_run_output_folder_path Path to the folder
 ##'     containing results for the unmarried women run to be combined.
-##' @param unmarried_women_run_name Same as \code{married_women_run_name} but for the unmarried women run.
+##' @param unmarried_women_run_name Same as
+##'     \code{married_women_run_name} but for the unmarried women run.
 ##' @param unmarried_women_run_data_folder_path Path to the folder
 ##'     containing results for the unmarried women run to be
 ##'     combined. (Only used if \code{special_aggregates_name} is
@@ -2032,6 +2117,12 @@ do_global_run <- function(## Describe the run
 ##' @param make_any_aggregates Logical. Should country aggregates of
 ##'     any kind (including default aggregates) be produced?
 ##' @param adjust_medians
+##' @param countries_in_CI_plots_csv_filename Name of \file{.csv} file
+##'     that lists the countries to be included in the main
+##'     country-level indicator plots. See \code{\link{make_results}}
+##'     for further details. \code{combine_runs} will copy this file
+##'     to \file{\code{output_folder_path}/data} so it is available
+##'     for \code{make_results}.
 ##' @param age_ratios_age_total_unmarried_run_name Run name of the
 ##'     unmarried 15--49 run to use as the denominator for age ratios.
 ##' @param age_ratios_age_total_married_run_name Run name of the
@@ -2071,6 +2162,7 @@ combine_runs <- function(## Describe the run
                          special_aggregates_name = NULL,
                          denominator_counts_csv_filename = NULL,
                          countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                          output_folder_path = NULL,
                          start_year = 1970.5,
                          end_year = 2030.5,
@@ -2203,7 +2295,7 @@ combine_runs <- function(## Describe the run
     }
 
     ##---------------------------------------------------------------------
-    ## Save the values of function arguments for making results
+    ## Save the values of function arguments for make_results()
     ##----------------------------------------------------------------------------
 
     combine_runs_args <- mget(names(formals(combine_runs)))
@@ -2230,6 +2322,11 @@ combine_runs <- function(## Describe the run
     }
     if(!is.null(countries_for_aggregates_csv_filename)) {
         copy_uwra_mwra_files(countries_for_aggregates_csv_filename,
+                             data_folder_path,
+                             file.path(unmarried_women_run_output_folder_path, "data"))
+    }
+    if(!is.null(countries_in_CI_plots_csv_filename)) {
+        copy_uwra_mwra_files(countries_in_CI_plots_csv_filename,
                              data_folder_path,
                              file.path(unmarried_women_run_output_folder_path, "data"))
     }
@@ -2491,6 +2588,14 @@ combine_runs <- function(## Describe the run
 ##' See \code{system.file("extdata", "country_and_area_classification.csv")} for
 ##' how the country classification file should be formatted. Assume all columns
 ##' are required.
+##'
+##' Typical values of the \acronym{MCMC} control parameters for a
+##' \dQuote{full} model run are: \describe{
+##' \item{\code{estimation_iterations}}{\code{ceiling(5e5 / \var{nchains})}, where \var{nchains} is the number of chains (i.e., \code{length(chain_nums)}).}
+##' \item{\code{burn_in_iterations}}{2e4}
+##' \item{\code{thinning}}{30}
+##' }
+##'
 ##' @param denominator_counts_csv_filename File path. Filepath to \file{.csv}
 ##'     file with denominator counts (married and unmarried) for this
 ##'     \code{age_group}. If \code{NULL}, defaults to \code{paste0("women_",
@@ -2567,6 +2672,10 @@ do_global_all_women_run <- function(## Describe the run
 
     ##---------------------------------------------------------------------
     ## Run Names with Common Time Stamp
+
+    if (identical(length(chain_nums), 1L)) {
+        message("Only a single chain has been requested; all women results will *not* be created.")
+    }
 
     systime <- format(Sys.time(), "%y%m%d_%H%M%S")
 
@@ -2783,6 +2892,19 @@ do_global_all_women_run <- function(## Describe the run
                               model_diagnostics = model_diagnostics,
             include_AR = include_AR,
             verbose = verbose)
+
+    ##-----------------------------------------------------------------------------
+    ## STOP if only one chain
+
+    if (identical(length(chain_nums), 1L)) {
+        warning("All women results *not* available with a single chain.")
+        return(invisible())
+    }
+
+    ##
+    ##-----------------------------------------------------------------------------
+
+    ## More than one chain >> continue >>
 
     ## --------------------------------------------------------------------
     ## All Women
@@ -3345,19 +3467,19 @@ rename_global_run <- function(run_name,
     ## Functions
 
     crawl_and_rename <- function(dir_path, run_name = run_name,
-                             new_run_name = new_run_name, ignore = ignore) {
-        info <- file.info(dir(dir_path, full.names = TRUE) #<need this
-                          )
-        for(i in 1:nrow(info)) {
-            fn <- basename(rownames(info)[i])
-            if(info[i, "isdir"]) {
-                crawl_and_rename(dir_path = file.path(dir_path, fn),
-                             run_name = run_name,
-                             new_run_name = new_run_name,
-                             ignore = ignore)
-            }
-            ## should still rename subdirectories (except 'ignore') so no 'else'.
-            if(grepl(run_name, fn, fixed = TRUE) && !grepl(pattern = ignore, x = fn)) {
+                                 new_run_name = new_run_name, ignore = ignore) {
+        info <- file.info(dir(dir_path, full.names = TRUE))
+        if (nrow(info)) {
+            for(i in 1:nrow(info)) {
+                fn <- basename(rownames(info)[i])
+                if(info[i, "isdir"]) {
+                    crawl_and_rename(dir_path = file.path(dir_path, fn),
+                                     run_name = run_name,
+                                     new_run_name = new_run_name,
+                                     ignore = ignore)
+                }
+                ## should still rename subdirectories (except 'ignore') so no 'else'.
+                if(grepl(run_name, fn, fixed = TRUE) && !grepl(pattern = ignore, x = fn)) {
                     new_fn <- gsub(run_name, new_run_name, fn, fixed = TRUE)
                     check <-
                         try(file.rename(from = file.path(dir_path, fn),
@@ -3366,6 +3488,7 @@ rename_global_run <- function(run_name,
                         warning("'", x,
                                 "' was unable to be renamed. 'file.rename' returned: ",
                                 paste(check))
+                }
             }
         }
     }
@@ -3377,8 +3500,16 @@ rename_global_run <- function(run_name,
     global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
     if(file.exists(global_args_fn)) {
         load(global_args_fn)
-        global_mcmc_args$run_desc <- ""
-        global_mcmc_args$run_name_override <- new_run_name
+        global_mcmc_args$renamed <- TRUE
+        global_mcmc_args$rename_list <- c(new_run_name, global_mcmc_args$rename_list)
+        save(global_mcmc_args, file = global_args_fn)
+    }
+    combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
+    if(file.exists(combine_args_fn)) {
+        load(combine_args_fn)
+        combine_runs_args$renamed <- TRUE
+        combine_runs_args$rename_list <- c(new_run_name, combine_runs_args$rename_list)
+        save(combine_runs_args, file = combine_args_fn)
     }
 
     crawl_and_rename(output_folder_path, run_name, new_run_name, ignore = ignore)
@@ -3387,3 +3518,105 @@ rename_global_run <- function(run_name,
 
 }
 
+
+##' Compare two global runs by plotting
+##'
+##' Generates \dQuote{CI} (credible interval) line plots that compare
+##' the results of two global model runs. Country- and aggregate-level
+##' (if \code{compare_aggregates} is \code{TRUE}) plots are available.
+##'
+##' @param run_1_name The name of the first run to compare.
+##' @param run_2_name The name of the second run to compare.
+##' @param run_1_output_folder_path Filepath to directory where
+##'     outputs for \code{run_1_name} are saved.
+##' @param run_1_plot_label The label to use for \dQuote{run_1} in the
+##'     plots. Defaults to \code{run_1_name}.
+##' @param run_2_output_folder_path See
+##'     \code{run_1_output_folder_path}, but for \dQuote{run_2}.
+##' @param run_2_plot_label See \code{run_2_plot_label}, but for
+##'     \dQuote{run_2}.
+##' @param output_folder_path Filepath to the directory in which the
+##'     comparison plots will be saved.
+##' @param plot_data Logical; should available input data be plotted?
+##'     Defaults to \code{TRUE} unless either \code{all_women} is
+##'     \code{TRUE} or \dQuote{run_1} and \dQuote{run_2} are from
+##'     different marital groups.
+##' @param all_women Logical; is the run an all women run such as the
+##'     kind produced by \code{\link{combine_runs}} or
+##'     \code{\link{do_global_all_women_run}}? If \code{NULL} an
+##'     attempt is made to determine this automatically from
+##'     \file{mcmc.meta.rda} in the output folder of
+##'     \dQuote{run_1}. Note that either both or neither must be
+##'     either all women runs.
+##' @param compare_aggregates Logical; should comparison plots be made
+##'     for the aggregates as well as the countries? If \code{FALSE}
+##'     only plots for countries are produced.
+##' @return Called for the side effect of producing plots.
+##' @author Mark Wheldon (wrapper) based on underlying function by Jin
+##'     Rou New and Leontine Alkema.
+##' @seealso \code{\link{compare_runs_fishbone_plots}}.
+##' @export
+compare_runs_CI_plots <- function(run_name_1, run_name_2,
+                               run_1_output_folder_path = file.path("output", run_name_1),
+                               run_1_plot_label = run_name_1,
+                               run_2_output_folder_path = file.path("output", run_name_2),
+                               run_2_plot_label = run_name_2,
+                               output_folder_path = file.path(run_1_output_folder_path, "fig", "compare_runs_plots"),
+                               plot_data = NULL,
+                               all_women = NULL,
+                               compare_aggregates = TRUE) {
+
+    message("Plotting comparison of ", run_name_1, " and ", run_name_2)
+
+    ##----------------------------------------------------------------------------
+    ## Meta Info
+
+    load(file.path(run_1_output_folder_path, "mcmc.meta.rda"))
+    run_1_mcmc_meta <- mcmc.meta
+
+    load(file.path(run_2_output_folder_path, "mcmc.meta.rda"))
+    run_2_mcmc_meta <- mcmc.meta
+
+    ## All women run?
+    if (!identical(run_1_mcmc_meta$general$all.women.run.copy,
+                   run_2_mcmc_meta$general$all.women.run.copy))
+        stop("Both runs must be either 'all women' runs or not.")
+    if (!is.logical(all_women)) all_women <- isTRUE(run_1_mcmc_meta$general$all.women.run.copy)
+
+    ##----------------------------------------------------------------------------
+    ## Set values
+
+    ## Directories
+    if (!dir.exists(output_folder_path)) stopifnot(dir.create(output_folder_path))
+
+    ## Marital group
+    if (!all_women && identical(run_1_mcmc_meta$general$marital.group,
+                                run_2_mcmc_meta$general$marital.group))
+        UWRA <- identical(run_1_mcmc_meta$general$marital.group, "UWRA")
+    else UWRA <- FALSE
+
+
+    ## Plot data?
+    if (!is.logical(plot_data)) {
+        if (all_women || !identical(run_1_mcmc_meta$general$marital.group,
+                                    run_2_mcmc_meta$general$marital.group)) plot_data <- FALSE
+        else plot_data <- TRUE
+    } else if (plot_data && !identical(run_1_mcmc_meta$general$marital.group,
+                                       run_2_mcmc_meta$general$marital.group)) {
+        message("Data from 'run_1' ('", run_name_1, "') will be plotted.")
+        warning("Plots will be labelled as 'married' women results.")
+    }
+
+    ##----------------------------------------------------------------------------
+    ## Plots
+
+    PlotComparison(run.name2 = run_2_plot_label,
+                   output.dir2 = paste0(run_2_output_folder_path, "/"),
+                   run.name = run_1_plot_label,
+                   output.dir = paste0(run_1_output_folder_path, "/"),
+                   fig.dir = output_folder_path,
+                   plot.for.aggregates = compare_aggregates,
+                   all.women = all_women,
+                   UWRA = UWRA,
+                   plot_data = plot_data)
+}

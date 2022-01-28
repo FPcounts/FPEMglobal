@@ -34,7 +34,8 @@ PlotComparison <- function(# Plot lots of results!
   ymin.at.0 = TRUE, ##<< Set lower bound on y-axis at 0?
   ymax.at.100 = TRUE, ##<< Set upper bound on y-axis at percent = 100%? Only applies if plot.prop is TRUE.
   UWRA = FALSE,
-  all.women = FALSE
+  all.women = FALSE,
+  plot_data = TRUE
   ){
 
     res_rda_filename <- function(output_dir, all_women) {
@@ -214,7 +215,7 @@ PlotComparison <- function(# Plot lots of results!
         mcmc.meta$data.raw$country.info <- country.info
     } else country.info <- mcmc.meta$data.raw$country.info
 
-    if(all.women) {
+    if(all.women || isFALSE(plot_data)) {
         plotDE.data.raw <- NULL
         plotDE.country.info <- country.info
     }  else {

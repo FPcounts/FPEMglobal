@@ -1,8 +1,8 @@
 Package: FPEMglobal
 Type: Package
 Title: Estimation of Contraceptive Use for All Women
-Version: 1.1.0
-Date: 2020-05-21
+Version: 1.2.0
+Date: 2021-02-15
 Authors@R: c(person("Mark", "Wheldon", email = "wheldon@un.org", role = c("aut", "cre")),
              person("Jin Rou", "New", email = "lalkema@schoolph.umass.edu", role = "aut"),
              person("Niamh", "Cahill", email = "niamh.cahill@ucd.ie", role = "aut"), 
@@ -41,7 +41,6 @@ Imports:
     scales,
     xtable
 Suggests:
-    doMC,
     doParallel,
     sp,
     rgdal,
@@ -49,6 +48,6 @@ Suggests:
     rmarkdown,
     bookdown
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 GitHubSHA1LastCommit: -
