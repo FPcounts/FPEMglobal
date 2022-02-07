@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## set global chunk options
+ ## set global chunk options
 options(formatR.arrow=TRUE,width=80)
 ```
 
@@ -87,7 +87,7 @@ For full all women runs done by `do_global_all_women_run`, the date-time part of
 More than one MCMC chain is required per run. This is controlled by the argument `chain_nums` which is passed to the `do_...` functions. This must be a sequence, not a single number. For example, if two chains are wanted, write `chain_nums = 1:2`; if four are wanted, write `chain_nums = 1:4`^[The _R_ syntax '`1:4`' is short-hand for `1 2 3 4`.]:
 
 ```{r chain-nums-ex, echo = TRUE, results = "hide", eval = FALSE, tidy=FALSE}
-## Example use of 'chain_nums' argument 
+ ## Example use of 'chain_nums' argument 
 
 do_global_all_women_run(...,    #other arguments
                         chain_nums = 1:4,
@@ -98,7 +98,7 @@ do_global_all_women_run(...,    #other arguments
 Each chain can take several hours (even days) so it is quicker to run as many of them as possible in parallel. You gain speed by running up to as many chains in parallel as there are cores on your computer. To use parallel running you must install the package [_doParallel_](https://cran.r-project.org/package=doParallel) [@corporation2017] on _Windows_, or  [_doMC_](https://cran.r-project.org/package=doMC) [@calaway2017], on _MacOS_ and _UNIX_/_Linux_. Parallel processing is controlled by the argument `run_in_parallel`. It is set to `TRUE` by default, however if you do not have `doParallel` or `doMC` installed, the package will automatically switch to running the chains in serial.
 
 ```{r run-in-parallel-ex, echo = TRUE, results = "hide", eval = FALSE, tidy=FALSE}
-## Example use of 'run_in_parallel' argument 
+ ## Example use of 'run_in_parallel' argument 
 
 do_global_all_women_run(...,    #other arguments
                         chain_nums = 1:4,
@@ -181,12 +181,12 @@ To list all data files included with the package use the following code:
 New input files can be validated using the `validate_input_file` function. By default, the input file included with the package will be validated. 
 
 ```{r validate-input-file, echo = TRUE, eval = TRUE}
-## Make sure you attach the package !!
+ ## Make sure you attach the package !!
  library(FPEMglobal)
 
-## By default, the input file included with the package will be
-## validated. Change 'input_data_folder_path' and 'data_csv_filename'
-## to validate a user-supplied file.
+ ## By default, the input file included with the package will be
+ ## validated. Change 'input_data_folder_path' and 'data_csv_filename'
+ ## to validate a user-supplied file.
 validate_input_file(marital_group = c("married", "unmarried")) # Both will be checked by default
 ```
 
@@ -342,9 +342,9 @@ all_women_run_name <- combine_runs(
     unmarried_women_run_output_folder_path = file.path("output", unmarried_run_name),
     )
 
-## See the run name
-## !! This time, not the same date-time as married_run_name or
-## !! unmarried_run_name.
+ ## See the run name
+ ## !! This time, not the same date-time as married_run_name or
+ ## !! unmarried_run_name.
  all_women_run_name
  
  make_results(all_women_run_name)
@@ -424,11 +424,9 @@ In the following sections two additional types of outputs are discussed: special
 
 ## Special Aggregates 
  
-Custom country aggregates can be requested if the ones produced by default are not adequate. Use the argument `special_aggregates_name`. This must be a name for the aggregate that can be used in the filenames of the output plots and tables. There must be a corresponding '.csv' file with the _same name_ as the aggregates describing the grouping of countries. It must have two columns: 'iso.country', and 'groupname'.  `special_aggregates_name` can be passed to `do_global_all_women_run` or `do_global_run` if a new run is being done. If a run has completed and special aggregates are desired, you must pass `special_aggregates_name` to `post_process_mcmc` and run it again on the output directory first, then run `make_results` (pass `special_aggregates_name` to `make_results` as well).
+Custom country aggregates can be requested if the ones produced by default are not adequate. Use the argument `special_aggregates_name`. This must be a name for the aggregate that can be used in the filenames of the output plots and tables. There must be a '.csv' file for each aggregate requested, each file having the _same name_ as the aggregate. 
 
-The special aggregates '.csv' file must be in the same directory as all other input files and you must declare this directory using the argument `input_data_folder_path`. You can specify more than one '.csv' it there are multiple aggregation schemes you need results for.
-
-The first seven rows of a table that should be supplied to obtain special country aggregates are shown below. The first column ('A') lists country ISO codes, the second ('B') lists the group they belong to. The file should contain each ISO code only once and should be saved in '.csv' format.
+A '.csv' file describing an aggregate must have two columns: 'iso.country', and 'groupname'. As an example, the first seven rows of such a table are shown below. The first column ('A') lists country ISO codes, the second ('B') lists the group they belong to. The file should contain each ISO code only once and should be saved in '.csv' format.
 
 |   |           A | B                     |
 |---+-------------+-----------------------|
@@ -440,6 +438,11 @@ The first seven rows of a table that should be supplied to obtain special countr
 | 6 |          24 | Africa                |
 | 7 |          28 | Americas              |
 |   |      ...etc | ...etc                |
+
+
+### Aggregates in a New Run
+
+`special_aggregates_name` can be passed to `do_global_all_women_run` or `do_global_run`. The '.csv' file(s) describing the aggregate must be in the folder pointed to by the argument `input_data_folder_path`. You can specify more than one '.csv' it there are multiple aggregation schemes you need results for.
 
 The code below illustrates how special aggregates for the WHO regions can be requested. The package comes with the file 'WHO_regions.csv' (access this with `system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")`) which defines WB country aggregates. The name of the aggregate to be passed to the functions is "WHO_regions".
 
@@ -464,6 +467,13 @@ The code below illustrates how special aggregates for the WHO regions can be req
      )
  
 ``` 
+
+
+### Adding Aggregates to an Existing Run
+
+If a run has completed and special aggregates are desired, you must pass `special_aggregates_name` to `post_process_mcmc` and post process the output directory again, and then re-run `make_results`. If you want to add aggregates for age ratios to an all women run you will also need to run `combine_runs`. Pass `special_aggregates_name` to `make_results` and, if applicable, `combine_runs` as well. Aggregates are based on the files stored in the 'countrytrajectories' directory inside the run directory. If you are adding aggregates to an all women run and you have deleted this directory you _will_ need to delete the entire all women directory and recreate it by running `combine_runs`. Use the argument `run_name_override` to specify the name of the all women output directory. 
+
+Note that the default value for `input_data_folder_path` in `post_process_mcmc` is the 'data' directory inside the run directory. For example, if the completed run is 'myrun_all_women', the default is 'myrun_all_women/data' directory. It is recommended to copy the aggregate '.csv' file(s) to this directory, rather than change the value of `input_data_folder_path`. 
 
 To add special aggregates to a completed run see the example at the end of the next section. You can omit the adjusted medians in that example if you do not want them. 
 
@@ -503,8 +513,8 @@ To get adjusted medians for a completed married or unmarried women run you must 
 To get adjusted medians for all women, you must first create them for the married and unmarried runs, re-run `combine_runs` with `adjust_medians = TRUE`, and finally re-generate the all women results with `make_results(..., all_women = TRUE)`.
 
 ```{r adjust-medians-finished-run, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
-## Add adjusted medians to a completed run (note that all plots and tables will be
-## recreated). 
+ ## Add adjusted medians to a completed run (note that all plots and tables will be
+ ## recreated). 
  
 make_results(all_women_runs$married_run_name,     #<<< Give the run name
              ## Adjust medians
@@ -516,9 +526,9 @@ make_results(all_women_runs$unmarried_run_name,     #<<< Give the run name
              adjust_medians = TRUE
              )
 
-## All women
-## You must re-run `combine_runs(..., adjust_medians = TRUE)`. 
-## Use 'run_name_override' to get them in the existing output folder.
+ ## All women
+ ## You must re-run `combine_runs(..., adjust_medians = TRUE)`. 
+ ## Use 'run_name_override' to get them in the existing output folder.
 all_women_adj_med <-
     combine_runs(married_women_run_output_folder_path = file.path("output",
                      all_women_runs$married_run_name),  
@@ -527,7 +537,7 @@ all_women_adj_med <-
              run_name_override = all_women_runs$all_women_run_name,
              adjust_medians = TRUE)
 
-## The same
+ ## The same
 all_women_adj_med
 all_women_runs$all_women_run_name
         
@@ -543,10 +553,10 @@ You can also get adjusted medians for special aggregates. Remember to run `post_
 
 ```{r adjust-medians-all-women-spec-aggs, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
 
-## Adjusted medians married and unmarried.
-## The special aggregates file will be searched for in
-## 'output/[run-name]/data'. Either copy it there or specify the
-## location.
+ ## Adjusted medians married and unmarried.
+ ## The special aggregates file will be searched for in
+ ## 'output/[run-name]/data'. Either copy it there or specify the
+ ## location.
 post_process_mcmc(all_women_runs$married_run_name,
                   input_data_folder_path = system.file("extdata", package = "FPEMglobal"), 
              special_aggregates_name = "WHO_regions")
@@ -562,12 +572,12 @@ make_results(all_women_runs$unmarried_run_name,
              adjust_medians = TRUE)
 
 
-## Add adjusted medians to a completed run with special aggregates (note that
-## all plots and tables will be recreated).
+ ## Add adjusted medians to a completed run with special aggregates (note that
+ ## all plots and tables will be recreated).
 
-## You must re-run `combine_runs()`
-## Use 'run_name_override' to get them in the existing output folder,
-## otherwise a new folder for all women will be created.
+ ## You must re-run `combine_runs()`
+ ## Use 'run_name_override' to get them in the existing output folder,
+ ## otherwise a new folder for all women will be created.
 
 all_women_spec_agg <-
     combine_runs(married_women_run_output_folder_path = file.path("output",

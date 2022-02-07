@@ -1232,7 +1232,7 @@ make_results <- function(run_name,
                                            )
 
         ## LOG
-        msg <- paste0("Finihsed making results for run ", run_name)
+        msg <- paste0("Finished making results for run ", run_name)
         message(msg)
         cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
             msg,
@@ -1967,7 +1967,7 @@ make_results <- function(run_name,
         ## Log
         ##----------------------------------------------------------------------------
 
-        msg <- paste0("Finihsed making results for run ", run_name)
+        msg <- paste0("Finished making results for run ", run_name)
         message(msg)
         cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
             msg,
