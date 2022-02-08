@@ -256,7 +256,37 @@ PlotComparison <- function(# Plot lots of results!
         plotDE.country.info <- NULL
     }
 
-    debug(PlotDataAndEstimates)
+    ## Exclude country data not common to all revisions being compared: ---
+
+    plotDE.data.raw$data <- plotDE.data.raw$data[plotDE.data.raw$data$iso.j %in% iso.in.all,]
+
+    plotDE.data.raw$country.info <-
+        plotDE.data.raw$country.info[plotDE.data.raw$country.info$iso.c %in% iso.in.all,]
+
+    if (!is.null(plotDE.data.raw$country.info.no.data)) {
+        plotDE.data.raw$country.info.no.data <-
+            plotDE.data.raw$country.info.no.data[plotDE.data.raw$country.info.no.data$iso.c %in% iso.in.all,]
+    }
+
+    plotDE.data.raw$se.info.j$se.logR.trad.impute <-
+        plotDE.data.raw$se.info.j$se.logR.trad.impute[plotDE.data.raw$data$iso.j %in% iso.in.all]
+    plotDE.data.raw$se.info.j$se.logR.modern.impute <-
+        plotDE.data.raw$se.info.j$se.logR.modern.impute[plotDE.data.raw$data$iso.j %in% iso.in.all]
+    plotDE.data.raw$se.info.j$se.logR.unmet.impute <-
+        plotDE.data.raw$se.info.j$se.logR.unmet.impute[plotDE.data.raw$data$iso.j %in% iso.in.all]
+
+    plotDE.data.raw$input.order.c <-
+        plotDE.data.raw$input.order.c[plotDE.data.raw$country.info$iso.c %in% iso.in.all]
+
+    plotDE.data.raw$getj.training.k <-
+        plotDE.data.raw$getj.training.k[plotDE.data.raw$data$iso.j %in% iso.in.all]
+
+    if (!is.null(plotDE.country.info)) {
+        plotDE.country.info <- plotDE.country.info[plotDE.country.info$iso.c %in% iso.in.all,]
+    }
+
+    ## ---
+
     PlotDataAndEstimates(data.raw = plotDE.data.raw,
                          country.info = plotDE.country.info,
                        CI.Lg.Lcat.qt = res.country$CIprop.Lg.Lcat.qt,
