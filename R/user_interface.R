@@ -472,12 +472,13 @@ add_global_mcmc <- function(run_name,
 
 ##' Post process MCMC chains from a global run of FPEM
 ##'
-##' MCMC chains from a global run of FPEM (via
-##' \code{\link{do_global_mcmc}}) must be
-##' post-processed before summary results (tables, plots) can be produced. This
-##' function does the post-processing and saves the results in
-##' \code{output_folder_path}. You need at least two chains for post-processing
-##' to work.
+##' MCMC chains from a global run of FPEM for either married or
+##' unmarried women (via \code{\link{do_global_mcmc}}) must be
+##' post-processed before summary results (tables, plots) can be
+##' produced. This function does the post-processing and saves the
+##' results in \code{output_folder_path}. You need at least two chains
+##' for post-processing to work. This function does not apply to all
+##' women runs; see \code{\link{combine_runs}}.
 ##'
 ##' The counts of women by marital status, age, and year in
 ##' \code{denominator_counts_csv_filename} are used to convert prevalence
@@ -544,11 +545,6 @@ add_global_mcmc <- function(run_name,
 ##'     \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 ##'     \code{NULL}, defaults to
 ##'     \code{file.path(age_ratios_age_total_output_folder_path, "data")}.
-##' @param all_women Logical; is the run an all women run such as the
-##'     kind produced by \code{\link{combine_runs}} or
-##'     \code{\link{do_global_all_women_run}}? If \code{NULL} an
-##'     attempt is made to determine this automatically from
-##'     \file{mcmc.meta.rda} in the output folder of the run.
 ##' @inheritParams do_global_mcmc
 ##' @return The run name (invisibly). The function is mainly called
 ##'     for its side effects.
@@ -591,7 +587,6 @@ post_process_mcmc <- function(run_name,
                               age_ratios_age_total_output_folder_path = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
-                              all_women = NULL,
                               verbose = FALSE) {
 
     msg <- paste0("Post-processing run ", run_name)
@@ -633,7 +628,10 @@ post_process_mcmc <- function(run_name,
         stop("can't find ", denominator_counts_csv_filename)
 
     ## All women run?
-    if(is.null(all_women)) all_women <- isTRUE(mcmc.meta$general$all.women.run.copy)
+    if(isTRUE(mcmc.meta$general$all.women.run.copy)) {
+        warning("'post_process_mcmc' was called on results for all women. This function only applies to runs for married or unmarried women. Did you mean to call 'combine_runs'?. Exiting .. ")
+        return(invisible())
+    }
 
     ## Validate denominators
     suppressMessages(validate_denominator_counts_file(age_group = NULL,
@@ -758,26 +756,24 @@ post_process_mcmc <- function(run_name,
 
             message("\nMaking aggregates for ", name.agg, " from ", file.agg, ".")
 
-            if(!all_women) {
-                res.new <- GetAggregates(run.name = run_name,
-                                         output.dir = output_folder_path,
-                                         file.aggregates = file.agg,
-                                         years.change = years_change,
-                                         years.change2 = years_change2,
-                                         countries.to.include.in.aggregates.csv = countries_for_aggregates_csv_filename,
-                                         verbose = verbose
-                                         )
-                save(res.new, file = res.fname)
-
-                ## Copy spec aggregate files
-                output_data_folder_path <- file.path(output_folder_path, "data")
-                if(!dir.exists(output_data_folder_path))
-                    dir.create(output_data_folder_path, recursive = TRUE, showWarnings = FALSE)
-                copy_uwra_mwra_files(basename(file.agg),
-                                     awra_output_folder_path = output_data_folder_path, #<- TO DIRECTORY
-                                     mwra_uwra_output_folder_path = input_data_folder_path, #<- FROM DIRECTORY
+            res.new <- GetAggregates(run.name = run_name,
+                                     output.dir = output_folder_path,
+                                     file.aggregates = file.agg,
+                                     years.change = years_change,
+                                     years.change2 = years_change2,
+                                     countries.to.include.in.aggregates.csv = countries_for_aggregates_csv_filename,
+                                     verbose = verbose
                                      )
-            }
+            save(res.new, file = res.fname)
+
+            ## Copy spec aggregate files
+            output_data_folder_path <- file.path(output_folder_path, "data")
+            if(!dir.exists(output_data_folder_path))
+                dir.create(output_data_folder_path, recursive = TRUE, showWarnings = FALSE)
+            copy_uwra_mwra_files(basename(file.agg),
+                                 awra_output_folder_path = output_data_folder_path, #<- TO DIRECTORY
+                                 mwra_uwra_output_folder_path = input_data_folder_path, #<- FROM DIRECTORY
+                                 )
         }
     }
 

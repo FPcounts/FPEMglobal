@@ -49,24 +49,24 @@ Estimation and projection is done separately for married and unmarried women. Th
 2. Run the model for unmarried women
     1. Generate MCMC sample
     2. Transform and summarize
-3. Combine the married and unmarried women runs to get results for all women regardless of marital status.
+3. Combine the married and unmarried women runs to get results for all women.
     1. Aggregate transformed MCMC samples for married and unmarried women
     2. Summarize
 	
 	
 ## User Functions
 	
-There are separate user functions for each of these steps. For example, `do_global_mcmc` implements steps 1a and 2a. There are also several wrapper functions that perform multiple steps and set defaults for the sub-functions. For example, `do_global_run` implements all of steps 1 and 2. The function `do_global_all_women_run` implements all steps from 1 to 3. The user-interface functions, and their actions, are summarized in the table below.
+There are separate user functions for each of these steps. For example, `do_global_mcmc` implements steps 1a and 2a. There are also several wrapper functions that perform multiple steps and set defaults for the sub-functions. For example, `do_global_run` implements all of steps 1 and 2. The function `do_global_all_women_run` implements all steps from 1 to 3. The user-interface functions, and their actions, are summarized in the table below. The 'Level' indicates the level of abstraction from the multi-step process given above. Higher values correspond to more abstraction. Level 0 functions perform a single step in the process, higher levels perform multiple steps. 
 
 | Level | Function                  | Action                                                                                                      |
 |-------+---------------------------+-------------------------------------------------------------------------------------------------------------|
-| 2     | `do_global_all_women_run` | Perform a complete  run for married, unmarried, and all women, post process results, create summary output. |
-| 1     | `do_global_run`           | Perform a  run for either married or unmarried women, post process results, create summary output.          |
-|       | `combine_runs`            | Combine married and unmarried women runs, as produced by `do_global_run`, to get all women MCMC output.     |
-| 0     | `do_global_mcmc`          | Run the  model for either married or unmarried women (generates MCMC output only).                          |
-|       | `add_global_mcmc`         | Run an additional MCMC chain; must run `do_global_mcmc` to get at least one chain first.                    |
-|       | `post_process_mcmc`       | Post-process MCMC output produced by `do_global_mcmc` (and `add_global_mcmc`).                              |
-|       | `make_results`            | Produce summary results from post-processed MCMC chains as produced by `post_process_mcmc`.                 |
+|     2 | `do_global_all_women_run` | Perform a complete  run for married, unmarried, and all women, post process results, create summary output. |
+|     1 | `do_global_run`           | Perform a  run for either married or unmarried women, post process results, create summary output.          |
+|     0 | `combine_runs`            | Combine married and unmarried women runs, as produced by `do_global_run`, to get all women MCMC output.     |
+|     0 | `do_global_mcmc`          | Run the  model for either married or unmarried women (generates MCMC output only).                          |
+|     0 | `add_global_mcmc`         | Run an additional MCMC chain; must run `do_global_mcmc` to get at least one chain first.                    |
+|     0 | `post_process_mcmc`       | Post-process MCMC output produced by `do_global_mcmc` (and `add_global_mcmc`).                              |
+|     0 | `make_results`            | Produce summary results from post-processed MCMC chains produced by `post_process_mcmc` or `combine_runs`.  |
 
 The following utility functions are also available:
 
@@ -74,6 +74,7 @@ The following utility functions are also available:
 |-------------------------+-------------------------------------------------------|
 | `validate_input_file`   | Checks input data file for invalid entries            |
 | `compare_runs_CI_plots` | Produces plots that compares two different model runs |
+
 
 ## Run Names
 
@@ -471,7 +472,7 @@ The code below illustrates how special aggregates for the WHO regions can be req
 
 ### Adding Aggregates to an Existing Run
 
-If a run has completed and special aggregates are desired, you must pass `special_aggregates_name` to `post_process_mcmc` and post process the output directory again, and then re-run `make_results`. If you want to add aggregates for age ratios to an all women run you will also need to run `combine_runs`. Pass `special_aggregates_name` to `make_results` and, if applicable, `combine_runs` as well. Aggregates are based on the files stored in the 'countrytrajectories' directory inside the run directory. If you are adding aggregates to an all women run and you have deleted this directory you _will_ need to delete the entire all women directory and recreate it by running `combine_runs`. Use the argument `run_name_override` to specify the name of the all women output directory. 
+If you want to add special aggregates to an already completed run you must this separately for each marital group. For married and unmarried women runs, call `post_process` and `make_results` again on the output, but add the argument `special_aggregates_name`, giving the names of the aggregates to add (you must pass this argment to _both_ `post_process` and `make_results`). If you want to add special aggregates to an all women run, you must first add them to both the married and unmarried women runs, then call `combine_runs` to combine them and `make_results` to generate the results. Use the argument `run_name_override` to specify the name of the existing all women output directory when calling `combine_runs`. You must pass the `special_aggregates_name` argument to `combine_runs` and `make_results`.
 
 Note that the default value for `input_data_folder_path` in `post_process_mcmc` is the 'data' directory inside the run directory. For example, if the completed run is 'myrun_all_women', the default is 'myrun_all_women/data' directory. It is recommended to copy the aggregate '.csv' file(s) to this directory, rather than change the value of `input_data_folder_path`. 
 
