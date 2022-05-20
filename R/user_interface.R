@@ -40,6 +40,25 @@ validate_input_file <- function(age_group = "15-49",
     for (mg in marital_group) {
         message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
 
+        ## Check log-ratio SEs
+        if (!is.null(input_data_folder_path))
+            fname <- file.path(input_data_folder_path, data_csv_filename)
+        else fname <- data_csv_filename
+        temp_df <- read.csv(fname)
+        inunion <- switch(mg, "married" = "1", "unmarried" = "0")
+        temp_df <- temp_df[as.character(temp_df$In.union) == inunion, ]
+        lr_cols <- c("SE.logR.trad.nouse", "SE.logR.modern.nouse", "SE.logR.unmet.noneed")
+        lr_cols_no_in <- lr_cols[!lr_cols %in% colnames(temp_df)]
+        if (length(lr_cols_no_in))
+            stop("Col(s) '", toString(lr_cols_no_in), "' not found in input file.")
+        for (lr in lr_cols) {
+            if (all(is.na(temp_df[, lr])))
+                stop("'", lr, "' are all 'NA' for marital group '", mg, "'.")
+            else if (all(!is.finite(temp_df[, lr])))
+                stop("'", lr, "' are all non-finite for marital group '", mg, "'.")
+        }
+
+        ## Check CP estimates
         marital_group_param_set <-
             marital_age_group_param_defaults(marital_group = mg, age_group, model_family,
                                              model_name)
