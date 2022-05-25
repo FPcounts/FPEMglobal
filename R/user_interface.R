@@ -546,6 +546,8 @@ add_global_mcmc <- function(run_name,
 ##'     change-in-changes.
 ##' @param model_diagnostics Logical; should convergence diagnostics
 ##'     and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.
+##' @param make_any_aggregates Logical. Should country aggregates of
+##'     any kind (including default aggregates) be produced?
 ##' @param special_aggregates_name Character vector of names
 ##'     (\emph{not} filenames) of any speical aggregates
 ##'     desired. There must be a corresponding file with name
@@ -601,6 +603,7 @@ post_process_mcmc <- function(run_name,
                                     1990.5, 2000.5, 2010.5,
                                     2000.5, 2010.5, 2019.5), ncol = 3, byrow = TRUE),
                               model_diagnostics = TRUE,
+                              make_any_aggregates = TRUE,
                               special_aggregates_name = NULL,
                               age_ratios_age_total_run_name = NULL,
                               age_ratios_age_total_output_folder_path = NULL,
@@ -748,6 +751,7 @@ post_process_mcmc <- function(run_name,
             start.year = start_year,
             end.year = end_year,
             years.change = years_change,
+            make.any.aggregates = make_any_aggregates,
             verbose = verbose
         )
     } else {
@@ -756,7 +760,7 @@ post_process_mcmc <- function(run_name,
 
     ## Special aggregates
 
-    if (!is.null(special_aggregates_name)) {
+    if (!is.null(special_aggregates_name) && make_any_aggregates) {
 
         for (name.agg in special_aggregates_name) {
 
@@ -1009,6 +1013,7 @@ make_results <- function(run_name,
                          plot_maps_shapefile_folder = NULL,
                          plot_maps_years = NULL,
                          adjust_medians = FALSE,
+                         make_any_aggregates = TRUE,
                          special_aggregates_name = NULL,
                          make_age_ratios = NULL,
                          validation_keep_all = TRUE,
@@ -1152,40 +1157,43 @@ make_results <- function(run_name,
         if(!file.exists(file.path(output_folder_path, uwra_adj_med_fn)))
             stop(adj_m_stop_msg("unmarried", uwra_adj_med_fn))
 
-        ## UNPD aggregates
+        if (make_any_aggregates) {
 
-        adj_med_fn_UNPDaggregate <-
-            makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda"))
-        uwra_adj_med_fn_UNPDaggregate <- paste0("uwra_", adj_med_fn_UNPDaggregate)
-        mwra_adj_med_fn_UNPDaggregate <- paste0("mwra_", adj_med_fn_UNPDaggregate)
+            ## UNPD aggregates
 
-        if(!file.exists(file.path(output_folder_path, mwra_adj_med_fn_UNPDaggregate)))
-            stop(adj_m_stop_msg("married", mwra_adj_med_fn_UNPDaggregate))
+            adj_med_fn_UNPDaggregate <-
+                makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda"))
+            uwra_adj_med_fn_UNPDaggregate <- paste0("uwra_", adj_med_fn_UNPDaggregate)
+            mwra_adj_med_fn_UNPDaggregate <- paste0("mwra_", adj_med_fn_UNPDaggregate)
 
-        if(!file.exists(file.path(output_folder_path, uwra_adj_med_fn_UNPDaggregate)))
-            stop(adj_m_stop_msg("unmarried", uwra_adj_med_fn_UNPDaggregate))
+            if(!file.exists(file.path(output_folder_path, mwra_adj_med_fn_UNPDaggregate)))
+                stop(adj_m_stop_msg("married", mwra_adj_med_fn_UNPDaggregate))
 
-        ## Special aggregates
+            if(!file.exists(file.path(output_folder_path, uwra_adj_med_fn_UNPDaggregate)))
+                stop(adj_m_stop_msg("unmarried", uwra_adj_med_fn_UNPDaggregate))
 
-        if(!is.null(special_aggregates_name)) {
-            for (name.agg in special_aggregates_name) {
+            ## Special aggregates
 
-                adj_med_fn_spec_agg <-
-                    makeFileName(paste0(name.agg, "-", adjust_medians_method, ".rda"))
-                uwra_adj_med_fn_spec_agg <- paste0("uwra_", adj_med_fn_spec_agg)
-                mwra_adj_med_fn_spec_agg <- paste0("mwra_", adj_med_fn_spec_agg)
+            if(!is.null(special_aggregates_name) && make_any_aggregates) {
+                for (name.agg in special_aggregates_name) {
 
-                if(!file.exists(file.path(output_folder_path, mwra_adj_med_fn_spec_agg)))
-                    stop(adj_m_stop_msg("married", mwra_adj_med_fn_spec_agg,
-                                        spec_agg = paste0("special aggregate '",
-                                                          name.agg,
-                                                          "' ")))
+                    adj_med_fn_spec_agg <-
+                        makeFileName(paste0(name.agg, "-", adjust_medians_method, ".rda"))
+                    uwra_adj_med_fn_spec_agg <- paste0("uwra_", adj_med_fn_spec_agg)
+                    mwra_adj_med_fn_spec_agg <- paste0("mwra_", adj_med_fn_spec_agg)
 
-                if(!file.exists(file.path(output_folder_path, uwra_adj_med_fn_spec_agg)))
-                    stop(adj_m_stop_msg("unmarried", uwra_adj_med_fn_spec_agg,
-                                        spec_agg = paste0("special aggregate '",
-                                                          name.agg,
-                                                          "' ")))
+                    if(!file.exists(file.path(output_folder_path, mwra_adj_med_fn_spec_agg)))
+                        stop(adj_m_stop_msg("married", mwra_adj_med_fn_spec_agg,
+                                            spec_agg = paste0("special aggregate '",
+                                                              name.agg,
+                                                              "' ")))
+
+                    if(!file.exists(file.path(output_folder_path, uwra_adj_med_fn_spec_agg)))
+                        stop(adj_m_stop_msg("unmarried", uwra_adj_med_fn_spec_agg,
+                                            spec_agg = paste0("special aggregate '",
+                                                              name.agg,
+                                                              "' ")))
+                }
             }
         }
     }
@@ -1194,7 +1202,7 @@ make_results <- function(run_name,
     ## Special aggregates
     ##----------------------------------------------------------------------------
 
-    if (!is.null(special_aggregates_name)) {
+    if (!is.null(special_aggregates_name) && make_any_aggregates) {
         for (name.agg in special_aggregates_name) {
             if(!all_women) {
                 file.agg.rda <- file.path(output_folder_path, paste0(name.agg, ".rda"))
@@ -1282,6 +1290,11 @@ make_results <- function(run_name,
                 if(is.null(make_all_bar_charts)) make_all_bar_charts <- TRUE
             }
 
+            if (make_all_bar_charts && !make_any_aggregates) {
+                warning("'make_all_bar_charts' is 'TRUE' but 'make_any_aggregates' is 'FALSE'. Bar charts will not be produced.")
+                        make_all_bar_charts <- FALSE
+            }
+
             if(make_all_bar_charts) {
                 GetAllBarCharts(run.name = run_name, output.dir = output_folder_path,
                                 fig.dir = file.path(output_folder_path, "fig", "barchart"),
@@ -1337,6 +1350,7 @@ make_results <- function(run_name,
                     output.dir = output_folder_path,
                     fig.dir = ci_fig_folder_path,
                     plot.ind.country.results = FALSE,
+                    make.any.aggregates = make_any_aggregates,
                     layout.style = "UNPD",
                     cex.symbols = list(SS = 1.5, add.info = 4, no.info = 2),
                     non.std.symbol = 24,
@@ -1352,6 +1366,7 @@ make_results <- function(run_name,
                         output.dir = output_folder_path,
                         fig.dir = ci_fig_folder_path,
                         plot.ind.country.results = FALSE,
+                        make.any.aggregates = make_any_aggregates,
                         layout.style = "diagnostic",
                         cex.symbols = list(SS = 1.5, add.info = 4, no.info = 2),
                         non.std.symbol = 24,
@@ -1361,7 +1376,7 @@ make_results <- function(run_name,
                         )
         }
 
-        if(!is.null(plot_CI_changes_years)) {
+        if(!is.null(plot_CI_changes_years) && make_any_aggregates) {
 
             CIPropChangesSubregions(
                 run.name = run_name,
@@ -1572,21 +1587,6 @@ make_results <- function(run_name,
                 table.dir = unadjusted_table_folder_path
             )
 
-            GetTablesRes(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                name.res = "UNPDaggregate",
-                table.dir = unadjusted_table_folder_path
-            )
-
-            GetTablesChange(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                name.res = "UNPDaggregate",
-                table.dir = unadjusted_table_folder_path,
-                change.in.changes = TRUE
-            )
-
             GetTablesChange(
                 run.name = run_name,
                 output.dir = output_folder_path,
@@ -1594,6 +1594,23 @@ make_results <- function(run_name,
                 table.dir = unadjusted_table_folder_path,
                 change.in.changes = TRUE
             )
+
+            if (make_any_aggregates) {
+                GetTablesRes(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    name.res = "UNPDaggregate",
+                    table.dir = unadjusted_table_folder_path
+                )
+
+                GetTablesChange(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    name.res = "UNPDaggregate",
+                    table.dir = unadjusted_table_folder_path,
+                    change.in.changes = TRUE
+                )
+            }
 
         } else {
 
@@ -1605,22 +1622,6 @@ make_results <- function(run_name,
                 all.womenize.table.name = FALSE
             )
 
-            GetTablesResAllWomen(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                name.res = "UNPDaggregate",
-                table.dir = unadjusted_table_folder_path,
-                all.womenize.table.name = FALSE
-            )
-
-            GetTablesChangeAllWomen(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                name.res = "UNPDaggregate",
-                table.dir = unadjusted_table_folder_path,
-                all.womenize.table.name = FALSE
-            )
-
             GetTablesChangeAllWomen(
                 run.name = run_name,
                 output.dir = output_folder_path,
@@ -1628,6 +1629,24 @@ make_results <- function(run_name,
                 table.dir = unadjusted_table_folder_path,
                 all.womenize.table.name = FALSE
             )
+
+            if (make_any_aggregates) {
+                GetTablesResAllWomen(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    name.res = "UNPDaggregate",
+                    table.dir = unadjusted_table_folder_path,
+                    all.womenize.table.name = FALSE
+                )
+
+                GetTablesChangeAllWomen(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    name.res = "UNPDaggregate",
+                    table.dir = unadjusted_table_folder_path,
+                    all.womenize.table.name = FALSE
+                )
+            }
 
         }
 
@@ -1686,40 +1705,44 @@ make_results <- function(run_name,
                                       plot.dir = compare_adjusted_fig_folder_path,
                                       verbose = verbose)
 
-                    ## Aggregates: For 'mod_tot_unmet', aggregates are adjusted independently of countries.
+                    if (make_any_aggregates) {
 
-                    res_country_adj_agg <-
-                        AdjustMedians(
+                        ## Aggregates: For 'mod_tot_unmet', aggregates are adjusted independently of countries.
+
+                        res_country_adj_agg <-
+                            AdjustMedians(
+                                run.name = run_name,
+                                name.res = "UNPDaggregate",
+                                output.dir = output_folder_path,
+                                adj.method = adjust_medians_method
+                            )
+                        save(res_country_adj_agg,
+                             file = file.path(output_folder_path,
+                                              makeFileName(paste0("res.UNPDaggregate.adj-",
+                                                                  adjust_medians_method,
+                                                                  ".rda"))))
+
+                        GetTablesRes(
                             run.name = run_name,
-                            name.res = "UNPDaggregate",
                             output.dir = output_folder_path,
+                            name.res = "UNPDaggregate",
+                            table.dir = adjusted_table_folder_path,
+                            res = res_country_adj_agg,
+                            adjusted.medians = TRUE,
                             adj.method = adjust_medians_method
                         )
-                    save(res_country_adj_agg,
-                         file = file.path(output_folder_path,
-                                          makeFileName(paste0("res.UNPDaggregate.adj-",
-                                                              adjust_medians_method,
-                                                              ".rda"))))
 
-                    GetTablesRes(
-                        run.name = run_name,
-                        output.dir = output_folder_path,
-                        name.res = "UNPDaggregate",
-                        table.dir = adjusted_table_folder_path,
-                        res = res_country_adj_agg,
-                        adjusted.medians = TRUE,
-                        adj.method = adjust_medians_method
-                    )
+                        CompareAdjMedians(run.name = run_name,
+                                          output.dir = output_folder_path,
+                                          name.res = "UNPDaggregate",
+                                          res.adj = res_country_adj_agg,
+                                          tabulate = TRUE,
+                                          table.dir = compare_adjusted_table_folder_path,
+                                          plot = FALSE,
+                                          plot.dir = compare_adjusted_fig_folder_path,
+                                          verbose = verbose)
 
-                    CompareAdjMedians(run.name = run_name,
-                                      output.dir = output_folder_path,
-                                      name.res = "UNPDaggregate",
-                                      res.adj = res_country_adj_agg,
-                                      tabulate = TRUE,
-                                      table.dir = compare_adjusted_table_folder_path,
-                                      plot = FALSE,
-                                      plot.dir = compare_adjusted_fig_folder_path,
-                                      verbose = verbose)
+                    }
 
                 } else { ## ALL WOMEN
 
@@ -1751,31 +1774,34 @@ make_results <- function(run_name,
                                       all.women = all_women,
                                       all.womenize.table.name = FALSE,
                                       verbose = verbose)
-
                     ## Aggregates
 
-                    res_country_adj_all_women_agg <-
-                        ConstructAdjMediansAllWomen(uwra.adj.med = file.path(output_folder_path, uwra_adj_med_fn_UNPDaggregate),
-                                                    mwra.adj.med = file.path(output_folder_path, mwra_adj_med_fn_UNPDaggregate)
-                                                    )
+                    if (make_any_aggregates) {
 
-                    GetTablesResAllWomen(run.name = run_name, name.res = "UNPDaggregate"
-                                        ,table.dir = adjusted_table_folder_path
-                                        ,res = res_country_adj_all_women_agg #aggregate
-                                        ,adjusted.medians = TRUE
-                                        ,adj.method = adjust_medians_method
-                                        ,all.womenize.table.name = FALSE
-                                         )
+                        res_country_adj_all_women_agg <-
+                            ConstructAdjMediansAllWomen(uwra.adj.med = file.path(output_folder_path, uwra_adj_med_fn_UNPDaggregate),
+                                                        mwra.adj.med = file.path(output_folder_path, mwra_adj_med_fn_UNPDaggregate)
+                                                        )
 
-                    CompareAdjMedians(run.name = run_name,
-                                      output.dir = output_folder_path,
-                                      res.adj = res_country_adj_all_women_agg,
-                                      name.res = "UNPDaggregate",
-                                      tabulate = TRUE,
-                                      plot = FALSE,
-                                      all.women = all_women,
-                                      all.womenize.table.name = FALSE,
-                                      verbose = verbose)
+                        GetTablesResAllWomen(run.name = run_name, name.res = "UNPDaggregate"
+                                            ,table.dir = adjusted_table_folder_path
+                                            ,res = res_country_adj_all_women_agg #aggregate
+                                            ,adjusted.medians = TRUE
+                                            ,adj.method = adjust_medians_method
+                                            ,all.womenize.table.name = FALSE
+                                             )
+
+                        CompareAdjMedians(run.name = run_name,
+                                          output.dir = output_folder_path,
+                                          res.adj = res_country_adj_all_women_agg,
+                                          name.res = "UNPDaggregate",
+                                          tabulate = TRUE,
+                                          plot = FALSE,
+                                          all.women = all_women,
+                                          all.womenize.table.name = FALSE,
+                                          verbose = verbose)
+
+                    }
                 }
             }
         }
@@ -1785,7 +1811,7 @@ make_results <- function(run_name,
 
         ## Extra Aggregates
 
-        if (!is.null(special_aggregates_name)) {
+        if (!is.null(special_aggregates_name) && make_any_aggregates) {
 
             for (name.agg in special_aggregates_name) {
 
@@ -1941,7 +1967,7 @@ make_results <- function(run_name,
 
             ## Special aggregates
 
-            if (!is.null(special_aggregates_name)) {
+            if (!is.null(special_aggregates_name) && make_any_aggregates) {
 
                 for (name.agg in special_aggregates_name) {
 
@@ -2077,6 +2103,7 @@ do_global_run <- function(## Describe the run
                           plot_maps_shapefile_folder = NULL,
                           plot_maps_years = floor(median(c(start_year, end_year))),
                           data_info_plot_years = c(1990, 2000, 2010),
+                          make_any_aggregates = TRUE,
                           adjust_medians = FALSE,
                           age_ratios_age_total_run_name = NULL,
                           age_ratios_age_total_output_folder_path = NULL,
@@ -2267,6 +2294,7 @@ do_global_run <- function(## Describe the run
                       end_year = end_year,
                       years_change = years_change,
                       model_diagnostics = model_diagnostics,
+                      make_any_aggregates = make_any_aggregates,
                       special_aggregates_name = special_aggregates_name,
                       age_ratios_age_total_run_name = age_ratios_age_total_run_name,
                       age_ratios_age_total_output_folder_path = age_ratios_age_total_output_folder_path,
@@ -2289,6 +2317,7 @@ do_global_run <- function(## Describe the run
                      plot_maps_years = plot_maps_years,
                      data_info_plot_years = data_info_plot_years,
                      adjust_medians = adjust_medians,
+                     make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
                      make_age_ratios = make_age_ratios,
                      verbose = verbose)
@@ -2343,8 +2372,6 @@ do_global_run <- function(## Describe the run
 ##'     containing results for the unmarried women run to be
 ##'     combined. (Only used if \code{special_aggregates_name} is
 ##'     non-\code{NULL}).
-##' @param make_any_aggregates Logical. Should country aggregates of
-##'     any kind (including default aggregates) be produced?
 ##' @param adjust_medians
 ##' @param countries_in_CI_plots_csv_filename Name of \file{.csv} file
 ##'     that lists the countries to be included in the main
@@ -2592,21 +2619,23 @@ combine_runs <- function(## Describe the run
         sapply(c(married_women_run_output_folder_path,
                  unmarried_women_run_output_folder_path),
                function(z) {
-            fn <- file.path(z, makeFileName(paste0("res.country.adj-",
-                                                   adjust_medians_method, ".rda")))
-            if(!file.exists(fn)) {
-                stop("'", fn, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
-            } else {
-                return(invisible())
-            }
-            fn2 <- file.path(z, makeFileName(paste0("res.UNPDaggregate.adj-",
-                                                   adjust_medians_method, ".rda")))
-            if(!file.exists(fn2)) {
-                stop("'", fn2, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
-            } else {
-                return(invisible())
-            }
-        })
+                   fn <- file.path(z, makeFileName(paste0("res.country.adj-",
+                                                          adjust_medians_method, ".rda")))
+                   if(!file.exists(fn)) {
+                       stop("'", fn, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
+                   } else {
+                       return(invisible())
+                   }
+                   if (make_any_aggregates) {
+                       fn2 <- file.path(z, makeFileName(paste0("res.UNPDaggregate.adj-",
+                                                               adjust_medians_method, ".rda")))
+                       if(!file.exists(fn2)) {
+                           stop("'", fn2, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
+                       } else {
+                           return(invisible())
+                       }
+                   }
+               })
 
         ## Married
         copy_uwra_mwra_files(makeFileName(paste0("res.country.adj-", adjust_medians_method, ".rda")),
@@ -2615,12 +2644,14 @@ combine_runs <- function(## Describe the run
                              new_filename = makeFileName(paste0("mwra_", "res.country.adj-",
                                                                 adjust_medians_method, ".rda"))
                              )
-        copy_uwra_mwra_files(makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda")),
-                             output_folder_path,
-                             married_women_run_output_folder_path,
-                             new_filename = makeFileName(paste0("mwra_", "res.UNPDaggregate.adj-",
-                                                                adjust_medians_method, ".rda"))
-                             )
+        if (make_any_aggregates) {
+            copy_uwra_mwra_files(makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda")),
+                                 output_folder_path,
+                                 married_women_run_output_folder_path,
+                                 new_filename = makeFileName(paste0("mwra_", "res.UNPDaggregate.adj-",
+                                                                    adjust_medians_method, ".rda"))
+                                 )
+        }
 
         ## Unmarried
         copy_uwra_mwra_files(makeFileName(paste0("res.country.adj-", adjust_medians_method, ".rda")),
@@ -2629,14 +2660,16 @@ combine_runs <- function(## Describe the run
                              new_filename = makeFileName(paste0("uwra_", "res.country.adj-",
                                                                 adjust_medians_method, ".rda"))
                              )
-        copy_uwra_mwra_files(makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda")),
-                             output_folder_path,
-                             unmarried_women_run_output_folder_path,
-                             new_filename = makeFileName(paste0("uwra_", "res.UNPDaggregate.adj-",
-                                                                adjust_medians_method, ".rda"))
-                             )
+        if (make_any_aggregates) {
+            copy_uwra_mwra_files(makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda")),
+                                 output_folder_path,
+                                 unmarried_women_run_output_folder_path,
+                                 new_filename = makeFileName(paste0("uwra_", "res.UNPDaggregate.adj-",
+                                                                    adjust_medians_method, ".rda"))
+                                 )
+        }
 
-        if(!is.null(special_aggregates_name)) {
+        if(!is.null(special_aggregates_name) && make_any_aggregates) {
             ## NOTE: Just copy the uwra and mwra special aggregate
             ## adusted median files. The adjusted medians themselves
             ## are made by make_results().
@@ -2695,7 +2728,7 @@ combine_runs <- function(## Describe the run
     ## Special aggregates
     ##--------------------------------------------------------------------------
 
-    if (!is.null(special_aggregates_name)) {
+    if (!is.null(special_aggregates_name) && make_any_aggregates) {
 
         for (name.agg in special_aggregates_name) {
 
@@ -2749,50 +2782,53 @@ combine_runs <- function(## Describe the run
                                    output_exists_warnings = FALSE
                                    )
 
-        GetAggregatesAgeRatios(age.subset.uwra.output.dir = unmarried_women_run_output_folder_path,
-                               age.subset.mwra.output.dir = married_women_run_output_folder_path,
-                               age.subset.awra.output.dir = output_folder_path,
-                               age.total.uwra.output.dir = age_ratios_age_total_unmarried_output_folder_path,
-                               age.total.mwra.output.dir = age_ratios_age_total_married_output_folder_path,
-                               age.total.awra.output.dir = age_ratios_age_total_all_women_output_folder_path,
-                               run.name = run_name,
-                               age.subset.WRA.csv = file.path(data_folder_path,
-                                                              denominator_counts_csv_filename),
-                               age.total.WRA.csv = file.path(age_ratios_age_total_denominator_counts_folder_path,
-                                                             age_ratios_age_total_denominator_counts_csv_filename),
-                               est.years = NULL,
-                               years.change = years_change,
-                               years.change2 = years_change2,
+        if (make_any_aggregates) {
+
+            GetAggregatesAgeRatios(age.subset.uwra.output.dir = unmarried_women_run_output_folder_path,
+                                   age.subset.mwra.output.dir = married_women_run_output_folder_path,
+                                   age.subset.awra.output.dir = output_folder_path,
+                                   age.total.uwra.output.dir = age_ratios_age_total_unmarried_output_folder_path,
+                                   age.total.mwra.output.dir = age_ratios_age_total_married_output_folder_path,
+                                   age.total.awra.output.dir = age_ratios_age_total_all_women_output_folder_path,
+                                   run.name = run_name,
+                                   age.subset.WRA.csv = file.path(data_folder_path,
+                                                                  denominator_counts_csv_filename),
+                                   age.total.WRA.csv = file.path(age_ratios_age_total_denominator_counts_folder_path,
+                                                                 age_ratios_age_total_denominator_counts_csv_filename),
+                                   est.years = NULL,
+                                   years.change = years_change,
+                                   years.change2 = years_change2,
                                    verbose = verbose,
                                    output_exists_messages = FALSE
-                               )
+                                   )
 
-        if (!is.null(special_aggregates_name)) {
+            if (!is.null(special_aggregates_name) && make_any_aggregates) {
 
-            for (name.agg in special_aggregates_name) {
+                for (name.agg in special_aggregates_name) {
 
-                file_agg <- paste0(name.agg, ".csv")
+                    file_agg <- paste0(name.agg, ".csv")
 
-                GetAggregatesAgeRatios(age.subset.uwra.output.dir = unmarried_women_run_output_folder_path,
-                                       age.subset.mwra.output.dir = married_women_run_output_folder_path,
-                                       age.subset.awra.output.dir = output_folder_path,
-                                       age.total.uwra.output.dir = age_ratios_age_total_unmarried_output_folder_path,
-                                       age.total.mwra.output.dir = age_ratios_age_total_married_output_folder_path,
-                                       age.total.awra.output.dir = age_ratios_age_total_all_women_output_folder_path,
-                                       run.name = run_name,
-                                       file.aggregates = file.path(data_folder_path, file_agg),
-                                       age.subset.WRA.csv = file.path(data_folder_path,
-                                                                      denominator_counts_csv_filename),
-                                       age.total.WRA.csv = file.path(age_ratios_age_total_denominator_counts_folder_path,
-                                                                     age_ratios_age_total_denominator_counts_csv_filename),
-                                       est.years = NULL,
-                                       years.change = years_change,
-                                       years.change2 = years_change2,
-                                   verbose = verbose,
-                                   output_exists_messages = FALSE
-                                       )
+                    GetAggregatesAgeRatios(age.subset.uwra.output.dir = unmarried_women_run_output_folder_path,
+                                           age.subset.mwra.output.dir = married_women_run_output_folder_path,
+                                           age.subset.awra.output.dir = output_folder_path,
+                                           age.total.uwra.output.dir = age_ratios_age_total_unmarried_output_folder_path,
+                                           age.total.mwra.output.dir = age_ratios_age_total_married_output_folder_path,
+                                           age.total.awra.output.dir = age_ratios_age_total_all_women_output_folder_path,
+                                           run.name = run_name,
+                                           file.aggregates = file.path(data_folder_path, file_agg),
+                                           age.subset.WRA.csv = file.path(data_folder_path,
+                                                                          denominator_counts_csv_filename),
+                                           age.total.WRA.csv = file.path(age_ratios_age_total_denominator_counts_folder_path,
+                                                                         age_ratios_age_total_denominator_counts_csv_filename),
+                                           est.years = NULL,
+                                           years.change = years_change,
+                                           years.change2 = years_change2,
+                                           verbose = verbose,
+                                           output_exists_messages = FALSE
+                                           )
+                }
+
             }
-
         }
     }
 
@@ -3081,6 +3117,7 @@ do_global_all_women_run <- function(## Describe the run
             denominator_counts_csv_filename = denominator_counts_csv_filename,
             countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
             countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
+            make_any_aggregates = make_any_aggregates,
             special_aggregates_name = special_aggregates_name,
             ## Outputs
             start_year = start_year,
@@ -3129,6 +3166,7 @@ do_global_all_women_run <- function(## Describe the run
             denominator_counts_csv_filename = denominator_counts_csv_filename,
             countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
             countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
+            make_any_aggregates = make_any_aggregates,
             special_aggregates_name = special_aggregates_name,
             ## Outputs
             start_year = start_year,
@@ -3209,6 +3247,7 @@ do_global_all_women_run <- function(## Describe the run
                  plot_maps_years = plot_maps_years,
                  data_info_plot_years = data_info_plot_years,
                  adjust_medians = adjust_medians,
+                 make_any_aggregates = make_any_aggregates,
                  special_aggregates_name = special_aggregates_name,
                  make_age_ratios = make_age_ratios,
                  verbose = verbose)
@@ -3231,8 +3270,9 @@ do_global_all_women_run <- function(## Describe the run
                      plot_barchart_years = plot_barchart_years,
                      plot_maps_shapefile_folder = plot_maps_shapefile_folder,
                      plot_maps_years = plot_maps_years,
-                 data_info_plot_years = data_info_plot_years,
+                     data_info_plot_years = data_info_plot_years,
                      adjust_medians = adjust_medians,
+                     make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
                      make_age_ratios = make_age_ratios,
                      verbose = verbose)
@@ -3245,8 +3285,9 @@ do_global_all_women_run <- function(## Describe the run
                      plot_barchart_years = plot_barchart_years,
                      plot_maps_shapefile_folder = plot_maps_shapefile_folder,
                      plot_maps_years = plot_maps_years,
-                 data_info_plot_years = data_info_plot_years,
+                     data_info_plot_years = data_info_plot_years,
                      adjust_medians = adjust_medians,
+                     make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
                      make_age_ratios = make_age_ratios,
                      verbose = verbose)
