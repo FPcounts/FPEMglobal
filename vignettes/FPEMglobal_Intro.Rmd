@@ -8,6 +8,7 @@ output:
     function(...) rmarkdown::html_vignette(..., css=c(system.file("rmarkdown", "templates", "html_vignette", "resources", "vignette.css", package = "rmarkdown"), "vignette2.css")):
       toc: true
 bibliography: bibliography.bib
+csl: 'apa-single-spaced.csl'
 link-citations: true
 vignette: >
   %\VignetteIndexEntry{Introduction to FPEMglobal}
@@ -25,16 +26,35 @@ knitr::opts_chunk$set(
 options(formatR.arrow=TRUE,width=80)
 ```
 
+```{r load-package, echo = FALSE, include = FALSE}
+## Make sure you attach the package !!
+ library(FPEMglobal)
+```
+
 <!-- 
 STYLE CONVENTIONS
 - Filenames: single quoted
 - Software: italics
 -->
 
+
+# Description
+
 _You can access this vignette from the *R* console by typing `vignette("FPEMglobal_Intro", package = "FPEMglobal")`._
 
+*FPEMglobal* (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level. This vignette concerns the application to all women of reproductive age (i.e., ages 15--49 years); for application to adolescent women aged 15--19 see the vignette "FPEMglobal_Age_1519". 
 
-FPEMglobal (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level. This vignette concerns the application to all women of reproductive age (i.e., ages 15--49 years); for application to adolescent women aged 15--19 see the vignette "FPEMglobal_Age_1519". There are submodels which produce estimates and projections for married and unmarried women. Together, these are used to produce results for all women. The married women model is described in @alkema_national_2013. Updates to the model are described in @cahill_modern_2017; these are included in _FPEMglobal_. The unmarried women model, and the process of producing estimates for all women regardless of marital status, is described in @kantorova18_contr. _FPEMglobal_ is a direct descendant of _ContraceptiveUse_ [@AlkemaContraceptiveUse2014].
+The package consists of submodels which produce estimates and projections for married and unmarried women. Together, these are used to produce results for all women. The married women model is described in @alkema_national_2013. Updates to the model are described in @cahill_modern_2017; these are included in _FPEMglobal_. The unmarried women model, and the process of producing estimates for all women of reproductive age, is described in @kantorova18_contr. _FPEMglobal_ is a direct descendant of _ContraceptiveUse_ [@AlkemaContraceptiveUse2014].
+
+
+#### Suggested Citation {-}
+
+```{r, echo = FALSE, results = "asis"}
+cite_entry <- citation("FPEMglobal")
+cat(format(cite_entry, style = { if (knitr::is_html_output()) "HTML" else if (knitr::is_latex_output()) "latex" else "textVersion" }))
+```
+
+See also `citation("FPEMglobal")` from within *R*.
 
 
 # Implementation
@@ -85,7 +105,7 @@ For full all women runs done by `do_global_all_women_run`, the date-time part of
 
 ## Multiple Chains and Parallel Processing {#sec:mult-chains-parallel}
 
-More than one MCMC chain is required per run. This is controlled by the argument `chain_nums` which is passed to the `do_...` functions. This must be a sequence, not a single number. For example, if two chains are wanted, write `chain_nums = 1:2`; if four are wanted, write `chain_nums = 1:4`^[The _R_ syntax '`1:4`' is short-hand for `1 2 3 4`.]:
+More than one MCMC chain is required per run. This is controlled by the argument `chain_nums` which is passed to the `do_...` functions. This must be a sequence, not a single number. For example, if two chains are wanted, write `chain_nums = 1:2`; if four are wanted, write `chain_nums = 1:4`:
 
 ```{r chain-nums-ex, echo = TRUE, results = "hide", eval = FALSE, tidy=FALSE}
  ## Example use of 'chain_nums' argument 
@@ -182,9 +202,6 @@ To list all data files included with the package use the following code:
 New input files can be validated using the `validate_input_file` function. By default, the input file included with the package will be validated. 
 
 ```{r validate-input-file, echo = TRUE, eval = TRUE}
- ## Make sure you attach the package !!
- library(FPEMglobal)
-
  ## By default, the input file included with the package will be
  ## validated. Change 'input_data_folder_path' and 'data_csv_filename'
  ## to validate a user-supplied file.
@@ -229,7 +246,7 @@ After the runs are complete, the input files are logged by copying them to the d
 The default value of `input_data_folder_path` is diffferent depending on the function. The `do_...` functions use the directory supplied with the package: `system.file("extdata", package = "FPEMglobal")`. However, `post_process_mcmc`, `combine_runs` and `make_results` use the directory 'output/[`run-name`]/data'. This ensures that post processing is done on the same inputs used to do the model run. You may need to change the defaults if you are re-processing outputs to, for example, add special aggregates (see below).
 
 
-# Example
+# Worked Examples
 
 A full global run of the model can be done with just one wrapper function, `do_global_all_women_run`. Alternatively, several separate functions can be called in sequence if finer control over the inputs and outputs is desired. For default behaviour, it is easiest to use the main wrapper.
 
@@ -441,7 +458,7 @@ A '.csv' file describing an aggregate must have two columns: 'iso.country', and 
 |   |      ...etc | ...etc                |
 
 
-### Aggregates in a New Run
+### Requesting Special Aggregates for a New Run
 
 `special_aggregates_name` can be passed to `do_global_all_women_run` or `do_global_run`. The '.csv' file(s) describing the aggregate must be in the folder pointed to by the argument `input_data_folder_path`. You can specify more than one '.csv' it there are multiple aggregation schemes you need results for.
 
@@ -470,16 +487,41 @@ The code below illustrates how special aggregates for the WHO regions can be req
 ``` 
 
 
-### Adding Aggregates to an Existing Run
+### Adding Special Aggregates to an Existing Run
 
-If you want to add special aggregates to an already completed run you must this separately for each marital group. For married and unmarried women runs, call `post_process` and `make_results` again on the output, but add the argument `special_aggregates_name`, giving the names of the aggregates to add (you must pass this argment to _both_ `post_process` and `make_results`). If you want to add special aggregates to an all women run, you must first add them to both the married and unmarried women runs, then call `combine_runs` to combine them and `make_results` to generate the results. Use the argument `run_name_override` to specify the name of the existing all women output directory when calling `combine_runs`. You must pass the `special_aggregates_name` argument to `combine_runs` and `make_results`.
+If you want to add special aggregates to an already completed run you must do this separately for each marital group. For married and unmarried women runs, call `post_process` and `make_results` again on the output, but add the argument `special_aggregates_name`, giving the names of the aggregates to add (you must pass this argment to _both_ `post_process` and `make_results`). If you want to add special aggregates to an all women run, you must first add them to both the married and unmarried women runs, then call `combine_runs` to combine them and `make_results` to generate the results. Use the argument `run_name_override` to specify the name of the existing all women output directory when calling `combine_runs`. You must pass the `special_aggregates_name` argument to `combine_runs` and `make_results`.
 
 Note that the default value for `input_data_folder_path` in `post_process_mcmc` is the 'data' directory inside the run directory. For example, if the completed run is 'myrun_all_women', the default is 'myrun_all_women/data' directory. It is recommended to copy the aggregate '.csv' file(s) to this directory, rather than change the value of `input_data_folder_path`. 
 
-To add special aggregates to a completed run see the example at the end of the next section. You can omit the adjusted medians in that example if you do not want them. 
+See the example at the end of the section 'Adjusted Medians' for `R` code. You can omit the adjusted medians in that example if you do not want them. 
 
- 
-## Adjusted Medians 
+
+## Overwriting Aggregates 
+
+To overwrite aggregates in an already completed run, you must first delete the following files, and then call `post_process` and `make_results`:
+
+- Married and Unmarried Runs
+  - 'post_process_args.RData'
+  - 'res.country.rda'
+  - 'res.aggregate.rda'
+  - 'res.country.age.ratio.rda' (if it exists)
+  - res.aggregate.age.ratio.rda (if it exists)
+  - 'res.UNPDaggregate.adj-mod_tot_unmet.rda'
+  - Any other '.rda' files specific to a special aggregate, e.g., 'SDG_regions_level_1.rda'
+- All Women
+  - The directory 'aggregatetrajectories'
+  - 'combine_runs_args.RData'
+  - 'res.aggregate.all.women.rda'
+
+See the example at the end of the section 'Adjusted Medians' for `R` code. You can omit the adjusted medians and special aggregates if you do not want them. 
+
+
+## Using New Denominator Counts
+
+If you want to use a revised set of denominator counts, you should follow the steps in the 'Overwriting Aggregates' section. However, you should delete the entire all women output directory rather than the few files specified. 
+
+
+## Adjusted Medians
 
 The posterior joint distributions for the estimates and projections that are produced by default are summarized using marginal quantiles, such as medians, 0.025, and 0.975 quantiles. "Demographic identities", for example the sum of modern and traditional prevalences equalling prevalence of any method, will not necessarily be satisfied by medians (or any other quantiles) of this type. If desired, additional copies of the output tables can be produced such that the medians do satisfy demographic identities. Moreover, aggregates of country-level indicators also satisfy the condition that the sum of constituent country medians equals the aggregate medians. 
 
