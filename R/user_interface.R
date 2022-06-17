@@ -40,10 +40,7 @@ validate_input_file <- function(age_group = "15-49",
     for (mg in marital_group) {
         message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
 
-        ## Check log-ratio SEs
-        if (!is.null(input_data_folder_path))
-            fname <- file.path(input_data_folder_path, data_csv_filename)
-        else fname <- data_csv_filename
+        fname <- data_csv_filename
         temp_df <- read.csv(fname)
         inunion <- switch(mg, "married" = "1", "unmarried" = "0")
         temp_df <- temp_df[as.character(temp_df$In.union) == inunion, ]
@@ -95,27 +92,44 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                                              input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                              denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
                                              marital_group = c("married", "unmarried"),
-                                countries_for_aggregates_csv_filename = "countries_mwra_195.csv") {
-
-    if(!is.null(input_data_folder_path)) {
-        denominator_counts_csv_filename <- file.path(input_data_folder_path, denominator_counts_csv_filename)
-    }
-    if(!file.exists(denominator_counts_csv_filename)) stop("'denominator_counts_csv_filename' does not exist.")
-
+                                             countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+                                             output_folder_path = NULL) {
     model_family <- "rate"
     model_name <- NULL
 
     marital_group <- match.arg(marital_group, several.ok = TRUE)
 
-    out_df <- data.frame()
-    for (mg in marital_group) {
-        message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
-        out_df <- rbind(out_df,
-                        data.frame(extractDenominators(denominator_counts_csv_filename,
-                                            in_union =
-                                                as.numeric(switch(mg, married = 1, unmarried = 0))),
-                                  In.union = as.numeric(switch(mg, married = 1, unmarried = 0))),
-                        check.names = FALSE)
+    if (identical(denominator_counts_csv_filename, "res.country.rda")) {
+        message("Reading denominator counts from '", file.path(output_folder_path, "res.country.rda"), "'.")
+        stopifnot (!is.null(output_folder_path) || !length(dir(output_folder_path)) ||
+                   !identical(length(marital_group), 1L))
+        res_country_list <- get(load(file.path(output_folder_path, "res.country.rda")))
+        out_df <- data.frame(ISO.code = res_country_list$iso.g,
+                             Country = names(res_country_list$W.Lg.t),
+                             do.call("rbind", res_country_list$W.Lg.t),
+                             row.names = NULL)
+        colnames(out_df)[-(1:2)] <-
+            as.numeric(dimnames(res_country_list$CIprop.Lg.Lcat.qt[[1]][["Total"]])[[2]])- 0.5
+        if (identical(marital_group, "married")) mg_in_union <- 1
+        else mg_in_union <- 0
+        out_df <- cbind(out_df, In.union = mg_in_union)
+    } else {
+        if(!is.null(input_data_folder_path)) {
+            denominator_counts_csv_filename <- file.path(input_data_folder_path, denominator_counts_csv_filename)
+        }
+        if(!file.exists(denominator_counts_csv_filename)) stop("'denominator_counts_csv_filename' does not exist.")
+        message("Reading denominator counts from '", file.path(denominator_counts_csv_filename), "'.")
+
+        out_df <- data.frame()
+        for (mg in marital_group) {
+            message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
+            if (identical(marital_group, "married")) mg_in_union <- 1
+            else mg_in_union <- 0
+            out_df <- rbind(out_df,
+                            data.frame(extractDenominators(denominator_counts_csv_filename,
+                                                           in_union = mg_in_union),
+                                       In.union = mg_in_union))
+        }
     }
     message("\n\n--------------------\n", rep(" ", 20 - nchar("aggregates")), "aggregates", "\n")
     if (is.character(countries_for_aggregates_csv_filename)) {
@@ -131,7 +145,16 @@ validate_denominator_counts_file <- function(age_group = "15-49",
         if (length(isos_not_in_data))
             stop("ISOs ",
                     toString(isos_not_in_data),
-                    " are listed in 'countries_for_aggregates_csv_filename' but are not in denominator counts file.")
+                 " are listed in 'countries_for_aggregates_csv_filename' but are not in denominator counts file.")
+        out_df_sum <- cbind(out_df[, c("ISO.code", "Country", "In.union")],
+                            sum = rowSums(out_df[, which(!colnames(out_df) %in% c("ISO.code", "Country", "In.union"))]))
+        out_df_sum_zero <- which(out_df_sum$sum <= 0)
+        if (length(out_df_sum_zero)) {
+            stop("The following countries appear in the file '",
+                 countries_for_aggregates_csv_filename,
+                 "' but their denominator counts are all zero:\n", toString(out_df_sum[out_df_sum_zero, "Country"]))
+            ## NOTE: Output might be truncated (see ?stop).
+        }
     }
     return(invisible(out_df))
 }
@@ -656,9 +679,13 @@ post_process_mcmc <- function(run_name,
     }
 
     ## Validate denominators
+    if (file.exists(file.path(output_folder_path, "res.country.rda")))
+        denom_file_to_validate <- "res.country.rda"
+    else denom_file_to_validate <- denominator_counts_csv_filename
     suppressMessages(validate_denominator_counts_file(age_group = NULL,
                                      input_data_folder_path = NULL,
-                                     denominator_counts_csv_filename = denominator_counts_csv_filename,
+                                     denominator_counts_csv_filename = denom_file_to_validate,
+                                     output_folder_path = output_folder_path,
                                      marital_group = switch(mcmc.meta$general$marital.group,
                                                             "MWRA" = "married",
                                                             "UWRA" = "unmarried",
@@ -2694,8 +2721,16 @@ combine_runs <- function(## Describe the run
 
     suppressMessages(validate_denominator_counts_file(age_group = age_group,
                                      input_data_folder_path = data_folder_path,
-                                     denominator_counts_csv_filename = denominator_counts_csv_filename,
-                                     marital_group = c("married", "unmarried"),
+                                     denominator_counts_csv_filename = "res.country.rda",
+                                     output_folder_path = married_women_run_output_folder_path,
+                                     marital_group = "married",
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
+
+    suppressMessages(validate_denominator_counts_file(age_group = age_group,
+                                     input_data_folder_path = data_folder_path,
+                                     denominator_counts_csv_filename = "res.country.rda",
+                                     output_folder_path = unmarried_women_run_output_folder_path,
+                                     marital_group = "unmarried",
                                      countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
 
     ##--------------------------------------------------------------------------

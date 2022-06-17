@@ -64,9 +64,11 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         country_ISO <- iso.Ptp3s.key.df[c, "iso.c"]
         country_rda_fname <- iso.Ptp3s.key.df[c, "filename"]
         if(verbose) message("\t", which(select.c %in% c), " ", country_name, " (ISO ", country_ISO, "), ", country_rda_fname)
-        if(!country_name %in% names(W.Lc.t) || identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
-            stop("No denominator counts with country name '", country_name, "'.")
-            }
+        if(!country_name %in% names(W.Lc.t))
+            stop("No denominator counts for country '", country_name, "'. Denominator counts are read from 'res.country.rda'.")
+        if (identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
+            stop("Denominator counts for country '", country_name, "' are all zero. Denominator counts are read from 'res.country.rda'.")
+        }
     load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
         for (t in 1:nyears){
       cumsum.trad.ts[t,] <- cumsum.trad.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,1,]
@@ -143,7 +145,8 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         mean((cumsum.modern.ts[t,]/(cumsum.tot.ts[t,]+cumsum.unmet.ts[t,])) >= 0.75, na.rm = TRUE)
         } else zero.counts <- c(zero.counts, t)
     }
-    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(est.years[zero.counts], collapse = ", "))
+    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(est.years[zero.counts], collapse = ", "),
+                                        "\n\tDenominator counts are read from 'res.country.rda'.")
 
   # change JR, 20140317
   # find changes based on posterior samples
@@ -161,7 +164,8 @@ zero.counts <- numeric(0)
         } else zero.counts <- c(zero.counts, t)
     }
 
-    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(years.change.unique[zero.counts], collapse = ", "))
+    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(years.change.unique[zero.counts], collapse = ", "),
+                                        "\n\tDenominator counts are read from 'res.country.rda'.")
   changeprop.Lcat.Ti <-  GetInfoChange(P.yp3s = P.yp3s, years.change = years.change, years.change2 = years.change2)
 
   # for the counts:
@@ -670,7 +674,7 @@ GetAggregatesAllWomen <-
 
         ## -------*** Unmarried women
 
-        if(verbose) message("\nLoading UWRA women population counts")
+        if(verbose) message("\nLoading UWRA women population counts from '", WRA.csv, "'.")
         uwra.denom.counts.li <-                      # a list, top-level elements are countries
             ReadWRA(est.years = est.years
                     ,winbugs.data = uwra.mcmc.meta$winbugs.data
@@ -697,13 +701,13 @@ GetAggregatesAllWomen <-
             not.in.counts <- uwra.counts.iso$name.c[idx]
             stop(paste("The following countries are in the MCMC output but there are no counts for them:\n    "
                       ,paste(not.in.counts, collapse = ", ")
-                      ,".\nPlease add counts to the counts file an re-run."
+                      ,".\nPlease add counts to the counts file '", WRA.csv, "' and re-run."
                       ,sep = ""))
         }
 
         ## -------*** Married women
 
-        if(verbose) message("\nLoading MWRA women population counts")
+        if(verbose) message("\nLoading MWRA women population counts from '", WRA.csv, "'.")
         mwra.denom.counts.li <-  ReadWRA(est.years = est.years
                                          ,winbugs.data = mwra.mcmc.meta$winbugs.data
                                          ,country.info = mwra.country.info
@@ -730,7 +734,7 @@ GetAggregatesAllWomen <-
             not.in.counts <- mwra.counts.iso$name.c[idx]
             stop(paste("The following countries are in the MCMC output but there are no counts for them:\n    "
                       ,paste(not.in.counts, collapse = ", ")
-                      ,".\nPlease add counts to the counts file an re-run."
+                      ,".\nPlease add counts to the counts file '", WRA.csv, "' and re-run."
                       ,sep = ""))
         }
 
