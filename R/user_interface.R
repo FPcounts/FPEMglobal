@@ -99,6 +99,8 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 
     marital_group <- match.arg(marital_group, several.ok = TRUE)
 
+    ## Read in the denominator counts
+
     if (identical(denominator_counts_csv_filename, "res.country.rda")) {
         message("Reading denominator counts from '", file.path(output_folder_path, "res.country.rda"), "'.")
         stopifnot (!is.null(output_folder_path) || !length(dir(output_folder_path)) ||
@@ -113,6 +115,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
         if (identical(marital_group, "married")) mg_in_union <- 1
         else mg_in_union <- 0
         out_df <- cbind(out_df, In.union = mg_in_union)
+
     } else {
         if(!is.null(input_data_folder_path)) {
             denominator_counts_csv_filename <- file.path(input_data_folder_path, denominator_counts_csv_filename)
@@ -122,7 +125,6 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 
         out_df <- data.frame()
         for (mg in marital_group) {
-            message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
             if (identical(marital_group, "married")) mg_in_union <- 1
             else mg_in_union <- 0
             out_df <- rbind(out_df,
@@ -131,7 +133,40 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                                        In.union = mg_in_union))
         }
     }
-    message("\n\n--------------------\n", rep(" ", 20 - nchar("aggregates")), "aggregates", "\n")
+
+    ## Check denominator counts
+    na_counts <- which(is.na(out_df), arr.ind = TRUE)
+    na_counts_rows <- unique(na_counts[, "row"])
+    if (length(na_counts)) {
+        msg <- "The following countries have 'NA' denominator counts:"
+        for (i in seq_along(na_counts_rows)) {
+            msg <- paste0(msg, "\n\t",
+                          out_df[na_counts_rows[i], "Country"],
+                          " (",
+                          toString(gsub("X", "",
+                                        colnames(out_df)[na_counts[na_counts[, "row"] == na_counts_rows[i], "col"]])),
+                          ").")
+        }
+        stop(msg)
+    }
+
+    zero_counts <- which(round(out_df[, !colnames(out_df) %in% c("ISO.code", "Country", "In.union")]) == 0,
+                         arr.ind = TRUE)
+    zero_counts_rows <- unique(zero_counts[, "row"])
+    if (length(zero_counts)) {
+        msg <- "The following countries have denominator counts of zero:"
+        for (i in seq_along(zero_counts_rows)) {
+            msg <- paste0(msg, "\n\t",
+                          out_df[zero_counts_rows[i], "Country"],
+                          " (",
+                          toString(gsub("X", "",
+                                        colnames(out_df[, !colnames(out_df) %in% c("ISO.code", "Country", "In.union")])[zero_counts[zero_counts[, "row"] == zero_counts_rows[i], "col"]])),
+                          ").")
+        }
+        stop(msg)
+    }
+
+    ## Check aggregates
     if (is.character(countries_for_aggregates_csv_filename)) {
         if(!is.null(input_data_folder_path)) {
             countries_for_aggregates_csv_filename <-
@@ -148,11 +183,18 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                  " are listed in 'countries_for_aggregates_csv_filename' but are not in denominator counts file.")
         out_df_sum <- cbind(out_df[, c("ISO.code", "Country", "In.union")],
                             sum = rowSums(out_df[, which(!colnames(out_df) %in% c("ISO.code", "Country", "In.union"))]))
-        out_df_sum_zero <- which(out_df_sum$sum <= 0)
-        if (length(out_df_sum_zero)) {
-            stop("The following countries appear in the file '",
+        out_df_sum_zero <- out_df_sum$ISO.code[which(out_df_sum$sum <= 0)]
+        isos_zero_pop <-
+            unique(countries_for_aggregates$ISO.Code)[unique(countries_for_aggregates$ISO.Code) %in% out_df_sum_zero]
+        if (length(isos_zero_pop)) {
+            msg <- paste0("The following countries appear in the file '",
                  countries_for_aggregates_csv_filename,
                  "' but their denominator counts are all zero:\n", toString(out_df_sum[out_df_sum_zero, "Country"]))
+            if (grepl("res\\.country\\.rda", denominator_counts_csv_filename))
+                msg <- paste0(msg, "\nNote: denominator counts were read from '",
+                              denominator_counts_csv_filename,
+                              "'. If you are using new denominator counts in a .csv file you will need to delete 'res.country.rda' and re-run 'post_process_mcmc'.")
+            stop(msg)
             ## NOTE: Output might be truncated (see ?stop).
         }
     }
@@ -682,7 +724,7 @@ post_process_mcmc <- function(run_name,
     if (file.exists(file.path(output_folder_path, "res.country.rda")))
         denom_file_to_validate <- "res.country.rda"
     else denom_file_to_validate <- denominator_counts_csv_filename
-    suppressMessages(validate_denominator_counts_file(age_group = NULL,
+    validate_denominator_counts_file(age_group = NULL,
                                      input_data_folder_path = NULL,
                                      denominator_counts_csv_filename = denom_file_to_validate,
                                      output_folder_path = output_folder_path,
@@ -690,7 +732,7 @@ post_process_mcmc <- function(run_name,
                                                             "MWRA" = "married",
                                                             "UWRA" = "unmarried",
                                                             "AWRA" = c("married", "unmarried")),
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
 
     ## Age ratios
     if(!is.null(age_ratios_age_total_run_name) || !is.null(age_ratios_age_total_output_folder_path)) {
@@ -2171,14 +2213,14 @@ do_global_run <- function(## Describe the run
     }
 
     ## Validate denominators. Checks that denominators needed for aggregates are present.
-    suppressMessages(validate_denominator_counts_file(age_group = age_group,
+    validate_denominator_counts_file(age_group = age_group,
                                      input_data_folder_path = input_data_folder_path,
                                      denominator_counts_csv_filename = denominator_counts_csv_filename,
                                      marital_group = switch(marital_group,
                                                             "MWRA" = "married",
                                                             "UWRA" = "unmarried",
                                                             "AWRA" = c("married", "unmarried")),
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
 
     ## If model does not handle missing data must not have missing inputs.
     tmp_model_name <- marital_age_group_param_defaults(marital_group = marital_group,
@@ -2719,19 +2761,19 @@ combine_runs <- function(## Describe the run
     ## Validate denominators. Checks that denominators needed for aggregates are present.
     ##----------------------------------------------------------------------------
 
-    suppressMessages(validate_denominator_counts_file(age_group = age_group,
+    validate_denominator_counts_file(age_group = age_group,
                                      input_data_folder_path = data_folder_path,
                                      denominator_counts_csv_filename = "res.country.rda",
                                      output_folder_path = married_women_run_output_folder_path,
                                      marital_group = "married",
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
 
-    suppressMessages(validate_denominator_counts_file(age_group = age_group,
+    validate_denominator_counts_file(age_group = age_group,
                                      input_data_folder_path = data_folder_path,
                                      denominator_counts_csv_filename = "res.country.rda",
                                      output_folder_path = unmarried_women_run_output_folder_path,
                                      marital_group = "unmarried",
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename))
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
 
     ##--------------------------------------------------------------------------
     ## Construct output for all women
