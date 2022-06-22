@@ -108,10 +108,11 @@ validate_denominator_counts_file <- function(age_group = "15-49",
         res_country_list <- get(load(file.path(output_folder_path, "res.country.rda")))
         out_df <- data.frame(ISO.code = res_country_list$iso.g,
                              Country = names(res_country_list$W.Lg.t),
-                             do.call("rbind", res_country_list$W.Lg.t),
+                             do.call("rbind", res_country_list$W.Lg.t) * 1e3, #NB !! Multiply by 1000
                              row.names = NULL)
         colnames(out_df)[-(1:2)] <-
             as.numeric(dimnames(res_country_list$CIprop.Lg.Lcat.qt[[1]][["Total"]])[[2]])- 0.5
+
         if (identical(marital_group, "married")) mg_in_union <- 1
         else mg_in_union <- 0
         out_df <- cbind(out_df, In.union = mg_in_union)
@@ -145,22 +146,6 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                           " (",
                           toString(gsub("X", "",
                                         colnames(out_df)[na_counts[na_counts[, "row"] == na_counts_rows[i], "col"]])),
-                          ").")
-        }
-        stop(msg)
-    }
-
-    zero_counts <- which(round(out_df[, !colnames(out_df) %in% c("ISO.code", "Country", "In.union")]) == 0,
-                         arr.ind = TRUE)
-    zero_counts_rows <- unique(zero_counts[, "row"])
-    if (length(zero_counts)) {
-        msg <- "The following countries have denominator counts of zero:"
-        for (i in seq_along(zero_counts_rows)) {
-            msg <- paste0(msg, "\n\t",
-                          out_df[zero_counts_rows[i], "Country"],
-                          " (",
-                          toString(gsub("X", "",
-                                        colnames(out_df[, !colnames(out_df) %in% c("ISO.code", "Country", "In.union")])[zero_counts[zero_counts[, "row"] == zero_counts_rows[i], "col"]])),
                           ").")
         }
         stop(msg)
