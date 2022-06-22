@@ -520,6 +520,8 @@ See the example at the end of the section 'Adjusted Medians' for `R` code. You c
 
 If you want to use a revised set of denominator counts, you should follow the steps in the 'Overwriting Aggregates' section. However, you should delete the entire all women output directory rather than the few files specified. 
 
+In addition, you will need to place copies of the denominator counts '.csv' file in the 'data' subdirectories of all runs you want to re-process.
+
 
 ## Adjusted Medians
 
