@@ -3803,7 +3803,6 @@ do_global_validation_run <- function(run_desc = "",
                       age_ratios_age_total_output_folder_path = NULL,
                       age_ratios_age_total_denominator_counts_csv_filename = NULL,
                       age_ratios_age_total_denominator_counts_folder_path = NULL,
-                      all_women = post_process_mcmc_args$all_women,
                       verbose = verbose)
 
     ##-----------------------------------------------------------------------------
