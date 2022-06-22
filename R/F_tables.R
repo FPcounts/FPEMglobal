@@ -679,7 +679,7 @@ GetTablesChangeAllWomen <- function(# Save csv's with CIs for change in proporti
 ##' @param name.change.agg.tbl.2
 ##' @param year1 First year to include in the table.
 ##' @param year2 Second year to include in the table.
-##' @param special.aggregates 'World Bank' produces 'Less Developed', etc. 'UN' produces 'Developed', 'Developing', etc. NB: whatever you request must be in 'name.res.agg.tbl.1' and 'name.res.agg.tbl.2'.
+##' @param special.aggregates 'UN' produces 'Developed', 'Developing', etc. NB: whatever you request must be in 'name.res.agg.tbl.1' and 'name.res.agg.tbl.2'. 'World Bank' is no longer available; use the 'special aggregates' mechanism (2022-06-22).
 ##' @param regioninfo.csv
 ##' @param select.c.csv
 ##' @param adjust.medians Logical. Use adjusted medians?
@@ -703,7 +703,7 @@ GetLancetBigTable <- function(run.name = "test",
                               name.change.agg.tbl.2 = paste(run.name, "UNPDaggregate_changes_ratio_MetDemModMeth.csv", sep = "_"),
                               year1 = 2000,
                               year2 = 2017,
-                              special.aggregates = c("World Bank", "UN"),
+                              special.aggregates = c("UN"),
                               regioninfo.csv = NULL #Need this to get the ordering of countries and regions
                               ## change.str = "Change (2017-2010) - (2010-2000)"
                              ,select.c.csv = NULL
@@ -858,10 +858,9 @@ GetLancetBigTable <- function(run.name = "test",
 ##' @param name.change.agg.tbl.2
 ##' @param year1 First year to include in the table.
 ##' @param year2 Second year to include in the table.
-##' @param special.aggregates 'World Bank' produces 'Less Developed',
-##'     etc. 'UN' produces 'Developed', 'Developing', etc. NB:
+##' @param special.aggregates 'UN' produces 'Developed', 'Developing', etc. NB:
 ##'     whatever you request must be in 'name.res.agg.tbl.1' and
-##'     'name.res.agg.tbl.2'.
+##'     'name.res.agg.tbl.2'. World Bank is no longer available; use the 'special aggregates' mechanism (2022-06-22).
 ##' @param regioninfo.csv
 ##' @param ##change.str
 ##' @return
@@ -883,7 +882,7 @@ GetLancetBigTableAllWomen <- function(run.name = "test",
                               name.change.agg.tbl.2 = paste(aw.run.name, "UNPDaggregate_changes_ratio_MetDemModMeth.csv", sep = "_"),
                               year1 = 2000,
                               year2 = 2017,##
-                              special.aggregates = c("World Bank", "UN"),
+                              special.aggregates = c("UN"),
                               regioninfo.csv = NULL,
                               ## change.str = "Change (2017-2010) - (2010-2000)"
                               select.c.csv = NULL,
@@ -1442,26 +1441,7 @@ InternalGetLancetBigTable <-
                      ,change.agg.tbl[change.agg.tbl$Name == "Other developing countries",]
                      ,change.agg.tbl[change.agg.tbl$Name == "FP2020 69 Countries",]
                       )
-            } else if(special.aggregates[1] == "World Bank") {
-                res.spec.agg <-
-                rbind(res.agg.tbl[res.agg.tbl$Name == "World",]
-                     ,res.agg.tbl[res.agg.tbl$Name == "High-income countries",]
-                     #,res.agg.tbl[res.agg.tbl$Name == "Middle-income countries",]
-                     ,res.agg.tbl[res.agg.tbl$Name == "Upper-middle-income countries",]
-                     ,res.agg.tbl[res.agg.tbl$Name == "Lower-middle-income countries",]
-                     ,res.agg.tbl[res.agg.tbl$Name == "Low-income countries",]
-                     ,res.agg.tbl[res.agg.tbl$Name == "FP2020 69 Countries",]
-                      )
-            change.spec.agg <-
-                rbind(change.agg.tbl[change.agg.tbl$Name == "World",]
-                     ,change.agg.tbl[change.agg.tbl$Name == "High-income countries",]
-                     #,change.agg.tbl[change.agg.tbl$Name == "Middle-income countries",]
-                     ,change.agg.tbl[change.agg.tbl$Name == "Upper-middle-income countries",]
-                     ,change.agg.tbl[change.agg.tbl$Name == "Lower-middle-income countries",]
-                     ,change.agg.tbl[change.agg.tbl$Name == "Low-income countries",]
-                     ,change.agg.tbl[change.agg.tbl$Name == "FP2020 69 Countries",]
-                      )
-            } else stop("'special.aggregates' must be one of 'World Bank' or 'UN'.")
+            } else stop("'special.aggregates' must be 'UN'; no other values are valid.")
 
             out.tbl <-
                 rbind(merge(res.spec.agg, change.spec.agg[, -2], by = "Name"
@@ -1533,7 +1513,7 @@ InternalLancetBigTable2Latex <-
              bullet.cols = c(11, 12),
              separate.tables = list(c(1, 3:6, 11, 12), c(1, 7:10, 11, 12)),
              shorten.UK = FALSE,
-             special.aggregates = c("World Bank", "UN")
+             special.aggregates = c("UN")
              ) {
 
         ## -------* Major areas
@@ -1547,13 +1527,7 @@ InternalLancetBigTable2Latex <-
             major.areas <-
                 c(major.areas, c("Developed regions", "Developing regions",
                                  "Developing (excl. China)"))
-        } else if(special.aggregates[1] == "World Bank") {
-            major.areas <-
-                c(major.areas, c("More developed regions", "Less developed regions"
-                                ,"Other developing regions"
-                                ,"Less developed regions, excluding China"
-                                 ,"Least developed regions"))
-            } else stop("'special.aggregates' must be one of 'World Bank' or 'UN'.")
+        } else stop("'special.aggregates' must be 'UN'; no other values are valid.")
 
         ## -------* Line endings
 

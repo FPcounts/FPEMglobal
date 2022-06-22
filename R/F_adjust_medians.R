@@ -1021,56 +1021,6 @@ AggregateMedians <- function(res,
                                     ,W.Lc.t = W.Lc.t, select.iso = select.iso
                                     ,est.years = est.years)
 
-        ## -------***** High-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for high-income countries
-        select.iso <- get_aggregate_ISOs(name = "high income countries", family = "World Bank")
-        nameg <- "High-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Middle-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for middle-income countries
-        select.iso <- get_aggregate_ISOs(name = "middle income countries", family = "World Bank")
-        nameg <- "Middle-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Upper-Middle-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for upper-middle-income countries
-        select.iso <- get_aggregate_ISOs(name = "upper middle income countries", family = "World Bank")
-        nameg <- "Upper-middle-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Lower-Middle-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for lower-middle-income countries
-        select.iso <- get_aggregate_ISOs(name = "lower middle income countries", family = "World Bank")
-        nameg <- "Lower-middle-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Low-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for low-income countries
-        select.iso <- get_aggregate_ISOs(name = "low income countries", family = "World Bank")
-        nameg <- "Low-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
         ## -------***** Sub-Saharan Africa
 
         ## [MCW-2018-03-23] :: Aggregate for Sub-Saharan Africa
