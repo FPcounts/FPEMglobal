@@ -64,9 +64,11 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         country_ISO <- iso.Ptp3s.key.df[c, "iso.c"]
         country_rda_fname <- iso.Ptp3s.key.df[c, "filename"]
         if(verbose) message("\t", which(select.c %in% c), " ", country_name, " (ISO ", country_ISO, "), ", country_rda_fname)
-        if(!country_name %in% names(W.Lc.t) || identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
-            stop("No denominator counts with country name '", country_name, "'.")
-            }
+        if(!country_name %in% names(W.Lc.t))
+            stop("No denominator counts for country '", country_name, "'. Denominator counts are read from 'res.country.rda'.")
+        if (identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
+            stop("Denominator counts for country '", country_name, "' are all zero. Denominator counts are read from 'res.country.rda'.")
+        }
     load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
         for (t in 1:nyears){
       cumsum.trad.ts[t,] <- cumsum.trad.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,1,]
@@ -143,7 +145,8 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         mean((cumsum.modern.ts[t,]/(cumsum.tot.ts[t,]+cumsum.unmet.ts[t,])) >= 0.75, na.rm = TRUE)
         } else zero.counts <- c(zero.counts, t)
     }
-    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(est.years[zero.counts], collapse = ", "))
+    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(est.years[zero.counts], collapse = ", "),
+                                        "\n\tDenominator counts are read from 'res.country.rda'.")
 
   # change JR, 20140317
   # find changes based on posterior samples
@@ -161,7 +164,8 @@ zero.counts <- numeric(0)
         } else zero.counts <- c(zero.counts, t)
     }
 
-    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(years.change.unique[zero.counts], collapse = ", "))
+    if(length(zero.counts) > 0) warning("\tDenominator counts unknown (or zero) in years :", paste(years.change.unique[zero.counts], collapse = ", "),
+                                        "\n\tDenominator counts are read from 'res.country.rda'.")
   changeprop.Lcat.Ti <-  GetInfoChange(P.yp3s = P.yp3s, years.change = years.change, years.change2 = years.change2)
 
   # for the counts:
@@ -283,15 +287,6 @@ if (is.null(output.dir)){
     res.aggregate <-
         c(res.aggregate,
           make_country_aggregates_internal(family = "UNPD",
-                                           C = C, iso.Ptp3s.key.df = iso.Ptp3s.key.df,
-                                           output.dir.countrytrajectories = output.dir.countrytrajectories,
-                                           years.change = years.change, years.change2 = years.change2,
-                                           W.Lc.t = W.Lc.t, verbose = verbose))
-
-    ## World Bank regions
-    res.aggregate <-
-        c(res.aggregate,
-          make_country_aggregates_internal(family = "World Bank",
                                            C = C, iso.Ptp3s.key.df = iso.Ptp3s.key.df,
                                            output.dir.countrytrajectories = output.dir.countrytrajectories,
                                            years.change = years.change, years.change2 = years.change2,
@@ -459,6 +454,7 @@ SelectCountriesInRegion <- function(# Select countries in a particular region
 ##' @param changes.years.names
 ##' @return
 ##' @author
+##' @noRd
 GetAggregatesAllWomen <-
     function(# Construct aggregate estimates
   ### Estimate the proportion/number of MWRA in various categories for aggregates.
@@ -669,14 +665,15 @@ GetAggregatesAllWomen <-
 
         ## -------*** Unmarried women
 
-        if(verbose) message("\nLoading UWRA women population counts")
+        if(verbose) message("\nLoading UWRA women population counts from '", WRA.csv, "'.")
         uwra.denom.counts.li <-                      # a list, top-level elements are countries
             ReadWRA(est.years = est.years
                     ,winbugs.data = uwra.mcmc.meta$winbugs.data
                     ,country.info = uwra.country.info
                     ,WRA.csv = WRA.csv
-                    ,return.iso = TRUE,
-                     in_union = 0)
+                    ,return.iso = TRUE
+                   ,in_union = 0
+                    ,verbose = verbose)
         uwra.counts.iso <- uwra.denom.counts.li[[2]]
         uwra.denom.counts.li <- uwra.denom.counts.li[[1]]
 
@@ -695,19 +692,20 @@ GetAggregatesAllWomen <-
             not.in.counts <- uwra.counts.iso$name.c[idx]
             stop(paste("The following countries are in the MCMC output but there are no counts for them:\n    "
                       ,paste(not.in.counts, collapse = ", ")
-                      ,".\nPlease add counts to the counts file an re-run."
+                      ,".\nPlease add counts to the counts file '", WRA.csv, "' and re-run."
                       ,sep = ""))
         }
 
         ## -------*** Married women
 
-        if(verbose) message("\nLoading MWRA women population counts")
+        if(verbose) message("\nLoading MWRA women population counts from '", WRA.csv, "'.")
         mwra.denom.counts.li <-  ReadWRA(est.years = est.years
                                          ,winbugs.data = mwra.mcmc.meta$winbugs.data
                                          ,country.info = mwra.country.info
                                          ,WRA.csv = WRA.csv
-                                         ,return.iso = TRUE,
-                                         in_union = 1
+                                         ,return.iso = TRUE
+                                        ,in_union = 1
+                                         ,verbose = verbose
                                           )
         mwra.counts.iso <- mwra.denom.counts.li[[2]]
         mwra.denom.counts.li <- mwra.denom.counts.li[[1]]
@@ -727,7 +725,7 @@ GetAggregatesAllWomen <-
             not.in.counts <- mwra.counts.iso$name.c[idx]
             stop(paste("The following countries are in the MCMC output but there are no counts for them:\n    "
                       ,paste(not.in.counts, collapse = ", ")
-                      ,".\nPlease add counts to the counts file an re-run."
+                      ,".\nPlease add counts to the counts file '", WRA.csv, "' and re-run."
                       ,sep = ""))
         }
 
@@ -783,7 +781,6 @@ GetAggregatesAllWomen <-
         if(is.null(file.aggregates)) {
             aggregates.from.file.df <- NULL #default aggregates
             aggregates <- c(get_aggregate_names(family = "UNPD"),
-                            get_aggregate_names(family = "World Bank"),
                             uwra.region.info$name.subreg,
                             uwra.region.info$name.reg,
                             "World")
@@ -1401,6 +1398,7 @@ GetAggregatesAllWomen <-
 ##' @param years.change
 ##' @return Saves quantiles in the respective directories.
 ##' @author Mark Wheldon.
+##' @noRd
 GetAggregatesAgeRatios <-
     function(age.subset.uwra.output.dir = NULL,
              age.subset.mwra.output.dir = NULL,
@@ -1533,7 +1531,6 @@ GetAggregatesAgeRatios <-
 
             if(is.null(file.aggregates)) {
                 aggregates <- c(get_aggregate_names(family = "UNPD"),
-                                get_aggregate_names(family = "World Bank"),
                                 age.subset.region.info$name.subreg,
                                 age.subset.region.info$name.reg,
                                 "World")
@@ -1796,6 +1793,7 @@ GetAggregatesAgeRatios <-
 ##'     "Z", "UnmarriedOverAll", "MarriedOverAll")'.
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 InternalMakeAggLists <- function(filename = NULL, output.dir = NULL, aggregates, n.iters,
                               years.names, d2.names) {
 
@@ -1855,6 +1853,7 @@ InternalMakeAggLists <- function(filename = NULL, output.dir = NULL, aggregates,
 ##' @param compress.RData
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 InternalMakeIndividualAggLists <- function(filename = NULL, output.dir = NULL
                                , n.iters,
                               years.names, d2.names
@@ -1915,6 +1914,7 @@ InternalMakeIndividualAggLists <- function(filename = NULL, output.dir = NULL
 ##' @param verbose
 ##' @return
 ##' @author
+##' @noRd
 InternalAllWomenAggregateCounts <-
     function(filename, output.dir, file.aggregates = NULL
              ,iso.both.j, CP.counts.j, uwra.denom.counts,
@@ -1940,45 +1940,6 @@ InternalAllWomenAggregateCounts <-
                 agg.label <- aggregates.names.df[i, "display.label"]
 
                 if(iso.both.j %in% get_aggregate_ISOs(name = agg, family = "UNPD")) {
-
-                    if(verbose) message("Adding to '", agg.label, "'.")
-
-                    load(file = file.path(output.dir,
-                                          paste0(filename, "_",
-                                                 as.character(aggregates.names.df[i, "file.name"]),
-                                                 ".RData")))
-
-                    res.aggregate.list$CP <-
-                        res.aggregate.list$CP + CP.counts.j
-
-                    if(!is.null(uwra.denom.counts)) {
-                        res.aggregate.list$W.Lg.t <-
-                            res.aggregate.list$W.Lg.t + uwra.denom.counts
-                    }
-                    if(!is.null(mwra.denom.counts)) {
-                        res.aggregate.list$W.Lg.t <-
-                            res.aggregate.list$W.Lg.t + mwra.denom.counts
-                    }
-                    save(res.aggregate.list, compress = compress.RData
-                        ,file = file.path(output.dir,
-                                          paste0(filename, "_"
-                                                ,as.character(aggregates.names.df[i, "file.name"]),
-                                                 ".RData")))
-                }
-            }
-
-            ## -------** World Bank Aggregates
-
-            wb_names_i <-
-                which(aggregates.names.df$agg.name %in%
-                      get_aggregate_names(family = "World Bank"))
-
-            for(i in wb_names_i) {
-
-                agg <- aggregates.names.df[i, "agg.name"]
-                agg.label <- aggregates.names.df[i, "display.label"]
-
-                if(iso.both.j %in% get_aggregate_ISOs(name = agg, family = "World Bank")) {
 
                     if(verbose) message("Adding to '", agg.label, "'.")
 
@@ -2169,6 +2130,7 @@ InternalAllWomenAggregateCounts <-
 ##' @param adj.method Character. One of c("modelp", "topdown", "bottomup"). Default is "modelp".
 ##' @return Nothing. Called for side effects, namely saving tables as \code{.csv} files.
 ##' @author Mark Wheldon
+##' @noRd
 make.aggregates <- function(file.agg, name.agg, output.dir,
                             run.name, table.dir.orig = NULL,
                             do.adjustments = TRUE,
@@ -2291,8 +2253,9 @@ make.aggregatesAllWomen <- function(file.agg, name.agg,
 ##' @return List of aggregates, named according to aggregate display labels.
 ##' @seealso \code{\link{get_aggregate_names}}
 ##' @author Mark Wheldon
+##' @noRd
 make_country_aggregates_internal <-
-    function(family = c("UNPD", "World Bank"), C,
+    function(family = "UNPD", C,
              iso.Ptp3s.key.df,
              output.dir.countrytrajectories,
              years.change, years.change2,
@@ -2328,9 +2291,11 @@ make_country_aggregates_internal <-
 
 
 
-#' Get names of aggregates within aggregate families
+##' Get names of aggregates within aggregate families
 ##'
-##' Returns the names of all aggregates within a specified family, e.g., UNPD, World Bank.
+##' Returns the names of all aggregates within a specified
+##' family. Only UNPD is available. For World Bank aggregates, use the
+##' 'special aggregates' interface.
 ##'
 ##' @note \emph{Internal} aggregate names are in lower case, except proper
 ##'     nouns. Punctuation is omitted unless part of a proper
@@ -2343,8 +2308,9 @@ make_country_aggregates_internal <-
 ##'     \emph{internal names} of aggregates, the names of which give
 ##'     the \emph{display labels}.
 ##' @author
+##' @noRd
 get_aggregate_names <-
-    function(family = c("UNPD", "World Bank")) {
+    function(family = "UNPD") {
 
     family <- match.arg(family)
 
@@ -2362,15 +2328,8 @@ get_aggregate_names <-
           `Less developed countries, excluding China` = "less developed countries excluding China",
           `Sub-Saharan Africa` = "sub-Saharan Africa")
 
-    } else if(family == "World Bank") {
-
-            c(`High-income countries` = "high income countries",
-          `Middle-income countries` = "middle income countries",
-          `Upper-middle-income countries` = "upper middle income countries",
-          `Lower-middle-income countries` = "lower middle income countries",
-          `Low-income countries` = "low income countries",
-          `No income group` = "no income group")
-
+    } else {
+        stop("'family' '", family, "' is not a valid selection.")
     }
 }
 
@@ -2384,9 +2343,10 @@ get_aggregate_names <-
 ##' @param file Not yet used.
 ##' @return \emph{Character} vector of ISO codes.
 ##' @author Mark Wheldon
+##' @noRd
 get_aggregate_ISOs <-
     function(name,
-             family = c("UNPD", "World Bank"),
+             family = c("UNPD"),
              file = NULL) {
 
         family = match.arg(family)
@@ -2577,82 +2537,8 @@ get_aggregate_ISOs <-
 
             }
 
-        } else if(family == "World Bank") {
-
-            if(name == "high income countries") {
-
-                out <-
-                    c("20", "28", "32", "36", "40", "44", "48", "52", "56", "60",
-                      "92", "96", "124", "136", "152", "191", "196", "203", "208",
-                      "233", "234", "246", "250", "258", "276", "292", "300", "304",
-                      "316", "344", "348", "352", "372", "376", "380", "392", "410",
-                      "414", "428", "438", "440", "442", "446", "470", "492", "512",
-                      "528", "531", "533", "534", "540", "554", "578", "580", "585",
-                      "591", "616", "620", "630", "634", "659", "663", "674", "682",
-                      "690", "702", "703", "705", "724", "752", "756", "780", "784",
-                      "796", "826", "833", "840", "850", "858")
-
-            }
-
-            if(name == "middle income countries") {
-
-                out <-
-                    c("24", "50", "64", "68", "90", "104", "116", "120", "132",
-                      "144", "178", "222", "262", "268", "275", "288", "296", "340",
-                      "356", "360", "384", "404", "417", "418", "426", "478", "496",
-                      "498", "504", "548", "558", "566", "583", "586", "598", "608",
-                      "626", "678", "704", "729", "748", "788", "804", "818", "860",
-                      "894", "8", "12", "16", "31", "51", "70", "72", "76",
-                      "84", "100", "112", "156", "170", "188", "192", "212", "214",
-                      "218", "226", "242", "266", "308", "320", "328", "364", "368",
-                      "388", "398", "400", "422", "434", "458", "462", "480", "484",
-                      "499", "516", "520", "584", "600", "604", "642", "643", "662",
-                      "670", "688", "710", "740", "764", "776", "792", "795", "798",
-                      "807", "862", "882")
-
-            }
-
-            if(name == "upper middle income countries") {
-
-                out <-
-                    c("8", "12", "16", "31", "51", "70", "72", "76",
-                      "84", "100", "112", "156", "170", "188", "192", "212", "214",
-                      "218", "226", "242", "266", "308", "320", "328", "364", "368",
-                      "388", "398", "400", "422", "434", "458", "462", "480", "484",
-                      "499", "516", "520", "584", "600", "604", "642", "643", "662",
-                      "670", "688", "710", "740", "764", "776", "792", "795", "798",
-                      "807", "862", "882")
-
-            }
-
-            if(name == "lower middle income countries") {
-
-                out <-
-                    c("24", "50", "64", "68", "90", "104", "116", "120", "132",
-                      "144", "178", "222", "262", "268", "275", "288", "296", "340",
-                      "356", "360", "384", "404", "417", "418", "426", "478", "496",
-                      "498", "504", "548", "558", "566", "583", "586", "598", "608",
-                      "626", "678", "704", "729", "748", "788", "804", "818", "860",
-                      "894")
-
-            }
-
-            if(name == "low income countries") {
-
-                out <-
-                    c("4", "108", "140", "148", "174", "180", "204", "231", "232",
-                      "270", "324", "332", "408", "430", "450", "454", "466", "508",
-                      "524", "562", "624", "646", "686", "694", "706", "716", "728",
-                      "760", "762", "768", "800", "834", "854", "887")
-
-            }
-
-            if(name == "no income group") {
-
-                out <- c("638", "184", "500", "312", "474", "660")
-
-            }
-
+        } else {
+            stop("'family' '", family, "' is not a valid selection.")
         }
 
         return(out)

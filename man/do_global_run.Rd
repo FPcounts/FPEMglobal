@@ -165,11 +165,11 @@ change-in-changes.}
 \code{FALSE}, the arguments that pertain to specific plots or tables are
 ineffective.}
 
-\item{plot_barchart_years}{Vector of years for which bar
-charts should be produced. These are saved to
-\file{\code{output_folder_path}/fig/barchart}. These must be in
-the range of \code{start_year} and \code{end_year} passed to
-\code{\link{post_process_mcmc}}.}
+\item{plot_barchart_years}{Vector of years for which bar charts
+should be produced. These are saved to
+\file{\code{output_folder_path}/fig/barchart}. These must be
+in the range of \code{start_year} and \code{end_year} passed
+to \code{\link{post_process_mcmc}}.}
 
 \item{plot_CI_changes_years}{Vector of length two (if longer, only
 the first and last elements are used). Declares the years to
@@ -181,8 +181,8 @@ the range of \code{start_year} and \code{end_year} passed to
 \code{\link{post_process_mcmc}}.}
 
 \item{make_all_bar_charts}{Logical. Produce barcharts? If
-\code{NULL} but \code{plot_barchart_years} is
-non-\code{NULL}, is reset to \code{TRUE}.}
+\code{NULL} but \code{plot_barchart_years} is non-\code{NULL},
+is reset to \code{TRUE}.}
 
 \item{plot_maps_shapefile_folder}{Path to directory containing
 shapefiles for maps. Only needed if \code{plot_maps} is
@@ -190,10 +190,10 @@ shapefiles for maps. Only needed if \code{plot_maps} is
 \code{input_data_folder_path}; it should be a full path to the
 shape files.}
 
-\item{plot_maps_years}{Vector of years for which maps are
-desired; the full set of maps are produced for each of the
-years listed. These must be in the range of \code{start_year}
-and \code{end_year} passed to \code{\link{post_process_mcmc}}.}
+\item{plot_maps_years}{Vector of years for which maps are desired;
+the full set of maps are produced for each of the years
+listed. These must be in the range of \code{start_year} and
+\code{end_year} passed to \code{\link{post_process_mcmc}}.}
 
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}

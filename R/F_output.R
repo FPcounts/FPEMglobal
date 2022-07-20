@@ -11,7 +11,8 @@ ReadWRA <- function(# Read WRA for all countries
   ##[MCW-2016-11-21-1] :: Added to allow return of a data frame that has all
   ##country names and their ISO codes. This is used in 'allWomenCIs()'.
   ,return.iso = FALSE,
-  in_union
+  in_union,
+  verbose = TRUE
 ){
   # read in number of women of reproductive ages in married/union
   nyears <-  length(est.years)
@@ -64,9 +65,15 @@ ReadWRA <- function(# Read WRA for all countries
           }
       }
       if(length(no.est.msg.yrs) > 0) {
+          if (verbose) {
           message(paste0("\nNo estimate for number of women for ", country.info$name.c[c], " for years\n",
                          paste(strwrap(paste(no.est.msg.yrs, collapse = ", "), initial = "  ", prefix = "  "), collapse = "\n")
                          ))
+          } else {
+              message(paste0("No estimate for number of women for ", country.info$name.c[c], " for some or all years between ",
+                             no.est.msg.yrs[1], " and ", no.est.msg.yrs[length(no.est.msg.yrs)], "."
+                         ))
+          }
       }
   }
   ##details<< If WRA information on a country is missing for a year, a warning message will be printed, and the WRA will be set to 0.
@@ -191,7 +198,8 @@ GetCIs <- function (# Construct country-specific CIs
                        country.info = countries.all,
                        WRA.csv = WRA.csv,
                        return.iso = TRUE,
-                       in_union
+                      in_union,
+                      verbose = verbose
                        )
     W.Lg.t.iso <- W.Lg.t[[2]]
     W.Lg.t <- W.Lg.t[[1]]

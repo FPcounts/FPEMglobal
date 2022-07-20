@@ -50,18 +50,19 @@ looked for in \code{input_data_folder_path}. Countries appear
 in the \file{.pdf} in the same order as they are listed in
 \code{countries_in_CI_plots_csv_filename}.}
 
-\item{plot_diagnostic_CI_plots}{Logical. Produce diagnostic versions of the main
-country-level indicator plots. These have zoomed y-axes.}
+\item{plot_diagnostic_CI_plots}{Logical. Produce diagnostic
+versions of the main country-level indicator plots. These have
+zoomed y-axes.}
 
 \item{make_all_bar_charts}{Logical. Produce barcharts? If
-\code{NULL} but \code{plot_barchart_years} is
-non-\code{NULL}, is reset to \code{TRUE}.}
+\code{NULL} but \code{plot_barchart_years} is non-\code{NULL},
+is reset to \code{TRUE}.}
 
-\item{plot_barchart_years}{Vector of years for which bar
-charts should be produced. These are saved to
-\file{\code{output_folder_path}/fig/barchart}. These must be in
-the range of \code{start_year} and \code{end_year} passed to
-\code{\link{post_process_mcmc}}.}
+\item{plot_barchart_years}{Vector of years for which bar charts
+should be produced. These are saved to
+\file{\code{output_folder_path}/fig/barchart}. These must be
+in the range of \code{start_year} and \code{end_year} passed
+to \code{\link{post_process_mcmc}}.}
 
 \item{plot_CI_changes_years}{Vector of length two (if longer, only
 the first and last elements are used). Declares the years to
@@ -78,10 +79,10 @@ shapefiles for maps. Only needed if \code{plot_maps} is
 \code{input_data_folder_path}; it should be a full path to the
 shape files.}
 
-\item{plot_maps_years}{Vector of years for which maps are
-desired; the full set of maps are produced for each of the
-years listed. These must be in the range of \code{start_year}
-and \code{end_year} passed to \code{\link{post_process_mcmc}}.}
+\item{plot_maps_years}{Vector of years for which maps are desired;
+the full set of maps are produced for each of the years
+listed. These must be in the range of \code{start_year} and
+\code{end_year} passed to \code{\link{post_process_mcmc}}.}
 
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
@@ -92,6 +93,12 @@ are produced. Note: this is \emph{not} a filename, although a
 corresponding file named
 \file{\code{special_aggregates_name}.csv} must be present in
 \code{input_data_folder_path}.}
+
+\item{make_age_ratios}{Logical. Should results for age-ratios be
+made? If \code{NULL} this is set based on the presence of
+files \dQuote{res.country.age.ratio.rda} or
+\dQuote{res.country.all.women.age.ratio.rda} in
+\code{output_folder_path}.}
 
 \item{validation_keep_all}{Logical. Should validation results be
 saved? If \code{TRUE}, a list with elements \code{CI.df} and
@@ -125,10 +132,12 @@ attempt is made to find this folder by substituting
 run. See \code{married_women_run_name}.}
 
 \item{married_women_output_folder_path}{Path to directory
-containing outputs for a married women run. See \code{married_women_run_name}.}
+containing outputs for a married women run. See
+\code{married_women_run_name}.}
 
 \item{unmarried_women_output_folder_path}{Path to directory
-containing outputs for a unmarried women run. See \code{married_women_output_folder_path}.}
+containing outputs for a unmarried women run. See
+\code{married_women_output_folder_path}.}
 }
 \value{
 Either \code{run_name} invisibly as a character string or,

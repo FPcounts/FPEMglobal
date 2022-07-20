@@ -99,10 +99,11 @@ copy_uwra_mwra_files <-
 ##' @param model_name
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 marital_age_group_param_defaults <- function(marital_group, age_group, model_family, model_name) {
     if(marital_group == "married") {
         if(is.null(model_name)) {
-            if(age_group == "15-19") {
+            if(age_group %in% c("15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49")) {
                 if(model_family == "rate") {
                     write_model_fun <- "WriteModel_MWRA_Geog_Rate_1519_InclNoData"
                 } else {        #level model

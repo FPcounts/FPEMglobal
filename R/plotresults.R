@@ -176,8 +176,8 @@ PlotResults <- function(# Plot lots of results!
                                                            , "CIs", fig.name.years, fp2020, diag, ".pdf"))# change JR, 20140418
                                 ,sources.pal = sources.pal
                                 ,add.info = add.info #[MCW-2016-04-08-4] Control
-                                 #'add.info' and size of
-                                #plotting characters.
+                                 # 'add.info' and size of
+                                # plotting characters.
                                 ,cex.symbols = cex.symbols
                                 ,non.std.symbol = non.std.symbol
                                 ,UWRA = UWRA
@@ -211,9 +211,9 @@ PlotResults <- function(# Plot lots of results!
                                                     , paste0(fig.run.name, filename.append
                                                            , "CIs", fig.name.years, fp2020, diag, ".pdf"))# change JR, 20140418
                                 ,sources.pal = sources.pal
-                                ,add.info = add.info #[MCW-2016-04-08-4] Control
-                                 #'add.info' and size of
-                                #plotting characters.
+                                ,add.info = add.info # [MCW-2016-04-08-4] Control
+                                 # 'add.info' and size of
+                                # plotting characters.
                                 ,cex.symbols = cex.symbols
                                 ,non.std.symbol = non.std.symbol
                                 ,UWRA = UWRA
@@ -235,9 +235,9 @@ PlotResults <- function(# Plot lots of results!
                                                 , paste0(fig.run.name, filename.append
                                                        , "CIs_nopar", fig.name.years, fp2020, diag, ".pdf"))# change JR, 20140418
                             ,sources.pal = sources.pal
-                            ,add.info = add.info #[MCW-2016-04-08-5] Control
-                                                 #'add.info' and size of
-                                                 #plotting characters.
+                            ,add.info = add.info # [MCW-2016-04-08-5] Control
+                                                 # 'add.info' and size of
+                                                 # plotting characters.
                             ,cex.symbols = cex.symbols
                             ,non.std.symbol = non.std.symbol
                             ,UWRA = UWRA
@@ -260,9 +260,9 @@ PlotResults <- function(# Plot lots of results!
                                  end.year = end.year,
                                  run.name = run.name
                                 ,sources.pal = sources.pal
-                                ,add.info = add.info #[MCW-2016-04-08-6] Control
-                                                     #'add.info' and size of
-                                                     #plotting characters.
+                                ,add.info = add.info # [MCW-2016-04-08-6] Control
+                                                     # 'add.info' and size of
+                                                     # plotting characters.
                                 ,cex.symbols = cex.symbols
                                 ,non.std.symbol = non.std.symbol
                                 ,UWRA = UWRA

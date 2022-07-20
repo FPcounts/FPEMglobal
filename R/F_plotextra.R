@@ -300,6 +300,7 @@ BarChartSubregion <- function(#Plot counts of MWRA with unmet need by subregion 
 ##' @param year Year for which results are plotted.
 ##' @return Called for its side effect. A plot is saved in \code{fig.dir}.
 ##' @author Mark Wheldon with great swathes copied from \code{\link{BarChartSubregion}}.
+##' @noRd
 BarChartPropUWRA <-
     function(run.name = "test",
              output.dir = NULL,
@@ -1196,6 +1197,7 @@ PlotLogisticParameters <- function (# Plot overview of country parameters of the
 ##' @return
 ##' @author Original by Sara Hertog, modified for use here by Mark Wheldon and
 ##'     Philipp Ueffing. Other code taken from other \pkg{FPCounts} functions.
+##' @noRd
 MapCPIndicator <-
     function(run.name = "test",
              output.dir = NULL,

@@ -26,6 +26,7 @@
 ##' @param USE.NAMES See \code{\link{mapply}}.
 ##' @return See \code{\link{mapply}}.
 ##' @author Mark Wheldon.
+##' @noRd
 mapplySafe <- function(FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE,
                        USE.NAMES = TRUE) {
     dots <- list(...)
@@ -58,6 +59,7 @@ mapplySafe <- function(FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE,
 ##'     useBytes = FALSE)}.
 ##' @return 'x' converted to a valid filename.
 ##' @author Mark Wheldon.
+##' @noRd
 makeFileName <- function(x, safe = "_", disallowed = "\\./|\\*|<|\\\\|>|:|\\||\\?|\"|/") {
     gsub(disallowed, safe, x = x)
 }
@@ -67,6 +69,7 @@ makeFileName <- function(x, safe = "_", disallowed = "\\./|\\*|<|\\\\|>|:|\\||\\
 ##' @param file.aggregates
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 makeSpecAggSubdir <- function(file.aggregates) {
     if(is.null(file.aggregates)) {
         file.path("aggregatetrajectories", "UNPDaggregates")
@@ -85,6 +88,7 @@ makeSpecAggSubdir <- function(file.aggregates) {
 ##' @param orig.name Character string; name of filename to convert.
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 makeAWFileName <- function(old.name) {
     if(length(old.name) > 1) {
         aw.name <- vector(mode = "character", length = length(old.name))
@@ -107,6 +111,7 @@ makeAWFileName <- function(old.name) {
 ##' @param orig.name Character string; name of filename to convert.
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 makeAgeRatioFileName <- function(old.name) {
     if(length(old.name) > 1) {
         ar.name <- vector(mode = "character", length = length(old.name))
@@ -128,6 +133,7 @@ makeAgeRatioFileName <- function(old.name) {
 ##' @param x Character vector containing name to be tidied up.
 ##' @return Character vector with tidied up name.
 ##' @author Mark Wheldon
+##' @noRd
 makeCountryNames <- function(x) {
     x[grep("^Bolivia \\(Plurinational State of\\)", x)] <- "Bolivia, Plurinational State of"
     x[grep("^C.+e d'Ivoire$", x)] <- "C\u00F4te d'Ivoire"
@@ -160,6 +166,7 @@ makeCountryNames <- function(x) {
 ##' @param x Character vector with region names to be tidied.
 ##' @return Character vector with tidy region names.
 ##' @author Mark Wheldon
+##' @noRd
 makeRegNames <- function(x) {
     x[grep("^Federated States of Micronesia", x)] <- "Micronesia, Fed. States of"
     return(x)
@@ -173,6 +180,7 @@ makeRegNames <- function(x) {
 ##' @param x Character vector with region names to be shortened.
 ##' @return Character vector with short region names.
 ##' @author Mark Wheldon
+##' @noRd
 shortenRegNames_manus <- function(x) {
     x[grep("^Latin America and the Caribbean"    , x)] <- "LAC"
     x[grep("^Northern America"                   , x)] <- "N. America"
@@ -187,6 +195,7 @@ shortenRegNames_manus <- function(x) {
 ##' @param x
 ##' @return A logical vector the same length of \code{x}.
 ##' @author Mark Wheldon
+##' @noRd
 is_finite_numeric <- function(x) {
     if(!is.null(x)) is.numeric(x) && !is.na(x) && !is.nan(x) && !is.infinite(x)
     else FALSE

@@ -159,6 +159,7 @@ ConstructOutput <- function(# Construct output for MCMC run
 ##' @param years.change2
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 ConstructOutputAllWomen <-
     function(run.name = "test",
              uwra.output.dir,
@@ -376,8 +377,9 @@ ConstructOutputAllWomen <-
                         ,winbugs.data = uwra.mcmc.meta$winbugs.data
                         ,country.info = uwra.c.info
                         ,WRA.csv = WRA.csv
-                        ,return.iso = TRUE,
-                        in_union = 0
+                        ,return.iso = TRUE
+                       ,in_union = 0
+                        ,verbose = verbose
                          )
             uwra.counts.iso <- uwra.denom.counts.li[[2]]
             uwra.denom.counts.li <- uwra.denom.counts.li[[1]]
@@ -448,8 +450,9 @@ ConstructOutputAllWomen <-
                                              ,winbugs.data = mwra.mcmc.meta$winbugs.data
                                              ,country.info = mwra.c.info
                                              ,WRA.csv = WRA.csv
-                                             ,return.iso = TRUE,
-                                             in_union = 1
+                                             ,return.iso = TRUE
+                                            ,in_union = 1
+                                             ,verbose = verbose
                                               )
             mwra.counts.iso <- mwra.denom.counts.li[[2]]
             mwra.denom.counts.li <- mwra.denom.counts.li[[1]]
@@ -902,6 +905,7 @@ ConstructOutputAllWomen <-
 ##' @param ratios.ar Array in which ratios will be put.
 ##' @return
 ##' @author
+##' @noRd
 InternalMakeRatios <- function(ratios.names, counts.ar, tot.counts.mat,
                                uwra.counts.ar, mwra.counts.ar) {
 
@@ -984,6 +988,7 @@ InternalMakeRatios <- function(ratios.names, counts.ar, tot.counts.mat,
 ##' @param counts.ar
 ##' @return
 ##' @author
+##' @noRd
 InternalMakeProbs <-
     function(probs.names = probs.names
             ,counts.ar = awra.CP.counts.j) {
@@ -1026,6 +1031,7 @@ InternalMakeProbs <-
 ##' @param years.change
 ##' @return Saves quantiles in 'res.country.age.ratio.rda'.
 ##' @author Mark Wheldon
+##' @noRd
 ConstructAgeRatios <-
     function(age.subset.output.dir,
              age.total.output.dir,
@@ -1219,8 +1225,9 @@ ConstructAgeRatios <-
                        ,winbugs.data = age.subset.mcmc.meta$winbugs.data
                        ,country.info = age.subset.c.info
                        ,WRA.csv = age.subset.WRA.csv
-                       ,return.iso = TRUE,
-                        in_union = as.numeric(!UWRA)
+                       ,return.iso = TRUE
+                       ,in_union = as.numeric(!UWRA)
+                        ,verbose = verbose
                         )
             age.subset.counts.iso <- age.subset.denom.counts.li[[2]]
             age.subset.denom.counts.li <- age.subset.denom.counts.li[[1]]
@@ -1291,8 +1298,9 @@ ConstructAgeRatios <-
                                                  ,winbugs.data = age.total.mcmc.meta$winbugs.data
                                                  ,country.info = age.total.c.info
                                                  ,WRA.csv = age.total.WRA.csv
-                                                 ,return.iso = TRUE,
-                                                  in_union = as.numeric(!UWRA)
+                                                 ,return.iso = TRUE
+                                                 ,in_union = as.numeric(!UWRA)
+                                                  ,verbose = verbose
                                                   )
             age.total.counts.iso <- age.total.denom.counts.li[[2]]
             age.total.denom.counts.li <- age.total.denom.counts.li[[1]]
@@ -1579,6 +1587,7 @@ ConstructAgeRatios <-
 ##' @param byrow
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 ConstructAgeRatiosAllWomen <-
     function(age.subset.output.dir,
              age.total.output.dir,

@@ -21,6 +21,7 @@
 ##' @param return.processed.data.frame
 ##' @return
 ##' @author
+##' @noRd
 PrecheckData <- function(# Pre-check contraceptive prevalence data
   ### Pre-process contraceptive prevalence data
   data.csv = NULL, ##<< If \code{NULL}, data set included in package is used.
@@ -616,6 +617,7 @@ PreprocessClassification <-
 ##'     only be included once (can only be part of one grouping).
 ##' @return
 ##' @author Mark Wheldon
+##' @noRd
 ReadFileAggregates <- function(file.aggregates) {
 
     ## -------* SET UP
@@ -2310,7 +2312,7 @@ verifyDenominators <- function(x, in_union) {
 
     ## Check for required columns
     if(!all(c("ISO.code", "Country") %in% colnames(temp_denom)))
-        stop("'", fname, "' must have columns 'ISO code' and 'Country'.")
+        stop("'", fname, "' must have columns 'ISO.code' and 'Country'.")
     if(!("In.union" %in% colnames(temp_denom))) {
         temp_denom_ccount <- table(temp_denom$`ISO.code`)
         ccount_gt_1 <- names(temp_denom_ccount[temp_denom_ccount > 1])
@@ -2322,7 +2324,7 @@ verifyDenominators <- function(x, in_union) {
     } else {
         ## Check 'in union' has correct entries
         if(!(all(temp_denom$`In.union` %in% c(0, 1))))
-            stop("'In union' in '",
+            stop("'In.union' in '",
                  fname,
                  "' must only contain '0' or '1'.")
         ccount_by_iu <- as.data.frame(table(temp_denom$`In.union`, temp_denom$`ISO.code`),
@@ -2344,7 +2346,7 @@ verifyDenominators <- function(x, in_union) {
     }
     if(length(bad_cols > 0))
         stop("'", fname, "' has non-numeric entries in column(s) '",
-             paste(bad_cols, collapse = ", "), "'. Note that the country names should be in a column called 'Country', country letter codes in a column called 'Country letter code', the ISO codes in a column called either 'ISO code' or 'LocID' and the marital group identifier in a column called 'In union'.")
+             paste(bad_cols, collapse = ", "), "'. Note that the country names should be in a column called 'Country', country letter codes in a column called 'Country letter code', the ISO codes in a column called 'ISO.code' and the marital group identifier in a column called 'In.union'.")
     return(TRUE)
 }
 

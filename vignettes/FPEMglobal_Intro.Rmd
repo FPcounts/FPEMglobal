@@ -8,6 +8,7 @@ output:
     function(...) rmarkdown::html_vignette(..., css=c(system.file("rmarkdown", "templates", "html_vignette", "resources", "vignette.css", package = "rmarkdown"), "vignette2.css")):
       toc: true
 bibliography: bibliography.bib
+csl: 'apa-single-spaced.csl'
 link-citations: true
 vignette: >
   %\VignetteIndexEntry{Introduction to FPEMglobal}
@@ -21,8 +22,13 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## set global chunk options
+ ## set global chunk options
 options(formatR.arrow=TRUE,width=80)
+```
+
+```{r load-package, echo = FALSE, include = FALSE}
+## Make sure you attach the package !!
+ library(FPEMglobal)
 ```
 
 <!-- 
@@ -31,10 +37,24 @@ STYLE CONVENTIONS
 - Software: italics
 -->
 
+
+# Description
+
 _You can access this vignette from the *R* console by typing `vignette("FPEMglobal_Intro", package = "FPEMglobal")`._
 
+*FPEMglobal* (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level. This vignette concerns the application to all women of reproductive age (i.e., ages 15--49 years); for application to adolescent women aged 15--19 see the vignette "FPEMglobal_Age_1519". 
 
-FPEMglobal (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level. This vignette concerns the application to all women of reproductive age (i.e., ages 15--49 years); for application to adolescent women aged 15--19 see the vignette "FPEMglobal_Age_1519". There are submodels which produce estimates and projections for married and unmarried women. Together, these are used to produce results for all women. The married women model is described in @alkema_national_2013. Updates to the model are described in @cahill_modern_2017; these are included in _FPEMglobal_. The unmarried women model, and the process of producing estimates for all women regardless of marital status, is described in @kantorova18_contr. _FPEMglobal_ is a direct descendant of _ContraceptiveUse_ [@AlkemaContraceptiveUse2014].
+The package consists of submodels which produce estimates and projections for married and unmarried women. Together, these are used to produce results for all women. The married women model is described in @alkema_national_2013. Updates to the model are described in @cahill_modern_2017; these are included in _FPEMglobal_. The unmarried women model, and the process of producing estimates for all women of reproductive age, is described in @kantorova18_contr. _FPEMglobal_ is a direct descendant of _ContraceptiveUse_ [@AlkemaContraceptiveUse2014].
+
+
+#### Suggested Citation {-}
+
+```{r, echo = FALSE, results = "asis"}
+cite_entry <- citation("FPEMglobal")
+cat(format(cite_entry, style = { if (knitr::is_html_output()) "HTML" else if (knitr::is_latex_output()) "latex" else "textVersion" }))
+```
+
+See also `citation("FPEMglobal")` from within *R*.
 
 
 # Implementation
@@ -49,24 +69,24 @@ Estimation and projection is done separately for married and unmarried women. Th
 2. Run the model for unmarried women
     1. Generate MCMC sample
     2. Transform and summarize
-3. Combine the married and unmarried women runs to get results for all women regardless of marital status.
+3. Combine the married and unmarried women runs to get results for all women.
     1. Aggregate transformed MCMC samples for married and unmarried women
     2. Summarize
 	
 	
 ## User Functions
 	
-There are separate user functions for each of these steps. For example, `do_global_mcmc` implements steps 1a and 2a. There are also several wrapper functions that perform multiple steps and set defaults for the sub-functions. For example, `do_global_run` implements all of steps 1 and 2. The function `do_global_all_women_run` implements all steps from 1 to 3. The user-interface functions, and their actions, are summarized in the table below.
+There are separate user functions for each of these steps. For example, `do_global_mcmc` implements steps 1a and 2a. There are also several wrapper functions that perform multiple steps and set defaults for the sub-functions. For example, `do_global_run` implements all of steps 1 and 2. The function `do_global_all_women_run` implements all steps from 1 to 3. The user-interface functions, and their actions, are summarized in the table below. The 'Level' indicates the level of abstraction from the multi-step process given above. Higher values correspond to more abstraction. Level 0 functions perform a single step in the process, higher levels perform multiple steps. 
 
 | Level | Function                  | Action                                                                                                      |
 |-------+---------------------------+-------------------------------------------------------------------------------------------------------------|
-| 2     | `do_global_all_women_run` | Perform a complete  run for married, unmarried, and all women, post process results, create summary output. |
-| 1     | `do_global_run`           | Perform a  run for either married or unmarried women, post process results, create summary output.          |
-|       | `combine_runs`            | Combine married and unmarried women runs, as produced by `do_global_run`, to get all women MCMC output.     |
-| 0     | `do_global_mcmc`          | Run the  model for either married or unmarried women (generates MCMC output only).                          |
-|       | `add_global_mcmc`         | Run an additional MCMC chain; must run `do_global_mcmc` to get at least one chain first.                    |
-|       | `post_process_mcmc`       | Post-process MCMC output produced by `do_global_mcmc` (and `add_global_mcmc`).                              |
-|       | `make_results`            | Produce summary results from post-processed MCMC chains as produced by `post_process_mcmc`.                 |
+|     2 | `do_global_all_women_run` | Perform a complete  run for married, unmarried, and all women, post process results, create summary output. |
+|     1 | `do_global_run`           | Perform a  run for either married or unmarried women, post process results, create summary output.          |
+|     0 | `combine_runs`            | Combine married and unmarried women runs, as produced by `do_global_run`, to get all women MCMC output.     |
+|     0 | `do_global_mcmc`          | Run the  model for either married or unmarried women (generates MCMC output only).                          |
+|     0 | `add_global_mcmc`         | Run an additional MCMC chain; must run `do_global_mcmc` to get at least one chain first.                    |
+|     0 | `post_process_mcmc`       | Post-process MCMC output produced by `do_global_mcmc` (and `add_global_mcmc`).                              |
+|     0 | `make_results`            | Produce summary results from post-processed MCMC chains produced by `post_process_mcmc` or `combine_runs`.  |
 
 The following utility functions are also available:
 
@@ -74,6 +94,7 @@ The following utility functions are also available:
 |-------------------------+-------------------------------------------------------|
 | `validate_input_file`   | Checks input data file for invalid entries            |
 | `compare_runs_CI_plots` | Produces plots that compares two different model runs |
+
 
 ## Run Names
 
@@ -84,10 +105,10 @@ For full all women runs done by `do_global_all_women_run`, the date-time part of
 
 ## Multiple Chains and Parallel Processing {#sec:mult-chains-parallel}
 
-More than one MCMC chain is required per run. This is controlled by the argument `chain_nums` which is passed to the `do_...` functions. This must be a sequence, not a single number. For example, if two chains are wanted, write `chain_nums = 1:2`; if four are wanted, write `chain_nums = 1:4`^[The _R_ syntax '`1:4`' is short-hand for `1 2 3 4`.]:
+More than one MCMC chain is required per run. This is controlled by the argument `chain_nums` which is passed to the `do_...` functions. This must be a sequence, not a single number. For example, if two chains are wanted, write `chain_nums = 1:2`; if four are wanted, write `chain_nums = 1:4`:
 
 ```{r chain-nums-ex, echo = TRUE, results = "hide", eval = FALSE, tidy=FALSE}
-## Example use of 'chain_nums' argument 
+ ## Example use of 'chain_nums' argument 
 
 do_global_all_women_run(...,    #other arguments
                         chain_nums = 1:4,
@@ -98,7 +119,7 @@ do_global_all_women_run(...,    #other arguments
 Each chain can take several hours (even days) so it is quicker to run as many of them as possible in parallel. You gain speed by running up to as many chains in parallel as there are cores on your computer. To use parallel running you must install the package [_doParallel_](https://cran.r-project.org/package=doParallel) [@corporation2017] on _Windows_, or  [_doMC_](https://cran.r-project.org/package=doMC) [@calaway2017], on _MacOS_ and _UNIX_/_Linux_. Parallel processing is controlled by the argument `run_in_parallel`. It is set to `TRUE` by default, however if you do not have `doParallel` or `doMC` installed, the package will automatically switch to running the chains in serial.
 
 ```{r run-in-parallel-ex, echo = TRUE, results = "hide", eval = FALSE, tidy=FALSE}
-## Example use of 'run_in_parallel' argument 
+ ## Example use of 'run_in_parallel' argument 
 
 do_global_all_women_run(...,    #other arguments
                         chain_nums = 1:4,
@@ -181,12 +202,9 @@ To list all data files included with the package use the following code:
 New input files can be validated using the `validate_input_file` function. By default, the input file included with the package will be validated. 
 
 ```{r validate-input-file, echo = TRUE, eval = TRUE}
-## Make sure you attach the package !!
- library(FPEMglobal)
-
-## By default, the input file included with the package will be
-## validated. Change 'input_data_folder_path' and 'data_csv_filename'
-## to validate a user-supplied file.
+ ## By default, the input file included with the package will be
+ ## validated. Change 'input_data_folder_path' and 'data_csv_filename'
+ ## to validate a user-supplied file.
 validate_input_file(marital_group = c("married", "unmarried")) # Both will be checked by default
 ```
 
@@ -228,7 +246,7 @@ After the runs are complete, the input files are logged by copying them to the d
 The default value of `input_data_folder_path` is diffferent depending on the function. The `do_...` functions use the directory supplied with the package: `system.file("extdata", package = "FPEMglobal")`. However, `post_process_mcmc`, `combine_runs` and `make_results` use the directory 'output/[`run-name`]/data'. This ensures that post processing is done on the same inputs used to do the model run. You may need to change the defaults if you are re-processing outputs to, for example, add special aggregates (see below).
 
 
-# Example
+# Worked Examples
 
 A full global run of the model can be done with just one wrapper function, `do_global_all_women_run`. Alternatively, several separate functions can be called in sequence if finer control over the inputs and outputs is desired. For default behaviour, it is easiest to use the main wrapper.
 
@@ -342,9 +360,9 @@ all_women_run_name <- combine_runs(
     unmarried_women_run_output_folder_path = file.path("output", unmarried_run_name),
     )
 
-## See the run name
-## !! This time, not the same date-time as married_run_name or
-## !! unmarried_run_name.
+ ## See the run name
+ ## !! This time, not the same date-time as married_run_name or
+ ## !! unmarried_run_name.
  all_women_run_name
  
  make_results(all_women_run_name)
@@ -424,11 +442,9 @@ In the following sections two additional types of outputs are discussed: special
 
 ## Special Aggregates 
  
-Custom country aggregates can be requested if the ones produced by default are not adequate. Use the argument `special_aggregates_name`. This must be a name for the aggregate that can be used in the filenames of the output plots and tables. There must be a corresponding '.csv' file with the _same name_ as the aggregates describing the grouping of countries. It must have two columns: 'iso.country', and 'groupname'.  `special_aggregates_name` can be passed to `do_global_all_women_run` or `do_global_run` if a new run is being done. If a run has completed and special aggregates are desired, you must pass `special_aggregates_name` to `post_process_mcmc` and run it again on the output directory first, then run `make_results` (pass `special_aggregates_name` to `make_results` as well).
+Custom country aggregates can be requested if the ones produced by default are not adequate. Use the argument `special_aggregates_name`. This must be a name for the aggregate that can be used in the filenames of the output plots and tables. There must be a '.csv' file for each aggregate requested, each file having the _same name_ as the aggregate. 
 
-The special aggregates '.csv' file must be in the same directory as all other input files and you must declare this directory using the argument `input_data_folder_path`. You can specify more than one '.csv' it there are multiple aggregation schemes you need results for.
-
-The first seven rows of a table that should be supplied to obtain special country aggregates are shown below. The first column ('A') lists country ISO codes, the second ('B') lists the group they belong to. The file should contain each ISO code only once and should be saved in '.csv' format.
+A '.csv' file describing an aggregate must have two columns: 'iso.country', and 'groupname'. As an example, the first seven rows of such a table are shown below. The first column ('A') lists country ISO codes, the second ('B') lists the group they belong to. The file should contain each ISO code only once and should be saved in '.csv' format.
 
 |   |           A | B                     |
 |---+-------------+-----------------------|
@@ -440,6 +456,11 @@ The first seven rows of a table that should be supplied to obtain special countr
 | 6 |          24 | Africa                |
 | 7 |          28 | Americas              |
 |   |      ...etc | ...etc                |
+
+
+### Requesting Special Aggregates for a New Run
+
+`special_aggregates_name` can be passed to `do_global_all_women_run` or `do_global_run`. The '.csv' file(s) describing the aggregate must be in the folder pointed to by the argument `input_data_folder_path`. You can specify more than one '.csv' it there are multiple aggregation schemes you need results for.
 
 The code below illustrates how special aggregates for the WHO regions can be requested. The package comes with the file 'WHO_regions.csv' (access this with `system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")`) which defines WB country aggregates. The name of the aggregate to be passed to the functions is "WHO_regions".
 
@@ -465,10 +486,44 @@ The code below illustrates how special aggregates for the WHO regions can be req
  
 ``` 
 
-To add special aggregates to a completed run see the example at the end of the next section. You can omit the adjusted medians in that example if you do not want them. 
 
- 
-## Adjusted Medians 
+### Adding Special Aggregates to an Existing Run
+
+If you want to add special aggregates to an already completed run you must do this separately for each marital group. For married and unmarried women runs, call `post_process` and `make_results` again on the output, but add the argument `special_aggregates_name`, giving the names of the aggregates to add (you must pass this argment to _both_ `post_process` and `make_results`). If you want to add special aggregates to an all women run, you must first add them to both the married and unmarried women runs, then call `combine_runs` to combine them and `make_results` to generate the results. Use the argument `run_name_override` to specify the name of the existing all women output directory when calling `combine_runs`. You must pass the `special_aggregates_name` argument to `combine_runs` and `make_results`.
+
+Note that the default value for `input_data_folder_path` in `post_process_mcmc` is the 'data' directory inside the run directory. For example, if the completed run is 'myrun_all_women', the default is 'myrun_all_women/data' directory. It is recommended to copy the aggregate '.csv' file(s) to this directory, rather than change the value of `input_data_folder_path`. 
+
+See the example at the end of the section 'Adjusted Medians' for `R` code. You can omit the adjusted medians in that example if you do not want them. 
+
+
+## Overwriting Aggregates 
+
+To overwrite aggregates in an already completed run, you must first delete the following files, and then call `post_process` and `make_results`:
+
+- Married and Unmarried Runs
+  - 'post_process_args.RData'
+  - 'res.country.rda'
+  - 'res.aggregate.rda'
+  - 'res.country.age.ratio.rda' (if it exists)
+  - res.aggregate.age.ratio.rda (if it exists)
+  - 'res.UNPDaggregate.adj-mod_tot_unmet.rda'
+  - Any other '.rda' files specific to a special aggregate, e.g., 'SDG_regions_level_1.rda'
+- All Women
+  - The directory 'aggregatetrajectories'
+  - 'combine_runs_args.RData'
+  - 'res.aggregate.all.women.rda'
+
+See the example at the end of the section 'Adjusted Medians' for `R` code. You can omit the adjusted medians and special aggregates if you do not want them. 
+
+
+## Using New Denominator Counts
+
+If you want to use a revised set of denominator counts, you should follow the steps in the 'Overwriting Aggregates' section. However, you should delete the entire all women output directory rather than the few files specified. 
+
+In addition, you will need to place copies of the denominator counts '.csv' file in the 'data' subdirectories of all runs you want to re-process.
+
+
+## Adjusted Medians
 
 The posterior joint distributions for the estimates and projections that are produced by default are summarized using marginal quantiles, such as medians, 0.025, and 0.975 quantiles. "Demographic identities", for example the sum of modern and traditional prevalences equalling prevalence of any method, will not necessarily be satisfied by medians (or any other quantiles) of this type. If desired, additional copies of the output tables can be produced such that the medians do satisfy demographic identities. Moreover, aggregates of country-level indicators also satisfy the condition that the sum of constituent country medians equals the aggregate medians. 
 
@@ -503,8 +558,8 @@ To get adjusted medians for a completed married or unmarried women run you must 
 To get adjusted medians for all women, you must first create them for the married and unmarried runs, re-run `combine_runs` with `adjust_medians = TRUE`, and finally re-generate the all women results with `make_results(..., all_women = TRUE)`.
 
 ```{r adjust-medians-finished-run, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
-## Add adjusted medians to a completed run (note that all plots and tables will be
-## recreated). 
+ ## Add adjusted medians to a completed run (note that all plots and tables will be
+ ## recreated). 
  
 make_results(all_women_runs$married_run_name,     #<<< Give the run name
              ## Adjust medians
@@ -516,9 +571,9 @@ make_results(all_women_runs$unmarried_run_name,     #<<< Give the run name
              adjust_medians = TRUE
              )
 
-## All women
-## You must re-run `combine_runs(..., adjust_medians = TRUE)`. 
-## Use 'run_name_override' to get them in the existing output folder.
+ ## All women
+ ## You must re-run `combine_runs(..., adjust_medians = TRUE)`. 
+ ## Use 'run_name_override' to get them in the existing output folder.
 all_women_adj_med <-
     combine_runs(married_women_run_output_folder_path = file.path("output",
                      all_women_runs$married_run_name),  
@@ -527,7 +582,7 @@ all_women_adj_med <-
              run_name_override = all_women_runs$all_women_run_name,
              adjust_medians = TRUE)
 
-## The same
+ ## The same
 all_women_adj_med
 all_women_runs$all_women_run_name
         
@@ -543,10 +598,10 @@ You can also get adjusted medians for special aggregates. Remember to run `post_
 
 ```{r adjust-medians-all-women-spec-aggs, echo = TRUE, results = "markup", eval = FALSE, cache = FALSE}
 
-## Adjusted medians married and unmarried.
-## The special aggregates file will be searched for in
-## 'output/[run-name]/data'. Either copy it there or specify the
-## location.
+ ## Adjusted medians married and unmarried.
+ ## The special aggregates file will be searched for in
+ ## 'output/[run-name]/data'. Either copy it there or specify the
+ ## location.
 post_process_mcmc(all_women_runs$married_run_name,
                   input_data_folder_path = system.file("extdata", package = "FPEMglobal"), 
              special_aggregates_name = "WHO_regions")
@@ -562,12 +617,12 @@ make_results(all_women_runs$unmarried_run_name,
              adjust_medians = TRUE)
 
 
-## Add adjusted medians to a completed run with special aggregates (note that
-## all plots and tables will be recreated).
+ ## Add adjusted medians to a completed run with special aggregates (note that
+ ## all plots and tables will be recreated).
 
-## You must re-run `combine_runs()`
-## Use 'run_name_override' to get them in the existing output folder,
-## otherwise a new folder for all women will be created.
+ ## You must re-run `combine_runs()`
+ ## Use 'run_name_override' to get them in the existing output folder,
+ ## otherwise a new folder for all women will be created.
 
 all_women_spec_agg <-
     combine_runs(married_women_run_output_folder_path = file.path("output",

@@ -53,6 +53,7 @@
 ##'
 ##' @author Mark Wheldon, based on \code{\link{GetTablesRes}}.
 ##'
+##' @noRd
 AdjustMedians <- function(run.name = "test",
                           name.res = "country",
                                  output.dir,
@@ -399,6 +400,7 @@ AdjustMedians <- function(run.name = "test",
 ##' @param uwra.adj.med Output of \code{\link{AdjustMedians}} for unmarried women. If a character string, assumed to be filepath to saved version which is passed to \code{\link{load}}.
 ##' @param mwra.adj.med See 'uwra.adj.med' (but for married women output).
 ##' @author Mark Wheldon.
+##' @noRd
 ConstructAdjMediansAllWomen <-
     function(uwra.adj.med,
              mwra.adj.med
@@ -670,6 +672,7 @@ ConstructAdjMediansAllWomen <-
 ##' @param select.c
 ##' @return
 ##' @author Mark Wheldon, based on \code{\link{InternalGetAggregates}}.
+##' @noRd
 InternalAggregateMedians <- function(counts.df, W.Lc.t
                                     ,select.iso, est.years) {
 
@@ -793,6 +796,7 @@ InternalAggregateMedians <- function(counts.df, W.Lc.t
 ##' @return
 ##' @author Mark Wheldon, with great swathes copied from \code{\link{GetAggregates}} and
 ##'     \code{\link{InternalGetAggregates}}.
+##' @noRd
 AggregateMedians <- function(res,
                              file.aggregates = NULL,
                              output.dir,
@@ -1017,56 +1021,6 @@ AggregateMedians <- function(res,
                                     ,W.Lc.t = W.Lc.t, select.iso = select.iso
                                     ,est.years = est.years)
 
-        ## -------***** High-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for high-income countries
-        select.iso <- get_aggregate_ISOs(name = "high income countries", family = "World Bank")
-        nameg <- "High-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Middle-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for middle-income countries
-        select.iso <- get_aggregate_ISOs(name = "middle income countries", family = "World Bank")
-        nameg <- "Middle-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Upper-Middle-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for upper-middle-income countries
-        select.iso <- get_aggregate_ISOs(name = "upper middle income countries", family = "World Bank")
-        nameg <- "Upper-middle-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Lower-Middle-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for lower-middle-income countries
-        select.iso <- get_aggregate_ISOs(name = "lower middle income countries", family = "World Bank")
-        nameg <- "Lower-middle-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
-        ## -------***** Low-Income Countries
-
-        ## [MCW-2017-09-27] :: Aggregate for low-income countries
-        select.iso <- get_aggregate_ISOs(name = "low income countries", family = "World Bank")
-        nameg <- "Low-income countries"
-        res.aggregate[[nameg]] <-
-            InternalAggregateMedians(median.counts.df
-                                    ,W.Lc.t = W.Lc.t, select.iso = select.iso
-                                    ,est.years = est.years)
-
         ## -------***** Sub-Saharan Africa
 
         ## [MCW-2018-03-23] :: Aggregate for Sub-Saharan Africa
@@ -1197,6 +1151,7 @@ AggregateMedians <- function(res,
 ##'     is TRUE, comparison plots are saved in 'plot.dir'. If 'tabulate' is
 ##'     true, comparison tables are saved in 'table.dir'.
 ##' @author Mark Wheldon.
+##' @noRd
 CompareAdjMedians <- function(run.name = "test",
                               output.dir = NULL,
                               res.orig = NULL,
@@ -2116,6 +2071,7 @@ CompareAdjMedians <- function(run.name = "test",
 ##'
 ##' @return \code{res.orig} but with medians replaced with adjusted medians.
 ##' @author Mark Wheldon
+##' @noRd
 ReplaceMediansWAdj <- function(res.orig, res.adj) {
     for(x in c("CIprop.Lg.Lcat", "CIratio.Lg.Lcat", "CIcount.Lg.Lcat")) {
         x.qt <- paste0(x, ".qt")

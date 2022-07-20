@@ -88,7 +88,7 @@ GetInfoChange <- function(# Find info on a change in an indicator
   years.all <- as.numeric(dimnames(P.yp3s)[[1]])
   nchanges <- nrow(years.change) + nrow(years.change2)
   change.Lcat.Ti <- list()
-  for (catname in names(P.Lcat.ts)){ #'catname' is 'Traditional', 'Modern', etc.
+  for (catname in names(P.Lcat.ts)){ # 'catname' is 'Traditional', 'Modern', etc.
       P.ts <- P.Lcat.ts[[catname]]
     # make a data frame for prop and numbers
     ## res.Ti <- as.data.frame(matrix(NA, nchanges, 6)) # percentiles and PPPC

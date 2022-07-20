@@ -126,36 +126,63 @@ PlotComparison <- function(# Plot lots of results!
     select.c <- match(iso.compare, code.c)
   }
 
-  ## Trim res.country so that it has only those countries in all the others are kept
-  res234.iso.g <- numeric(0)
-  if(!is.null(run.name4)) res234.iso.g <- c(res234.iso.g, res.country4$iso.g)
-  if(!is.null(run.name3)) res234.iso.g <- c(res234.iso.g, res.country3$iso.g)
-  if(!is.null(run.name2)) res234.iso.g <- c(res234.iso.g, res.country2$iso.g)
-  res234.iso.g <- unique(res234.iso.g)
-  if(length(res234.iso.g) > 0) {
-      iso.in.all <- res.country$iso.g %in% res234.iso.g
-      res.country$CIprop.Lg.Lcat.qt <- res.country$CIprop.Lg.Lcat.qt[iso.in.all]
-      res.country$CIratio.Lg.Lcat.qt <- res.country$CIratio.Lg.Lcat.qt[iso.in.all]
-      res.country$CIcount.Lg.Lcat.qt <- res.country$CIcount.Lg.Lcat.qt[iso.in.all]
-  }
+    ## Identify countries in all runs to be compared
+    iso.in.all <- res.country$iso.g
+    if(!is.null(run.name4)) iso.in.all <- iso.in.all[iso.in.all %in% res.country4$iso.g]
+    if(!is.null(run.name3)) iso.in.all <- iso.in.all[iso.in.all %in% res.country3$iso.g]
+    if(!is.null(run.name2)) iso.in.all <- iso.in.all[iso.in.all %in% res.country2$iso.g]
 
-  if (plot.for.aggregates) {
-      ## Trim res.country so that it has only those aggregates in all the others are kept
-      res234.reg.g <- numeric(0)
-      if(!is.null(run.name4)) res234.reg.g <-
-                                  c(res234.reg.g, names(res.aggregate4$CIprop.Lg.Lcat.qt))
-      if(!is.null(run.name3)) res234.reg.g <-
-                                  c(res234.reg.g, names(res.aggregate3$CIprop.Lg.Lcat.qt))
-      if(!is.null(run.name2)) res234.reg.g <-
-                                  c(res234.reg.g, names(res.aggregate2$CIprop.Lg.Lcat.qt))
-      res234.reg.g <- unique(res234.reg.g)
-      if(length(res234.reg.g) > 0) {
-          reg.in.all <- names(res.aggregate$CIprop.Lg.Lcat.qt) %in% res234.reg.g
-          res.aggregate$CIprop.Lg.Lcat.qt <- res.aggregate$CIprop.Lg.Lcat.qt[reg.in.all]
-          res.aggregate$CIratio.Lg.Lcat.qt <- res.aggregate$CIratio.Lg.Lcat.qt[reg.in.all]
-          res.aggregate$CIcount.Lg.Lcat.qt <- res.aggregate$CIcount.Lg.Lcat.qt[reg.in.all]
-      }
-  }
+    ## Trim results to only those countries in all runs
+    if(!is.null(run.name4)) {
+        select_el <- which(sapply(res.country4, "length") == length(res.country4$iso.g))
+        idx <- res.country4$iso.g %in% iso.in.all
+        for (i in select_el) res.country4[[i]] <- res.country4[[i]][idx]
+    }
+    if(!is.null(run.name3)) {
+        select_el <- which(sapply(res.country3, "length") == length(res.country3$iso.g))
+        idx <- res.country3$iso.g %in% iso.in.all
+        for (i in select_el) res.country3[[i]] <- res.country3[[i]][idx]
+    }
+    if(!is.null(run.name2)) {
+        select_el <- which(sapply(res.country2, "length") == length(res.country2$iso.g))
+        idx <- res.country2$iso.g %in% iso.in.all
+        for (i in select_el) res.country2[[i]] <- res.country2[[i]][idx]
+    }
+    if(!is.null(run.name)) {
+        select_el <- which(sapply(res.country, "length") == length(res.country$iso.g))
+        idx <- res.country$iso.g %in% iso.in.all
+        for (i in select_el) res.country[[i]] <- res.country[[i]][idx]
+    }
+
+    if (plot.for.aggregates) {
+        ## Identify aggregates in all runs to be compared
+        reg.in.all <- names(res.aggregate$CIprop.Lg.Lcat.qt)
+        if(!is.null(run.name4)) reg.in.all <- reg.in.all[reg.in.all %in% names(res.aggregate4$CIprop.Lg.Lcat.qt)]
+        if(!is.null(run.name3)) reg.in.all <- reg.in.all[reg.in.all %in% names(res.aggregate3$CIprop.Lg.Lcat.qt)]
+        if(!is.null(run.name2)) reg.in.all <- reg.in.all[reg.in.all %in% names(res.aggregate2$CIprop.Lg.Lcat.qt)]
+
+        ## Trim results to only those aggregates in all runs
+        if(!is.null(run.name4)) {
+            select_el <- which(sapply(res.aggregate4, "length") == length(res.aggregate4$CIprop.Lg.Lcat.qt))
+            idx <- names(res.aggregate4$CIprop.Lg.Lcat.qt) %in% reg.in.all
+            for (i in select_el) res.aggregate4[[i]] <- res.aggregate4[[i]][idx]
+        }
+        if(!is.null(run.name3)) {
+            select_el <- which(sapply(res.aggregate3, "length") == length(res.aggregate3$CIprop.Lg.Lcat.qt))
+            idx <- names(res.aggregate3$CIprop.Lg.Lcat.qt) %in% reg.in.all
+            for (i in select_el) res.aggregate3[[i]] <- res.aggregate3[[i]][idx]
+        }
+        if(!is.null(run.name2)) {
+            select_el <- which(sapply(res.aggregate2, "length") == length(res.aggregate2$CIprop.Lg.Lcat.qt))
+            idx <- names(res.aggregate2$CIprop.Lg.Lcat.qt) %in% reg.in.all
+            for (i in select_el) res.aggregate2[[i]] <- res.aggregate2[[i]][idx]
+        }
+        if(!is.null(run.name)) {
+            select_el <- which(sapply(res.aggregate, "length") == length(res.aggregate$CIprop.Lg.Lcat.qt))
+            idx <- names(res.aggregate$CIprop.Lg.Lcat.qt) %in% reg.in.all
+            for (i in select_el) res.aggregate[[i]] <- res.aggregate[[i]][idx]
+        }
+    }
 
   # order country lists of res.country4 so that it has the same country order as res.country
   if (!is.null(run.name4)) {
@@ -218,10 +245,47 @@ PlotComparison <- function(# Plot lots of results!
     if(all.women || isFALSE(plot_data)) {
         plotDE.data.raw <- NULL
         plotDE.country.info <- country.info
+
+        ## Have to keep only the common countries in 'country.info'
+        select_el <- which(sapply(country.info, "length") == length(res.country$iso.g))
+        idx <- country.info$code.c %in% res.country$iso.g
+        for (i in select_el) country.info[[i]] <- country.info[[i]][idx]
+
     }  else {
         plotDE.data.raw <- mcmc.meta$data.raw
         plotDE.country.info <- NULL
     }
+
+    ## Exclude country data not common to all revisions being compared: ---
+
+    plotDE.data.raw$data <- plotDE.data.raw$data[plotDE.data.raw$data$iso.j %in% iso.in.all,]
+
+    plotDE.data.raw$country.info <-
+        plotDE.data.raw$country.info[plotDE.data.raw$country.info$iso.c %in% iso.in.all,]
+
+    if (!is.null(plotDE.data.raw$country.info.no.data)) {
+        plotDE.data.raw$country.info.no.data <-
+            plotDE.data.raw$country.info.no.data[plotDE.data.raw$country.info.no.data$iso.c %in% iso.in.all,]
+    }
+
+    plotDE.data.raw$se.info.j$se.logR.trad.impute <-
+        plotDE.data.raw$se.info.j$se.logR.trad.impute[plotDE.data.raw$data$iso.j %in% iso.in.all]
+    plotDE.data.raw$se.info.j$se.logR.modern.impute <-
+        plotDE.data.raw$se.info.j$se.logR.modern.impute[plotDE.data.raw$data$iso.j %in% iso.in.all]
+    plotDE.data.raw$se.info.j$se.logR.unmet.impute <-
+        plotDE.data.raw$se.info.j$se.logR.unmet.impute[plotDE.data.raw$data$iso.j %in% iso.in.all]
+
+    plotDE.data.raw$input.order.c <-
+        plotDE.data.raw$input.order.c[plotDE.data.raw$country.info$iso.c %in% iso.in.all]
+
+    plotDE.data.raw$getj.training.k <-
+        plotDE.data.raw$getj.training.k[plotDE.data.raw$data$iso.j %in% iso.in.all]
+
+    if (!is.null(plotDE.country.info)) {
+        plotDE.country.info <- plotDE.country.info[plotDE.country.info$iso.c %in% iso.in.all,]
+    }
+
+    ## ---
 
     PlotDataAndEstimates(data.raw = plotDE.data.raw,
                          country.info = plotDE.country.info,
