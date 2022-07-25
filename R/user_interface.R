@@ -2292,10 +2292,19 @@ do_global_run <- function(## Describe the run
             stop("'age_ratios_age_total_output_folder_path' does not exist ('",
                  age_ratios_age_total_output_folder_path,
                  "')")
+        if(!length(dir(age_ratios_age_total_output_folder_path)))
+            stop("'age_ratios_age_total_output_folder_path' is empty ('",
+                 age_ratios_age_total_output_folder_path,
+                 "')")
+        if(!dir.exists(file.path(age_ratios_age_total_output_folder_path, "countrytrajectories")))
+            stop("'Directory 'countrytrajectories' not found in 'age_ratios_age_total_output_folder_path' ('",
+                 file.path(age_ratios_age_total_output_folder_path, "countrytrajectories"),
+                 "'")
         if(!file.exists(file.path(age_ratios_age_total_denominator_counts_folder_path,
                                   age_ratios_age_total_denominator_counts_csv_filename)))
-            stop("'age_ratios_age_total_output_folder_path' does not exist ('",
-                 age_ratios_age_total_output_folder_path,
+            stop("'age_ratios_age_total_denominator_counts_csv_filename' not found in 'age_ratios_age_total_denominator_counts_folder_path' ('",
+                 file.path(age_ratios_age_total_denominator_counts_folder_path,
+                           age_ratios_age_total_denominator_counts_csv_filename),
                  "')")
     }
 
@@ -2601,6 +2610,51 @@ combine_runs <- function(## Describe the run
         if(is.null(age_ratios_age_total_denominator_counts_folder_path)) {
             age_ratios_age_total_denominator_counts_folder_path <-
                 file.path(age_ratios_age_total_married_output_folder_path, "data")
+        }
+
+        if(!dir.exists(age_ratios_age_total_married_output_folder_path))
+            stop("'age_ratios_age_total_married_output_folder_path' does not exist ('",
+                 age_ratios_age_total_married_output_folder_path,
+                 "')")
+        if(!length(dir(age_ratios_age_total_married_output_folder_path)))
+            stop("'age_ratios_age_total_married_output_folder_path' is empty ('",
+                 age_ratios_age_total_married_output_folder_path,
+                 "')")
+        if(!dir.exists(file.path(age_ratios_age_total_married_output_folder_path, "countrytrajectories")))
+            stop("'Directory 'countrytrajectories' not found in 'age_ratios_age_total_married_output_folder_path' ('",
+                 file.path(age_ratios_age_total_married_output_folder_path, "countrytrajectories"),
+                 "'")
+
+        if(!dir.exists(age_ratios_age_total_unmarried_output_folder_path))
+            stop("'age_ratios_age_total_unmarried_output_folder_path' does not exist ('",
+                 age_ratios_age_total_unmarried_output_folder_path,
+                 "')")
+        if(!length(dir(age_ratios_age_total_unmarried_output_folder_path)))
+            stop("'age_ratios_age_total_unmarried_output_folder_path' is empty ('",
+                 age_ratios_age_total_unmarried_output_folder_path,
+                 "')")
+        if(!dir.exists(file.path(age_ratios_age_total_unmarried_output_folder_path, "countrytrajectories")))
+            stop("'Directory 'countrytrajectories' not found in 'age_ratios_age_total_unmarried_output_folder_path' ('",
+                 file.path(age_ratios_age_total_unmarried_output_folder_path, "countrytrajectories"),
+                 "'")
+
+        if(!dir.exists(age_ratios_age_total_all_women_output_folder_path))
+            stop("'age_ratios_age_total_all_women_output_folder_path' does not exist ('",
+                 age_ratios_age_total_all_women_output_folder_path,
+                 "')")
+        if(!length(dir(age_ratios_age_total_all_women_output_folder_path)))
+            stop("'age_ratios_age_total_all_women_output_folder_path' is empty ('",
+                 age_ratios_age_total_all_women_output_folder_path,
+                 "')")
+        if(!dir.exists(file.path(age_ratios_age_total_all_women_output_folder_path, "countrytrajectories")))
+            stop("'Directory 'countrytrajectories' not found in 'age_ratios_age_total_all_women_output_folder_path' ('",
+                 file.path(age_ratios_age_total_all_women_output_folder_path, "countrytrajectories"),
+                 "'")
+        if(make_any_aggregates) {
+            if(!dir.exists(file.path(age_ratios_age_total_all_women_output_folder_path, "aggregatetrajectories")))
+                stop("'Directory 'aggregatetrajectories' not found in 'age_ratios_age_total_all_women_output_folder_path' ('",
+                     file.path(age_ratios_age_total_all_women_output_folder_path, "aggregatetrajectories"),
+                     "'")
         }
     }
 
@@ -3137,19 +3191,52 @@ do_global_all_women_run <- function(## Describe the run
                 stop("'age_ratios_age_total_married_output_folder_path' does not exist ('",
                      age_ratios_age_total_married_output_folder_path,
                      "')")
+            if(!length(dir(age_ratios_age_total_married_output_folder_path)))
+                stop("'age_ratios_age_total_married_output_folder_path' is empty ('",
+                     age_ratios_age_total_married_output_folder_path,
+                     "')")
+            if(!dir.exists(file.path(age_ratios_age_total_married_output_folder_path, "countrytrajectories")))
+                stop("'Directory 'countrytrajectories' not found in 'age_ratios_age_total_married_output_folder_path' ('",
+                     file.path(age_ratios_age_total_married_output_folder_path, "countrytrajectories"),
+                     "'")
+
             if(!dir.exists(age_ratios_age_total_unmarried_output_folder_path))
                 stop("'age_ratios_age_total_unmarried_output_folder_path' does not exist ('",
                      age_ratios_age_total_unmarried_output_folder_path,
                      "')")
+            if(!length(dir(age_ratios_age_total_unmarried_output_folder_path)))
+                stop("'age_ratios_age_total_unmarried_output_folder_path' is empty ('",
+                     age_ratios_age_total_unmarried_output_folder_path,
+                     "')")
+            if(!dir.exists(file.path(age_ratios_age_total_unmarried_output_folder_path, "countrytrajectories")))
+                stop("'Directory 'countrytrajectories' not found in 'age_ratios_age_total_unmarried_output_folder_path' ('",
+                     file.path(age_ratios_age_total_unmarried_output_folder_path, "countrytrajectories"),
+                     "'")
+
             if(!dir.exists(age_ratios_age_total_all_women_output_folder_path))
                 stop("'age_ratios_age_total_all_women_output_folder_path' does not exist ('",
                      age_ratios_age_total_all_women_output_folder_path,
                      "')")
+            if(!length(dir(age_ratios_age_total_all_women_output_folder_path)))
+                stop("'age_ratios_age_total_all_women_output_folder_path' is empty ('",
+                     age_ratios_age_total_all_women_output_folder_path,
+                     "')")
+            if(!dir.exists(file.path(age_ratios_age_total_all_women_output_folder_path, "countrytrajectories")))
+                stop("'Directory 'countrytrajectories' not found in 'age_ratios_age_total_all_women_output_folder_path' ('",
+                     file.path(age_ratios_age_total_all_women_output_folder_path, "countrytrajectories"),
+                     "'")
+            if(make_any_aggregates) {
+                if(!dir.exists(file.path(age_ratios_age_total_all_women_output_folder_path, "aggregatetrajectories")))
+                    stop("'Directory 'aggregatetrajectories' not found in 'age_ratios_age_total_all_women_output_folder_path' ('",
+                         file.path(age_ratios_age_total_all_women_output_folder_path, "aggregatetrajectories"),
+                         "'")
+            }
+
             if(!file.exists(file.path(age_ratios_age_total_denominator_counts_folder_path,
                                       age_ratios_age_total_denominator_counts_csv_filename)))
                 stop("'age_ratios_age_total_denominator_counts_folder_path/age_ratios_age_total_denominator_counts_csv_filename' does not exist ('",
                      file.path(age_ratios_age_total_denominator_counts_folder_path,
-                                      age_ratios_age_total_denominator_counts_csv_filename),
+                               age_ratios_age_total_denominator_counts_csv_filename),
                      "')")
         }
     }
