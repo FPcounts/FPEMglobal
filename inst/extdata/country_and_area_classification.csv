@@ -3,13 +3,17 @@ Letter Code",Region Code,Region,Major area Code,Major area,"Developed
 region",Less Developed Regions,"Least developed
 country","Less developed regions, excluding least developed countries","Total population of less than 90,000 by mid-2015",FP2020 country,Sexual activity among unmarried,Sub SaharanAfrica,WPP small country,WCU data,Land Locked Developing Countries (LLDC),Small Island Developing States (SIDS)
 Afghanistan,4,AFG,34,Southern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,Yes,No
+Åland Islands,248,ALA,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
 Albania,8,ALB,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Algeria,12,DZA,15,Northern Africa,2,Africa,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
+American Samoa,16,ASM,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,Yes
+Andorra,20,AND,39,Southern Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Angola,24,AGO,17,Middle Africa,2,Africa,No,Yes,Yes,No,No,No,1,Yes,No,Yes,No,No
 Anguilla,660,AIA,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Antigua and Barbuda,28,ATG,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Argentina,32,ARG,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Armenia,51,ARM,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,Yes,No
+Aruba,533,ABW,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,No,No,Yes
 Australia,36,AUS,53,Australia and New Zealand,9,Oceania,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Austria,40,AUT,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Azerbaijan,31,AZE,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,Yes,No
@@ -21,11 +25,17 @@ Belarus,112,BLR,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,
 Belgium,56,BEL,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Belize,84,BLZ,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Benin,204,BEN,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
+Bermuda,60,BMU,21,Northern America,21,Northern America,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Bhutan,64,BTN,34,Southern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,Yes,No
 Bolivia (Plurinational State of),68,BOL,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,Yes,1,No,No,Yes,Yes,No
+"Bonaire, Sint Eustatius and Saba",535,BES,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,Yes
 Bosnia and Herzegovina,70,BIH,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Botswana,72,BWA,18,Southern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,Yes,No
+Bouvet Island,74,BVT,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
 Brazil,76,BRA,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
+British Indian Ocean Territory,86,IOT,14,Eastern Africa,2,Africa,No,Yes,No,Yes,Yes,No,0,Yes,Yes,No,No,No
+British Virgin Islands,92,VGB,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,Yes
+Brunei Darussalam,96,BRN,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,No,No,No
 Bulgaria,100,BGR,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Burkina Faso,854,BFA,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Burundi,108,BDI,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
@@ -33,20 +43,26 @@ Cabo Verde,132,CPV,11,Western Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,N
 Cambodia,116,KHM,35,South-eastern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,No,No
 Cameroon,120,CMR,17,Middle Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
 Canada,124,CAN,21,Northern America,21,Northern America,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+Cayman Islands,136,CYM,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,No
 Central African Republic,140,CAF,17,Middle Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Chad,148,TCD,17,Middle Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Chile,152,CHL,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 China,156,CHN,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 "China, Hong Kong Special Administrative Region",344,HKG,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 "China, Taiwan Province of China",158,TWN,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
+"China, Macao Special Administrative Region",446,MAC,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,No,No,No
+Christmas Island,162,CXR,53,Australia and New Zealand,9,Oceania,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
+Cocos (Keeling) Islands,166,CCK,53,Australia and New Zealand,9,Oceania,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
 Colombia,170,COL,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Comoros,174,COM,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,Yes
 Congo,178,COG,17,Middle Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
 Cook Islands,184,COK,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Costa Rica,188,CRI,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
-Cote d'Ivoire,384,CIV,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
+Côte d’Ivoire,384,CIV,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
 Croatia,191,HRV,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Cuba,192,CUB,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
+Curaçao,531,CUW,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,No,No,Yes
+Cyprus,196,CYP,145,Western Asia,142,Asia,Yes,No,No,No,No,No,1,No,No,No,No,No
 Czechia,203,CZE,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Democratic People's Republic of Korea,408,PRK,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,Yes,1,No,No,Yes,No,No
 Democratic Republic of the Congo,180,COD,17,Middle Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
@@ -62,34 +78,47 @@ Eritrea,232,ERI,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,
 Estonia,233,EST,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Eswatini,748,SWZ,18,Southern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,Yes,No
 Ethiopia,231,ETH,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
+Falkland Islands (Malvinas),238,FLK,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,No
+Faroe Islands,234,FRO,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Fiji,242,FJI,54,Melanesia,9,Oceania,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Finland,246,FIN,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 France,250,FRA,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+French Guiana,254,GUF,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,No,No,No
+French Polynesia,258,PYF,61,Polynesia,9,Oceania,No,Yes,No,Yes,No,No,1,No,No,No,No,Yes
+French Southern Territories,260,ATF,14,Eastern Africa,2,Africa,No,Yes,No,Yes,Yes,No,0,Yes,Yes,No,No,No
 Gabon,266,GAB,17,Middle Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
 Gambia,270,GMB,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
 Georgia,268,GEO,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Germany,276,DEU,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Ghana,288,GHA,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
+Gibraltar,292,GIB,39,Southern Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Greece,300,GRC,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+Greenland,304,GRL,21,Northern America,21,Northern America,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Grenada,308,GRD,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Guadeloupe,312,GLP,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Guam,316,GUM,57,Micronesia,9,Oceania,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Guatemala,320,GTM,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
+Guernsey,831,GGY,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
 Guinea,324,GIN,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
 Guinea-Bissau,624,GNB,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,Yes
 Guyana,328,GUY,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Haiti,332,HTI,29,Caribbean,419,Latin America and the Caribbean,No,Yes,Yes,No,No,Yes,1,No,No,Yes,No,Yes
+Heard Island and McDonald Islands,334,HMD,53,Australia and New Zealand,9,Oceania,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
+Holy See,336,VAT,39,Southern Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Honduras,340,HND,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,Yes,1,No,No,Yes,No,No
 Hungary,348,HUN,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+Iceland,352,ISL,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,No,No,No
 India,356,IND,34,Southern Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,No,No
 Indonesia,360,IDN,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,No,No
 Iran (Islamic Republic of),364,IRN,34,Southern Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Iraq,368,IRQ,145,Western Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,No,No
 Ireland,372,IRL,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+Isle of Man,833,IMN,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Israel,376,ISR,145,Western Asia,142,Asia,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Italy,380,ITA,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Jamaica,388,JAM,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Japan,392,JPN,30,Eastern Asia,142,Asia,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+Jersey,832,JEY,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
 Jordan,400,JOR,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Kazakhstan,398,KAZ,143,Central Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,Yes,No
 Kenya,404,KEN,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
@@ -102,7 +131,9 @@ Lebanon,422,LBN,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Lesotho,426,LSO,18,Southern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Liberia,430,LBR,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
 Libya,434,LBY,15,Northern Africa,2,Africa,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
+Liechtenstein,438,LIE,155,Western Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Lithuania,440,LTU,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+Luxembourg,442,LUX,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,No,No,No
 Madagascar,450,MDG,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
 Malawi,454,MWI,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Malaysia,458,MYS,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
@@ -113,7 +144,10 @@ Marshall Islands,584,MHL,57,Micronesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,Y
 Martinique,474,MTQ,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Mauritania,478,MRT,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,0,Yes,No,Yes,No,No
 Mauritius,480,MUS,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,Yes
+Mayotte,175,MYT,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,0,Yes,No,No,No,No
 Mexico,484,MEX,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
+Micronesia (Federated States of),583,FSM,57,Micronesia,9,Oceania,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
+Monaco,492,MCO,155,Western Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Mongolia,496,MNG,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,Yes,1,No,No,Yes,Yes,No
 Montenegro,499,MNE,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Montserrat,500,MSR,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
@@ -124,10 +158,14 @@ Namibia,516,NAM,18,Southern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,
 Nauru,520,NRU,57,Micronesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Nepal,524,NPL,34,Southern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,Yes,No
 Netherlands,528,NLD,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+New Caledonia,540,NCL,54,Melanesia,9,Oceania,No,Yes,No,Yes,No,No,1,No,No,No,No,Yes
 New Zealand,554,NZL,53,Australia and New Zealand,9,Oceania,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Nicaragua,558,NIC,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,Yes,1,No,No,Yes,No,No
 Niger,562,NER,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,0,Yes,No,Yes,Yes,No
 Nigeria,566,NGA,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
+Niue,570,NIU,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,Yes
+Norfolk Island,574,NFK,53,Australia and New Zealand,9,Oceania,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
+Northern Mariana Islands,580,MNP,57,Micronesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Norway,578,NOR,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Oman,512,OMN,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Pakistan,586,PAK,34,Southern Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,No,No
@@ -137,37 +175,48 @@ Papua New Guinea,598,PNG,54,Melanesia,9,Oceania,No,Yes,No,Yes,No,Yes,1,No,No,Yes
 Paraguay,600,PRY,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,Yes,No
 Peru,604,PER,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Philippines,608,PHL,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,Yes,1,No,No,Yes,No,No
+Pitcairn,612,PCN,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
 Poland,616,POL,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Portugal,620,PRT,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Puerto Rico,630,PRI,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Qatar,634,QAT,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Republic of Korea,410,KOR,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Republic of Moldova,498,MDA,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,Yes,No
-Reunion,638,REU,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
+Réunion,638,REU,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
 Romania,642,ROU,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Russian Federation,643,RUS,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Rwanda,646,RWA,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
+Saint Barthélemy,652,BLM,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
+Saint Helena,654,SHN,11,Western Africa,2,Africa,No,Yes,No,Yes,Yes,No,1,Yes,Yes,No,No,No
 Saint Kitts and Nevis,659,KNA,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Saint Lucia,662,LCA,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
+Saint Martin (French Part),663,MAF,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
+Saint Pierre and Miquelon,666,SPM,21,Northern America,21,Northern America,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Saint Vincent and the Grenadines,670,VCT,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Samoa,882,WSM,61,Polynesia,9,Oceania,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
+San Marino,674,SMR,39,Southern Europe,150,Europe,Yes,No,No,No,Yes,No,1,No,Yes,No,No,No
 Sao Tome and Principe,678,STP,17,Middle Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,Yes
+Sark,680,,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
 Saudi Arabia,682,SAU,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Senegal,686,SEN,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
 Serbia,688,SRB,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
+Seychelles,690,SYC,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,Yes
 Sierra Leone,694,SLE,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
 Singapore,702,SGP,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
+Sint Maarten (Dutch part),534,SXM,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,Yes
 Slovakia,703,SVK,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Slovenia,705,SVN,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Solomon Islands,90,SLB,54,Melanesia,9,Oceania,No,Yes,Yes,No,No,Yes,1,No,No,Yes,No,Yes
 Somalia,706,SOM,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,0,Yes,No,Yes,No,No
 South Africa,710,ZAF,18,Southern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
+South Georgia and the South Sandwich Islands,239,SGS,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
 South Sudan,728,SSD,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,0,Yes,No,Yes,Yes,No
 Spain,724,ESP,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Sri Lanka,144,LKA,34,Southern Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,No,No
 State of Palestine,275,PSE,145,Western Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,No,No
 Sudan,729,SDN,15,Northern Africa,2,Africa,No,Yes,Yes,No,No,Yes,0,No,No,Yes,No,No
 Suriname,740,SUR,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
+Svalbard and Jan Mayen Islands,744,SJM,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
 Sweden,752,SWE,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Switzerland,756,CHE,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Syrian Arab Republic,760,SYR,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
@@ -176,17 +225,20 @@ Thailand,764,THA,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,
 The former Yugoslav Republic of Macedonia,807,MKD,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,Yes,No
 Timor-Leste,626,TLS,35,South-eastern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,No,Yes
 Togo,768,TGO,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
+Tokelau,772,TKL,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,No
 Tonga,776,TON,61,Polynesia,9,Oceania,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Trinidad and Tobago,780,TTO,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Tunisia,788,TUN,15,Northern Africa,2,Africa,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Turkey,792,TUR,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Turkmenistan,795,TKM,143,Central Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,Yes,No
+Turks and Caicos Islands,796,TCA,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,No
 Tuvalu,798,TUV,61,Polynesia,9,Oceania,No,Yes,Yes,No,Yes,No,1,No,Yes,Yes,No,Yes
 Uganda,800,UGA,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Ukraine,804,UKR,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 United Arab Emirates,784,ARE,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 United Kingdom of Great Britain and Northern Ireland,826,GBR,154,Northern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 United Republic of Tanzania,834,TZA,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
+United States Minor Outlying Islands,581,UMI,57,Micronesia,9,Oceania,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
 United States of America,840,USA,21,Northern America,21,Northern America,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 United States Virgin Islands,850,VIR,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
 Uruguay,858,URY,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
@@ -194,7 +246,8 @@ Uzbekistan,860,UZB,143,Central Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,Ye
 Vanuatu,548,VUT,54,Melanesia,9,Oceania,No,Yes,Yes,No,No,No,1,No,No,Yes,No,Yes
 Venezuela (Bolivarian Republic of),862,VEN,5,South America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Viet Nam,704,VNM,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,No,No
+Wallis and Futuna Islands,876,WLF,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,No
+Western Sahara,732,ESH,15,Northern Africa,2,Africa,No,Yes,No,Yes,No,Yes,0,No,No,No,No,No
 Yemen,887,YEM,145,Western Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,No,No
 Zambia,894,ZMB,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Zimbabwe,716,ZWE,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,Yes,No
-Northern Mariana Islands,580,MNP,57,Micronesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
