@@ -394,7 +394,8 @@ do_global_mcmc <- function(run_desc = "",
     ##---------------------------------------------------------------------
     ## Save the values of function arguments so same arguments can be used for validations
 
-    global_mcmc_args <- c(mget(names(formals(do_global_mcmc))), marital_group_param_set)
+    global_mcmc_args <- c(mget(names(formals(do_global_mcmc))), marital_group_param_set,
+                          list(run_name = run_name))
     save(global_mcmc_args, file = file.path(output_folder_path, "global_mcmc_args.RData"))
 
     ##-----------------------------------------------------------------------------
