@@ -68,4 +68,6 @@ the results of two global model runs. Country- and aggregate-level
 \author{
 Mark Wheldon (wrapper) based on underlying function by Jin
 Rou New and Leontine Alkema.
+
+Jin Rou New, Leontine Alkema, Mark Wheldon
 }

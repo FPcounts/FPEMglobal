@@ -9,7 +9,8 @@ validate_denominator_counts_file(
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
   marital_group = c("married", "unmarried"),
-  countries_for_aggregates_csv_filename = "countries_mwra_195.csv"
+  countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+  output_folder_path = NULL
 )
 }
 \arguments{
@@ -33,6 +34,10 @@ supplied with the package.}
 
 \item{marital_group}{Character. The marital group for which a run
 of the model is desired.}
+
+\item{output_folder_path}{Filepath to directory where outputs
+should be saved. If \code{NULL}, defaults to
+\code{file.path("output", run_name)}.}
 }
 \value{
 The processed denominator counts file is returned \emph{invisibly} as a data frame.

@@ -18,12 +18,12 @@ post_process_mcmc(
     2000.5, 2005.5, 1990.5, 1995.5, 2000.5, 1990.5, 2000.5, 2010.5, 2000.5, 2010.5,
     2019.5), ncol = 3, byrow = TRUE),
   model_diagnostics = TRUE,
+  make_any_aggregates = TRUE,
   special_aggregates_name = NULL,
   age_ratios_age_total_run_name = NULL,
   age_ratios_age_total_output_folder_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
-  all_women = NULL,
   verbose = FALSE
 )
 }
@@ -66,6 +66,9 @@ change-in-changes.}
 \item{model_diagnostics}{Logical; should convergence diagnostics
 and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.}
 
+\item{make_any_aggregates}{Logical. Should country aggregates of
+any kind (including default aggregates) be produced?}
+
 \item{special_aggregates_name}{Character vector of names
 (\emph{not} filenames) of any speical aggregates
 desired. There must be a corresponding file with name
@@ -89,12 +92,6 @@ age group 15--49. Only used if \code{make_age_ratios} is
 \code{NULL}, defaults to
 \code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
 
-\item{all_women}{Logical; is the run an all women run such as the
-kind produced by \code{\link{combine_runs}} or
-\code{\link{do_global_all_women_run}}? If \code{NULL} an
-attempt is made to determine this automatically from
-\file{mcmc.meta.rda} in the output folder of the run.}
-
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
 }
@@ -103,12 +100,13 @@ The run name (invisibly). The function is mainly called
 for its side effects.
 }
 \description{
-MCMC chains from a global run of FPEM (via
-\code{\link{do_global_mcmc}}) must be
-post-processed before summary results (tables, plots) can be produced. This
-function does the post-processing and saves the results in
-\code{output_folder_path}. You need at least two chains for post-processing
-to work.
+MCMC chains from a global run of FPEM for either married or
+unmarried women (via \code{\link{do_global_mcmc}}) must be
+post-processed before summary results (tables, plots) can be
+produced. This function does the post-processing and saves the
+results in \code{output_folder_path}. You need at least two chains
+for post-processing to work. This function does not apply to all
+women runs; see \code{\link{combine_runs}}.
 }
 \details{
 The counts of women by marital status, age, and year in

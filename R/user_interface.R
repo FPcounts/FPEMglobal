@@ -4049,6 +4049,7 @@ rename_global_run <- function(run_name,
 ##' @author Mark Wheldon (wrapper) based on underlying function by Jin
 ##'     Rou New and Leontine Alkema.
 ##' @seealso \code{\link{compare_runs_fishbone_plots}}.
+##' @author Jin Rou New, Leontine Alkema, Mark Wheldon
 ##' @export
 compare_runs_CI_plots <- function(run_name_1, run_name_2,
                                run_1_output_folder_path = file.path("output", run_name_1),
@@ -4113,4 +4114,110 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
                    all.women = all_women,
                    UWRA = UWRA,
                    plot_data = plot_data)
+}
+
+
+
+## Make sure output directory is valid.
+##
+## 'post_processed' is 'TRUE' by default because an un-processed
+## directory doesn't even have 'mcmc.array.rda', which means it's
+## unlikely to be used.
+
+
+
+
+##' Check that a directory is a valid FPEMglobal output directory
+##'
+##' Checks the content of \code{output_dir} to make sure certain
+##' directories and files are present. If some are missing, an error
+##' is returned, otherwise \code{output_folder_path} is returned
+##' invisibly.
+##'
+##' 'post_processed' is 'TRUE' by default because an un-processed
+##' directory doesn't even have 'mcmc.array.rda', which means it's
+##' unlikely to be used.
+##'
+##' @param output_folder_path Path to directory to validate.
+##' @param post_processed Logical; has \code{\link{post_process_mcmc}}
+##'     been run on the directory?
+##' @param countrytrajectories Logical; check for
+##'     \file{countrytrajectories} or \file{aggregatetrajectories}
+##'     directories?
+##' @param made_results Logical; has \code{\link{make_results}} been
+##'     run on the directory?
+##' @return If all checks pass, \code{output_folder_path} is returned
+##'     invisibly, otherwise an error is thrown.
+##' @author Mark Wheldon
+##' @export
+assert_valid_output_dir <- function(output_folder_path, post_processed = TRUE, countrytrajectories = post_processed,
+                                    made_results = post_processed) {
+
+    ## Argument check
+    checkmate::qassert(output_folder_path, "S+")
+    if (!post_processed && is_all_women_run(output_dir = output_folder_path)) {
+        warning("'post_processed' = 'FALSE' but this is an all women run; 'post_processed' is 'TRUE' by definition.")
+        post_processed <-  TRUE
+    }
+
+    ## --------------------
+    ## RECURSE
+    if (length(output_folder_path) > 1) {
+        return(sapply(setNames(output_folder_path, output_folder_path), "assert_valid_output_dir",
+                      post_processed = post_processed,
+                      countrytrajectories = countrytrajectories,
+                      made_results = made_results))
+    }
+    ## --------------------
+
+    ## -------* Existence
+
+    checkmate::assert_directory_exists(output_folder_path)
+
+    ## Emptiness
+    empty_dirs <- isTRUE(identical(length(dir(output_folder_path)), 0L))
+    if (any(empty_dirs)) {
+        stop("Directory \n\t", output_folder_path, "\nis empty.")
+    }
+
+    ## -------* Content
+
+    ## -------** All Marital Groups
+
+    checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.meta.rda")))
+    checkmate::assert_directory_exists(file.path(output_folder_path, "data"))
+    if (post_processed) {
+        checkmate::assert_file_exists(file.path(output_folder_path, c("par.ciq.rda")))
+    }
+    if (made_results) {
+        checkmate::assert_directory_exists(file.path(output_folder_path, c("fig", "table")))
+    }
+    if (countrytrajectories) {
+        checkmate::assert_directory_exists(file.path(output_folder_path, "countrytrajectories"))
+    }
+
+    if (!is_all_women_run(output_dir = output_folder_path)) {
+
+        ## -------** Married / Unmarried
+
+        checkmate::assert_file_exists(file.path(output_folder_path,
+                                                c("global_mcmc_args.RData", "model.txt", "iso.Ptp3s.key.csv")))
+        if (post_processed) {
+            checkmate::assert_file_exists(file.path(output_folder_path, "data.global.rda", "mcmc.array.rda",
+                                                    "post_process_args.RData",
+                                                    "res.country.rda", "res.aggregate.rda"))
+        }
+
+    } else {
+
+        ## -------** All Women
+
+        checkmate::assert_file_exists(file.path(output_folder_path, c("combine_runs_args.RData",
+                                                           "res.aggregate.all.women.rda",
+                                                           "res.country.all.women.rda")))
+        checkmate::assert_directory_exists(file.path(output_folder_path, "aggregatetrajectories"))
+    }
+
+    ## RETURN
+    return(invisible(output_folder_path))
 }

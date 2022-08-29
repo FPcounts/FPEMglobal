@@ -1,6 +1,6 @@
 ################################################################################
 ###
-### Utility functions used in 'global_run.R'.
+### Utility functions used in 'user_interface.R'.
 ###
 ### Not intended to be exported.
 ###

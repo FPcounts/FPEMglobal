@@ -17,6 +17,7 @@ make_results(
   plot_maps_shapefile_folder = NULL,
   plot_maps_years = NULL,
   adjust_medians = FALSE,
+  make_any_aggregates = TRUE,
   special_aggregates_name = NULL,
   make_age_ratios = NULL,
   validation_keep_all = TRUE,
@@ -87,6 +88,9 @@ listed. These must be in the range of \code{start_year} and
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
 
+\item{make_any_aggregates}{Logical. Should country aggregates of
+any kind (including default aggregates) be produced?}
+
 \item{special_aggregates_name}{\emph{name} for special aggregates,
 if any. The default, \code{NULL}, means no special aggregates
 are produced. Note: this is \emph{not} a filename, although a
@@ -109,12 +113,6 @@ saved? If \code{TRUE}, a list with elements \code{CI.df} and
 results be returned as a data frame? If \code{FALSE} the
 function returns the \code{run_name} invisibly as a character
 string.}
-
-\item{all_women}{Logical; is the run an all women run such as the
-kind produced by \code{\link{combine_runs}} or
-\code{\link{do_global_all_women_run}}? If \code{NULL} an
-attempt is made to determine this automatically from
-\file{mcmc.meta.rda} in the output folder of the run.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}

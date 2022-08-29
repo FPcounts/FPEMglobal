@@ -39,7 +39,8 @@ Imports:
     rjags,
     R2jags,
     scales,
-    xtable
+    xtable,
+    checkmate
 Suggests:
     doParallel,
     sp,

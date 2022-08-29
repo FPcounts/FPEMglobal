@@ -38,6 +38,7 @@ do_global_run(
   plot_maps_shapefile_folder = NULL,
   plot_maps_years = floor(median(c(start_year, end_year))),
   data_info_plot_years = c(1990, 2000, 2010),
+  make_any_aggregates = TRUE,
   adjust_medians = FALSE,
   age_ratios_age_total_run_name = NULL,
   age_ratios_age_total_output_folder_path = NULL,
@@ -194,6 +195,9 @@ shape files.}
 the full set of maps are produced for each of the years
 listed. These must be in the range of \code{start_year} and
 \code{end_year} passed to \code{\link{post_process_mcmc}}.}
+
+\item{make_any_aggregates}{Logical. Should country aggregates of
+any kind (including default aggregates) be produced?}
 
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
