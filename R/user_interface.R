@@ -17,14 +17,14 @@
 ##' @seealso \code{link{validate_denominator_counts_file}}, \code{\link{do_global_all_women_run}}
 ##'
 ##' @inheritParams do_global_mcmc
-##' @return The processed input file is returned \emph{invisibly} as a data frame.
+##' @return If all checks pass, the processed input file is returned \emph{invisibly} as a data frame.
 ##' @author Mark Wheldon
 ##' @export
 validate_input_file <- function(age_group = "15-49",
                                 input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                 data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-                                marital_group = c("married", "unmarried")
-                                ) {
+                                marital_group = c("married", "unmarried"),
+                                verbose = FALSE) {
 
     if(!is.null(input_data_folder_path)) {
         data_csv_filename <- file.path(input_data_folder_path, data_csv_filename)
@@ -38,7 +38,7 @@ validate_input_file <- function(age_group = "15-49",
 
     out_df <- data.frame()
     for (mg in marital_group) {
-        message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
+        if (verbose) message("\n\n--------------------\n", rep(" ", 20 - nchar(mg)), mg, "\n")
 
         fname <- data_csv_filename
         temp_df <- read.csv(fname)
@@ -47,10 +47,10 @@ validate_input_file <- function(age_group = "15-49",
         lr_cols <- c("SE.logR.trad.nouse", "SE.logR.modern.nouse", "SE.logR.unmet.noneed")
         lr_cols_no_in <- lr_cols[!lr_cols %in% colnames(temp_df)]
         if (length(lr_cols_no_in))
-            stop("Col(s) '", toString(lr_cols_no_in), "' not found in input file.")
+            stop("Col(s) '", toString(lr_cols_no_in), "' not found in input file for marital group '", mg, "'." )
         for (lr in lr_cols) {
             if (all(is.na(temp_df[, lr])))
-                stop("'", lr, "' are all 'NA' for marital group '", mg, "'.")
+                stop("'", lr, "' are all 'NA' for marital group '", mg, "'." )
             else if (all(!is.finite(temp_df[, lr])))
                 stop("'", lr, "' are all non-finite for marital group '", mg, "'.")
         }
@@ -62,12 +62,13 @@ validate_input_file <- function(age_group = "15-49",
         out_df <- rbind(out_df,
                         PreprocessData(data.csv = data_csv_filename,
                                        write.model.fun = marital_group_param_set$write_model_fun,
-                                       print.messages = TRUE,
-                                       print.warnings = TRUE,
+                                       print.messages = verbose,
+                                       print.warnings = verbose,
                                        return.processed.data.frame = TRUE,
                                        marital.group = switch(mg, "married" = "MWRA", "unmarried" = "UWRA")),
                         check.names = FALSE)
     }
+    message("'", data_csv_filename, "' is valid.")
     return(invisible(out_df))
 }
 
@@ -93,7 +94,8 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                                              denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
                                              marital_group = c("married", "unmarried"),
                                              countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-                                             output_folder_path = NULL) {
+                                             output_folder_path = NULL,
+                                             verbose = FALSE) {
     model_family <- "rate"
     model_name <- NULL
 
@@ -183,6 +185,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
             ## NOTE: Output might be truncated (see ?stop).
         }
     }
+    message("'", denominator_counts_csv_filename, "' is valid.")
     return(invisible(out_df))
 }
 
@@ -483,7 +486,7 @@ add_global_mcmc <- function(run_name,
     ##---------------------------------------------------------------------
     ## Meta Info
 
-    load(file.path(output_folder_path, "mcmc.meta.rda"))
+    load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
 
     if (sum(is.element(chain_nums, mcmc.meta$general$ChainNums))>0){
         chain_nums <- setdiff(chain_nums, mcmc.meta$general$ChainNums)
@@ -673,11 +676,11 @@ post_process_mcmc <- function(run_name,
     ##----------------------------------------------------------------------------
     ## Meta Info
 
-    load(file.path(output_folder_path, "mcmc.meta.rda"))
+    load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
     write_model_function <- mcmc.meta$general$write.model.fun
 
     global_mcmc_args_filepath <- file.path(output_folder_path, "global_mcmc_args.RData")
-    if(file.exists(global_mcmc_args_filepath)) load(global_mcmc_args_filepath)
+    if(file.exists(global_mcmc_args_filepath)) load(global_mcmc_args_filepath, verbose = verbose)
 
     if(is.null(input_data_folder_path))
         input_data_folder_path <- file.path(output_folder_path, "data")
@@ -1081,7 +1084,7 @@ make_results <- function(run_name,
     ##----------------------------------------------------------------------------
 
     ## MCMC meta
-    load(file.path(output_folder_path, "mcmc.meta.rda"))
+    load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
     data_raw <- mcmc.meta$data.raw
 
     ## Validation run?
@@ -1096,7 +1099,7 @@ make_results <- function(run_name,
 
     ## Extra meta information
     global_mcmc_args_filepath <- file.path(output_folder_path, "global_mcmc_args.RData")
-    if(file.exists(global_mcmc_args_filepath)) load(global_mcmc_args_filepath)
+    if(file.exists(global_mcmc_args_filepath)) load(global_mcmc_args_filepath, verbose = verbose)
 
     ## Make paths to input data
     if(is.null(input_data_folder_path))
@@ -1124,7 +1127,7 @@ make_results <- function(run_name,
             post_process_args_filepath <- file.path(output_folder_path, "combine_runs_args.RData")
         }
         if(file.exists(post_process_args_filepath)) {
-            post_process_args <- get(load(post_process_args_filepath))
+            post_process_args <- get(load(post_process_args_filepath), verbose = verbose)
                                 #could be called 'combine_runs_args
             if(is.null(plot_barchart_years)) {
                 plot_barchart_years <-
@@ -1878,7 +1881,7 @@ make_results <- function(run_name,
                                 #^ Produced by 'combine_runs()'
                 }
 
-                new_agg <- load(file.agg.rda)
+                new_agg <- load(file.agg.rda, verbose = verbose)
                 res_new <- get(new_agg)
 
                 message("\nMaking aggregates for ", name.agg, " from ", file.agg.rda, ".")
@@ -2348,7 +2351,7 @@ do_global_run <- function(## Describe the run
     ## Post-Process
 
     ## Meta Info
-    load(file.path(output_folder_path, "mcmc.meta.rda"))
+    load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
 
     post_process_mcmc(run_name = run_name,
                       input_data_folder_path = output_data_folder_path,
@@ -2535,7 +2538,7 @@ combine_runs <- function(## Describe the run
         }
     }
 
-    load(file.path(unmarried_women_run_output_folder_path, "mcmc.meta.rda"))
+    load(file.path(unmarried_women_run_output_folder_path, "mcmc.meta.rda"), verbose = verbose)
 
     ## Age group
     age_group <- mcmc.meta$general$age.group
@@ -2707,7 +2710,7 @@ combine_runs <- function(## Describe the run
     }
 
     ## Add a label in 'mcmc.meta.rda' to mark this as an all women copy
-    load(file.path(output_folder_path, "mcmc.meta.rda"))
+    load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
                                 # The copy of 'mcmc.meta.rda', not the
                                 # original from the unmarried women
                                 # run.
@@ -3552,8 +3555,7 @@ do_global_validation_mcmc <-
              chain_nums = 1:3,
              run_in_parallel = isTRUE(length(chain_nums) > 1),
              output_folder_path = NULL,
-             verbose = FALSE
-             ) {
+             verbose = FALSE) {
 
         ## --------------------------------------------------------------------
         ## Parallelization mechanism
@@ -3579,9 +3581,9 @@ do_global_validation_mcmc <-
         ## probably make it so that these are all in 'mcmc.meta').
         global_mcmc_args <-
             get(load(file.path(run_name_to_validate_output_folder_path,
-                               "global_mcmc_args.RData")))
+                               "global_mcmc_args.RData"), verbose = verbose))
         global_mcmc_meta <-
-            get(load(file.path(run_name_to_validate_output_folder_path, "mcmc.meta.rda")))
+            get(load(file.path(run_name_to_validate_output_folder_path, "mcmc.meta.rda"), verbose = verbose))
 
         ## --------------------------------------------------------------------
         ## Run name and output paths
@@ -3781,7 +3783,7 @@ do_global_validation_run <- function(run_desc = "",
     global_mcmc_args_filepath <-
         file.path(run_name_to_validate_output_folder_path, "global_mcmc_args.RData")
     if(file.exists(global_mcmc_args_filepath))
-        global_mcmc_args <- get(load(global_mcmc_args_filepath))
+        global_mcmc_args <- get(load(global_mcmc_args_filepath, verbose = verbose))
 
     if(is.null(input_data_folder_path))
         input_data_folder_path <- file.path(run_name_to_validate_output_folder_path, "data")
@@ -3791,7 +3793,7 @@ do_global_validation_run <- function(run_desc = "",
     global_mcmc_meta_filepath <-
         file.path(run_name_to_validate_output_folder_path, "mcmc.meta.rda")
     if(file.exists(global_mcmc_meta_filepath)) {
-        global_mcmc_meta <- get(load(global_mcmc_meta_filepath))
+        global_mcmc_meta <- get(load(global_mcmc_meta_filepath, verbose = verbose))
     } else {
         stop("'", global_mcmc_meta_filepath, "' does not exist. Cannot do validation without this information.")
     }
@@ -3800,7 +3802,7 @@ do_global_validation_run <- function(run_desc = "",
     post_process_mcmc_args_filepath <-
         file.path(run_name_to_validate_output_folder_path, "post_process_args.RData")
     if(file.exists(post_process_mcmc_args_filepath)) {
-        post_process_mcmc_args <- get(load(post_process_mcmc_args_filepath))
+        post_process_mcmc_args <- get(load(post_process_mcmc_args_filepath, verbose = verbose))
     if(!file.exists(file.path(input_data_folder_path,
                               basename(post_process_mcmc_args$denominator_counts_csv_filename))))
         stop("Denominator counts file in 'post_process_args.Rdata' not found.")
@@ -3927,6 +3929,7 @@ do_global_validation_run <- function(run_desc = "",
 ##'     \file{\code{output_folder_path}/data} still matches; it is not
 ##'     a good idea to rename files in that directory.
 ##'
+##' @inheritParams do_global_mcmc
 ##' @param run_name Character. Name of run to be renamed.
 ##' @param new_run_name Character. New run name.
 ##' @param output_folder_path Filepath to directory where outputs are saved. If \code{NULL}, defaults to
@@ -3938,7 +3941,7 @@ do_global_validation_run <- function(run_desc = "",
 rename_global_run <- function(run_name,
                               new_run_name,
                               output_folder_path = NULL,
-                              ignore = "^data$") {
+                              ignore = "^data$", verbose = FALSE) {
 
     ##-----------------------------------------------------------------------------
     ## Set-up
@@ -3981,14 +3984,14 @@ rename_global_run <- function(run_name,
     ## 'global_mcmc_args' object
     global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
     if(file.exists(global_args_fn)) {
-        load(global_args_fn)
+        load(global_args_fn, verbose = verbose)
         global_mcmc_args$renamed <- TRUE
         global_mcmc_args$rename_list <- c(new_run_name, global_mcmc_args$rename_list)
         save(global_mcmc_args, file = global_args_fn)
     }
     combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
     if(file.exists(combine_args_fn)) {
-        load(combine_args_fn)
+        load(combine_args_fn, verbose = verbose)
         combine_runs_args$renamed <- TRUE
         combine_runs_args$rename_list <- c(new_run_name, combine_runs_args$rename_list)
         save(combine_runs_args, file = combine_args_fn)
@@ -4059,17 +4062,18 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
                                output_folder_path = file.path(run_1_output_folder_path, "fig", "compare_runs_plots"),
                                plot_data = NULL,
                                all_women = NULL,
-                               compare_aggregates = TRUE) {
+                               compare_aggregates = TRUE,
+                               verbose = FALSE) {
 
     message("Plotting comparison of ", run_name_1, " and ", run_name_2)
 
     ##----------------------------------------------------------------------------
     ## Meta Info
 
-    load(file.path(run_1_output_folder_path, "mcmc.meta.rda"))
+    load(file.path(run_1_output_folder_path, "mcmc.meta.rda"), verbose = verbose)
     run_1_mcmc_meta <- mcmc.meta
 
-    load(file.path(run_2_output_folder_path, "mcmc.meta.rda"))
+    load(file.path(run_2_output_folder_path, "mcmc.meta.rda"), verbose = verbose)
     run_2_mcmc_meta <- mcmc.meta
 
     ## All women run?
@@ -4150,15 +4154,11 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 ##'     invisibly, otherwise an error is thrown.
 ##' @author Mark Wheldon
 ##' @export
-assert_valid_output_dir <- function(output_folder_path, post_processed = TRUE, countrytrajectories = post_processed,
-                                    made_results = post_processed) {
-
-    ## Argument check
-    checkmate::qassert(output_folder_path, "S+")
-    if (!post_processed && is_all_women_run(output_dir = output_folder_path)) {
-        warning("'post_processed' = 'FALSE' but this is an all women run; 'post_processed' is 'TRUE' by definition.")
-        post_processed <-  TRUE
-    }
+assert_valid_output_dir <- function(output_folder_path,
+                                    post_processed = TRUE,
+                                    countrytrajectories = post_processed,
+                                    made_results = post_processed,
+                                    verbose = FALSE) {
 
     ## --------------------
     ## RECURSE
@@ -4169,6 +4169,10 @@ assert_valid_output_dir <- function(output_folder_path, post_processed = TRUE, c
                       made_results = made_results))
     }
     ## --------------------
+
+    ## -------* Argument check
+
+    checkmate::qassert(output_folder_path, "S1")
 
     ## -------* Existence
 
@@ -4184,7 +4188,14 @@ assert_valid_output_dir <- function(output_folder_path, post_processed = TRUE, c
 
     ## -------** All Marital Groups
 
+    ## Meta Info
     checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.meta.rda")))
+    mcmc.meta <- get(load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose))
+    if (!post_processed && isTRUE(mcmc.meta$general$all.women.run.copy)) {
+        warning("'post_processed' = 'FALSE' but this is an all women run; 'post_processed' is 'TRUE' by definition.")
+        post_processed <-  TRUE
+    }
+
     checkmate::assert_directory_exists(file.path(output_folder_path, "data"))
     if (post_processed) {
         checkmate::assert_file_exists(file.path(output_folder_path, c("par.ciq.rda")))
@@ -4196,16 +4207,16 @@ assert_valid_output_dir <- function(output_folder_path, post_processed = TRUE, c
         checkmate::assert_directory_exists(file.path(output_folder_path, "countrytrajectories"))
     }
 
-    if (!is_all_women_run(output_dir = output_folder_path)) {
+    ## -------** Married / Unmarried
 
-        ## -------** Married / Unmarried
+    if (!isTRUE(mcmc.meta$general$all.women.run.copy)) {
 
         checkmate::assert_file_exists(file.path(output_folder_path,
                                                 c("global_mcmc_args.RData", "model.txt", "iso.Ptp3s.key.csv")))
         if (post_processed) {
-            checkmate::assert_file_exists(file.path(output_folder_path, "data.global.rda", "mcmc.array.rda",
+            checkmate::assert_file_exists(file.path(output_folder_path, c("data.global.rda", "mcmc.array.rda",
                                                     "post_process_args.RData",
-                                                    "res.country.rda", "res.aggregate.rda"))
+                                                    "res.country.rda", "res.aggregate.rda")))
         }
 
     } else {
@@ -4213,11 +4224,12 @@ assert_valid_output_dir <- function(output_folder_path, post_processed = TRUE, c
         ## -------** All Women
 
         checkmate::assert_file_exists(file.path(output_folder_path, c("combine_runs_args.RData",
-                                                           "res.aggregate.all.women.rda",
-                                                           "res.country.all.women.rda")))
-        checkmate::assert_directory_exists(file.path(output_folder_path, "aggregatetrajectories"))
+                                                                      "res.aggregate.all.women.rda",
+                                                                      "res.country.all.women.rda")))
+        checkmate::assert_directory_exists(file.path(output_folder_path, c("aggregatetrajectories")))
     }
 
     ## RETURN
+    if (verbose) message("'", output_folder_path, "' is a valid output directory.")
     return(invisible(output_folder_path))
 }

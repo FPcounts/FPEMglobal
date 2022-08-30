@@ -8,7 +8,8 @@ rename_global_run(
   run_name,
   new_run_name,
   output_folder_path = NULL,
-  ignore = "^data$"
+  ignore = "^data$",
+  verbose = FALSE
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ rename_global_run(
 \code{file.path("output", run_name)}.}
 
 \item{ignore}{Regular expression. Files and directories with names that match will not be renamed.}
+
+\item{verbose}{Logical; print lots and lots of messages about
+progress?}
 }
 \value{
 Called for side effect only.

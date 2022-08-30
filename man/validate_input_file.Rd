@@ -8,7 +8,8 @@ validate_input_file(
   age_group = "15-49",
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-  marital_group = c("married", "unmarried")
+  marital_group = c("married", "unmarried"),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -36,9 +37,12 @@ containing country-level prevalence data. See
 
 \item{marital_group}{Character. The marital group for which a run
 of the model is desired.}
+
+\item{verbose}{Logical; print lots and lots of messages about
+progress?}
 }
 \value{
-The processed input file is returned \emph{invisibly} as a data frame.
+If all checks pass, the processed input file is returned \emph{invisibly} as a data frame.
 }
 \description{
 The main input file for \code{\link{do_global_run}} and friends

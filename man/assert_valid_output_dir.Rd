@@ -8,7 +8,8 @@ assert_valid_output_dir(
   output_folder_path,
   post_processed = TRUE,
   countrytrajectories = post_processed,
-  made_results = post_processed
+  made_results = post_processed,
+  verbose = FALSE
 )
 }
 \arguments{
