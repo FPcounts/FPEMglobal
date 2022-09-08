@@ -48,7 +48,7 @@ report_file_copy <- function(succeeded, filename, to_directory, from_directory,
             message("\n'", filename, "' copied from '", from_directory,
                     "', saved as '", new_filename, "'.")
             cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"),
-                ": '", filename, "' copied from '", from_directory,
+                ": '", filename, "' copied from '", basename(from_directory),
                 "', saved as '", new_filename, "'.",
                 file = log_file, sep = "", append = TRUE)
         } else {

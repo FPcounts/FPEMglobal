@@ -4191,10 +4191,6 @@ assert_valid_output_dir <- function(output_folder_path,
     ## Meta Info
     checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.meta.rda")))
     mcmc.meta <- get(load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose))
-    if (!post_processed && isTRUE(mcmc.meta$general$all.women.run.copy)) {
-        warning("'post_processed' = 'FALSE' but this is an all women run; 'post_processed' is 'TRUE' by definition.")
-        post_processed <-  TRUE
-    }
 
     checkmate::assert_directory_exists(file.path(output_folder_path, "data"))
     if (post_processed) {
@@ -4214,19 +4210,23 @@ assert_valid_output_dir <- function(output_folder_path,
         checkmate::assert_file_exists(file.path(output_folder_path,
                                                 c("global_mcmc_args.RData", "model.txt", "iso.Ptp3s.key.csv")))
         if (post_processed) {
-            checkmate::assert_file_exists(file.path(output_folder_path, c("data.global.rda", "mcmc.array.rda",
-                                                    "post_process_args.RData",
-                                                    "res.country.rda", "res.aggregate.rda")))
+            checkmate::assert_file_exists(file.path(output_folder_path, c("data.global.rda",
+                                                                          "post_process_args.RData",
+                                                                          "res.country.rda", "res.aggregate.rda")))
+            if (!isTRUE(mcmc.meta$general$is.age.adjusted.copy))
+                checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.array.rda")))
         }
 
     } else {
 
         ## -------** All Women
 
-        checkmate::assert_file_exists(file.path(output_folder_path, c("combine_runs_args.RData",
-                                                                      "res.aggregate.all.women.rda",
-                                                                      "res.country.all.women.rda")))
-        checkmate::assert_directory_exists(file.path(output_folder_path, c("aggregatetrajectories")))
+        if (post_processed)
+            checkmate::assert_file_exists(file.path(output_folder_path, c("combine_runs_args.RData",
+                                                                          "res.aggregate.all.women.rda",
+                                                                          "res.country.all.women.rda")))
+        if (countrytrajectories)
+            checkmate::assert_directory_exists(file.path(output_folder_path, c("aggregatetrajectories")))
     }
 
     ## RETURN
