@@ -4138,9 +4138,9 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 ##' is returned, otherwise \code{output_folder_path} is returned
 ##' invisibly.
 ##'
-##' 'post_processed' is 'TRUE' by default because an un-processed
-##' directory doesn't even have 'mcmc.array.rda', which means it's
-##' unlikely to be used.
+##' The default for 'post_processed' is 'TRUE' by because an
+##' un-processed directory doesn't even have 'mcmc.array.rda', which
+##' means it's unlikely to be used.
 ##'
 ##' @param output_folder_path Path to directory to validate.
 ##' @param post_processed Logical; has \code{\link{post_process_mcmc}}
@@ -4150,6 +4150,12 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 ##'     directories?
 ##' @param made_results Logical; has \code{\link{make_results}} been
 ##'     run on the directory?
+##' @param adjusted_medians Logical; check for adjusted median
+##'     results?
+##' @param age_ratios Logical; check for age ratio results? Defaults
+##'     to \code{FALSE} if \code{output_folder_path} points to a
+##'     \dQuote{15-49} run, otherwise the value of
+##'     \code{post_processed}.
 ##' @return If all checks pass, \code{output_folder_path} is returned
 ##'     invisibly, otherwise an error is thrown.
 ##' @author Mark Wheldon
@@ -4158,6 +4164,8 @@ assert_valid_output_dir <- function(output_folder_path,
                                     post_processed = TRUE,
                                     countrytrajectories = post_processed,
                                     made_results = post_processed,
+                                    adjusted_medians = post_processed,
+                                    age_ratios = NULL,
                                     verbose = FALSE) {
 
     ## --------------------
@@ -4192,6 +4200,9 @@ assert_valid_output_dir <- function(output_folder_path,
     checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.meta.rda")))
     mcmc.meta <- get(load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose))
 
+    if (identical(mcmc.meta$general$age.group, "15-49")) age_ratios <- FALSE
+    else if (is.null(age_ratios)) age_ratios <- post_processed
+
     checkmate::assert_directory_exists(file.path(output_folder_path, "data"))
     if (post_processed) {
         checkmate::assert_file_exists(file.path(output_folder_path, c("par.ciq.rda")))
@@ -4217,6 +4228,12 @@ assert_valid_output_dir <- function(output_folder_path,
                 checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.array.rda")))
         }
 
+        if (adjusted_medians)
+            checkmate::assert_file_exists(file.path(output_folder_path, c("res.country.adj-mod_tot_unmet.rda")))
+
+        if (age_ratios)
+            checkmate::assert_file_exists(file.path(output_folder_path, c("res.country.age.ratio.rda")))
+
     } else {
 
         ## -------** All Women
@@ -4227,6 +4244,12 @@ assert_valid_output_dir <- function(output_folder_path,
                                                                           "res.country.all.women.rda")))
         if (countrytrajectories)
             checkmate::assert_directory_exists(file.path(output_folder_path, c("aggregatetrajectories")))
+
+        if (adjusted_medians)
+            checkmate::assert_file_exists(file.path(output_folder_path, c("res.country.all.women.adj-mod_tot_unmet.rda")))
+
+        if (age_ratios)
+            checkmate::assert_file_exists(file.path(output_folder_path, c("res.country.all.women.age.ratio.rda")))
     }
 
     ## RETURN
