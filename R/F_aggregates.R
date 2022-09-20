@@ -64,8 +64,9 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         country_ISO <- iso.Ptp3s.key.df[c, "iso.c"]
         country_rda_fname <- iso.Ptp3s.key.df[c, "filename"]
         if(verbose) message("\t", which(select.c %in% c), " ", country_name, " (ISO ", country_ISO, "), ", country_rda_fname)
-        if(!country_name %in% names(W.Lc.t))
+        if(!country_name %in% names(W.Lc.t)) {
             stop("No denominator counts for country '", country_name, "'. Denominator counts are read from 'res.country.rda'.")
+        }
         if (identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
             stop("Denominator counts for country '", country_name, "' are all zero. Denominator counts are read from 'res.country.rda'.")
         }
@@ -243,6 +244,21 @@ if (is.null(output.dir)){
     load(file.path(output.dir, "res.country.rda")) # change JR, 20140418
     iso.Ptp3s.key.df <-
         read.csv(file.path(output.dir, "iso.Ptp3s.key.csv"), stringsAsFactors = FALSE)
+
+    ## Names of countries in 'iso.Ptp3s.key.df' may be corrupted due
+    ## to non-ASCII characters in some country names. This is a
+    ## problem because aggregates will be created by matching country
+    ## names from 'iso.Ptp3s.key.df' to those in res.country$W.Lg.t.
+    ##
+    ## SO: Use the iso.g element of res.country to rename countries in
+    ## 'iso.Ptp3s.key.df' for use in creating aggregates.
+
+    res.country_names <-
+        data.frame(iso.c = res.country$iso.g, name.c = names(res.country[["CIprop.Lg.Lcat.qt"]]))
+    iso.Ptp3s.key.df <-
+        base::merge(iso.Ptp3s.key.df[, c("iso.c", "filename")],
+                    res.country_names,
+                    all.x = TRUE, all.y = FALSE, sort = FALSE)[, c("iso.c", "name.c", "filename")]
 
   W.Lc.t <- res.country$W.Lg.t
 #  if (is.null(output.dir.countrytrajectories) | is.null(W.Lc.t)){
