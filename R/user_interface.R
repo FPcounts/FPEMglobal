@@ -1070,6 +1070,8 @@ make_results <- function(run_name,
                          plot_CI_changes_years = NULL,
                          plot_maps_shapefile_folder = NULL,
                          plot_maps_years = NULL,
+                         plot_prior_post = NULL,
+                         plot_parameters = NULL,
                          adjust_medians = FALSE,
                          make_any_aggregates = TRUE,
                          special_aggregates_name = NULL,
@@ -1127,8 +1129,7 @@ make_results <- function(run_name,
             post_process_args_filepath <- file.path(output_folder_path, "combine_runs_args.RData")
         }
         if(file.exists(post_process_args_filepath)) {
-            post_process_args <- get(load(post_process_args_filepath), verbose = verbose)
-                                #could be called 'combine_runs_args
+            post_process_args <- get(load(post_process_args_filepath, verbose = verbose))
             if(is.null(plot_barchart_years)) {
                 plot_barchart_years <-
                     c(floor(post_process_args$start_year),
@@ -1402,6 +1403,12 @@ make_results <- function(run_name,
             dir.create(ci_fig_folder_path, recursive = TRUE, showWarnings = FALSE)
         }
 
+        if (is.null(plot_prior_post) && !all_women) plot_prior_post <- TRUE
+        else plot_prior_post <- FALSE
+
+        if (is.null(plot_parameters) && !all_women) plot_parameters <- TRUE
+        else plot_parameters <- FALSE
+
         PlotResults(all.women = all_women,
                     UWRA = unmarried,
                     run.name = run_name,
@@ -1414,7 +1421,9 @@ make_results <- function(run_name,
                     non.std.symbol = 24,
                     select.c.csv = countries_in_CI_plots_csv_filename,
                     all.womenize.fig.name = FALSE,
-                    hide.CP.tot.lt.1pc = TRUE
+                    hide.CP.tot.lt.1pc = TRUE,
+                    plot.prior.post = plot_prior_post,
+                    plot.parameters = plot_parameters
                     )
 
         if(plot_diagnostic_CI_plots) {
@@ -1430,7 +1439,9 @@ make_results <- function(run_name,
                         non.std.symbol = 24,
                         select.c.csv = countries_in_CI_plots_csv_filename,
                         all.womenize.fig.name = FALSE,
-                        hide.CP.tot.lt.1pc = TRUE
+                        hide.CP.tot.lt.1pc = TRUE,
+                    plot.prior.post = plot_prior_post,
+                    plot.parameters = plot_parameters
                         )
         }
 

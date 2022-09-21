@@ -1963,7 +1963,6 @@ InternalAllWomenAggregateCounts <-
                                           paste0(filename, "_",
                                                  as.character(aggregates.names.df[i, "file.name"]),
                                                  ".RData")))
-
                     res.aggregate.list$CP <-
                         res.aggregate.list$CP + CP.counts.j
 

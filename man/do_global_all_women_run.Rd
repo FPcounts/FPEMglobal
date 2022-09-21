@@ -23,8 +23,8 @@ do_global_all_women_run(
   special_aggregates_name = NULL,
   start_year = 1970.5,
   end_year = 2030.5,
-  years_change = matrix(c(1990.5, 2000.5, 2000.5, 2018.5, 2018.5, 2030.5, 2012.5,
-    2018.5, 2012.5, 2020.5, 2012.5, 2017.5), ncol = 2, byrow = TRUE),
+  years_change = matrix(c(1990.5, 2000.5, 2000.5, 2018.5, 2018.5, 2030.5, 2012.5, 2018.5,
+    2012.5, 2020.5, 2012.5, 2017.5), ncol = 2, byrow = TRUE),
   years_change2 = matrix(c(2005.5, 2010.5, 2015.5, 2000.5, 2005.5, 2010.5, 1995.5,
     2000.5, 2005.5, 1990.5, 1995.5, 2000.5, 1990.5, 2000.5, 2010.5), ncol = 3, byrow =
     TRUE),

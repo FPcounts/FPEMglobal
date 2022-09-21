@@ -16,6 +16,8 @@ make_results(
   plot_CI_changes_years = NULL,
   plot_maps_shapefile_folder = NULL,
   plot_maps_years = NULL,
+  plot_prior_post = NULL,
+  plot_parameters = NULL,
   adjust_medians = FALSE,
   make_any_aggregates = TRUE,
   special_aggregates_name = NULL,

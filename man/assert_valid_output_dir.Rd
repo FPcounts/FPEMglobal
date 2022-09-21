@@ -9,6 +9,8 @@ assert_valid_output_dir(
   post_processed = TRUE,
   countrytrajectories = post_processed,
   made_results = post_processed,
+  adjusted_medians = post_processed,
+  age_ratios = NULL,
   verbose = FALSE
 )
 }
@@ -24,6 +26,14 @@ directories?}
 
 \item{made_results}{Logical; has \code{\link{make_results}} been
 run on the directory?}
+
+\item{adjusted_medians}{Logical; check for adjusted median
+results?}
+
+\item{age_ratios}{Logical; check for age ratio results? Defaults
+to \code{FALSE} if \code{output_folder_path} points to a
+\dQuote{15-49} run, otherwise the value of
+\code{post_processed}.}
 }
 \value{
 If all checks pass, \code{output_folder_path} is returned
@@ -36,9 +46,9 @@ is returned, otherwise \code{output_folder_path} is returned
 invisibly.
 }
 \details{
-'post_processed' is 'TRUE' by default because an un-processed
-directory doesn't even have 'mcmc.array.rda', which means it's
-unlikely to be used.
+The default for 'post_processed' is 'TRUE' by because an
+un-processed directory doesn't even have 'mcmc.array.rda', which
+means it's unlikely to be used.
 }
 \author{
 Mark Wheldon
