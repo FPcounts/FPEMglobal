@@ -1342,7 +1342,7 @@ make_results <- function(run_name,
 
             ## Barcharts
 
-            if(is.null(plot_barchart_years) || is.na(plot_barchart_years)) {
+            if(is.null(plot_barchart_years) || any(is.na(plot_barchart_years))) {
                 if(isTRUE(make_all_bar_charts))
                     warning("'make_all_bar_charts' is 'TRUE' but 'plot_barchart_years' is 'NULL'. Bar charts will not be produced.")
                 make_all_bar_charts <- FALSE
@@ -2694,7 +2694,8 @@ combine_runs <- function(## Describe the run
     ## Save the values of function arguments for make_results()
     ##----------------------------------------------------------------------------
 
-    combine_runs_args <- mget(names(formals(combine_runs)))
+    combine_runs_args <- mget(names(formals(combine_runs)),
+                              list(run_name = run_name))
     save(combine_runs_args, file = file.path(output_folder_path, "combine_runs_args.RData"))
 
     ##----------------------------------------------------------------------------
