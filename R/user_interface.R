@@ -1072,6 +1072,7 @@ make_results <- function(run_name,
                          plot_maps_years = NULL,
                          plot_prior_post = NULL,
                          plot_parameters = NULL,
+                         tabulate_changes = TRUE,
                          adjust_medians = FALSE,
                          make_any_aggregates = TRUE,
                          special_aggregates_name = NULL,
@@ -1656,13 +1657,15 @@ make_results <- function(run_name,
                 table.dir = unadjusted_table_folder_path
             )
 
-            GetTablesChange(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                name.res = "Country",
-                table.dir = unadjusted_table_folder_path,
-                change.in.changes = TRUE
-            )
+            if (tabulate_changes) {
+                GetTablesChange(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    name.res = "Country",
+                    table.dir = unadjusted_table_folder_path,
+                    change.in.changes = TRUE
+                )
+            }
 
             if (make_any_aggregates) {
                 GetTablesRes(
@@ -1672,6 +1675,7 @@ make_results <- function(run_name,
                     table.dir = unadjusted_table_folder_path
                 )
 
+                if (tabulate_changes) {
                 GetTablesChange(
                     run.name = run_name,
                     output.dir = output_folder_path,
@@ -1679,6 +1683,7 @@ make_results <- function(run_name,
                     table.dir = unadjusted_table_folder_path,
                     change.in.changes = TRUE
                 )
+                }
             }
 
         } else {
@@ -1691,6 +1696,7 @@ make_results <- function(run_name,
                 all.womenize.table.name = FALSE
             )
 
+            if (tabulate_changes) {
             GetTablesChangeAllWomen(
                 run.name = run_name,
                 output.dir = output_folder_path,
@@ -1698,6 +1704,7 @@ make_results <- function(run_name,
                 table.dir = unadjusted_table_folder_path,
                 all.womenize.table.name = FALSE
             )
+            }
 
             if (make_any_aggregates) {
                 GetTablesResAllWomen(
@@ -1708,6 +1715,7 @@ make_results <- function(run_name,
                     all.womenize.table.name = FALSE
                 )
 
+                if (tabulate_changes) {
                 GetTablesChangeAllWomen(
                     run.name = run_name,
                     output.dir = output_folder_path,
@@ -1715,6 +1723,7 @@ make_results <- function(run_name,
                     table.dir = unadjusted_table_folder_path,
                     all.womenize.table.name = FALSE
                 )
+                }
             }
 
         }
@@ -1902,9 +1911,11 @@ make_results <- function(run_name,
                     ## Tables
                     GetTablesRes(run.name = run_name, res = res_new, name.res = name.agg
                                 ,table.dir = unadjusted_table_folder_path)
+                    if (tabulate_changes) {
                     GetTablesChange(run.name = run_name, res = res_new, name.res = name.agg
                                    ,table.dir = unadjusted_table_folder_path
                                    ,change.in.changes = TRUE)
+                    }
 
                     if(adjust_medians) {
 
@@ -1937,15 +1948,15 @@ make_results <- function(run_name,
                                         ,table.dir = unadjusted_table_folder_path
                                         ,res = res_new
                                         ,adjusted.medians = FALSE
-                                        ,all.womenize.table.name = FALSE
-                                         )
+                                        ,all.womenize.table.name = FALSE)
+                    if (tabulate_changes) {
                     GetTablesChangeAllWomen(run.name = run_name
                                            ,name.res = name.agg
                                            ,output.dir = output_folder_path
                                            ,table.dir = unadjusted_table_folder_path
                                            ,res = res_new
-                                           ,all.womenize.table.name = FALSE
-                                            )
+                                           ,all.womenize.table.name = FALSE)
+                    }
 
                     if(adjust_medians) {
 
@@ -1993,6 +2004,7 @@ make_results <- function(run_name,
                                all.womenize.table.name = FALSE,
                                adjusted.medians = FALSE) #Not yet implemented.
 
+            if (tabulate_changes) {
             GetTablesChangeAgeRatios(run.name = run_name,
                                      output.dir = output_folder_path,
                                      table.dir = unadjusted_table_folder_path,
@@ -2003,6 +2015,7 @@ make_results <- function(run_name,
                                      adjusted.medians = FALSE, #Not yet implemented
                                      adj.method = NULL         #Not yet implemented
                                      )
+            }
 
             ## Aggregates only possible if `combine_runs()` has been run
 
@@ -2020,6 +2033,7 @@ make_results <- function(run_name,
                                    all.women = all_women,
                                    all.womenize.table.name = FALSE,
                                    adjusted.medians = FALSE) #Not yet implemented.
+                if (tabulate_changes) {
                 GetTablesChangeAgeRatios(run.name = run_name,
                                          output.dir = output_folder_path,
                                          table.dir = unadjusted_table_folder_path,
@@ -2029,6 +2043,7 @@ make_results <- function(run_name,
                                          fp2020.69.only = FALSE,
                                          adjusted.medians = FALSE, #Not yet implemented
                                          )
+                }
 
             if(all_women) message("\nYou can now re-run 'make_results' for married and unmarried women to get age ratios for UNPD and WB aggregates.")
 
@@ -2056,6 +2071,7 @@ make_results <- function(run_name,
                                            all.womenize.table.name = FALSE,
                                            adjusted.medians = FALSE) #Not yet implemented.
 
+                        if (tabulate_changes) {
                         GetTablesChangeAgeRatios(run.name = run_name,
                                                  output.dir = output_folder_path,
                                                  table.dir =  file.path(output_folder_path, "table", "orig"),
@@ -2065,6 +2081,7 @@ make_results <- function(run_name,
                                                  fp2020.69.only = FALSE,
                                                  adjusted.medians = FALSE, #Not yet implemented
                                                  )
+                        }
 
                         if(all_women) message("\nYou can now re-run 'make_results' for married and unmarried women to get age ratios for special aggregates.")
 
