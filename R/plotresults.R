@@ -398,7 +398,7 @@ if(!identical(layout.style, "diagnostic")) {
     }
     ##------------------------------------------------------------------------------------------
     if(!identical(layout.style, "diagnostic")) {
-    if(verbose) cat("\n'Logistic paramters")
+    if(verbose) cat("\n'Logistic parameters")
 
     if (plot.parameters && !all.women) {
         ##details<< Plot model parameters using \code{\link{PlotLogisticParameters}}.

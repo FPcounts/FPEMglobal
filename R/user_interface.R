@@ -2694,7 +2694,7 @@ combine_runs <- function(## Describe the run
     ## Save the values of function arguments for make_results()
     ##----------------------------------------------------------------------------
 
-    combine_runs_args <- mget(names(formals(combine_runs)),
+    combine_runs_args <- c(mget(names(formals(combine_runs))),
                               list(run_name = run_name))
     save(combine_runs_args, file = file.path(output_folder_path, "combine_runs_args.RData"))
 

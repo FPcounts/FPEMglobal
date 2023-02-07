@@ -202,10 +202,15 @@ PlotTrace <- function(#Traceplot for one parameter
                       n.chains= NULL, n.sim= NULL, main = NULL,
                       loess.curves = dim(mcmc.array)[1] > 4) {
     if (is.null(main)) main <- parname
+    main <- iconv(main, "ASCII", "UTF-8", sub="")
     if (is.null(n.sim)) n.sim <- dim(mcmc.array)[1]
     if (is.null(n.chains)) n.chains <- dim(mcmc.array)[2]
     if((parname %in% dimnames(mcmc.array)[[3]])) {
-        plot(c(mcmc.array[,1,parname]), type = "l", ylab = parname,  main = main,
+        plot(c(mcmc.array[,1,parname]), type = "l",
+             ylab = iconv(parname, "ASCII", "UTF-8", sub=""),
+             main = iconv(main, "ASCII", "UTF-8", sub=""),
+                                # Get errors from non-ASCII country names
+                                # (ref: https://stackoverflow.com/questions/9637278/r-tm-package-invalid-input-in-utf8towcs)
              ylim = c(min(mcmc.array[,,parname]),max(mcmc.array[,,parname])))
         for (chain in 1:n.chains){
             lines(c(mcmc.array[,chain,parname]), type = "l", col = chain)

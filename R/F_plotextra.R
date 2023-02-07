@@ -1037,6 +1037,9 @@ PlotLogisticParameters <- function (# Plot overview of country parameters of the
   ,write.model.fun = NULL
   ){
 
+    ## Try to prevent non-ASCII characters in country names causing errors.
+    dimnames(par.ciq)[[1]] <- iconv(dimnames(par.ciq)[[1]], "ASCII", "UTF-8", sub="")
+
   ##details<< Note: pace parameter omega of logistic curve is expressed as
   ## the no of years needed for an increase of 60% on the 0-asymptote scale
                                         #perc80 <- (logit(0.9) - logit(0.1))
