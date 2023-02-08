@@ -2,7 +2,7 @@
 ######################################################################
 ## Scripts where 'requireNamespace()' is used for functions in
 ## packages that are 'suggested'.
-source("R/runMCMC.R", local = TRUE)
+source("R/user_interface.R", local = TRUE)
 source("R/F_plotextra.R", local = TRUE)
 ######################################################################
 
