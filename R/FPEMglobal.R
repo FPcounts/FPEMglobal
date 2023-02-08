@@ -13,11 +13,6 @@ source("R/F_plotextra.R", local = TRUE)
 #'
 #' @import coda
 #' @import foreach
-#' @import ggplot2
-#' @import magrittr
 #' @import MCMCpack
-#' @import msm
-#' @import reshape2
-#' @import scales
 #'
 NULL

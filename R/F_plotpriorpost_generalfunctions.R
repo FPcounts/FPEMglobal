@@ -52,10 +52,10 @@ PlotPostWithTruncatedNormalPrior <- function(# Plot histogram of posterior sampl
   minx <- ifelse(min(post.samp)<0, 1.1*min(post.samp), 0.9*min(post.samp))
   maxx <- ifelse(max(post.samp)<0, 0.9*max(post.samp), 1.1*max(post.samp))
   hist(post.samp, xlab = parname, col = "grey", freq = FALSE, main = as.character(title), xlim = c(minx, maxx))
-  lines(density(rtnorm(1000, priormean, priorsd, lower = priorlower, upper = priorupper)), col = 2, lwd = 3)
+  lines(density(msm::rtnorm(1000, priormean, priorsd, lower = priorlower, upper = priorupper)), col = 2, lwd = 3)
   abline(v = priormean, col = 2, lty = 2)
 }
-#PlotPostWithTruncatedNormalPrior(post.samp = rtnorm(100,0,1,upper=1), priormean = -1, priorsd = 10, priorupper = 0.5, parname = "test")
+#PlotPostWithTruncatedNormalPrior(post.samp = msm::rtnorm(100,0,1,upper=1), priormean = -1, priorsd = 10, priorupper = 0.5, parname = "test")
 
 
 PlotPostWithUnifPrior <- function(# Plot histogram of posterior sample

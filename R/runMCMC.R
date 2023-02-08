@@ -837,9 +837,9 @@ InternalMCMCinits <-
         ## [MCW-2016-08-25-6] Increase length of parameters if want estimates for countries with no data.
         if(include.c.no.data || isTRUE(validation.list$at.random.no.data) || isTRUE(validation.list$leave.iso.out)) {
             inits.list1 <- list(
-                T.c = c(rtnorm(winbugs.data$C + winbugs.data$C.no.data, 1980, 80, lower=1800), NA),
+                T.c = c(msm::rtnorm(winbugs.data$C + winbugs.data$C.no.data, 1980, 80, lower=1800), NA),
                                 # change JR, 2013119: changed from winbugs.data$C+1
-                RT.c = c(rtnorm(winbugs.data$C + winbugs.data$C.no.data, 1980, 80, lower=1800), NA),
+                RT.c = c(msm::rtnorm(winbugs.data$C + winbugs.data$C.no.data, 1980, 80, lower=1800), NA),
                                 # change JR, 2013119: changed from winbugs.data$C+1
                 logitRomega.c = logit(runif(winbugs.data$C + winbugs.data$C.no.data, 0.02, 0.25)),
                 logitomega.c = logit(runif(winbugs.data$C + winbugs.data$C.no.data, 0.02, 0.25)),
@@ -848,9 +848,9 @@ InternalMCMCinits <-
             )
         } else {
             inits.list1 <- list(
-                T.c = c(rtnorm(winbugs.data$C, 1980, 80, lower=1800), NA),
+                T.c = c(msm::rtnorm(winbugs.data$C, 1980, 80, lower=1800), NA),
                                 # change JR, 2013119: changed from winbugs.data$C+1
-                RT.c = c(rtnorm(winbugs.data$C, 1980, 80, lower=1800), NA),
+                RT.c = c(msm::rtnorm(winbugs.data$C, 1980, 80, lower=1800), NA),
                                 # change JR, 2013119: changed from winbugs.data$C+1
                 logitRomega.c = logit(runif(winbugs.data$C, 0.02, 0.25)),
                 logitomega.c = logit(runif(winbugs.data$C, 0.02, 0.25)),
@@ -954,14 +954,14 @@ InternalMCMCinits <-
                       ##tau.pos.m = 1/runif(2, 0.01, 1)^2,
                       sigma.geo.m = runif(2, 0.01, 2),
                       ## note: first 3 refer to non-rich countries
-                      T.world = rtnorm(1, 1980, 40,  lower=1800),
-                      T.subreg = rtnorm(size.clus.lev.2, 1980, 60,  lower=1800),
-                      T.reg = rtnorm(size.clus.lev.1, 1980, 50,  lower=1800),
+                      T.world = msm::rtnorm(1, 1980, 40,  lower=1800),
+                      T.subreg = msm::rtnorm(size.clus.lev.2, 1980, 60,  lower=1800),
+                      T.reg = msm::rtnorm(size.clus.lev.1, 1980, 50,  lower=1800),
 
-                      TOneLevel = rtnorm(1, 1900, 50,  lower=1800),
-                      RT.world = rtnorm(1, 1980, 40,  lower=1800),
-                      RT.subreg = rtnorm(size.clus.lev.2, 1980, 60,  lower=1800),
-                      RT.reg = rtnorm(size.clus.lev.1, 1980, 50,  lower=1800),
+                      TOneLevel = msm::rtnorm(1, 1900, 50,  lower=1800),
+                      RT.world = msm::rtnorm(1, 1980, 40,  lower=1800),
+                      RT.subreg = msm::rtnorm(size.clus.lev.2, 1980, 60,  lower=1800),
+                      RT.reg = msm::rtnorm(size.clus.lev.1, 1980, 50,  lower=1800),
 
                       sigma.Tsubreg = runif(1, 2, 80),
                       sigma.Treg = runif(1, 2, 80),
@@ -972,12 +972,12 @@ InternalMCMCinits <-
                       sigma.Rwreg = runif(1, 0.01, 2),
                       sigma.wsubreg = runif(1, 0.01, 2),
                       sigma.Rwsubreg = runif(1, 0.01, 2),
-                      w.subreg = rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0),
-                      Rw.subreg = rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0),
-                      w.reg = rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
-                      Rw.reg = rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
-                      w.world = rtnorm(1,logit(0.07), 1,  lower=-4.5, upper = 0),
-                      Rw.world = rtnorm(1,logit(0.07), 1, lower=-4.5, upper = 0),
+                      w.subreg = msm::rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0),
+                      Rw.subreg = msm::rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0),
+                      w.reg = msm::rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
+                      Rw.reg = msm::rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
+                      w.world = msm::rtnorm(1,logit(0.07), 1,  lower=-4.5, upper = 0),
+                      Rw.world = msm::rtnorm(1,logit(0.07), 1, lower=-4.5, upper = 0),
 
                       lr.world  = rnorm(1, 2, 2),
                       sigma.ar.unmet  = runif(1,0.01,1),
@@ -1019,7 +1019,7 @@ InternalMCMCinits <-
         ## Increase length of parameters if want estimates for countries with no data.
         if(include.c.no.data || isTRUE(validation.list$at.random.no.data) || isTRUE(validation.list$leave.iso.out)) {
          inits.list1 <- list(
-            RT.c = c(rtnorm(winbugs.data$C + winbugs.data$C.no.data, 1980, 80, lower=1800), NA),
+            RT.c = c(msm::rtnorm(winbugs.data$C + winbugs.data$C.no.data, 1980, 80, lower=1800), NA),
                                 #Removed inits for T.c
             logitRomega.c = logit(runif(winbugs.data$C + winbugs.data$C.no.data, 0.02, 0.25)),
             logitomega.c = logit(runif(winbugs.data$C + winbugs.data$C.no.data, 0.02, 0.25)),
@@ -1028,7 +1028,7 @@ InternalMCMCinits <-
          )
          } else {
         inits.list1 <- list(
-            RT.c = c(rtnorm(winbugs.data$C, 1980, 80, lower=1800), NA), # change JR, 2013119: changed from winbugs.data$C+1
+            RT.c = c(msm::rtnorm(winbugs.data$C, 1980, 80, lower=1800), NA), # change JR, 2013119: changed from winbugs.data$C+1
                                 #Removed inits for T.c
             logitRomega.c = logit(runif(winbugs.data$C, 0.02, 0.25)),
             logitomega.c = logit(runif(winbugs.data$C, 0.02, 0.25)),
@@ -1084,14 +1084,14 @@ InternalMCMCinits <-
                                 # tau.pos.m = 1/runif(2, 0.01, 1)^2,
                       sigma.geo.m = runif(2, 0.01, 2),
                                 # note: first 3 refer to non-rich countries
-                      w.world = rtnorm(1,logit(0.07), 1,  lower=-4.5, upper = 0),
-                      S.world = rtnorm(1,logit(0.5), 1,  lower=-4.5, upper = 4.5), #Change NC, 20161130
-                      RT.world = rtnorm(1, 1980, 40,  lower=1800),
-                      Rw.world = rtnorm(1,logit(0.07), 1, lower=-4.5, upper = 0),
-                      w.reg = rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
-                      S.reg = rtnorm(size.clus.lev.1, log(0.5), sd = 1.5,  lower=-4.5, upper = 4.5), #Change NC, 20161130
-                      RT.reg = rtnorm(size.clus.lev.1, 1980, 50,  lower=1800),
-                      Rw.reg = rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
+                      w.world = msm::rtnorm(1,logit(0.07), 1,  lower=-4.5, upper = 0),
+                      S.world = msm::rtnorm(1,logit(0.5), 1,  lower=-4.5, upper = 4.5), #Change NC, 20161130
+                      RT.world = msm::rtnorm(1, 1980, 40,  lower=1800),
+                      Rw.world = msm::rtnorm(1,logit(0.07), 1, lower=-4.5, upper = 0),
+                      w.reg = msm::rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
+                      S.reg = msm::rtnorm(size.clus.lev.1, log(0.5), sd = 1.5,  lower=-4.5, upper = 4.5), #Change NC, 20161130
+                      RT.reg = msm::rtnorm(size.clus.lev.1, 1980, 50,  lower=1800),
+                      Rw.reg = msm::rtnorm(size.clus.lev.1, log(0.07), sd = 1.5,  lower=-4.5, upper = 0),
                       sigma.RTreg = runif(1, 2, 80),
                       sigma.wreg = runif(1, 0.01, 2),
                       sigma.Sreg= runif(1, 0.01, 2),
@@ -1146,10 +1146,10 @@ InternalMCMCinits <-
                 inits.list1 <-
                     c(inits.list1
                     , list(
-                          w.subreg = rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0),
-                          S.subreg = rtnorm(size.clus.lev.2, logit(0.5), sd = 1.5,  lower=-4.5, upper = 4.5),
-                          RT.subreg = rtnorm(size.clus.lev.2, 1980, 60,  lower=1800),
-                          Rw.subreg = rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0)
+                          w.subreg = msm::rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0),
+                          S.subreg = msm::rtnorm(size.clus.lev.2, logit(0.5), sd = 1.5,  lower=-4.5, upper = 4.5),
+                          RT.subreg = msm::rtnorm(size.clus.lev.2, 1980, 60,  lower=1800),
+                          Rw.subreg = msm::rtnorm(size.clus.lev.2, logit(0.07), sd = 1.5,  lower=-4.5, upper = 0)
                       ))
             }
         }

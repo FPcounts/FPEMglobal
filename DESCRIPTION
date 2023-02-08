@@ -21,11 +21,11 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     abind,
+    checkmate,
     coda,
     dplyr,
     foreach,
     ggplot2,
-    lattice,
     magrittr,
     MCMCpack,
     msm,
@@ -33,12 +33,9 @@ Imports:
     plyr,
     RColorBrewer,
     reshape,
-    reshape2,
     rjags,
     R2jags,
-    scales,
-    xtable,
-    checkmate
+    xtable
 Suggests:
     doParallel,
     sp,
