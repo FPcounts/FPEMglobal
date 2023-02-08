@@ -14,9 +14,6 @@ GetPPCSymbols <- function(PPPC){# Gives vector with symbols for PPPC
                                                ifelse(PPPC >0.9, "*",""))))))
   return(PPcats)
 }
-#res <- data.frame(PPPC,PPcats)
-#xtable(res)
-#write.csv(res, file = "temp.csv")
 
 #--------------------------------------------------------------------------------
 GetSummaryCountries<- function (# Save a csv with summary info about countries
@@ -1053,7 +1050,7 @@ InternalGetLancetBigTable <-
                           ,paste0("X", c(year1, year2) + 0.5)
                            )]
 
-            tbl <- reshape(tbl, direction = "wide", timevar = "Percentile"
+            tbl <- stats::reshape(tbl, direction = "wide", timevar = "Percentile"
                           ,idvar = c("Name", "Iso")
                            )
             tbl <- data.frame(tbl[,c("Name", "Iso")]

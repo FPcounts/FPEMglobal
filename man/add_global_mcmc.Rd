@@ -17,7 +17,7 @@ add_global_mcmc(
 
 \item{chain_nums}{number identifying chains to add. Unlike
 \code{\link{do_global_mcmc}}, this can be a scalar. It must \emph{not}
-be the number identifying a chain already created. See \dQuote{Details}.}
+be the number identifying a chain already created. See \dQuote{Description}.}
 
 \item{output_folder_path}{Filepath to directory where outputs
 should be saved. If \code{NULL}, defaults to

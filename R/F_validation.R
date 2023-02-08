@@ -944,7 +944,7 @@ PlotValidationResults <- function(# Plot lots of results!
   #   rownames(table.ix) <- paste0(namesselect, " (", nobs.i, ")")
   #   colnames(table.ix) <- c("# Obs", "Mean diff", "Medan abs diff", "% Below 80CI", "% Above 80CI")
   #   # print table
-  #   print(xtable(table.ix, #digits = c(0,0,0,0,0),
+  #   print(xtable::xtable(table.ix, #digits = c(0,0,0,0,0),
   #                 caption = paste("Change in median/CI: Results for ", comp.year, ", ", nameplot1, " (",
   #                                 nameplot2, ")")),
   #                 file = validation.res.file, append = T, type = "html")

@@ -465,7 +465,7 @@ do_global_mcmc <- function(run_desc = "",
 ##' @param run_name The name of the run to add a chain to.
 ##' @param chain_nums number identifying chains to add. Unlike
 ##'     \code{\link{do_global_mcmc}}, this can be a scalar. It must \emph{not}
-##'     be the number identifying a chain already created. See \dQuote{Details}.
+##'     be the number identifying a chain already created. See \dQuote{Description}.
 ##' @inheritParams do_global_mcmc
 ##' @return A name for the run is returned invisibly as a character string. MCMC chains are
 ##'     saved to \file{output_folder_path/temp.JAGSobjects}. They need to
@@ -482,6 +482,8 @@ add_global_mcmc <- function(run_name,
                             output_folder_path = file.path("output", run_name),
                             run_in_parallel = isTRUE(length(chain_nums) > 1),
                             verbose = FALSE) {
+
+    if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
 
     ##---------------------------------------------------------------------
     ## Meta Info
@@ -539,6 +541,9 @@ add_global_mcmc <- function(run_name,
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    if (file.exists(file.path(output_folder_path, "post_process_args.RData")))
+        warning("Chains have been added but any existing results have *not* been updated; you will need to re-run 'post_process_mcmc' *and* 'make_results' to update those.")
 
     return(invisible(run_name))
 }

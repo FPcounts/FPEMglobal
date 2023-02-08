@@ -11,25 +11,13 @@ source("R/F_plotextra.R", local = TRUE)
 #' @docType package
 #' @name FPEMglobal
 #'
-#' @import abind
 #' @import coda
-#' @import dplyr
 #' @import foreach
-#' @import gdata
 #' @import ggplot2
-#' @import lattice
 #' @import magrittr
 #' @import MCMCpack
 #' @import msm
-#' @import parallel
-#' @import plyr
-#' @import proto
-#' @import RColorBrewer
-#' @import reshape
 #' @import reshape2
-#' @import rjags
-#' @import R2jags
 #' @import scales
-#' @import xtable
 #'
 NULL

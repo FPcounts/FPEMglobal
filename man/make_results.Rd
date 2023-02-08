@@ -18,6 +18,7 @@ make_results(
   plot_maps_years = NULL,
   plot_prior_post = NULL,
   plot_parameters = NULL,
+  tabulate_changes = TRUE,
   adjust_medians = FALSE,
   make_any_aggregates = TRUE,
   special_aggregates_name = NULL,

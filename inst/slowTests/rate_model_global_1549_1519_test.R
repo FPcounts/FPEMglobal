@@ -86,6 +86,9 @@ verbose <- FALSE
 ###-----------------------------------------------------------------------------
 ### ** 15-49 (ALL WRA)
 
+###-----------------------------------------------------------------------------
+### *** Initial Run
+
 all_women_1549_runs <-
     do_global_all_women_run(
         run_name_override_married = run_name_override_married_1549,
@@ -116,6 +119,13 @@ all_women_1549_runs <-
     )
 
 all_women_1549_runs
+
+###-----------------------------------------------------------------------------
+### *** Add a Chain
+
+add_global_mcmc(all_women_1549_runs$married_run_name,
+                chain_nums = max(chain_nums) + 1,
+                verbose = verbose)
 
 ###-----------------------------------------------------------------------------
 ### ** 15-19 (Adolescent Women)

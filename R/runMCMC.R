@@ -592,7 +592,7 @@ RunMCMC <- function(# Start MCMC sampling
 
     if (run.jags) {
         if (run.on.server) {
-            foreach(chainNum=ChainNums, .packages = "FPEMglobal") %dopar% {
+            foreach::foreach(chainNum=ChainNums, .packages = "FPEMglobal") %dopar% {
                 cat(paste("Start chain ID ", chainNum), "\n")
                 ##tryCatch(
                 InternalRunOneChain(chainNum = chainNum, mcmc.meta = mcmc.meta
@@ -662,7 +662,7 @@ InternalRunOneChain <- function(#Do MCMC sampling
   #  cat("And lots of error messages (potentially), which I do not know how to get rid off", "\n")
   cat("Just wait for statement that MCMC run has finished", "\n")
   jags.dir <- file.path(mcmc.meta$general$output.dir, "temp.JAGSobjects/")
-  #   mod<-tryCatch(jags(data=mcmc.meta$winbugs.data,
+  #   mod<-tryCatch(R2jags::jags(data=mcmc.meta$winbugs.data,
   #               inits=fix.init,
   #               parameters.to.save=unlist(mcmc.meta$parnames.list),
   #               model.file=file.path(mcmc.meta$general$output.dir, "model.txt"),
@@ -689,7 +689,7 @@ InternalRunOneChain <- function(#Do MCMC sampling
   # need to sample something in R first
     temp <- rnorm(1)
 
-  mod<-jags(data=mcmc.meta$winbugs.data,
+  mod<-R2jags::jags(data=mcmc.meta$winbugs.data,
             # inits=fix.init,
             # note this functionality does not work as of July 21, 2012
             # isntead: need a function without input arguments, that samples 1!
@@ -725,7 +725,7 @@ InternalRunOneChain <- function(#Do MCMC sampling
   #--- update MCMC ----------
   if (mcmc.meta$general$N.STEPS >1){
     for (i in 2:(mcmc.meta$general$N.STEPS)){
-      mod.upd <-update(mod.upd, parameters.to.save=unlist(mcmc.meta$parnames.list), # change JR, 20131104
+      mod.upd <-rjags::update(mod.upd, parameters.to.save=unlist(mcmc.meta$parnames.list), # change JR, 20131104
                        n.iter=mcmc.meta$general$N.ITER/mcmc.meta$general$N.STEPS,
                        n.thin=mcmc.meta$general$N.THIN)
       save(mod.upd, file = file.path(mcmc.meta$general$output.dir, "temp.JAGSobjects", paste0("jags_mod", filename.append, chainNum, "update_", i, ".Rdata"))) # change JR, 20140414 # change JR, 20140418
@@ -772,7 +772,7 @@ AddMCMCChain <- function(# Add additional MCMC chain to existing run.
   mcmc.meta$general$ChainNums <- unique(c(mcmc.meta$general$ChainNums, ChainNums))
     save(mcmc.meta, file = file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda"))) # change JR, 20140418
     if(run.on.server) {
-        foreach(chainNum=ChainNums, .packages = "FPEMglobal") %dopar% {
+        foreach::foreach(chainNum=ChainNums, .packages = "FPEMglobal") %dopar% {
                 cat(paste("Start chain ID ", chainNum), "\n")
     #tryCatch(
       InternalRunOneChain(chainNum = chainNum, mcmc.meta = mcmc.meta
