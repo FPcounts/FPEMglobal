@@ -26,13 +26,15 @@ run_name_override_married_1519 <- "test_1519_married"
 run_name_override_unmarried_1519 <- "test_1519_unmarried"
 run_name_override_all_women_1519 <- "test_1519_all_women"
 
+output_folder_test <- tempdir()
+
 age_ratios_age_total_run_name_prefix <- "test"
 age_ratios_age_total_married_output_folder_path <-
-    file.path("output", paste0(run_name_override_married_1549))
+    file.path(output_folder_test, paste0(run_name_override_married_1549))
 age_ratios_age_total_unmarried_output_folder_path <-
-    file.path("output", paste0(run_name_override_unmarried_1549))
+    file.path(output_folder_test, paste0(run_name_override_unmarried_1549))
 age_ratios_age_total_all_women_output_folder_path <-
-    file.path("output", paste0(run_name_override_all_women_1549))
+    file.path(output_folder_test, paste0(run_name_override_all_women_1549))
 
 ###-----------------------------------------------------------------------------
 ### ** MCMC parameters
@@ -113,6 +115,7 @@ all_women_1549_runs <-
         plot_maps_years = plot_maps_years,
         adjust_medians = adjust_medians,
         age_ratios_age_total_run_name_prefix = age_ratios_age_total_run_name_prefix,
+        output_folder_path = output_folder_test,
         ## Advanced
         verbose = verbose,
         include_AR = include_AR
@@ -152,24 +155,28 @@ do_global_mcmc(run_name_override = run_name_override_married_1519,
                set_seed_chains = 1,
                ## Inputs
                data_csv_filename = data_csv_filename_1519,
-               include_AR = include_AR)
+               include_AR = include_AR,
+               ## Outputs
+               output_folder_path = output_folder_test)
 
 ###
 ### Post process
 
 post_process_mcmc(run_name = run_name_override_married_1519,
-    ## Results
-    years_change = years_change,
-    years_change2 = years_change2,
-    model_diagnostics = model_diagnostics,
-    special_aggregates_name = special_aggregates_name,
-    age_ratios_age_total_output_folder_path = age_ratios_age_total_married_output_folder_path,
-    verbose = verbose)
+                  output_folder_path = output_folder_test,
+                  ## Results
+                  years_change = years_change,
+                  years_change2 = years_change2,
+                  model_diagnostics = model_diagnostics,
+                  special_aggregates_name = special_aggregates_name,
+                  age_ratios_age_total_output_folder_path = age_ratios_age_total_married_output_folder_path,
+                  verbose = verbose)
 
 ###
 ### Make results
 
 make_results(run_name = run_name_override_married_1519,
+             output_folder_path = output_folder_test,
              plot_maps_shapefile_folder = plot_maps_shapefile_folder,
              plot_maps_years = plot_maps_years,
              adjust_medians = adjust_medians,
@@ -196,12 +203,15 @@ do_global_mcmc(run_name_override = run_name_override_unmarried_1519,
                set_seed_chains = 1,
                ## Inputs
                data_csv_filename = data_csv_filename_1519,
-               include_AR = include_AR)
+               include_AR = include_AR,
+               ## Outputs
+               output_folder_path = output_folder_test)
 
 ###
 ### Post process
 
 post_process_mcmc(run_name = run_name_override_unmarried_1519,
+                  output_folder_path = output_folder_test,
     ## Results
     years_change = years_change,
     years_change2 = years_change2,
@@ -214,6 +224,7 @@ post_process_mcmc(run_name = run_name_override_unmarried_1519,
 ### Make results
 
 make_results(run_name = run_name_override_unmarried_1519,
+                  output_folder_path = output_folder_test,
              plot_maps_shapefile_folder = plot_maps_shapefile_folder,
              plot_maps_years = plot_maps_years,
              adjust_medians = adjust_medians,
@@ -224,7 +235,8 @@ make_results(run_name = run_name_override_unmarried_1519,
 ###-----------------------------------------------------------------------------
 ### **** Combine
 
-combine_runs(married_women_run_name = run_name_override_married_1519,
+combine_runs(output_folder_path = output_folder_test,
+             married_women_run_name = run_name_override_married_1519,
              unmarried_women_run_name = run_name_override_unmarried_1519,
              run_name_override = run_name_override_all_women_1519,
              ## Results
@@ -241,6 +253,7 @@ combine_runs(married_women_run_name = run_name_override_married_1519,
 ### **** Make Results
 
 make_results(run_name = run_name_override_all_women_1519,
+             output_folder_path = output_folder_test,
              plot_maps_shapefile_folder = plot_maps_shapefile_folder,
              plot_maps_years = plot_maps_years,
              adjust_medians = adjust_medians,
@@ -252,12 +265,14 @@ make_results(run_name = run_name_override_all_women_1519,
 ### **** Make Results again for MW and UW
 
 make_results(run_name = run_name_override_married_1519,
+             output_folder_path = output_folder_test,
              adjust_medians = adjust_medians,
              special_aggregates_name = special_aggregates_name,
              make_age_ratios = make_age_ratios,
              verbose = verbose)
 
 make_results(run_name = run_name_override_unmarried_1519,
+             output_folder_path = output_folder_test,
              adjust_medians = adjust_medians,
              special_aggregates_name = special_aggregates_name,
              make_age_ratios = make_age_ratios,

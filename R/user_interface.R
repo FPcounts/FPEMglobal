@@ -3079,6 +3079,7 @@ do_global_all_women_run <- function(## Describe the run
                                     countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
                                     countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                                     special_aggregates_name = NULL,
+                                    output_folder_path = NULL,
                                     start_year = 1970.5,
                                     end_year = 2030.5,
                                     years_change = matrix(c(
@@ -3137,11 +3138,16 @@ do_global_all_women_run <- function(## Describe the run
     }
 
     ##---------------------------------------------------------------------
+    ## Directories
+
+    if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
+
+    ##---------------------------------------------------------------------
     ## Check output doesn't already exist
 
     for(rn in c(run_name_override_married, run_name_override_unmarried,
                   run_name_override_all_women)) {
-        ofp <- file.path("output", rn)
+        ofp <- file.path(output_folder_path, rn)
 
         if(dir.exists(ofp)) {
             if(any(grepl("^mcmc\\.info(\\.[0-9]+\\.|\\.)rda$", dir(ofp)),

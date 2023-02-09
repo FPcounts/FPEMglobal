@@ -21,6 +21,7 @@ do_global_all_women_run(
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
   countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
   special_aggregates_name = NULL,
+  output_folder_path = NULL,
   start_year = 1970.5,
   end_year = 2030.5,
   years_change = matrix(c(1990.5, 2000.5, 2000.5, 2018.5, 2018.5, 2030.5, 2012.5, 2018.5,
@@ -143,6 +144,10 @@ desired. There must be a corresponding file with name
 \file{\code{special_aggregates_name}.csv} in
 \code{input_data_folder_path} that defines the special
 aggregates. See \dQuote{Details}.}
+
+\item{output_folder_path}{Filepath to directory where outputs
+should be saved. If \code{NULL}, defaults to
+\code{file.path("output", run_name)}.}
 
 \item{start_year}{Estimates and projections are produced for a
 specified time interval. This is the start year of that
