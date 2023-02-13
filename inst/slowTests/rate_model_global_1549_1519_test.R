@@ -11,6 +11,11 @@
 
 library(FPEMglobal)
 
+### TEMP DIRECTORY
+owd <- getwd()
+tmpdir <- tempdir()
+setwd(tmpdir)
+
 ###-----------------------------------------------------------------------------
 ### * Common Arguments
 
@@ -262,3 +267,8 @@ make_results(run_name = run_name_override_unmarried_1519,
              special_aggregates_name = special_aggregates_name,
              make_age_ratios = make_age_ratios,
              verbose = verbose)
+
+
+
+### RESET DIRECTORY
+setwd(owd)
