@@ -1038,7 +1038,11 @@ PlotLogisticParameters <- function (# Plot overview of country parameters of the
   ){
 
     ## Try to prevent non-ASCII characters in country names causing errors.
-    dimnames(par.ciq)[[1]] <- iconv(dimnames(par.ciq)[[1]], "ASCII", "UTF-8", sub="")
+    test <- try(dimnames(par.ciq)[[1]] <- iconv(dimnames(par.ciq)[[1]], "ASCII", "UTF-8", sub=""),
+                silent = TRUE)
+    if (inherits(test, "try-error")) {
+        dimnames(par.ciq)[[1]][grep("Ivoire", dimnames(par.ciq)[[1]])] <- "Cote d'Ivoire"
+    }
 
   ##details<< Note: pace parameter omega of logistic curve is expressed as
   ## the no of years needed for an increase of 60% on the 0-asymptote scale

@@ -389,7 +389,13 @@ if("metDemGT.Lg.Lcat.pr" %in% names(res)) {
         ## Met demand greater than
         metDemGT.Lg.Lcat.pr <- res[["metDemGT.Lg.Lcat.pr"]]
     metDemGT.Lg.pr <- lapply(metDemGT.Lg.Lcat.pr, function(l) l[[1]])
-    names(metDemGT.Lg.pr) <- iconv(names(metDemGT.Lg.pr), "ASCII", "UTF-8", sub="")
+
+    test <- try(names(metDemGT.Lg.pr) <- iconv(names(metDemGT.Lg.pr), "ASCII", "UTF-8", sub=""),
+                silent = TRUE)
+    if (inherits(test, "try-error")) {
+        names(metDemGT.Lg.pr)[grep("Ivoire", names(metDemGT.Lg.pr))] <- "Cote d'Ivoire"
+    }
+
         estimates <-t(as.data.frame(metDemGT.Lg.pr))
         if(name.res == "Country") {
           iso.col.GT <- res$iso.g
