@@ -639,7 +639,7 @@ add_global_mcmc <- function(run_name,
 ##'     in one call.
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
-post_process_mcmc <- function(run_name,
+post_process_mcmc <- function(run_name = NULL,
                               output_folder_path = file.path("output", run_name),
                               input_data_folder_path = NULL,
                               denominator_counts_csv_filename = NULL,
@@ -670,6 +670,24 @@ post_process_mcmc <- function(run_name,
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
                               verbose = FALSE) {
 
+    ##----------------------------------------------------------------------------
+    ## Meta Info
+
+    if (is.null(output_folder_path) && is.null(run_name))
+        stop("'output_folder_path' or 'run_name' must be specified.")
+
+    if (is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
+
+    global_mcmc_args_filepath <- file.path(output_folder_path, "global_mcmc_args.RData")
+    if (file.exists(global_mcmc_args_filepath)) {
+        load(global_mcmc_args_filepath, verbose = verbose)
+    } else stop("Cannot find '", global_mcmc_args_filepath, "'.")
+
+    if (is.null(run_name)) run_name <- get_run_name(global_mcmc_args_filepath)
+
+    load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
+    write_model_function <- mcmc.meta$general$write.model.fun
+
     msg <- paste0("Post-processing run ", run_name)
     message(msg)
 
@@ -677,15 +695,6 @@ post_process_mcmc <- function(run_name,
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
-
-    ##----------------------------------------------------------------------------
-    ## Meta Info
-
-    load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
-    write_model_function <- mcmc.meta$general$write.model.fun
-
-    global_mcmc_args_filepath <- file.path(output_folder_path, "global_mcmc_args.RData")
-    if(file.exists(global_mcmc_args_filepath)) load(global_mcmc_args_filepath, verbose = verbose)
 
     if(is.null(input_data_folder_path))
         input_data_folder_path <- file.path(output_folder_path, "data")
@@ -1064,7 +1073,7 @@ post_process_mcmc <- function(run_name,
 ##' @examples vignette("FPEMglobal_Intro")
 ##'
 ##' @export
-make_results <- function(run_name,
+make_results <- function(run_name = NULL,
                          output_folder_path = file.path("output", run_name),
                          input_data_folder_path = NULL,
                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
@@ -1091,6 +1100,12 @@ make_results <- function(run_name,
     ## Meta information
     ##----------------------------------------------------------------------------
 
+    ## Output folder path
+    if (is.null(output_folder_path) && is.null(run_name))
+        stop("'output_folder_path' or 'run_name' must be specified.")
+
+    if (is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
+
     ## MCMC meta
     load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
     data_raw <- mcmc.meta$data.raw
@@ -1105,9 +1120,19 @@ make_results <- function(run_name,
     unmarried <-
         (identical(mcmc.meta$general$marital.group, "UWRA") && !all_women)
 
-    ## Extra meta information
-    global_mcmc_args_filepath <- file.path(output_folder_path, "global_mcmc_args.RData")
-    if(file.exists(global_mcmc_args_filepath)) load(global_mcmc_args_filepath, verbose = verbose)
+    ## Extra info
+    if (!all_women) {
+        global_mcmc_args_filepath <- file.path(output_folder_path, "global_mcmc_args.RData")
+        if (file.exists(global_mcmc_args_filepath)) {
+            load(global_mcmc_args_filepath, verbose = verbose)
+        } else stop("Cannot find '", global_mcmc_args_filepath, "'.")
+        post_process_args_filepath <- file.path(output_folder_path, "post_process_args.RData")
+    } else {
+        post_process_args_filepath <- file.path(output_folder_path, "combine_runs_args.RData")
+    }
+
+    ## Run name
+    if (is.null(run_name)) run_name <- get_run_name(post_process_args_filepath)
 
     ## Make paths to input data
     if(is.null(input_data_folder_path))
@@ -1129,11 +1154,6 @@ make_results <- function(run_name,
     ## Years to plot
     if(any(sapply(list(plot_barchart_years, plot_CI_changes_years, plot_maps_years),
                   "is.null"))) {
-        if(!all_women) {
-            post_process_args_filepath <- file.path(output_folder_path, "post_process_args.RData")
-        } else {
-            post_process_args_filepath <- file.path(output_folder_path, "combine_runs_args.RData")
-        }
         if(file.exists(post_process_args_filepath)) {
             post_process_args <- get(load(post_process_args_filepath, verbose = verbose))
             if(is.null(plot_barchart_years)) {
@@ -2510,9 +2530,9 @@ do_global_run <- function(## Describe the run
 combine_runs <- function(## Describe the run
                          run_desc = "",
                          output_folder_path = NULL,
-                         married_women_run_name,
+                         married_women_run_name = NULL,
                          married_women_run_output_folder_path = NULL,
-                         unmarried_women_run_name,
+                         unmarried_women_run_name = NULL,
                          unmarried_women_run_output_folder_path = NULL,
                          unmarried_women_run_data_folder_path = file.path(unmarried_women_run_output_folder_path, "data"),
                          region_information_csv_filename = "country_and_area_classification.csv",
@@ -2561,6 +2581,10 @@ combine_runs <- function(## Describe the run
         } else {
             stop("'married_women_run_output_folder_path' or 'married_women_run_name' must be specified.")
         }
+    } else {
+        if (is.null(married_women_run_name))
+            married_women_run_name <- get_run_name(file.path(married_women_run_output_folder_path,
+                                                             "post_process_args.RData"))
     }
 
     if(is.null(unmarried_women_run_output_folder_path)) {
@@ -2569,6 +2593,10 @@ combine_runs <- function(## Describe the run
         } else {
             stop("'unmarried_women_run_output_folder_path' or 'unmarried_women_run_name' must be specified.")
         }
+    } else {
+        if (is.null(unmarried_women_run_name))
+            unmarried_women_run_name <- get_run_name(file.path(unmarried_women_run_output_folder_path,
+                                                             "post_process_args.RData"))
     }
 
     load(file.path(unmarried_women_run_output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -4021,13 +4049,33 @@ rename_global_run <- function(run_name,
         load(global_args_fn, verbose = verbose)
         global_mcmc_args$renamed <- TRUE
         global_mcmc_args$rename_list <- c(new_run_name, global_mcmc_args$rename_list)
+        if (!"rename_list" %in% names(comment(global_mcmc_args))) {
+            comment(global_mcmc_args) <-
+                c(comment(global_mcmc_args),
+                  rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+        }
         save(global_mcmc_args, file = global_args_fn)
+    }
+    post_process_args_fn <- file.path(output_folder_path, "post_process_args.RData")
+    if(file.exists(post_process_args_fn)) {
+        load(post_process_args_fn, verbose = verbose)
+        post_process_args$renamed <- TRUE
+        post_process_args$rename_list <- c(new_run_name, post_process_args$rename_list)
+        if (!"rename_list" %in% names(comment(post_process_args))) {
+        comment(post_process_args) <- c(comment(post_process_args),
+                                        rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+        }
+        save(post_process_args, file = post_process_args_fn)
     }
     combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
     if(file.exists(combine_args_fn)) {
         load(combine_args_fn, verbose = verbose)
         combine_runs_args$renamed <- TRUE
         combine_runs_args$rename_list <- c(new_run_name, combine_runs_args$rename_list)
+        if (!"rename_list" %in% names(comment(combine_runs_args))) {
+        comment(combine_runs_args) <- c(comment(combine_runs_args),
+                                        rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+        }
         save(combine_runs_args, file = combine_args_fn)
     }
 
@@ -4045,8 +4093,7 @@ rename_global_run <- function(run_name,
     ##----------------------------------------------------------------------------
     ## Return
 
-    return(invisible())
-
+    return(new_run_name)
 }
 
 

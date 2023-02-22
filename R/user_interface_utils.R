@@ -21,13 +21,30 @@ make_run_name <- function(marital_group, age_group, run_note = NULL,
     return(run_name)
 }
 
-convert_run_name <-
-    function(run_name, from = c("married", "unmarried", "all_women"),
+convert_run_name <- function(run_name, from = c("married", "unmarried", "all_women"),
              to = c("married", "unmarried", "all_women")) {
         from <- match.arg(from)
         to  <-  match.arg(to)
         gsub(pattern = from, replacement = to, x = run_name)
-        }
+    }
+
+## Get run name from 'global_mcmc_args.RData',
+## 'post_process_args.RData', or 'combine_runs_args.RData'.
+get_run_name <- function(args_Rdata_file_path) {
+    args <- get(load(args_Rdata_file_path))
+    if (!is.null(args$renamed) && args$renamed && length(args$rename_list)) {
+        source_element <- "rename_list"
+        out <- args$rename_list[1]
+    } else {
+        out <- args$run_name
+        source_element <- "nun_name"
+    }
+    if (is.null(out))
+        stop("run name cannot be determined from '",
+             source_element, "' in '",
+             args_Rdata_file_path, "'; result is 'NULL'.")
+    else return(out)
+}
 
 ###-----------------------------------------------------------------------------
 ### * Copy Various Files

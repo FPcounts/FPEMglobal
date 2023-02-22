@@ -268,6 +268,18 @@ make_results(run_name = run_name_override_unmarried_1519,
              make_age_ratios = make_age_ratios,
              verbose = verbose)
 
+###-----------------------------------------------------------------------------
+### ** TEST RENAME
+
+new_run_names <-
+    mapply(function(y, z) rename_global_run(run_name = y, new_run_name = z, verbose = verbose),
+           all_women_1549_runs, lapply(all_women_1549_runs, function(z) paste0(z, "_RENAMED")))
+
+post_process_mcmc(output_folder_path = file.path("output", "test_1549_married"))
+make_results(output_folder_path = file.path("output", "test_1549_married"))
+
+
+
 
 
 ### RESET DIRECTORY

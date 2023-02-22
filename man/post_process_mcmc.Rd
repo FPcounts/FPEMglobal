@@ -5,7 +5,7 @@
 \title{Post process MCMC chains from a global run of FPEM}
 \usage{
 post_process_mcmc(
-  run_name,
+  run_name = NULL,
   output_folder_path = file.path("output", run_name),
   input_data_folder_path = NULL,
   denominator_counts_csv_filename = NULL,

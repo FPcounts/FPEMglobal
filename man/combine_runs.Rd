@@ -7,9 +7,9 @@
 combine_runs(
   run_desc = "",
   output_folder_path = NULL,
-  married_women_run_name,
+  married_women_run_name = NULL,
   married_women_run_output_folder_path = NULL,
-  unmarried_women_run_name,
+  unmarried_women_run_name = NULL,
   unmarried_women_run_output_folder_path = NULL,
   unmarried_women_run_data_folder_path =
     file.path(unmarried_women_run_output_folder_path, "data"),
