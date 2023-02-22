@@ -1513,7 +1513,7 @@ CompareAdjMedians <- function(run.name = "test",
                 med.adj <- as.list(as.data.frame(d))
                 med.adj <- med.adj[paste0(names(c), ".Adj")]
                 mapply(FUN = function(e, f) {
-                    if(!is.na(f) && is.finite(f) && !is.null(f) &&
+                    if(all(!is.na(f)) && all(is.finite(f)) && all(!is.null(f)) &&
                        all(!is.na(e)) && all(is.finite(e)) && all(!is.null(e))) {
                         check <- f >= e["0.1",] & f <= e["0.9",]
                                 # NB: can have 'NaN' values in 'f' if,
