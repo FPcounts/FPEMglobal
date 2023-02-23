@@ -10,7 +10,7 @@ Authors@R: c(person("Mark", "Wheldon", email = "wheldon@un.org", role = c("aut",
 	     person("Andrew", "Tait", email = "andrew.tait@decisionmechanics.com", role = "aut"),
 	     person("Sara", "Hertog", email = "hertog@un.org", role = "aut"),
              person("Leontine", "Alkema", email = "lalkema@schoolph.umass.edu", role = c("aut")),
-             person("ChuChu", "", email = "", role = "ctb"),
+             person("ChuChu", "Wei", email = "chuchuwei@umass.edu", role = "ctb"),
              person("Kristin", "Bietsch", email = "KBietsch@avenirhealth.org", role = "ctb"),	     
              person("Marilou", "Vicente", email = "vicente@un.org", role = "ctb"))
 Description: Provides contraceptive use estimates for all (married/partnered and unmarried) women.

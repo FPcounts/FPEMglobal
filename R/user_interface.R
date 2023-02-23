@@ -2608,24 +2608,68 @@ combine_runs <- function(## Describe the run
     ## run_name and output folder
     ##--------------------------------------------------------------------------
 
-    if(!is.null(run_name_override)) run_name <- run_name_override
-    else run_name <- make_run_name("all_women", age_group, run_desc)
+    ## Four ways:
+    ##
+    ## 1. Leave 'run_name' and 'output_folder_path' 'NULL'. Both will
+    ## be set by default. 'run_name' will be created with the
+    ## datetime, 'output_folder_path' will be
+    ## '"output/'run_name'"'. If the output already exists, this will
+    ## throw an error if the 'run_name's do not match.
+    ##
+    ## 2. Specify only 'run_name_override'. 'output_folder_path' will be
+    ## '"output/'run_name_override'"'.
+    ##
+    ## 3. Specify only 'output_folder_path'. If you're adding to an
+    ## existing run, 'run_name' will be taken from the
+    ## 'combine_runs_args.RData' file. If not, it will be set
+    ## automatically (see option 1).
+    ##
+    ## 4. Specify both 'run_name' and 'output_folder_path'. If you are
+    ## adding to an existing run this will throw an error.
+
+    if (is.null(run_name_override) && is.null(output_folder_path)) {
+        run_name <- make_run_name("all_women", age_group, run_desc)
+        output_folder_path <- file.path("output", run_name)
+        if (dir.exists(output_folder_path))
+            check_run_name_conflicts(run_name, output_folder_path)
+        else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
+
+    } else if (!is.null(run_name_override) && is.null(output_folder_path)) {
+        run_name <- run_name_override
+        output_folder_path <- file.path("output", run_name)
+        if (dir.exists(output_folder_path))
+            check_run_name_conflicts(run_name, output_folder_path)
+        else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
+
+    } else if (is.null(run_name_override) && !is.null(output_folder_path)) {
+        combine_runs_filepath <-
+            file.path(output_folder_path, "combine_runs_args.RData")
+        if (file.exists(combine_runs_filepath))
+            run_name <- get_run_name(combine_runs_filepath)
+        else run_name <- make_run_name("all_women", age_group, run_desc)
+        if (dir.exists(output_folder_path))
+            check_run_name_conflicts(run_name, output_folder_path)
+        else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
+
+    } else if (!is.null(run_name_override) && !is.null(output_folder_path)) {
+        combine_runs_filepath <-
+            file.path(output_folder_path, "combine_runs_args.RData")
+        if (dir.exists(output_folder_path))
+            check_run_name_conflicts(run_name, output_folder_path)
+        else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
+    }
 
     message("This run has 'run_name': ", run_name, ".")
+
+    ## Output Data Folder
+    data_folder_path <- file.path(output_folder_path, "data")
+    dir.create(data_folder_path, showWarnings = FALSE)
 
     ## Make filepaths that need 'age_group'
     if(is.null(denominator_counts_csv_filename)) {
         denominator_counts_csv_filename <-
             paste0("number_of_women_", mcmc.meta$general$age.group, ".csv")
     }
-
-    ## Output Folder
-    if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
-    dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
-
-    ## Output Data Folder
-    data_folder_path <- file.path(output_folder_path, "data")
-    dir.create(data_folder_path, showWarnings = FALSE)
 
     ##----------------------------------------------------------------------------
     ## Age ratios

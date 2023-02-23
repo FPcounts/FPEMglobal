@@ -46,6 +46,24 @@ get_run_name <- function(args_Rdata_file_path) {
     else return(out)
 }
 
+## Make sure a run_name conflict does not occur when writing to existing outputs
+check_run_name_conflicts <- function(run_name, output_folder_path) {
+    combine_runs_filepath <-
+        file.path(output_folder_path, "combine_runs_args.RData")
+    if (dir.exists(output_folder_path)) {
+        if (file.exists(combine_runs_filepath)) {
+            existing_run_name <- get_run_name(combine_runs_filepath)
+            if (!identical(run_name, existing_run_name))
+                stop("'run_name' not the same as existing run name ('",
+                     existing_run_name, "').")
+        } else {
+            stop("'", output_folder_path, "' already exists but '",
+                 combine_runs_filepath, "' does not; cannot determine 'run_name' of existing output.")
+        }
+    }
+    return(invisible())
+}
+
 ###-----------------------------------------------------------------------------
 ### * Copy Various Files
 
