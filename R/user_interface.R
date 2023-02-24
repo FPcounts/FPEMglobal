@@ -683,7 +683,7 @@ post_process_mcmc <- function(run_name = NULL,
         load(global_mcmc_args_filepath, verbose = verbose)
     } else stop("Cannot find '", global_mcmc_args_filepath, "'.")
 
-    if (is.null(run_name)) run_name <- get_run_name(global_mcmc_args_filepath)
+    if (is.null(run_name)) run_name <- get_run_name_from_args(get(load(global_mcmc_args_filepath)))
 
     load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
     write_model_function <- mcmc.meta$general$write.model.fun
@@ -1132,7 +1132,7 @@ make_results <- function(run_name = NULL,
     }
 
     ## Run name
-    if (is.null(run_name)) run_name <- get_run_name(post_process_args_filepath)
+    if (is.null(run_name)) run_name <- get_run_name_from_args(get(load(post_process_args_filepath)))
 
     ## Make paths to input data
     if(is.null(input_data_folder_path))
@@ -2583,8 +2583,8 @@ combine_runs <- function(## Describe the run
         }
     } else {
         if (is.null(married_women_run_name))
-            married_women_run_name <- get_run_name(file.path(married_women_run_output_folder_path,
-                                                             "post_process_args.RData"))
+            married_women_run_name <- get_run_name_from_args(get(load(file.path(married_women_run_output_folder_path,
+                                                             "post_process_args.RData"))))
     }
 
     if(is.null(unmarried_women_run_output_folder_path)) {
@@ -2595,8 +2595,8 @@ combine_runs <- function(## Describe the run
         }
     } else {
         if (is.null(unmarried_women_run_name))
-            unmarried_women_run_name <- get_run_name(file.path(unmarried_women_run_output_folder_path,
-                                                             "post_process_args.RData"))
+            unmarried_women_run_name <- get_run_name_from_args(get(load(file.path(unmarried_women_run_output_folder_path,
+                                                             "post_process_args.RData"))))
     }
 
     load(file.path(unmarried_women_run_output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -2645,7 +2645,7 @@ combine_runs <- function(## Describe the run
         combine_runs_filepath <-
             file.path(output_folder_path, "combine_runs_args.RData")
         if (file.exists(combine_runs_filepath))
-            run_name <- get_run_name(combine_runs_filepath)
+            run_name <- get_run_name_from_args(get(load(combine_runs_filepath)))
         else run_name <- make_run_name("all_women", age_group, run_desc)
         if (dir.exists(output_folder_path))
             check_run_name_conflicts(run_name, output_folder_path)

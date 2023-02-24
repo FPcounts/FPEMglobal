@@ -28,21 +28,27 @@ convert_run_name <- function(run_name, from = c("married", "unmarried", "all_wom
         gsub(pattern = from, replacement = to, x = run_name)
     }
 
-## Get run name from 'global_mcmc_args.RData',
-## 'post_process_args.RData', or 'combine_runs_args.RData'.
-get_run_name <- function(args_Rdata_file_path) {
-    args <- get(load(args_Rdata_file_path))
+##' Get run_name from an argument list
+##'
+##' Get run name from 'global_mcmc_args.RData',
+##' 'post_process_args.RData', or 'combine_runs_args.RData'.
+##'
+##' @param args_list
+##' @return Run name as a character string.
+##' @author Mark Wheldon
+##' @export
+get_run_name_from_args <- function(args) {
     if (!is.null(args$renamed) && args$renamed && length(args$rename_list)) {
         source_element <- "rename_list"
         out <- args$rename_list[1]
     } else {
         out <- args$run_name
-        source_element <- "nun_name"
+        source_element <- "run_name"
     }
     if (is.null(out))
         stop("run name cannot be determined from '",
              source_element, "' in '",
-             args_Rdata_file_path, "'; result is 'NULL'.")
+             deparse(substitute(args)), "'; result is 'NULL'.")
     else return(out)
 }
 
