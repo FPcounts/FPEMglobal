@@ -3,3 +3,4 @@
 ^\.gitignore$
 vignettes/custom_data*
 slowTests/output*
+^data-raw$
