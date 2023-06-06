@@ -4296,7 +4296,7 @@ assert_valid_output_dir <- function(output_folder_path,
     ## --------------------
     ## RECURSE
     if (length(output_folder_path) > 1) {
-        assert_valid_output_dir_v <- Vectorize("assert_valid_output_dir", vectorize.args = "output_folder_path")
+        assert_valid_output_dir_v <- Vectorize(FPEMglobal::assert_valid_output_dir, vectorize.args = "output_folder_path")
         call_args <- lapply(as.list(match.call())[-1L], eval, parent.frame())
         return(do.call("assert_valid_output_dir_v", args = call_args))
     }
