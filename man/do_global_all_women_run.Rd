@@ -36,7 +36,7 @@ do_global_all_women_run(
   plot_maps_shapefile_folder = NULL,
   plot_maps_years = floor(median(c(start_year, end_year))),
   data_info_plot_years = c(1990, 2000, 2010),
-  adjust_medians = FALSE,
+  adjust_medians = TRUE,
   run_name_override_married = NULL,
   run_name_override_unmarried = NULL,
   run_name_override_all_women = NULL,

@@ -26,7 +26,7 @@ combine_runs(
     2000.5, 2005.5, 1990.5, 1995.5, 2000.5, 1990.5, 2000.5, 2010.5, 2000.5, 2010.5,
     2019.5), ncol = 3, byrow = TRUE),
   make_any_aggregates = TRUE,
-  adjust_medians = FALSE,
+  adjust_medians = TRUE,
   age_ratios_age_total_unmarried_run_name = NULL,
   age_ratios_age_total_married_run_name = NULL,
   age_ratios_age_total_all_women_run_name = NULL,

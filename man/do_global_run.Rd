@@ -39,7 +39,7 @@ do_global_run(
   plot_maps_years = floor(median(c(start_year, end_year))),
   data_info_plot_years = c(1990, 2000, 2010),
   make_any_aggregates = TRUE,
-  adjust_medians = FALSE,
+  adjust_medians = TRUE,
   age_ratios_age_total_run_name = NULL,
   age_ratios_age_total_output_folder_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
