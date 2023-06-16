@@ -39,7 +39,7 @@ ConstructOutput <- function(# Construct output for MCMC run
   ## Years outside (\code{start.year}, \code{end.year}) are ignored.
   ## Mid-point years closest to the given \code{years.change} are used for calculations.
 
-  ## HOTFIX [MCW-2016-02-24-4] Need to be able to turn these off for datafiles
+  ## Need to be able to turn these off for datafiles
   ## with no, e.g., developing regions.
  ,make.any.aggregates = TRUE
   ,countries.to.include.in.aggregates.csv = NULL ##<< country ISO codes that should be used to form aggregates. NULL means all.
@@ -51,8 +51,15 @@ ConstructOutput <- function(# Construct output for MCMC run
     output.dir <- file.path(getwd(), "output", run.name## , "/"
                             )
   filename.append <- ifelse(do.SS.run.first.pass, "_pre", "")
-  load(file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda"))) # change JR, 20140418
-    load(file.path(output.dir, paste0("mcmc.array", filename.append, ".rda"))) # change JR, 20140418
+    load(file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda"))) # change JR, 20140418
+
+    if (dir.exists(file.path(output.dir, "countrytrajectories")) && !file.exists(file.path(output.dir, "mcmc.array.rda")))
+        generate_c_traj <- FALSE
+    else generate_c_traj <- TRUE
+
+    if (generate_c_traj)
+        load(file.path(output.dir, paste0("mcmc.array", filename.append, ".rda"))) # change JR, 20140418
+    else mcmc.array <- NULL
 
     if(mcmc.meta$general$marital.group == "UWRA") In.union  <- 0
     if(mcmc.meta$general$marital.group == "MWRA") In.union  <- 1
@@ -88,11 +95,19 @@ ConstructOutput <- function(# Construct output for MCMC run
                                                             #Added because this
                                                             #tripped me up at
                                                             #first.
+
+      ## Aggregates might fail if the existing 'res.country.rda' file doesn't have years that match 'start.year' and 'est.year'
+      res.country.years <- dimnames(res.country$CIprop.Lg.Lcat.qt[[1]][[1]])[[2]]
+      if (!identical(as.numeric(res.country.years), seq(start.year, end.year, by = 1)))
+          warning("Years in the existing 'res.country.rda' file are '", toString(res.country.years),
+                  "', but 'start.year' and 'end.year' expand to '", toString(seq(start.year, end.year, by = 1)),
+                  "' which doesn't match. Subsequent steps might fail because of this.")
   }
   ##------------------------------------------------------------------------------------------
   if (!do.SS.run.first.pass) {
   # Validation
-  if (!is.null(mcmc.meta$validation.list)){
+      if (!is.null(mcmc.meta$validation.list)){
+          if (generate_c_traj) stop("Cannot validate without 'mcmc.array.rda'.")
     Ps <- GetPercentilesLeftOut(data = mcmc.meta$data.raw$data,
                                 mcmc.array = mcmc.array,
                                 winbugs.data = mcmc.meta$winbugs.data,
@@ -102,6 +117,7 @@ ConstructOutput <- function(# Construct output for MCMC run
   }
   ##------------------------------------------------------------------------------------------
   # Posteriors of model parameters of logistic curves
+      if (generate_c_traj) {
       ## [MCW-2016-08-26-6] Estimate for countries with no data.
       if(mcmc.meta$general$include.c.no.data) {
           country.info.for.GetPar <-
@@ -114,11 +130,12 @@ ConstructOutput <- function(# Construct output for MCMC run
                             winbugs.data = mcmc.meta$winbugs.data
                             ## [MCW-2016-08-26-7] Use new 'country.info' as defined above.
                           , country.info = country.info.for.GetPar)
-  save(par.ciq, file = file.path(output.dir, paste0("par.ciq", filename.append, ".rda"))) # change JR, 20140418
+    save(par.ciq, file = file.path(output.dir, paste0("par.ciq", filename.append, ".rda"))) # change JR, 20140418
+    }
   ##------------------------------------------------------------------------------------------
   do.country.specific.run <- mcmc.meta$general$do.country.specific.run
       if (!do.country.specific.run) {
-          if(make.any.aggregates) {     #HOTFIX [MCW-2016-02-24-6] (explained above)
+          if(make.any.aggregates) {
               if (!file.exists(file.path(output.dir, paste0("res.aggregate", filename.append, ".rda")))) {
     res.aggregate <- GetAggregates(run.name = run.name,
                                    output.dir = output.dir,
@@ -131,7 +148,7 @@ ConstructOutput <- function(# Construct output for MCMC run
                   warning("'", paste0("res.aggregate", filename.append, ".rda")
             ,"' already exists. Aggregate CIs not re-created")
                   }
-          } #HOTFIX [MCW-2016-02-24-6] (explained above)
+          }
       }
   cat(paste0("Results constructed and saved to ", output.dir, "\n"))
   }

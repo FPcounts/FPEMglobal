@@ -89,7 +89,7 @@ GetCIs <- function (# Construct country-specific CIs
 ### (including posterior probabilities of a positive change).
 ### This function is called from \code{\link{ConstructOutput}}.
                     mcmc.meta, ##<< Object of class \code{\link{mcmc.meta}}
-                    mcmc.array, ##<< Object of class \code{\link{mcmc.array}}
+                    mcmc.array = NULL, ##<< Object of class \code{\link{mcmc.array}}
                     include.AR = TRUE, ##<< Logical: include AR(1) trajectories?
                     thin = 1, ##<< Optional additional thinning of MCMC samples
                     output.dir,## Where to save the folder with country trajectories?
@@ -164,20 +164,35 @@ GetCIs <- function (# Construct country-specific CIs
 
     ##details<< Country trajectories are stored in \code{output.dir/countrytrajectories}.
     ## output.dir.countrytrajectories <- file.path(mcmc.meta$general$output.dir, "countrytrajectories/")
-    output.dir.countrytrajectories <- file.path(output.dir, "/countrytrajectories/")
-    dir.create(output.dir.countrytrajectories, showWarnings = FALSE)
+    output.dir.countrytrajectories <- file.path(output.dir, "countrytrajectories")
 
-    mcmc.array.thin <- mcmc.array[seq(1, length(mcmc.array[,1,1]), thin),,,drop = FALSE]
+    if (dir.exists(output.dir.countrytrajectories) && is.null(mcmc.array)) {
+
+        all_ctraj_files <- file.path(output.dir.countrytrajectories, paste0("P.tp3s_country", 1:C.all, ".rda"))
+        not_exist <- all_ctraj_files[!file.exists(all_ctraj_files)]
+        if (length(not_exist))
+            stop("'mcmc.array' is missing; all country trajectory files must be saved in '",
+                 dirname(not_exist[1]), "' but the following ", toString(length(not_exist)),
+                 " files (out of ", toString(length(all_ctraj_files)), ") are missing: '",
+                 toString(basename(not_exist)), "'.")
+        generate_c_traj <- FALSE
+
+    } else {
+
+        generate_c_traj <- TRUE
+        dir.create(output.dir.countrytrajectories, showWarnings = FALSE)
+        mcmc.array.thin <- mcmc.array[seq(1, length(mcmc.array[,1,1]), thin),,,drop = FALSE]
                                 # [MCW-2018-01-17 (1)] :: If only one
                                 # iteration make sure extra dimension
                                 # not dropped.
-    if (length(mcmc.array[1,,1])==1) {# when there is only one chain the thinning changes array into matrix
-        mcmc.array.thin <- array(NA, c(length(seq(1, length(mcmc.array[,1,1]), thin)),
-                                       length(mcmc.array[1,,1]), length(mcmc.array[1,1,])))
-        mcmc.array.thin[,1,] <- mcmc.array[seq(1, length(mcmc.array[,1,1]), thin),,]
-        dimnames(mcmc.array.thin) <- list(NULL, NULL, names(mcmc.array[1,1,]))
+        if (length(mcmc.array[1,,1])==1) {# when there is only one chain the thinning changes array into matrix
+            mcmc.array.thin <- array(NA, c(length(seq(1, length(mcmc.array[,1,1]), thin)),
+                                           length(mcmc.array[1,,1]), length(mcmc.array[1,1,])))
+            mcmc.array.thin[,1,] <- mcmc.array[seq(1, length(mcmc.array[,1,1]), thin),,]
+            dimnames(mcmc.array.thin) <- list(NULL, NULL, names(mcmc.array[1,1,]))
+        }
+        n.s <- prod(dim(mcmc.array.thin)[1:2]) # nthinnedsim*nchains
     }
-    n.s <- prod(dim(mcmc.array.thin)[1:2]) # nthinnedsim*nchains
 
     nrepeatARsampling <- max(nrepeatARsampling, 1)
     if (!include.AR) nrepeatARsampling = 1
@@ -309,52 +324,60 @@ GetCIs <- function (# Construct country-specific CIs
         }
     }
 
-    ##------------------------------------------------------------
-    ## output: World level unmet parametric function for p.seq
-    if (!do.country.specific.run) { # change JR, 20131104
-        a.s <- c(mcmc.array.thin[, , "a.unmet"])
-        b.s <- c(mcmc.array.thin[, , "b.unmet"])
-        c.s <- c(mcmc.array.thin[, , "c.unmet"])
-    } else {
-        a.s <- rep(winbugs.data$a.unmet0, n.s)
-        b.s <- rep(winbugs.data$b.unmet0, n.s)
-        c.s <- rep(winbugs.data$c.unmet0, n.s)
+    if (!is.null(mcmc.array)) {
+        ##------------------------------------------------------------
+        ## output: World level unmet parametric function for p.seq
+        if (!do.country.specific.run) { # change JR, 20131104
+            a.s <- c(mcmc.array.thin[, , "a.unmet"])
+            b.s <- c(mcmc.array.thin[, , "b.unmet"])
+            c.s <- c(mcmc.array.thin[, , "c.unmet"])
+        } else {
+            a.s <- rep(winbugs.data$a.unmet0, n.s)
+            b.s <- rep(winbugs.data$b.unmet0, n.s)
+            c.s <- rep(winbugs.data$c.unmet0, n.s)
+        }
+        p.seq <- seq(0, 1, 0.01)
+        Zstar.cqp <- array(NA, c(C.all, length(percentiles), length(p.seq)))
+        logitZstar.sp <- matrix(NA, n.s, length(p.seq))
+        for (i in 1:length(p.seq)) {
+            logitZstar.sp[,i] <- (a.s + b.s*(p.seq[i]- winbugs.data$pmid.for.unmet) +
+                                  c.s*(p.seq[i]- winbugs.data$pmid.for.unmet)^2)
+        }
+        Zstar.qp <- apply(invlogit(logitZstar.sp), 2, quantile, percentiles)
+        ##  make a.s etc same dimension with added AR repetitions
+        a.S <- rep(a.s, nrepeatARsampling)
+        b.S <- rep(b.s, nrepeatARsampling)
+        c.S <- rep(c.s, nrepeatARsampling)
+        ##rep(seq(1,2),  2)
+        ##------------------------------------------------------------
+
+    ## [MCW-2017-01-23-1] :: Create a data frame to record which country (ISO)
+    ## goes with which 'P.tp3s_country' file.
+    iso.P.tp3s.df <-
+        data.frame(iso.c = rep(NA, C.all), name.c = NA ,filename = NA)
     }
-    p.seq <- seq(0, 1, 0.01)
-    Zstar.cqp <- array(NA, c(C.all, length(percentiles), length(p.seq)))
-    logitZstar.sp <- matrix(NA, n.s, length(p.seq))
-    for (i in 1:length(p.seq)) {
-        logitZstar.sp[,i] <- (a.s + b.s*(p.seq[i]- winbugs.data$pmid.for.unmet) +
-                              c.s*(p.seq[i]- winbugs.data$pmid.for.unmet)^2)
-    }
-    Zstar.qp <- apply(invlogit(logitZstar.sp), 2, quantile, percentiles)
-    ##  make a.s etc same dimension with added AR repetitions
-    a.S <- rep(a.s, nrepeatARsampling)
-    b.S <- rep(b.s, nrepeatARsampling)
-    c.S <- rep(c.s, nrepeatARsampling)
-    ##rep(seq(1,2),  2)
-    ##------------------------------------------------------------
+
     CIprop.Lg.Lcat.qt <- CIratio.Lg.Lcat.qt <- CIstar.Lg.Lcat.qt  <-
         ## >>>>> RATE MODEL [MCW-2018-01-03] Copied from Niamh's version
         CIrate.Lg.Lcat.qt<-
             ## <<<<< RATE MODEL
             changeprop.Lg.Lcat.Ti <-
                 CIcount.Lg.Lcat.qt <- changecount.Lg.Lcat.Ti <- changeratio.Lg.Lcat.Ti <- meanProp.Lg.Lcat <-meanRatio.Lg.Lcat <-meanStar.Lg.Lcat <- metDemGT.Lg.Lcat.pr <- list()
+    ##------------------------------------------------------------
+
+    for (c in 1:C.all) {
+
+        c_traj_file_path <- file.path(output.dir.countrytrajectories, paste0("P.tp3s_country", c, ".rda"))
+
+        if (generate_c_traj) {
+
+            if(verbose) message(paste0("(", format(c, width = nchar(C.all)), "/", C.all, ") Constructing output for ", countries.all$name.c[c], " (ISO ", countries.all$iso.c[c], ")"))
+            ## [MCW-2017-01-23-2] :: Add country ISO code and name to data frame.
+            iso.P.tp3s.df[c, c("iso.c", "name.c")] <- c(countries.all$iso.c[c], name.c[c])
 
     Zstar.St <-  Z.St <- logitBstar.St <- B.St <- Bstar.St <-
         D.St <- Dstar.St <- p.unmet.St <- pstar.unmet.St <-
             matrix(NA, n.s*nrepeatARsampling,  nyears)
-    ##------------------------------------------------------------
-
-    ## [MCW-2017-01-23-1] :: Create a data frame to record which country (ISO)
-    ## goes with which 'P.tp3s_country' file.
-    iso.P.tp3s.df <-
-        data.frame(iso.c = rep(NA, C.all), name.c = NA ,filename = NA)
-
-    for (c in 1:C.all){
-        if(verbose) message(paste0("(", format(c, width = nchar(C.all)), "/", C.all, ") Constructing output for ", countries.all$name.c[c], " (ISO ", countries.all$iso.c[c], ")"))
-        ## [MCW-2017-01-23-2] :: Add country ISO code and name to data frame.
-        iso.P.tp3s.df[c, c("iso.c", "name.c")] <- c(countries.all$iso.c[c], name.c[c])
 
         seed.country <- seed*as.numeric(countries.all$iso.c[c]) # change JR, 20140317
         CIprop.Lg.Lcat.qt[[name.c[c]]] <- CIratio.Lg.Lcat.qt[[name.c[c]]] <-
@@ -363,6 +386,7 @@ GetCIs <- function (# Construct country-specific CIs
             CIrate.Lg.Lcat.qt[[name.c[c]]] <-
             ## <<<<< RATE MODEL
             list()
+
         pstar.st <- InternalInternalGetTrajectoriesCountryTotStar(c = c,
                                                                   start.year = start.year,
                                                                   end.year = end.year,
@@ -436,6 +460,7 @@ GetCIs <- function (# Construct country-specific CIs
             ##A[1:2, 1:2,1]
             ##apply(A,2, cbind)
         }
+
         CIprop.Lg.Lcat.qt[[name.c[c]]][["Total"]] <- apply(p.St, 2, quantile, percentiles)
         CIprop.Lg.Lcat.qt[[name.c[c]]][["Traditional"]] <-  apply((1-R.St)*p.St, 2, quantile, percentiles)
         CIprop.Lg.Lcat.qt[[name.c[c]]][["Modern"]] <- apply(R.St*p.St, 2, quantile, percentiles)
@@ -569,10 +594,127 @@ GetCIs <- function (# Construct country-specific CIs
         ##details<<
         ## Country trajectories in form of array \code{P.tp3s} written to \code{"output.dir/country.trajectories/"}
         ## where t refers to estimation year, p3 to (trad, modern, unmet) and s to posterior sample
-        save(P.tp3s, file = file.path(output.dir.countrytrajectories, paste0("P.tp3s_country", c, ".rda"))) # change JR, 20140418
+        save(P.tp3s, file = c_traj_file_path) # change JR, 20140418
 
         ## [MCW-2017-01-23-3] :: Add 'P.tp3s_country' filename to data frame.
         iso.P.tp3s.df[c, "filename"] <- paste0("P.tp3s_country", c, ".rda")
+
+        } else {
+            if(verbose) message(paste0("(", format(c, width = nchar(C.all)), "/", C.all, ") Loading existing trajectories for ", countries.all$name.c[c], " (ISO ", countries.all$iso.c[c], ")"))
+            load(file = c_traj_file_path)
+
+            ##
+            ## Must subset to est.years !!
+            ##
+            traj_years <- dimnames(P.tp3s)[[1]] # character: "1970.5", "1971.5", etc.
+            est_years_not_in <- est.years[!est.years %in% as.numeric(traj_years)]
+            if (length(est_years_not_in))
+                stop("The following years are in 'est.years' but not in the the country trajectory file: '",
+                     toString(est_years_not_in), "'.")
+
+            P.tp3s <- P.tp3s[as.character(est.years), , ,drop = TRUE]
+
+            ##<< Proportions for Total, Traditional, Modern, Unmet, TotalPlusUnmet, TradPlusUnmet.
+            CIprop.Lg.Lcat.qt[[name.c[c]]][["Total"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE],
+                      1, quantile, percentiles)
+            CIprop.Lg.Lcat.qt[[name.c[c]]][["Traditional"]] <-
+                apply(P.tp3s[, "Traditional", , drop = TRUE], 1, quantile, percentiles)
+            CIprop.Lg.Lcat.qt[[name.c[c]]][["Modern"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE], 1, quantile, percentiles)
+
+            CIstar.Lg.Lcat.qt[[name.c[c]]][["Total"]] <- NA
+            CIstar.Lg.Lcat.qt[[name.c[c]]][["Traditional"]] <- NA
+            CIstar.Lg.Lcat.qt[[name.c[c]]][["Modern"]] <- NA
+
+            ##<<Ratios Met Demand, Met Demand with Modern Methods, Z
+            ##(unmet/none) and modern/total (R). R and Z might not be
+            ##included for aggregates.
+            CIratio.Lg.Lcat.qt[[name.c[c]]][["Modern/Total"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE] / P.tp3s[, "Traditional", , drop = TRUE],
+                      1, quantile, percentiles)
+            CIstar.Lg.Lcat.qt[[name.c[c]]][["Modern/Total"]] <- NA
+
+            ## >>>>> RATE MODEL [MCW-2018-01-03] Copied from Niamh's version
+            if(ModelFunctionRateModel(write.model.fun)) {
+                if(include.AR) {    #Only gets made if include.AR == TRUE
+                    ## [MCW 2018-11-09] This does not get used (checked in Niamh's code)
+                    CIrate.Lg.Lcat.qt[[name.c[c]]][["TotalRate"]] <- NA
+                }
+            }
+            ## <<<<< RATE MODEL
+
+            ## [MCW-2016-07-12-2] :: Compute means for key CP indicators for UNPD outputs.
+            meanProp.Lg.Lcat[[name.c[c]]][["Total"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE],
+                      1, mean, na.rm = TRUE)
+            meanProp.Lg.Lcat[[name.c[c]]][["Traditional"]] <-
+                apply(P.tp3s[, "Traditional", , drop = TRUE], 1, mean, na.rm = TRUE)
+            meanProp.Lg.Lcat[[name.c[c]]][["Modern"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE], 1, mean, na.rm = TRUE)
+
+            meanStar.Lg.Lcat[[name.c[c]]][["Total"]] <- NA
+            meanStar.Lg.Lcat[[name.c[c]]][["Traditional"]] <- NA
+            meanStar.Lg.Lcat[[name.c[c]]][["Modern"]] <- NA
+
+            meanRatio.Lg.Lcat[[name.c[c]]][["Modern/Total"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE] / P.tp3s[, "Traditional", , drop = TRUE],
+                      1, mean, na.rm = TRUE)
+            meanStar.Lg.Lcat[[name.c[c]]][["Modern/Total"]] <- NA
+
+            Zstar.qp <- NA
+            Zstar.cqp <- NA
+            p.seq <- NA
+
+            CIprop.Lg.Lcat.qt[[name.c[c]]][["Unmet"]] <- apply(P.tp3s[, "Unmet", , drop = TRUE], 1, quantile, percentiles)
+            CIprop.Lg.Lcat.qt[[name.c[c]]][["TotalPlusUnmet"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE],
+                      1, quantile, percentiles)
+            CIprop.Lg.Lcat.qt[[name.c[c]]][["TradPlusUnmet"]] <-
+                apply(P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE], 1, quantile, percentiles)
+
+            CIratio.Lg.Lcat.qt[[name.c[c]]][["Met Demand"]] <-
+                apply((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) /
+                      ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, quantile, percentiles)
+            CIratio.Lg.Lcat.qt[[name.c[c]]][["Z"]] <-
+                apply(P.tp3s[, "Unmet", ] / (1 - P.tp3s[, "Modern", ] - P.tp3s[, "Traditional", ]), 1, quantile, percentiles)
+            CIstar.Lg.Lcat.qt[[name.c[c]]][["Met Demand"]] <- NA
+            CIstar.Lg.Lcat.qt[[name.c[c]]][["Z"]] <- NA
+
+            ## change JR, 20140830: added demand met with modern methods
+            CIratio.Lg.Lcat.qt[[name.c[c]]][["Met Demand with Modern Methods"]] <-
+                apply(P.tp3s[, "Modern", ] / ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, quantile, percentiles)
+            CIstar.Lg.Lcat.qt[[name.c[c]]][["Met Demand with Modern Methods"]] <- NA
+
+            ## [MCW-2016-07-12-4] :: Compute means for CP indicators for unmet.
+            meanProp.Lg.Lcat[[name.c[c]]][["Unmet"]] <- apply(P.tp3s[, "Unmet", , drop = TRUE], 1, mean, na.rm = TRUE)
+            meanProp.Lg.Lcat[[name.c[c]]][["TotalPlusUnmet"]] <-
+                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE],
+                      1, mean, na.rm = TRUE)
+            meanProp.Lg.Lcat[[name.c[c]]][["TradPlusUnmet"]] <-
+                apply(P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE], 1, mean, na.rm = TRUE)
+
+            meanRatio.Lg.Lcat[[name.c[c]]][["Met Demand"]] <-
+                apply((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) /
+                      ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, mean, na.rm = TRUE)
+            meanRatio.Lg.Lcat[[name.c[c]]][["Z"]] <-
+                apply(P.tp3s[, "Unmet", ] / (1 - P.tp3s[, "Modern", ] - P.tp3s[, "Traditional", ]), 1, mean, na.rm = TRUE)
+
+            meanStar.Lg.Lcat[[name.c[c]]][["Met Demand"]] <- NA
+            meanStar.Lg.Lcat[[name.c[c]]][["Z"]] <- NA
+
+            meanRatio.Lg.Lcat[[name.c[c]]][["Met Demand with Modern Methods"]] <-
+                apply(P.tp3s[, "Modern", ] / ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, mean, na.rm = TRUE)
+        meanStar.Lg.Lcat[[name.c[c]]][["Met Demand with Modern Methods"]] <- NA
+
+        ## Met Demand with modern methods > 75%
+        metDemGT.Lg.Lcat.pr[[name.c[c]]][["Met Demand with Modern Methods >= 75%"]] <-
+            matrix(rowMeans((P.tp3s[, "Modern", ] /
+                             ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ])) >= 0.75, na.rm = TRUE),
+                   nrow = 1)
+
+        }
+
         ##------------------------------------------------------------
         ## construct changes in prop and count and ratios
 
@@ -600,12 +742,15 @@ GetCIs <- function (# Construct country-specific CIs
                         , type.is.prop = FALSE, type.is.ratio = TRUE, W.y = W.y,
                           years.change = years.change, years.change2 = years.change2
                           ) # change JR, 20140317
+
     } # end country loop
 
+    if (generate_c_traj) {
     ## [MCW-2017-01-23-4] :: Save data frame.
     write.csv(x = iso.P.tp3s.df
              ,file = file.path(output.dir, "iso.Ptp3s.key.csv")
             , row.names = FALSE)
+    }
 
     ##print(dim(Psum.yp3s))
     ## get estimates of counts
@@ -617,9 +762,13 @@ GetCIs <- function (# Construct country-specific CIs
     CIprop.Lg.Lcat.qt <- lapply(CIprop.Lg.Lcat.qt,  lapply, function(c.qt){
         dimnames(c.qt) <- list(percentiles, est.years)
         return(c.qt)})
-    CIstar.Lg.Lcat.qt <- lapply(CIstar.Lg.Lcat.qt,  lapply, function(c.qt){
-        dimnames(c.qt) <- list(percentiles, est.years)
-        return(c.qt)})
+
+    if (generate_c_traj) {
+        CIstar.Lg.Lcat.qt <- lapply(CIstar.Lg.Lcat.qt,  lapply, function(c.qt){
+            dimnames(c.qt) <- list(percentiles, est.years)
+            return(c.qt)})
+    }
+
     CIratio.Lg.Lcat.qt <- lapply(CIratio.Lg.Lcat.qt,  lapply, function(c.qt){
         dimnames(c.qt) <- list(percentiles, est.years)
         return(c.qt)})
@@ -628,11 +777,13 @@ GetCIs <- function (# Construct country-specific CIs
         return(c.qt)})
     ## >>>>> RATE MODEL [MCW-2018-01-03] Copied from Niamh's version
     if(ModelFunctionRateModel(write.model.fun)) {
-            if(include.AR) {    #Only gets made if include.AR == TRUE
-        CIrate.Lg.Lcat.qt <- lapply(CIrate.Lg.Lcat.qt,  lapply, function(c.qt){
-            dimnames(c.qt) <- list(percentiles, est.years[-1])
-            return(c.qt)})
-    }}
+        if(include.AR) {    #Only gets made if include.AR == TRUE
+            if (generate_c_traj) {
+                CIrate.Lg.Lcat.qt <- lapply(CIrate.Lg.Lcat.qt,  lapply, function(c.qt){
+                    dimnames(c.qt) <- list(percentiles, est.years[-1])
+                    return(c.qt)})
+            }
+        }}
     ## <<<<< RATE MODEL
 
     ## Names for probabilities

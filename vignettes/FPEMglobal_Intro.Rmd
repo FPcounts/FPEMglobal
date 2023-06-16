@@ -38,9 +38,14 @@ STYLE CONVENTIONS
 -->
 
 
-# Description
+---
 
-_You can access this vignette from the *R* console by typing `vignette("FPEMglobal_Intro", package = "FPEMglobal")`._
+You can access this vignette from the *R* console by typing `vignette("FPEMglobal_Intro", package = "FPEMglobal")`.
+
+---
+
+
+# Description
 
 *FPEMglobal* (*F*amily *P*lanning *E*stimation *M*odel global) implements a Bayesian hierarchical model for estimating and projecting the prevalence of contraceptive use and unmet need at the national level. This vignette concerns the application to all women of reproductive age (i.e., ages 15--49 years); for application to adolescent women aged 15--19 see the vignette "FPEMglobal_Age_1519". 
 

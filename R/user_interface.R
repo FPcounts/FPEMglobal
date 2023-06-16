@@ -812,8 +812,11 @@ post_process_mcmc <- function(run_name = NULL,
 
         message("\nConstructing output objects, including standard aggregates.")
 
-        if(!file.exists(file.path(output_folder_path, "mcmc.array.rda")))
-            stop("'mcmc.array.rda' was not created. Did you run enough chains?")
+        if(!file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
+            if (!dir.exists(file.path(output_folder_path, "countrytrajectories")) &&
+                !length(dir(file.path(output_folder_path, "countrytrajectories"))) > 1)
+                stop("'mcmc.array.rda' was not created. Did you run enough chains?")
+        }
 
         ConstructOutput(
             run.name = run_name,
@@ -900,34 +903,47 @@ post_process_mcmc <- function(run_name = NULL,
     ##----------------------------------------------------------------------------
     ## Summarize global run
 
-        message("\nSummarizing global run.")
+    message("\nSummarizing global run.")
 
+    if (file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
         SummariseGlobalRun(         #This creates (sufficient?) input for one-country run.
             run.name = run_name,
             output.dir = output_folder_path,
             write.model.fun = write_model_function
         )
+    } else {
+        warning("Summarization of global run failed: '",
+                file.path(output_folder_path, "mcmc.array.rda"),
+                "' mcmc.array.rda' does not exist.")
+    }
 
     ##----------------------------------------------------------------------------
     ## Check convergence
 
     if(model_diagnostics) {
-       if(dir.exists(file.path(output_folder_path, "convergence"))) {
+        if(dir.exists(file.path(output_folder_path, "convergence"))) {
             message("\nModel diagnostics will *NOT* be re-done; they already exist. Delete '",
                     file.path(output_folder_path, "convergence"),
                     "' and re-run if you want new ones.")
-    } else {
+        } else {
 
             message("\nChecking convergence.")
 
-            CheckConvergence(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                check.convergence = TRUE,
-                png.traceplots = TRUE,
-                fig.dir =file.path(output_folder_path, "convergence"),
-                sink.convergence.log = FALSE
-            )
+            if (file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
+
+                CheckConvergence(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    check.convergence = TRUE,
+                    png.traceplots = TRUE,
+                    fig.dir =file.path(output_folder_path, "convergence"),
+                    sink.convergence.log = FALSE
+                )
+            } else {
+                warning("Checking convergence failed: '",
+                        file.path(output_folder_path, "mcmc.array.rda"),
+                        "' mcmc.array.rda' does not exist.")
+            }
         }
     }
 
@@ -2624,7 +2640,7 @@ combine_runs <- function(## Describe the run
     ## 'combine_runs_args.RData' file. If not, it will be set
     ## automatically (see option 1).
     ##
-    ## 4. Specify both 'run_name' and 'output_folder_path'. If you are
+    ## 4. Specify both 'run_name_override' and 'output_folder_path'. If you are
     ## adding to an existing run this will throw an error.
 
     if (is.null(run_name_override) && is.null(output_folder_path)) {
@@ -2657,6 +2673,7 @@ combine_runs <- function(## Describe the run
         if (dir.exists(output_folder_path))
             check_run_name_conflicts(run_name, output_folder_path)
         else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
+        run_name <- run_name_override
     }
 
     message("This run has 'run_name': ", run_name, ".")
