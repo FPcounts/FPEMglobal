@@ -2668,12 +2668,12 @@ combine_runs <- function(## Describe the run
         else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
 
     } else if (!is.null(run_name_override) && !is.null(output_folder_path)) {
+        run_name <- run_name_override
         combine_runs_filepath <-
             file.path(output_folder_path, "combine_runs_args.RData")
         if (dir.exists(output_folder_path))
             check_run_name_conflicts(run_name, output_folder_path)
         else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
-        run_name <- run_name_override
     }
 
     message("This run has 'run_name': ", run_name, ".")
