@@ -616,12 +616,14 @@ GetCIs <- function (# Construct country-specific CIs
 
             ##<< Proportions for Total, Traditional, Modern, Unmet, TotalPlusUnmet, TradPlusUnmet.
             CIprop.Lg.Lcat.qt[[name.c[c]]][["Total"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE],
-                      1, quantile, percentiles)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE],
+                      1, FUN = quantile, probs = percentiles, na.rm = TRUE)
             CIprop.Lg.Lcat.qt[[name.c[c]]][["Traditional"]] <-
-                apply(P.tp3s[, "Traditional", , drop = TRUE], 1, quantile, percentiles)
+                apply(X = P.tp3s[, "Traditional", , drop = TRUE], MARGIN = 1, FUN = quantile,
+                      probs = percentiles, na.rm = TRUE)
             CIprop.Lg.Lcat.qt[[name.c[c]]][["Modern"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE], 1, quantile, percentiles)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE], MARGIN = 1, FUN = quantile,
+                      probs = percentiles, na.rm = TRUE)
 
             CIstar.Lg.Lcat.qt[[name.c[c]]][["Total"]] <- NA
             CIstar.Lg.Lcat.qt[[name.c[c]]][["Traditional"]] <- NA
@@ -631,8 +633,8 @@ GetCIs <- function (# Construct country-specific CIs
             ##(unmet/none) and modern/total (R). R and Z might not be
             ##included for aggregates.
             CIratio.Lg.Lcat.qt[[name.c[c]]][["Modern/Total"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE] / P.tp3s[, "Traditional", , drop = TRUE],
-                      1, quantile, percentiles)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE] / P.tp3s[, "Traditional", , drop = TRUE],
+                      MARGIN = 1, FUN = quantile, probs = percentiles, na.rm = TRUE)
             CIstar.Lg.Lcat.qt[[name.c[c]]][["Modern/Total"]] <- NA
 
             ## >>>>> RATE MODEL [MCW-2018-01-03] Copied from Niamh's version
@@ -646,71 +648,86 @@ GetCIs <- function (# Construct country-specific CIs
 
             ## [MCW-2016-07-12-2] :: Compute means for key CP indicators for UNPD outputs.
             meanProp.Lg.Lcat[[name.c[c]]][["Total"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE],
-                      1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE],
+                      MARGIN = 1, FUN = mean, na.rm = TRUE)
             meanProp.Lg.Lcat[[name.c[c]]][["Traditional"]] <-
-                apply(P.tp3s[, "Traditional", , drop = TRUE], 1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Traditional", , drop = TRUE], MARGIN = 1, FUN = mean, na.rm = TRUE)
             meanProp.Lg.Lcat[[name.c[c]]][["Modern"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE], 1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE], MARGIN = 1, FUN = mean, na.rm = TRUE)
 
             meanStar.Lg.Lcat[[name.c[c]]][["Total"]] <- NA
             meanStar.Lg.Lcat[[name.c[c]]][["Traditional"]] <- NA
             meanStar.Lg.Lcat[[name.c[c]]][["Modern"]] <- NA
 
             meanRatio.Lg.Lcat[[name.c[c]]][["Modern/Total"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE] / P.tp3s[, "Traditional", , drop = TRUE],
-                      1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE] / P.tp3s[, "Traditional", , drop = TRUE],
+                      MARGIN = 1, FUN = mean, na.rm = TRUE)
             meanStar.Lg.Lcat[[name.c[c]]][["Modern/Total"]] <- NA
 
             Zstar.qp <- NA
             Zstar.cqp <- NA
             p.seq <- NA
 
-            CIprop.Lg.Lcat.qt[[name.c[c]]][["Unmet"]] <- apply(P.tp3s[, "Unmet", , drop = TRUE], 1, quantile, percentiles)
+            CIprop.Lg.Lcat.qt[[name.c[c]]][["Unmet"]] <-
+                apply(X = P.tp3s[, "Unmet", , drop = TRUE], MARGIN = 1, FUN = quantile,
+                      probs = percentiles, na.rm = TRUE)
             CIprop.Lg.Lcat.qt[[name.c[c]]][["TotalPlusUnmet"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE],
-                      1, quantile, percentiles)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE] +
+                          P.tp3s[, "Unmet", , drop = TRUE], MARGIN = 1, FUN = quantile,
+                      probs = percentiles, na.rm = TRUE)
             CIprop.Lg.Lcat.qt[[name.c[c]]][["TradPlusUnmet"]] <-
-                apply(P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE], 1, quantile, percentiles)
+                apply(X = P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE], MARGIN = 1,
+                      FUN = quantile, probs = percentiles, na.rm = TRUE)
 
             CIratio.Lg.Lcat.qt[[name.c[c]]][["Met Demand"]] <-
                 apply((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) /
-                      ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, quantile, percentiles)
+                      ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), MARGIN = 1,
+                      FUN = quantile, probs = percentiles, na.rm = TRUE)
             CIratio.Lg.Lcat.qt[[name.c[c]]][["Z"]] <-
-                apply(P.tp3s[, "Unmet", ] / (1 - P.tp3s[, "Modern", ] - P.tp3s[, "Traditional", ]), 1, quantile, percentiles)
+                apply(X = P.tp3s[, "Unmet", ] / (1 - P.tp3s[, "Modern", ] - P.tp3s[, "Traditional", ]), MARGIN = 1,
+                      FUN = quantile, probs = percentiles, na.rm = TRUE)
             CIstar.Lg.Lcat.qt[[name.c[c]]][["Met Demand"]] <- NA
             CIstar.Lg.Lcat.qt[[name.c[c]]][["Z"]] <- NA
 
             ## change JR, 20140830: added demand met with modern methods
             CIratio.Lg.Lcat.qt[[name.c[c]]][["Met Demand with Modern Methods"]] <-
-                apply(P.tp3s[, "Modern", ] / ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, quantile, percentiles)
+                apply(X = P.tp3s[, "Modern", ] / ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) +
+                                                  P.tp3s[, "Unmet", ]), MARGIN = 1, FUN = quantile,
+                      probs = percentiles, na.rm = TRUE)
             CIstar.Lg.Lcat.qt[[name.c[c]]][["Met Demand with Modern Methods"]] <- NA
 
             ## [MCW-2016-07-12-4] :: Compute means for CP indicators for unmet.
-            meanProp.Lg.Lcat[[name.c[c]]][["Unmet"]] <- apply(P.tp3s[, "Unmet", , drop = TRUE], 1, mean, na.rm = TRUE)
+            meanProp.Lg.Lcat[[name.c[c]]][["Unmet"]] <- apply(X = P.tp3s[, "Unmet", , drop = TRUE], MARGIN = 1,
+                                                              FUN = mean, na.rm = TRUE)
             meanProp.Lg.Lcat[[name.c[c]]][["TotalPlusUnmet"]] <-
-                apply(P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE],
-                      1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Modern", , drop = TRUE] + P.tp3s[, "Traditional", , drop = TRUE] +
+                          P.tp3s[, "Unmet", , drop = TRUE],
+                      MARGIN = 1, FUN = mean, na.rm = TRUE)
             meanProp.Lg.Lcat[[name.c[c]]][["TradPlusUnmet"]] <-
-                apply(P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE], 1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Traditional", , drop = TRUE] + P.tp3s[, "Unmet", , drop = TRUE], MARGIN = 1,
+                      FUN = mean, na.rm = TRUE)
 
             meanRatio.Lg.Lcat[[name.c[c]]][["Met Demand"]] <-
                 apply((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) /
-                      ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, mean, na.rm = TRUE)
+                      ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), MARGIN = 1,
+                      FUN = mean, na.rm = TRUE)
             meanRatio.Lg.Lcat[[name.c[c]]][["Z"]] <-
-                apply(P.tp3s[, "Unmet", ] / (1 - P.tp3s[, "Modern", ] - P.tp3s[, "Traditional", ]), 1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Unmet", ] / (1 - P.tp3s[, "Modern", ] - P.tp3s[, "Traditional", ]), MARGIN = 1,
+                      FUN = mean, na.rm = TRUE)
 
             meanStar.Lg.Lcat[[name.c[c]]][["Met Demand"]] <- NA
             meanStar.Lg.Lcat[[name.c[c]]][["Z"]] <- NA
 
             meanRatio.Lg.Lcat[[name.c[c]]][["Met Demand with Modern Methods"]] <-
-                apply(P.tp3s[, "Modern", ] / ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ]), 1, mean, na.rm = TRUE)
+                apply(X = P.tp3s[, "Modern", ] / ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) +
+                                                  P.tp3s[, "Unmet", ]), MARGIN = 1, FUN = mean, na.rm = TRUE)
         meanStar.Lg.Lcat[[name.c[c]]][["Met Demand with Modern Methods"]] <- NA
 
         ## Met Demand with modern methods > 75%
         metDemGT.Lg.Lcat.pr[[name.c[c]]][["Met Demand with Modern Methods >= 75%"]] <-
             matrix(rowMeans((P.tp3s[, "Modern", ] /
-                             ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ])) >= 0.75, na.rm = TRUE),
+                             ((P.tp3s[, "Modern", ] + P.tp3s[, "Traditional", ]) + P.tp3s[, "Unmet", ])) >= 0.75,
+                            na.rm = TRUE),
                    nrow = 1)
 
         }
