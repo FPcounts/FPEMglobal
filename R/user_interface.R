@@ -613,6 +613,7 @@ add_global_mcmc <- function(run_name,
 ##'     \file{\code{special_aggregates_name}.csv} in
 ##'     \code{input_data_folder_path} that defines the special
 ##'     aggregates. See \dQuote{Details}.
+##' @param summarize_global_run Logical; should the model summary for one-country runs be produced?
 ##' @param age_ratios_age_total_run_name Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.
 ##' @param age_ratios_age_total_output_folder_path Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
 ##'     directory of the 15--49 run to use to make age ratios.
@@ -664,6 +665,7 @@ post_process_mcmc <- function(run_name = NULL,
                               model_diagnostics = TRUE,
                               make_any_aggregates = TRUE,
                               special_aggregates_name = NULL,
+                              summarize_global_run = TRUE,
                               age_ratios_age_total_run_name = NULL,
                               age_ratios_age_total_output_folder_path = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
@@ -903,18 +905,20 @@ post_process_mcmc <- function(run_name = NULL,
     ##----------------------------------------------------------------------------
     ## Summarize global run
 
-    message("\nSummarizing global run.")
+    if (summarize_global_run) {
+        message("\nSummarizing global run.")
 
-    if (file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
-        SummariseGlobalRun(         #This creates (sufficient?) input for one-country run.
-            run.name = run_name,
-            output.dir = output_folder_path,
-            write.model.fun = write_model_function
-        )
-    } else {
-        warning("Summarization of global run failed: '",
-                file.path(output_folder_path, "mcmc.array.rda"),
-                "' mcmc.array.rda' does not exist.")
+        if (file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
+            SummariseGlobalRun(         #This creates (sufficient?) input for one-country run.
+                run.name = run_name,
+                output.dir = output_folder_path,
+                write.model.fun = write_model_function
+            )
+        } else {
+            warning("Summarization of global run failed: '",
+                    file.path(output_folder_path, "mcmc.array.rda"),
+                    "' mcmc.array.rda' does not exist.")
+        }
     }
 
     ##----------------------------------------------------------------------------
@@ -4365,7 +4369,7 @@ assert_valid_output_dir <- function(output_folder_path,
             checkmate::assert_file_exists(file.path(output_folder_path, c("data.global.rda",
                                                                           "post_process_args.RData",
                                                                           "res.country.rda", "res.aggregate.rda")))
-            if (!isTRUE(mcmc.meta$general$is.age.adjusted.copy))
+            if (!isTRUE(mcmc.meta$general$is.age.calibrated))
                 checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.array.rda")))
         }
 
