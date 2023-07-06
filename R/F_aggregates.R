@@ -113,21 +113,21 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
     for (t in 1:nyears){
         ## Don't divide by zero!
         if(!any(cumsumW.t[t] == 0)) {
-    CIprop.Lcat.qt[["Traditional"]][,t] <- quantile(cumsum.trad.ts[t,]/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["TotalPlusUnmet"]][,t] <- quantile((cumsum.unmet.ts[t,]+cumsum.tot.ts[t,])/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["TradPlusUnmet"]][,t] <- quantile((cumsum.trad.ts[t,]+cumsum.unmet.ts[t,])/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["Modern"]][,t] <- quantile(cumsum.modern.ts[t,]/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["Total"]][,t] <- quantile(cumsum.tot.ts[t,]/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["Unmet"]][,t] <- quantile(cumsum.unmet.ts[t,]/cumsumW.t[t], percentiles)
+    CIprop.Lcat.qt[["Traditional"]][,t] <- quantile(cumsum.trad.ts[t,]/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["TotalPlusUnmet"]][,t] <- quantile((cumsum.unmet.ts[t,]+cumsum.tot.ts[t,])/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["TradPlusUnmet"]][,t] <- quantile((cumsum.trad.ts[t,]+cumsum.unmet.ts[t,])/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["Modern"]][,t] <- quantile(cumsum.modern.ts[t,]/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["Total"]][,t] <- quantile(cumsum.tot.ts[t,]/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["Unmet"]][,t] <- quantile(cumsum.unmet.ts[t,]/cumsumW.t[t], percentiles, na.rm = TRUE)
     CIratio.Lcat.qt[["Met Demand"]][,t]<- quantile(cumsum.tot.ts[t,]/
-                                (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles)
+                                (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles, na.rm = TRUE)
     CIratio.Lcat.qt[["Met Demand with Modern Methods"]][,t]<- quantile(cumsum.modern.ts[t,]/
-                                                     (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles) # change JR, 20140830: added demand met with modern methods
+                                                     (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles, na.rm = TRUE) # change JR, 20140830: added demand met with modern methods
     CIratio.Lcat.qt[["Modern/Total"]][,t]<- quantile(cumsum.modern.ts[t,]/
-                                                     (cumsum.tot.ts[t,]), percentiles)
+                                                     (cumsum.tot.ts[t,]), percentiles, na.rm = TRUE)
 
     CIratio.Lcat.qt[["Z"]][,t]<- quantile(cumsum.unmet.ts[t,]/
-                                                     (cumsumW.t[t] - cumsum.tot.ts[t,]), percentiles)
+                                                     (cumsumW.t[t] - cumsum.tot.ts[t,]), percentiles, na.rm = TRUE)
     ## [MCW-2016-08-30-4] calculate means
     meanCIprop.Lcat.qt[["Traditional"]][,t] <- mean(cumsum.trad.ts[t,]/cumsumW.t[t],  na.rm = TRUE)
     meanCIprop.Lcat.qt[["TotalPlusUnmet"]][,t] <- mean((cumsum.unmet.ts[t,]+cumsum.tot.ts[t,])/cumsumW.t[t],  na.rm = TRUE)
