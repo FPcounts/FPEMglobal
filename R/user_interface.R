@@ -1202,7 +1202,14 @@ make_results <- function(run_name = NULL,
             stop("'CI_plots_years' must be a numeric vector of length 2, or a list of length 2 with numeric or 'NULL' elements.")
         }
         CI_plots_start <- CI_plots_years[[1]]
+        if (!is.null(CI_plots_start) &&
+            identical(as.numeric(CI_plots_start), as.numeric(floor(CI_plots_start))))
+            CI_plots_start <- CI_plots_start + 0.5
+
         CI_plots_end <- CI_plots_years[[2]]
+        if (!is.null(CI_plots_end) &&
+            identical(as.numeric(CI_plots_end), as.numeric(floor(CI_plots_end))))
+            CI_plots_end <- CI_plots_end + 0.5
     } else {
         CI_plots_start <- NULL
         CI_plots_end <- NULL

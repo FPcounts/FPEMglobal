@@ -286,10 +286,10 @@ PlotDataAndEstimates <- function (# Create overview country/aggregate plots
         cats.to.plot <- categories.to.plot #passed in as an argument
         tot.CP <- CI.Lg.Lcat.qt[[g]][["Total"]]
 
-        if(identical(length(na.omit(tot.CP)), 0L)) {
+        if(isTRUE(all.equal(sum(is.finite(tot.CP)), 0))) {
             message(names(CI.Lg.Lcat.qt)[g], " has no estimates: skipping.")
             next()
-            }
+        }
 
         tot.CP <-
             tot.CP["0.5"
@@ -623,22 +623,25 @@ PlotDataAndEstimates <- function (# Create overview country/aggregate plots
             yall <- c(CI.qt, CI2.qt, CI3.qt, CI4.qt, data.props)
             ymin <- 0           #default case
             if((is.logical(ymin.at.0) && !isTRUE(ymin.at.0)) || ymin.at.0 == "CIs") {
-                ymin <- ifelse(min(yall, na.rm = T) < 0.05, 0,
-                               min(yall, na.rm = T)-0.2*diff(range(yall, na.rm = T)))
+                ymin <- ifelse(min(yall, na.rm = TRUE) < 0.05, 0,
+                               min(yall, na.rm = TRUE)-0.2*diff(range(yall, na.rm = TRUE)))
             } else if(ymin.at.0 == "data" && !is.null(data.props)) {
-                ymin <- ifelse(min(data.props, na.rm = T) < 0.05, 0,
-                               min(data.props, na.rm = T)-0.2*diff(range(data.props, na.rm = T)))
+                ymin <- ifelse(min(data.props, na.rm = TRUE) < 0.05, 0,
+                               min(data.props, na.rm = TRUE)-0.2*diff(range(data.props, na.rm = TRUE)))
             }
             if(plot.prop) {
             ymax <- 1           #default case
             if((is.logical(ymax.at.100) && !isTRUE(ymax.at.100)) || ymax.at.100 == "CIs") {
-                ymax <- max(yall, na.rm = T)+0.2*diff(range(yall, na.rm = T))
+                ymax <- max(yall, na.rm = TRUE)+0.2*diff(range(yall, na.rm = TRUE))
             } else if(ymax.at.100 == "data" && !is.null(data.props)) {
-                ymax <- max(data.props, na.rm = T)+0.2*diff(range(data.props, na.rm = T))
+                ymax <- max(data.props, na.rm = TRUE)+0.2*diff(range(data.props, na.rm = TRUE))
             }
             } else {
-                ymax <- max(yall, na.rm = T)+0.2*diff(range(yall, na.rm = T))
+                ymax <- max(yall, na.rm = TRUE)+0.2*diff(range(yall, na.rm = TRUE))
             }
+
+            if (all(is.finite(c(xmin, xmax, ymin, ymax)))) {
+
             InternalPlotEmpty(ylab = ifelse(plot.prop,"", "Count"),
                               main = axisnamecats[cat],
                               xlim = c(xmin, xmax),
@@ -710,6 +713,7 @@ PlotDataAndEstimates <- function (# Create overview country/aggregate plots
                                   position = "center", cex = 2.8*cex.adj.factor)
                 InternalPlotNull()
             }
+                }
         }
 
         ## [MCW-2017-01-25-6] :: Plot legend if 'if(!is.null(data.to.plot))'.
@@ -1424,7 +1428,7 @@ PlotDataAndEstimatesDIAG <- function (# Create overview country/aggregate plots
             end.year <- 2015.5
         }
     }
-    xmin <- start.year #min(years.i, start.year, na.rm = T)
+    xmin <- start.year #min(years.i, start.year, na.rm = TRUE)
     xmax <- end.year
 
     if (ind.country.overviewplot || ind.country.indplot){
@@ -1499,7 +1503,7 @@ PlotDataAndEstimatesDIAG <- function (# Create overview country/aggregate plots
         cats.to.plot <- categories.to.plot #passed in as an argument
         tot.CP <- CI.Lg.Lcat.qt[[g]][["Total"]]
 
-        if(identical(length(na.omit(tot.CP)), 0L)) {
+        if(isTRUE(all.equal(sum(is.finite(tot.CP)), 0))) {
             message(names(CI.Lg.Lcat.qt)[g], " has no estimates: skipping.")
             next()
             }
@@ -1838,10 +1842,10 @@ PlotDataAndEstimatesDIAG <- function (# Create overview country/aggregate plots
       if(!is.null(data.props) && isTRUE(all(is.finite(data.props)))) {
           yall <- data.props
       } else yall <- c(CI.qt, CI2.qt, CI3.qt, CI4.qt, data.props)
-      ymin <- ifelse(ymin.at.0, 0, ifelse(min(yall, na.rm = T) < 0.05, 0,
-                                          min(yall, na.rm = T)-0.2*diff(range(yall, na.rm = T))))
+      ymin <- ifelse(ymin.at.0, 0, ifelse(min(yall, na.rm = TRUE) < 0.05, 0,
+                                          min(yall, na.rm = TRUE)-0.2*diff(range(yall, na.rm = TRUE))))
       ymax <- ifelse(plot.prop & ymax.at.100, 1,
-                     max(yall, na.rm = T)+0.2*diff(range(yall, na.rm = T)))
+                     max(yall, na.rm = TRUE)+0.2*diff(range(yall, na.rm = TRUE)))
           if(isTRUE(all(is.finite(c(xmin, xmax, ymin, ymax))))) {
       InternalPlotEmpty(ylab = ifelse(plot.prop,"", "Count"),
                         main = axisnamecats[cat],
@@ -2122,7 +2126,7 @@ PlotDataAndEstimatesORIG <- function (# Create overview country/aggregate plots
             end.year <- 2015.5
         }
     }
-    xmin <- start.year #min(years.i, start.year, na.rm = T)
+    xmin <- start.year #min(years.i, start.year, na.rm = TRUE)
     xmax <- end.year
 
     if (ind.country.overviewplot | ind.country.indplot){
@@ -2406,10 +2410,10 @@ PlotDataAndEstimatesORIG <- function (# Create overview country/aggregate plots
                 data.props <- NULL
             }
             yall <- c(CI.qt, CI2.qt, CI3.qt, CI4.qt, data.props)
-            ymin <- ifelse(ymin.at.0, 0, ifelse(min(yall, na.rm = T) < 0.05, 0,
-                                                min(yall, na.rm = T)-0.2*diff(range(yall, na.rm = T))))
+            ymin <- ifelse(ymin.at.0, 0, ifelse(min(yall, na.rm = TRUE) < 0.05, 0,
+                                                min(yall, na.rm = TRUE)-0.2*diff(range(yall, na.rm = TRUE))))
             ymax <- ifelse(plot.prop & ymax.at.100, 1,
-                           max(yall, na.rm = T)+0.2*diff(range(yall, na.rm = T)))
+                           max(yall, na.rm = TRUE)+0.2*diff(range(yall, na.rm = TRUE)))
             InternalPlotEmpty(ylab = ifelse(plot.prop,"", "Count"),
                               main = axisnamecats[cat],
                               xlim = c(xmin, xmax),
