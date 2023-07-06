@@ -1097,6 +1097,7 @@ make_results <- function(run_name = NULL,
                          output_folder_path = file.path("output", run_name),
                          input_data_folder_path = NULL,
                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+                         CI_plots_years = NULL,
                          plot_diagnostic_CI_plots = FALSE,
                          make_all_bar_charts = NULL,
                          plot_barchart_years = NULL,
@@ -1194,6 +1195,17 @@ make_results <- function(run_name = NULL,
                 message("\n'plot_maps_years' taken from '", post_process_args_filepath, "'.")
             }
         } else warning("'", post_process_args_filepath, "' does not exist: cannot determine at least one of 'plot_barchart_years', 'plot_CI_changes_years', or 'plot_maps_years'. Specify them as arguments.")
+    }
+
+    if (!is.null(CI_plots_years)) {
+        if (!identical(length(CI_plots_years), 2L) || !all(sapply(CI_plots_years, function(z) is.numeric(z) || is.null(z)))) {
+            stop("'CI_plots_years' must be a numeric vector of length 2, or a list of length 2 with numeric or 'NULL' elements.")
+        }
+        CI_plots_start <- CI_plots_years[[1]]
+        CI_plots_end <- CI_plots_years[[2]]
+    } else {
+        CI_plots_start <- NULL
+        CI_plots_end <- NULL
     }
 
     ## Make age ratios?
@@ -1461,6 +1473,8 @@ make_results <- function(run_name = NULL,
                     output.dir = output_folder_path,
                     fig.dir = ci_fig_folder_path,
                     plot.ind.country.results = FALSE,
+                    start.year = CI_plots_start,
+                    end.year = CI_plots_end,
                     make.any.aggregates = make_any_aggregates,
                     layout.style = "UNPD",
                     cex.symbols = list(SS = 1.5, add.info = 4, no.info = 2),
@@ -1479,6 +1493,8 @@ make_results <- function(run_name = NULL,
                         output.dir = output_folder_path,
                         fig.dir = ci_fig_folder_path,
                         plot.ind.country.results = FALSE,
+                    start.year = CI_plots_start,
+                    end.year = CI_plots_end,
                         make.any.aggregates = make_any_aggregates,
                         layout.style = "diagnostic",
                         cex.symbols = list(SS = 1.5, add.info = 4, no.info = 2),

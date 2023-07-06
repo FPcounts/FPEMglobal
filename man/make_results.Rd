@@ -9,6 +9,7 @@ make_results(
   output_folder_path = file.path("output", run_name),
   input_data_folder_path = NULL,
   countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+  CI_plots_years = NULL,
   plot_diagnostic_CI_plots = FALSE,
   make_all_bar_charts = NULL,
   plot_barchart_years = NULL,

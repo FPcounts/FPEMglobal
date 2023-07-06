@@ -172,12 +172,12 @@ BarChart <- function(# Plot bar chart
   name.g <- dimnames(final.gq3t)[[1]]
   name.g <- ifelse(name.g=="Australia and New Zealand", "Australia and NZ", paste(name.g))
   name.g <- ifelse(name.g=="Latin America and the Caribbean", "LAC", paste(name.g))
-  if (max(final.gq3t)<1){
+  if (max(final.gq3t, na.rm = TRUE)<1){
     xlab = "Percentage"
     final.gq3t = 100*final.gq3t
-    xmax <- min(100, max(final.gq3t)*1.05)
+    xmax <- min(100, max(final.gq3t, na.rm = TRUE)*1.05)
   } else {
-    xmax <- max(final.gq3t)*1.05
+    xmax <- max(final.gq3t, na.rm = TRUE)*1.05
     xlab = ifelse(UWRA, "Number of UWRA (*1,000)", "Number of MWRA (*1,000)")
   }
   # grey vertical bounds in background... at...
