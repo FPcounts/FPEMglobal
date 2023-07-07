@@ -176,8 +176,10 @@ BarChart <- function(# Plot bar chart
     xlab = "Percentage"
     final.gq3t = 100*final.gq3t
     xmax <- min(100, max(final.gq3t, na.rm = TRUE)*1.05)
+    if (!is.finite(xmax)) xmax <- 100
   } else {
-    xmax <- max(final.gq3t, na.rm = TRUE)*1.05
+      xmax <- max(final.gq3t, na.rm = TRUE)*1.05
+      if (!is.finite(xmax)) xmax <- 1e6
     xlab = ifelse(UWRA, "Number of UWRA (*1,000)", "Number of MWRA (*1,000)")
   }
   # grey vertical bounds in background... at...
