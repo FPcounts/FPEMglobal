@@ -4311,7 +4311,7 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 ##' un-processed directory doesn't even have 'mcmc.array.rda', which
 ##' means it's unlikely to be used.
 ##'
-##' @param output_folder_path Path to directory to validate.
+##' @param output_folder_path Path (or paths, if a vector) to directory to validate.
 ##' @param post_processed Logical; has \code{\link{post_process_mcmc}}
 ##'     been run on the directory?
 ##' @param countrytrajectories Logical; check for
