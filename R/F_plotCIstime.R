@@ -514,8 +514,8 @@ PlotDataAndEstimates <- function (# Create overview country/aggregate plots
         ## par( mar = c(7,6,6,1), cex.main = 2, cex.axis = 2, cex.lab = 2)
         for (cat in (1:length(cats))[cats.select]) {
             if (!is.null(CI.Lg.Lcat.qt)){
-                if (!is.null(CIstar.Lg.Lcat.qt[[g]][[cats[cat]]]) &&
-                        !is.na(CIstar.Lg.Lcat.qt[[g]][[cats[cat]]])) {
+                if (!all(is.null(CIstar.Lg.Lcat.qt[[g]][[cats[cat]]])) &&
+                        !all(is.na(CIstar.Lg.Lcat.qt[[g]][[cats[cat]]]))) {
                     CIstar.qt <- CIstar.Lg.Lcat.qt[[g]][[cats[cat]]]
                 } else {
                     CIstar.qt <- NULL
