@@ -75,23 +75,23 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         for (t in 1:nyears){
             ## only increment non-missing cells
             non_miss <- !is.na(cumsum.trad.ts[t,]) & !is.na(P.tp3s[t,"Traditional",])
-            if (any(non_miss)) {
+            if (!all(non_miss)) {
                 message("For '", country_name, "', ",
-                        sum(non_miss), " out of ", n.s, " (", sum(non_miss) / n.s * 100, "%) trajectories for CP 'Traditional' are 'NA'; these were ignored in creating aggregates.")
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for CP 'Traditional' are 'NA'; these were ignored in creating aggregates.")
             }
             cumsum.trad.ts[t,non_miss] <- cumsum.trad.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Traditional",non_miss]
 
             non_miss <- !is.na(cumsum.modern.ts[t,]) & !is.na(P.tp3s[t,"Modern",])
-            if (any(non_miss)) {
+            if (!all(non_miss)) {
                 message("For '", country_name, "', ",
-                        sum(non_miss), " out of ", n.s, " (", sum(non_miss) / n.s * 100, "%) trajectories for CP 'Modern' are 'NA'; these were ignored in creating aggregates.")
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for CP 'Modern' are 'NA'; these were ignored in creating aggregates.")
             }
             cumsum.modern.ts[t,non_miss] <- cumsum.modern.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Modern",non_miss]
 
             non_miss <- !is.na(cumsum.unmet.ts[t,]) & !is.na(P.tp3s[t,"Unmet",])
-            if (any(non_miss)) {
+            if (!all(non_miss)) {
                 message("For '", country_name, "', ",
-                        sum(non_miss), " out of ", n.s, " (", sum(non_miss) / n.s * 100, "%) trajectories for 'Unmet' are 'NA'; these were ignored in creating aggregates.")
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for 'Unmet' are 'NA'; these were ignored in creating aggregates.")
             }
             cumsum.unmet.ts[t,non_miss] <- cumsum.unmet.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Unmet",non_miss]
 
