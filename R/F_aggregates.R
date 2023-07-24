@@ -70,13 +70,33 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         if (identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
             stop("Denominator counts for country '", country_name, "' are all zero. Denominator counts are read from 'res.country.rda'.")
         }
-    load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
+
+        load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
         for (t in 1:nyears){
-      cumsum.trad.ts[t,] <- cumsum.trad.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,1,]
-      cumsum.modern.ts[t,] <- cumsum.modern.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,2,]
-      cumsum.unmet.ts[t,] <- cumsum.unmet.ts[t,] + W.Lc.t[[country_name]][t]*(P.tp3s[t,3,])
-      cumsumW.t[t] <- cumsumW.t[t] + W.Lc.t[[country_name]][t]
-    }
+            ## only increment non-missing cells
+            non_miss <- !is.na(cumsum.trad.ts[t,]) & !is.na(P.tp3s[t,"Traditional",])
+            if (!all(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for CP 'Traditional' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.trad.ts[t,non_miss] <- cumsum.trad.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Traditional",non_miss]
+
+            non_miss <- !is.na(cumsum.modern.ts[t,]) & !is.na(P.tp3s[t,"Modern",])
+            if (!all(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for CP 'Modern' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.modern.ts[t,non_miss] <- cumsum.modern.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Modern",non_miss]
+
+            non_miss <- !is.na(cumsum.unmet.ts[t,]) & !is.na(P.tp3s[t,"Unmet",])
+            if (!all(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for 'Unmet' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.unmet.ts[t,non_miss] <- cumsum.unmet.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Unmet",non_miss]
+
+            cumsumW.t[t] <- cumsumW.t[t] + W.Lc.t[[country_name]][t]
+        }
     } # end country loop
 
   # divide by cumsumW.t (to have results same as for country results)
@@ -1053,7 +1073,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("awra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             awra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            ##if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
         }
         res.aggregate.list <- awra.CP.counts.agg.CIs.li
         rm(awra.CP.counts.agg.CIs.li)
@@ -1069,7 +1089,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("mwra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             mwra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            ##if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
         }
         res.aggregate.list <- mwra.CP.counts.agg.CIs.li
         rm(mwra.CP.counts.agg.CIs.li)
@@ -1085,7 +1105,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("uwra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             uwra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            ##if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
         }
         res.aggregate.list <- uwra.CP.counts.agg.CIs.li
         rm(uwra.CP.counts.agg.CIs.li)
