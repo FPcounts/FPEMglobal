@@ -71,23 +71,32 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
             stop("Denominator counts for country '", country_name, "' are all zero. Denominator counts are read from 'res.country.rda'.")
         }
 
-        ##
-        ##
-        ##
-        ## !!!!!!!!!!!!!!!!!!!!! 2023-07-13 LOOK at next section: Is
-        ## !!!!!!!!!!!!!!!!!!!!! this the cause of switching Mod and
-        ## !!!!!!!!!!!!!!!!!!!!! Trad and missing 'NA' trajectories???
-        ##
-        ##
-        ##
-
-    load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
+        load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
         for (t in 1:nyears){
-      cumsum.trad.ts[t,] <- cumsum.trad.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,1,]
-      cumsum.modern.ts[t,] <- cumsum.modern.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,2,]
-      cumsum.unmet.ts[t,] <- cumsum.unmet.ts[t,] + W.Lc.t[[country_name]][t]*(P.tp3s[t,3,])
-      cumsumW.t[t] <- cumsumW.t[t] + W.Lc.t[[country_name]][t]
-    }
+            ## only increment non-missing cells
+            non_miss <- !is.na(cumsum.trad.ts[t,]) & !is.na(P.tp3s[t,"Traditional",])
+            if (any(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(non_miss), " out of ", n.s, " (", sum(non_miss) / n.s * 100, "%) trajectories for CP 'Traditional' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.trad.ts[t,non_miss] <- cumsum.trad.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Traditional",non_miss]
+
+            non_miss <- !is.na(cumsum.modern.ts[t,]) & !is.na(P.tp3s[t,"Modern",])
+            if (any(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(non_miss), " out of ", n.s, " (", sum(non_miss) / n.s * 100, "%) trajectories for CP 'Modern' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.modern.ts[t,non_miss] <- cumsum.modern.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Modern",non_miss]
+
+            non_miss <- !is.na(cumsum.unmet.ts[t,]) & !is.na(P.tp3s[t,"Unmet",])
+            if (any(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(non_miss), " out of ", n.s, " (", sum(non_miss) / n.s * 100, "%) trajectories for 'Unmet' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.unmet.ts[t,non_miss] <- cumsum.unmet.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Unmet",non_miss]
+
+            cumsumW.t[t] <- cumsumW.t[t] + W.Lc.t[[country_name]][t]
+        }
     } # end country loop
 
   # divide by cumsumW.t (to have results same as for country results)
