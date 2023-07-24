@@ -70,6 +70,17 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         if (identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
             stop("Denominator counts for country '", country_name, "' are all zero. Denominator counts are read from 'res.country.rda'.")
         }
+
+        ##
+        ##
+        ##
+        ## !!!!!!!!!!!!!!!!!!!!! 2023-07-13 LOOK at next section: Is
+        ## !!!!!!!!!!!!!!!!!!!!! this the cause of switching Mod and
+        ## !!!!!!!!!!!!!!!!!!!!! Trad and missing 'NA' trajectories???
+        ##
+        ##
+        ##
+
     load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
         for (t in 1:nyears){
       cumsum.trad.ts[t,] <- cumsum.trad.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,1,]
@@ -1053,7 +1064,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("awra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             awra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            ##if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
         }
         res.aggregate.list <- awra.CP.counts.agg.CIs.li
         rm(awra.CP.counts.agg.CIs.li)
@@ -1069,7 +1080,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("mwra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             mwra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            ##if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
         }
         res.aggregate.list <- mwra.CP.counts.agg.CIs.li
         rm(mwra.CP.counts.agg.CIs.li)
@@ -1085,7 +1096,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("uwra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             uwra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            ##if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
         }
         res.aggregate.list <- uwra.CP.counts.agg.CIs.li
         rm(uwra.CP.counts.agg.CIs.li)
