@@ -15,7 +15,7 @@ assert_valid_output_dir(
 )
 }
 \arguments{
-\item{output_folder_path}{Path to directory to validate.}
+\item{output_folder_path}{Path (or paths, if a vector) to directory to validate.}
 
 \item{post_processed}{Logical; has \code{\link{post_process_mcmc}}
 been run on the directory?}
