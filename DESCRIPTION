@@ -1,7 +1,7 @@
 Package: FPEMglobal
 Type: Package
 Title: Estimation of Contraceptive Use for All Women
-Version: 1.5.0
+Version: 1.6.0.9000
 Date: 2022-07-20
 Authors@R: c(person("Mark", "Wheldon", email = "wheldon@un.org", role = c("aut", "cre")),
              person("Jin Rou", "New", email = "lalkema@schoolph.umass.edu", role = "aut"),
