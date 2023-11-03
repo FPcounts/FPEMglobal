@@ -69,7 +69,14 @@ PlotResults <- function(# Plot lots of results!
     if (do.SS.run.first.pass & !file.exists(file.path(output.dir, paste0("par.ciq", filename.append, ".rda")))) {
         par.ciq <- NULL
     } else {
-        load(file.path(output.dir, paste0("par.ciq", filename.append, ".rda"))) # change JR, 20140418
+        if (file.exists(file.path(output.dir, paste0("par.ciq", filename.append, ".rda"))))
+            load(file.path(output.dir, paste0("par.ciq", filename.append, ".rda"))) # change JR, 20140418
+        else {
+            warning("'", file.path(output.dir, paste0("par.ciq", filename.append, ".rda")),
+                    "' was not found; parameter estimates cannot be plotted.")
+            par.ciq <- NULL
+            plot.parameters <- FALSE
+        }
     }
     load(file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda"))) # change JR, 20140418
     do.country.specific.run <- mcmc.meta$general$do.country.specific.run # change JR, 20131104

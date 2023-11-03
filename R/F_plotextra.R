@@ -212,9 +212,11 @@ BarChartSubregion <- function(#Plot counts of MWRA with unmet need by subregion 
 
   order <- order(res2010.sq[,3])
   ## Regions with less than 1 million women with unmet need are left out.
-  leaveout <- sum((res2010.sq[,3] * x.axis.scale) < leave.out.less.than )
+  leaveout <- sum((res2010.sq[,3] * x.axis.scale) < leave.out.less.than, na.rm = TRUE)
   #ymax = max(res2015.sq, res2010.sq)*1.05
-  ymax = max(res2010.sq)*1.1
+  ymax = max(res2010.sq, na.rm = TRUE)*1.1
+
+  if (is.finite(ymax) && is.finite(leaveout)) {
 
   plot(seq(1, n.subreg)~res2010.sq[order,3], type = "n", ylab = ""
       ,xlim = c(0, ymax )
@@ -279,7 +281,8 @@ BarChartSubregion <- function(#Plot counts of MWRA with unmet need by subregion 
     segments(res.sq[order,1], add+seq(1, n.subreg), res.sq[order,5],
            add+seq(1, n.subreg), lwd = ifelse(plot.tiff,1,2), col = 1)
   } # end t
-  dev.off()
+}
+      dev.off()
   if(UWRA) {
         cat("Counts of UWRA with unmet need by subregion broken down by country estimates plotted.\n") } else {
          cat("Counts of MWRA with unmet need by subregion broken down by country estimates plotted.\n") }

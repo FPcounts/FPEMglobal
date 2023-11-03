@@ -613,6 +613,7 @@ add_global_mcmc <- function(run_name,
 ##'     \file{\code{special_aggregates_name}.csv} in
 ##'     \code{input_data_folder_path} that defines the special
 ##'     aggregates. See \dQuote{Details}.
+##' @param summarize_global_run Logical; should the model summary for one-country runs be produced?
 ##' @param age_ratios_age_total_run_name Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.
 ##' @param age_ratios_age_total_output_folder_path Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
 ##'     directory of the 15--49 run to use to make age ratios.
@@ -664,6 +665,7 @@ post_process_mcmc <- function(run_name = NULL,
                               model_diagnostics = TRUE,
                               make_any_aggregates = TRUE,
                               special_aggregates_name = NULL,
+                              summarize_global_run = TRUE,
                               age_ratios_age_total_run_name = NULL,
                               age_ratios_age_total_output_folder_path = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
@@ -812,8 +814,11 @@ post_process_mcmc <- function(run_name = NULL,
 
         message("\nConstructing output objects, including standard aggregates.")
 
-        if(!file.exists(file.path(output_folder_path, "mcmc.array.rda")))
-            stop("'mcmc.array.rda' was not created. Did you run enough chains?")
+        if(!file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
+            if (!dir.exists(file.path(output_folder_path, "countrytrajectories")) &&
+                !length(dir(file.path(output_folder_path, "countrytrajectories"))) > 1)
+                stop("'mcmc.array.rda' was not created. Did you run enough chains?")
+        }
 
         ConstructOutput(
             run.name = run_name,
@@ -900,34 +905,49 @@ post_process_mcmc <- function(run_name = NULL,
     ##----------------------------------------------------------------------------
     ## Summarize global run
 
+    if (summarize_global_run) {
         message("\nSummarizing global run.")
 
-        SummariseGlobalRun(         #This creates (sufficient?) input for one-country run.
-            run.name = run_name,
-            output.dir = output_folder_path,
-            write.model.fun = write_model_function
-        )
+        if (file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
+            SummariseGlobalRun(         #This creates (sufficient?) input for one-country run.
+                run.name = run_name,
+                output.dir = output_folder_path,
+                write.model.fun = write_model_function
+            )
+        } else {
+            warning("Summarization of global run failed: '",
+                    file.path(output_folder_path, "mcmc.array.rda"),
+                    "' mcmc.array.rda' does not exist.")
+        }
+    }
 
     ##----------------------------------------------------------------------------
     ## Check convergence
 
     if(model_diagnostics) {
-       if(dir.exists(file.path(output_folder_path, "convergence"))) {
+        if(dir.exists(file.path(output_folder_path, "convergence"))) {
             message("\nModel diagnostics will *NOT* be re-done; they already exist. Delete '",
                     file.path(output_folder_path, "convergence"),
                     "' and re-run if you want new ones.")
-    } else {
+        } else {
 
             message("\nChecking convergence.")
 
-            CheckConvergence(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                check.convergence = TRUE,
-                png.traceplots = TRUE,
-                fig.dir =file.path(output_folder_path, "convergence"),
-                sink.convergence.log = FALSE
-            )
+            if (file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
+
+                CheckConvergence(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    check.convergence = TRUE,
+                    png.traceplots = TRUE,
+                    fig.dir =file.path(output_folder_path, "convergence"),
+                    sink.convergence.log = FALSE
+                )
+            } else {
+                warning("Checking convergence failed: '",
+                        file.path(output_folder_path, "mcmc.array.rda"),
+                        "' mcmc.array.rda' does not exist.")
+            }
         }
     }
 
@@ -1077,6 +1097,7 @@ make_results <- function(run_name = NULL,
                          output_folder_path = file.path("output", run_name),
                          input_data_folder_path = NULL,
                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+                         CI_plots_years = NULL,
                          plot_diagnostic_CI_plots = FALSE,
                          make_all_bar_charts = NULL,
                          plot_barchart_years = NULL,
@@ -1149,7 +1170,7 @@ make_results <- function(run_name = NULL,
         if (all_women)
             msg <- paste0(msg, ". Has it been copied from the married or unmarried output's 'data' directory?")
         stop(msg)
-        }
+    }
 
     ## Years to plot
     if(any(sapply(list(plot_barchart_years, plot_CI_changes_years, plot_maps_years),
@@ -1174,6 +1195,24 @@ make_results <- function(run_name = NULL,
                 message("\n'plot_maps_years' taken from '", post_process_args_filepath, "'.")
             }
         } else warning("'", post_process_args_filepath, "' does not exist: cannot determine at least one of 'plot_barchart_years', 'plot_CI_changes_years', or 'plot_maps_years'. Specify them as arguments.")
+    }
+
+    if (!is.null(CI_plots_years)) {
+        if (!identical(length(CI_plots_years), 2L) || !all(sapply(CI_plots_years, function(z) is.numeric(z) || is.null(z)))) {
+            stop("'CI_plots_years' must be a numeric vector of length 2, or a list of length 2 with numeric or 'NULL' elements.")
+        }
+        CI_plots_start <- CI_plots_years[[1]]
+        if (!is.null(CI_plots_start) &&
+            identical(as.numeric(CI_plots_start), as.numeric(floor(CI_plots_start))))
+            CI_plots_start <- CI_plots_start + 0.5
+
+        CI_plots_end <- CI_plots_years[[2]]
+        if (!is.null(CI_plots_end) &&
+            identical(as.numeric(CI_plots_end), as.numeric(floor(CI_plots_end))))
+            CI_plots_end <- CI_plots_end + 0.5
+    } else {
+        CI_plots_start <- NULL
+        CI_plots_end <- NULL
     }
 
     ## Make age ratios?
@@ -1377,7 +1416,7 @@ make_results <- function(run_name = NULL,
 
             if (make_all_bar_charts && !make_any_aggregates) {
                 warning("'make_all_bar_charts' is 'TRUE' but 'make_any_aggregates' is 'FALSE'. Bar charts will not be produced.")
-                        make_all_bar_charts <- FALSE
+                make_all_bar_charts <- FALSE
             }
 
             if(make_all_bar_charts) {
@@ -1441,6 +1480,8 @@ make_results <- function(run_name = NULL,
                     output.dir = output_folder_path,
                     fig.dir = ci_fig_folder_path,
                     plot.ind.country.results = FALSE,
+                    start.year = CI_plots_start,
+                    end.year = CI_plots_end,
                     make.any.aggregates = make_any_aggregates,
                     layout.style = "UNPD",
                     cex.symbols = list(SS = 1.5, add.info = 4, no.info = 2),
@@ -1459,6 +1500,8 @@ make_results <- function(run_name = NULL,
                         output.dir = output_folder_path,
                         fig.dir = ci_fig_folder_path,
                         plot.ind.country.results = FALSE,
+                    start.year = CI_plots_start,
+                    end.year = CI_plots_end,
                         make.any.aggregates = make_any_aggregates,
                         layout.style = "diagnostic",
                         cex.symbols = list(SS = 1.5, add.info = 4, no.info = 2),
@@ -1466,8 +1509,8 @@ make_results <- function(run_name = NULL,
                         select.c.csv = countries_in_CI_plots_csv_filename,
                         all.womenize.fig.name = FALSE,
                         hide.CP.tot.lt.1pc = TRUE,
-                    plot.prior.post = plot_prior_post,
-                    plot.parameters = plot_parameters
+                        plot.prior.post = plot_prior_post,
+                        plot.parameters = plot_parameters
                         )
         }
 
@@ -1701,13 +1744,13 @@ make_results <- function(run_name = NULL,
                 )
 
                 if (tabulate_changes) {
-                GetTablesChange(
-                    run.name = run_name,
-                    output.dir = output_folder_path,
-                    name.res = "UNPDaggregate",
-                    table.dir = unadjusted_table_folder_path,
-                    change.in.changes = TRUE
-                )
+                    GetTablesChange(
+                        run.name = run_name,
+                        output.dir = output_folder_path,
+                        name.res = "UNPDaggregate",
+                        table.dir = unadjusted_table_folder_path,
+                        change.in.changes = TRUE
+                    )
                 }
             }
 
@@ -1722,13 +1765,13 @@ make_results <- function(run_name = NULL,
             )
 
             if (tabulate_changes) {
-            GetTablesChangeAllWomen(
-                run.name = run_name,
-                output.dir = output_folder_path,
-                name.res = "Country",
-                table.dir = unadjusted_table_folder_path,
-                all.womenize.table.name = FALSE
-            )
+                GetTablesChangeAllWomen(
+                    run.name = run_name,
+                    output.dir = output_folder_path,
+                    name.res = "Country",
+                    table.dir = unadjusted_table_folder_path,
+                    all.womenize.table.name = FALSE
+                )
             }
 
             if (make_any_aggregates) {
@@ -1741,13 +1784,13 @@ make_results <- function(run_name = NULL,
                 )
 
                 if (tabulate_changes) {
-                GetTablesChangeAllWomen(
-                    run.name = run_name,
-                    output.dir = output_folder_path,
-                    name.res = "UNPDaggregate",
-                    table.dir = unadjusted_table_folder_path,
-                    all.womenize.table.name = FALSE
-                )
+                    GetTablesChangeAllWomen(
+                        run.name = run_name,
+                        output.dir = output_folder_path,
+                        name.res = "UNPDaggregate",
+                        table.dir = unadjusted_table_folder_path,
+                        all.womenize.table.name = FALSE
+                    )
                 }
             }
 
@@ -1937,9 +1980,9 @@ make_results <- function(run_name = NULL,
                     GetTablesRes(run.name = run_name, res = res_new, name.res = name.agg
                                 ,table.dir = unadjusted_table_folder_path)
                     if (tabulate_changes) {
-                    GetTablesChange(run.name = run_name, res = res_new, name.res = name.agg
-                                   ,table.dir = unadjusted_table_folder_path
-                                   ,change.in.changes = TRUE)
+                        GetTablesChange(run.name = run_name, res = res_new, name.res = name.agg
+                                       ,table.dir = unadjusted_table_folder_path
+                                       ,change.in.changes = TRUE)
                     }
 
                     if(adjust_medians) {
@@ -1975,12 +2018,12 @@ make_results <- function(run_name = NULL,
                                         ,adjusted.medians = FALSE
                                         ,all.womenize.table.name = FALSE)
                     if (tabulate_changes) {
-                    GetTablesChangeAllWomen(run.name = run_name
-                                           ,name.res = name.agg
-                                           ,output.dir = output_folder_path
-                                           ,table.dir = unadjusted_table_folder_path
-                                           ,res = res_new
-                                           ,all.womenize.table.name = FALSE)
+                        GetTablesChangeAllWomen(run.name = run_name
+                                               ,name.res = name.agg
+                                               ,output.dir = output_folder_path
+                                               ,table.dir = unadjusted_table_folder_path
+                                               ,res = res_new
+                                               ,all.womenize.table.name = FALSE)
                     }
 
                     if(adjust_medians) {
@@ -2008,7 +2051,7 @@ make_results <- function(run_name = NULL,
                     }
                 }
             }
-            }
+        }
 
         ##............................................................................
         ## Age Ratios
@@ -2030,16 +2073,16 @@ make_results <- function(run_name = NULL,
                                adjusted.medians = FALSE) #Not yet implemented.
 
             if (tabulate_changes) {
-            GetTablesChangeAgeRatios(run.name = run_name,
-                                     output.dir = output_folder_path,
-                                     table.dir = unadjusted_table_folder_path,
-                                     name.res = "Country",
-                                     fp2020.69.only = FALSE,
-                                     all.women = all_women,
-                                     all.womenize.table.name = FALSE,
-                                     adjusted.medians = FALSE, #Not yet implemented
-                                     adj.method = NULL         #Not yet implemented
-                                     )
+                GetTablesChangeAgeRatios(run.name = run_name,
+                                         output.dir = output_folder_path,
+                                         table.dir = unadjusted_table_folder_path,
+                                         name.res = "Country",
+                                         fp2020.69.only = FALSE,
+                                         all.women = all_women,
+                                         all.womenize.table.name = FALSE,
+                                         adjusted.medians = FALSE, #Not yet implemented
+                                         adj.method = NULL         #Not yet implemented
+                                         )
             }
 
             ## Aggregates only possible if `combine_runs()` has been run
@@ -2059,18 +2102,18 @@ make_results <- function(run_name = NULL,
                                    all.womenize.table.name = FALSE,
                                    adjusted.medians = FALSE) #Not yet implemented.
                 if (tabulate_changes) {
-                GetTablesChangeAgeRatios(run.name = run_name,
-                                         output.dir = output_folder_path,
-                                         table.dir = unadjusted_table_folder_path,
-                                         name.res = "UNPDaggregate",
-                                         all.women = all_women,
-                                         all.womenize.table.name = FALSE,
-                                         fp2020.69.only = FALSE,
-                                         adjusted.medians = FALSE, #Not yet implemented
-                                         )
+                    GetTablesChangeAgeRatios(run.name = run_name,
+                                             output.dir = output_folder_path,
+                                             table.dir = unadjusted_table_folder_path,
+                                             name.res = "UNPDaggregate",
+                                             all.women = all_women,
+                                             all.womenize.table.name = FALSE,
+                                             fp2020.69.only = FALSE,
+                                             adjusted.medians = FALSE, #Not yet implemented
+                                             )
                 }
 
-            if(all_women) message("\nYou can now re-run 'make_results' for married and unmarried women to get age ratios for UNPD and WB aggregates.")
+                if(all_women) message("\nYou can now re-run 'make_results' for married and unmarried women to get age ratios for UNPD and WB aggregates.")
 
             } else message("\n'", file.path(output_folder_path, "res.aggregate.age.ratio.rda"), "' does not exist: age ratios for UNPD aggregates not created.\n**Note: `combine_runs()` must be run before any age ratios for aggregates can be made.")
 
@@ -2097,15 +2140,15 @@ make_results <- function(run_name = NULL,
                                            adjusted.medians = FALSE) #Not yet implemented.
 
                         if (tabulate_changes) {
-                        GetTablesChangeAgeRatios(run.name = run_name,
-                                                 output.dir = output_folder_path,
-                                                 table.dir =  file.path(output_folder_path, "table", "orig"),
-                                                 name.res = name.agg,
-                                                 all.women = all_women,
-                                                 all.womenize.table.name = FALSE,
-                                                 fp2020.69.only = FALSE,
-                                                 adjusted.medians = FALSE, #Not yet implemented
-                                                 )
+                            GetTablesChangeAgeRatios(run.name = run_name,
+                                                     output.dir = output_folder_path,
+                                                     table.dir =  file.path(output_folder_path, "table", "orig"),
+                                                     name.res = name.agg,
+                                                     all.women = all_women,
+                                                     all.womenize.table.name = FALSE,
+                                                     fp2020.69.only = FALSE,
+                                                     adjusted.medians = FALSE, #Not yet implemented
+                                                     )
                         }
 
                         if(all_women) message("\nYou can now re-run 'make_results' for married and unmarried women to get age ratios for special aggregates.")
@@ -2181,7 +2224,7 @@ do_global_run <- function(## Describe the run
                           steps_before_progress_report = 4,
                           thinning = 2,
                           chain_nums = 1:3,
-                           set_seed_chains = 1,
+                          set_seed_chains = 1,
                           run_in_parallel = isTRUE(length(chain_nums) > 1),
                           input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                           data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
@@ -2266,8 +2309,8 @@ do_global_run <- function(## Describe the run
 
     ## If model does not handle missing data must not have missing inputs.
     tmp_model_name <- marital_age_group_param_defaults(marital_group = marital_group,
-                                                   age_group = age_group, model_family = "rate",
-                                                   model_name = NULL)$write_model_fun
+                                                       age_group = age_group, model_family = "rate",
+                                                       model_name = NULL)$write_model_fun
     if (!ModelFunctionInclNoData(tmp_model_name)) {
         if (!is.null(input_data_folder_path)) {
             denom_isos <-
@@ -2539,7 +2582,7 @@ combine_runs <- function(## Describe the run
                          special_aggregates_name = NULL,
                          denominator_counts_csv_filename = NULL,
                          countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+                         countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                          start_year = 1970.5,
                          end_year = 2030.5,
                          years_change = matrix(c(
@@ -2584,7 +2627,7 @@ combine_runs <- function(## Describe the run
     } else {
         if (is.null(married_women_run_name))
             married_women_run_name <- get_run_name_from_args(get(load(file.path(married_women_run_output_folder_path,
-                                                             "post_process_args.RData"))))
+                                                                                "post_process_args.RData"))))
     }
 
     if(is.null(unmarried_women_run_output_folder_path)) {
@@ -2596,7 +2639,7 @@ combine_runs <- function(## Describe the run
     } else {
         if (is.null(unmarried_women_run_name))
             unmarried_women_run_name <- get_run_name_from_args(get(load(file.path(unmarried_women_run_output_folder_path,
-                                                             "post_process_args.RData"))))
+                                                                                  "post_process_args.RData"))))
     }
 
     load(file.path(unmarried_women_run_output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -2624,7 +2667,7 @@ combine_runs <- function(## Describe the run
     ## 'combine_runs_args.RData' file. If not, it will be set
     ## automatically (see option 1).
     ##
-    ## 4. Specify both 'run_name' and 'output_folder_path'. If you are
+    ## 4. Specify both 'run_name_override' and 'output_folder_path'. If you are
     ## adding to an existing run this will throw an error.
 
     if (is.null(run_name_override) && is.null(output_folder_path)) {
@@ -2652,6 +2695,7 @@ combine_runs <- function(## Describe the run
         else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
 
     } else if (!is.null(run_name_override) && !is.null(output_folder_path)) {
+        run_name <- run_name_override
         combine_runs_filepath <-
             file.path(output_folder_path, "combine_runs_args.RData")
         if (dir.exists(output_folder_path))
@@ -2772,7 +2816,7 @@ combine_runs <- function(## Describe the run
     ##----------------------------------------------------------------------------
 
     combine_runs_args <- c(mget(names(formals(combine_runs))),
-                              list(run_name = run_name))
+                           list(run_name = run_name))
     save(combine_runs_args, file = file.path(output_folder_path, "combine_runs_args.RData"))
 
     ##----------------------------------------------------------------------------
@@ -2837,23 +2881,23 @@ combine_runs <- function(## Describe the run
         sapply(c(married_women_run_output_folder_path,
                  unmarried_women_run_output_folder_path),
                function(z) {
-                   fn <- file.path(z, makeFileName(paste0("res.country.adj-",
-                                                          adjust_medians_method, ".rda")))
-                   if(!file.exists(fn)) {
-                       stop("'", fn, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
-                   } else {
-                       return(invisible())
-                   }
-                   if (make_any_aggregates) {
-                       fn2 <- file.path(z, makeFileName(paste0("res.UNPDaggregate.adj-",
-                                                               adjust_medians_method, ".rda")))
-                       if(!file.exists(fn2)) {
-                           stop("'", fn2, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
-                       } else {
-                           return(invisible())
-                       }
-                   }
-               })
+            fn <- file.path(z, makeFileName(paste0("res.country.adj-",
+                                                   adjust_medians_method, ".rda")))
+            if(!file.exists(fn)) {
+                stop("'", fn, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
+            } else {
+                return(invisible())
+            }
+            if (make_any_aggregates) {
+                fn2 <- file.path(z, makeFileName(paste0("res.UNPDaggregate.adj-",
+                                                        adjust_medians_method, ".rda")))
+                if(!file.exists(fn2)) {
+                    stop("'", fn2, "' does not exist. Did you run 'make_results' with 'adjust_medians = TRUE'? If you don't want adjusted medians, set 'adjust_medians' to 'FALSE'.")
+                } else {
+                    return(invisible())
+                }
+            }
+        })
 
         ## Married
         copy_uwra_mwra_files(makeFileName(paste0("res.country.adj-", adjust_medians_method, ".rda")),
@@ -3212,7 +3256,7 @@ do_global_all_women_run <- function(## Describe the run
     ## Check output doesn't already exist
 
     for(rn in c(run_name_override_married, run_name_override_unmarried,
-                  run_name_override_all_women)) {
+                run_name_override_all_women)) {
         ofp <- file.path("output", rn)
 
         if(dir.exists(ofp)) {
@@ -3444,7 +3488,7 @@ do_global_all_women_run <- function(## Describe the run
             age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
             ## Advanced
             run_name_override = run_name_override_unmarried,
-                              model_diagnostics = model_diagnostics,
+            model_diagnostics = model_diagnostics,
             include_AR = include_AR,
             verbose = verbose)
 
@@ -3909,12 +3953,12 @@ do_global_validation_run <- function(run_desc = "",
         file.path(run_name_to_validate_output_folder_path, "post_process_args.RData")
     if(file.exists(post_process_mcmc_args_filepath)) {
         post_process_mcmc_args <- get(load(post_process_mcmc_args_filepath, verbose = verbose))
-    if(!file.exists(file.path(input_data_folder_path,
-                              basename(post_process_mcmc_args$denominator_counts_csv_filename))))
-        stop("Denominator counts file in 'post_process_args.Rdata' not found.")
-    if(!file.exists(file.path(input_data_folder_path,
-                              basename(post_process_mcmc_args$countries_for_aggregates_csv_filename))))
-        stop("Country aggregates file in 'post_process_args.Rdata' not found.")
+        if(!file.exists(file.path(input_data_folder_path,
+                                  basename(post_process_mcmc_args$denominator_counts_csv_filename))))
+            stop("Denominator counts file in 'post_process_args.Rdata' not found.")
+        if(!file.exists(file.path(input_data_folder_path,
+                                  basename(post_process_mcmc_args$countries_for_aggregates_csv_filename))))
+            stop("Country aggregates file in 'post_process_args.Rdata' not found.")
     }
 
     ## --------------------------------------------------------------------
@@ -4106,8 +4150,8 @@ rename_global_run <- function(run_name,
         post_process_args$renamed <- TRUE
         post_process_args$rename_list <- c(new_run_name, post_process_args$rename_list)
         if (!"rename_list" %in% names(comment(post_process_args))) {
-        comment(post_process_args) <- c(comment(post_process_args),
-                                        rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+            comment(post_process_args) <- c(comment(post_process_args),
+                                            rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
         }
         save(post_process_args, file = post_process_args_fn)
     }
@@ -4117,8 +4161,8 @@ rename_global_run <- function(run_name,
         combine_runs_args$renamed <- TRUE
         combine_runs_args$rename_list <- c(new_run_name, combine_runs_args$rename_list)
         if (!"rename_list" %in% names(comment(combine_runs_args))) {
-        comment(combine_runs_args) <- c(comment(combine_runs_args),
-                                        rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+            comment(combine_runs_args) <- c(comment(combine_runs_args),
+                                            rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
         }
         save(combine_runs_args, file = combine_args_fn)
     }
@@ -4180,15 +4224,15 @@ rename_global_run <- function(run_name,
 ##' @author Jin Rou New, Leontine Alkema, Mark Wheldon
 ##' @export
 compare_runs_CI_plots <- function(run_name_1, run_name_2,
-                               run_1_output_folder_path = file.path("output", run_name_1),
-                               run_1_plot_label = run_name_1,
-                               run_2_output_folder_path = file.path("output", run_name_2),
-                               run_2_plot_label = run_name_2,
-                               output_folder_path = file.path(run_1_output_folder_path, "fig", "compare_runs_plots"),
-                               plot_data = NULL,
-                               all_women = NULL,
-                               compare_aggregates = TRUE,
-                               verbose = FALSE) {
+                                  run_1_output_folder_path = file.path("output", run_name_1),
+                                  run_1_plot_label = run_name_1,
+                                  run_2_output_folder_path = file.path("output", run_name_2),
+                                  run_2_plot_label = run_name_2,
+                                  output_folder_path = file.path(run_1_output_folder_path, "fig", "compare_runs_plots"),
+                                  plot_data = NULL,
+                                  all_women = NULL,
+                                  compare_aggregates = TRUE,
+                                  verbose = FALSE) {
 
     message("Plotting comparison of ", run_name_1, " and ", run_name_2)
 
@@ -4267,7 +4311,7 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 ##' un-processed directory doesn't even have 'mcmc.array.rda', which
 ##' means it's unlikely to be used.
 ##'
-##' @param output_folder_path Path to directory to validate.
+##' @param output_folder_path Path (or paths, if a vector) to directory to validate.
 ##' @param post_processed Logical; has \code{\link{post_process_mcmc}}
 ##'     been run on the directory?
 ##' @param countrytrajectories Logical; check for
@@ -4348,7 +4392,7 @@ assert_valid_output_dir <- function(output_folder_path,
             checkmate::assert_file_exists(file.path(output_folder_path, c("data.global.rda",
                                                                           "post_process_args.RData",
                                                                           "res.country.rda", "res.aggregate.rda")))
-            if (!isTRUE(mcmc.meta$general$is.age.adjusted.copy))
+            if (!isTRUE(mcmc.meta$general$is.age.calibrated))
                 checkmate::assert_file_exists(file.path(output_folder_path, c("mcmc.array.rda")))
         }
 

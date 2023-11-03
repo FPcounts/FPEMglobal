@@ -70,13 +70,33 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
         if (identical(as.double(sum(W.Lc.t[[country_name]])), 0)) {
             stop("Denominator counts for country '", country_name, "' are all zero. Denominator counts are read from 'res.country.rda'.")
         }
-    load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
+
+        load(file = file.path(dir.traj, country_rda_fname)) # change JR, 20140418
         for (t in 1:nyears){
-      cumsum.trad.ts[t,] <- cumsum.trad.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,1,]
-      cumsum.modern.ts[t,] <- cumsum.modern.ts[t,] + W.Lc.t[[country_name]][t]*P.tp3s[t,2,]
-      cumsum.unmet.ts[t,] <- cumsum.unmet.ts[t,] + W.Lc.t[[country_name]][t]*(P.tp3s[t,3,])
-      cumsumW.t[t] <- cumsumW.t[t] + W.Lc.t[[country_name]][t]
-    }
+            ## only increment non-missing cells
+            non_miss <- !is.na(cumsum.trad.ts[t,]) & !is.na(P.tp3s[t,"Traditional",])
+            if (!all(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for CP 'Traditional' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.trad.ts[t,non_miss] <- cumsum.trad.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Traditional",non_miss]
+
+            non_miss <- !is.na(cumsum.modern.ts[t,]) & !is.na(P.tp3s[t,"Modern",])
+            if (!all(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for CP 'Modern' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.modern.ts[t,non_miss] <- cumsum.modern.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Modern",non_miss]
+
+            non_miss <- !is.na(cumsum.unmet.ts[t,]) & !is.na(P.tp3s[t,"Unmet",])
+            if (!all(non_miss)) {
+                message("For '", country_name, "', ",
+                        sum(!non_miss), " out of ", n.s, " (", sum(!non_miss) / n.s * 100, "%) trajectories for 'Unmet' are 'NA'; these were ignored in creating aggregates.")
+            }
+            cumsum.unmet.ts[t,non_miss] <- cumsum.unmet.ts[t,non_miss] + W.Lc.t[[country_name]][t]*P.tp3s[t,"Unmet",non_miss]
+
+            cumsumW.t[t] <- cumsumW.t[t] + W.Lc.t[[country_name]][t]
+        }
     } # end country loop
 
   # divide by cumsumW.t (to have results same as for country results)
@@ -113,21 +133,21 @@ InternalGetAggregates <- function(#  Find aggregates for set of countries
     for (t in 1:nyears){
         ## Don't divide by zero!
         if(!any(cumsumW.t[t] == 0)) {
-    CIprop.Lcat.qt[["Traditional"]][,t] <- quantile(cumsum.trad.ts[t,]/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["TotalPlusUnmet"]][,t] <- quantile((cumsum.unmet.ts[t,]+cumsum.tot.ts[t,])/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["TradPlusUnmet"]][,t] <- quantile((cumsum.trad.ts[t,]+cumsum.unmet.ts[t,])/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["Modern"]][,t] <- quantile(cumsum.modern.ts[t,]/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["Total"]][,t] <- quantile(cumsum.tot.ts[t,]/cumsumW.t[t],  percentiles)
-    CIprop.Lcat.qt[["Unmet"]][,t] <- quantile(cumsum.unmet.ts[t,]/cumsumW.t[t], percentiles)
+    CIprop.Lcat.qt[["Traditional"]][,t] <- quantile(cumsum.trad.ts[t,]/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["TotalPlusUnmet"]][,t] <- quantile((cumsum.unmet.ts[t,]+cumsum.tot.ts[t,])/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["TradPlusUnmet"]][,t] <- quantile((cumsum.trad.ts[t,]+cumsum.unmet.ts[t,])/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["Modern"]][,t] <- quantile(cumsum.modern.ts[t,]/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["Total"]][,t] <- quantile(cumsum.tot.ts[t,]/cumsumW.t[t],  percentiles, na.rm = TRUE)
+    CIprop.Lcat.qt[["Unmet"]][,t] <- quantile(cumsum.unmet.ts[t,]/cumsumW.t[t], percentiles, na.rm = TRUE)
     CIratio.Lcat.qt[["Met Demand"]][,t]<- quantile(cumsum.tot.ts[t,]/
-                                (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles)
+                                (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles, na.rm = TRUE)
     CIratio.Lcat.qt[["Met Demand with Modern Methods"]][,t]<- quantile(cumsum.modern.ts[t,]/
-                                                     (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles) # change JR, 20140830: added demand met with modern methods
+                                                     (cumsum.tot.ts[t,]+cumsum.unmet.ts[t,]), percentiles, na.rm = TRUE) # change JR, 20140830: added demand met with modern methods
     CIratio.Lcat.qt[["Modern/Total"]][,t]<- quantile(cumsum.modern.ts[t,]/
-                                                     (cumsum.tot.ts[t,]), percentiles)
+                                                     (cumsum.tot.ts[t,]), percentiles, na.rm = TRUE)
 
     CIratio.Lcat.qt[["Z"]][,t]<- quantile(cumsum.unmet.ts[t,]/
-                                                     (cumsumW.t[t] - cumsum.tot.ts[t,]), percentiles)
+                                                     (cumsumW.t[t] - cumsum.tot.ts[t,]), percentiles, na.rm = TRUE)
     ## [MCW-2016-08-30-4] calculate means
     meanCIprop.Lcat.qt[["Traditional"]][,t] <- mean(cumsum.trad.ts[t,]/cumsumW.t[t],  na.rm = TRUE)
     meanCIprop.Lcat.qt[["TotalPlusUnmet"]][,t] <- mean((cumsum.unmet.ts[t,]+cumsum.tot.ts[t,])/cumsumW.t[t],  na.rm = TRUE)
@@ -1053,7 +1073,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("awra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             awra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            file.remove(file.path(agg.li.dir, filename.agg))
         }
         res.aggregate.list <- awra.CP.counts.agg.CIs.li
         rm(awra.CP.counts.agg.CIs.li)
@@ -1069,7 +1089,7 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("mwra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             mwra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            file.remove(file.path(agg.li.dir, filename.agg))
         }
         res.aggregate.list <- mwra.CP.counts.agg.CIs.li
         rm(mwra.CP.counts.agg.CIs.li)
@@ -1085,19 +1105,22 @@ GetAggregatesAllWomen <-
             filename.agg <- paste0("uwra_CP_counts_agg_li", "_", aggregates.names.df[aggregates.names.df$display.label == agg, "file.name"], ".RData")
             load(file = file.path(agg.li.dir, filename.agg))
             uwra.CP.counts.agg.CIs.li[[agg]] <- res.aggregate.list
-            if(!compress.RData) save(res.aggregate.list, file = file.path(agg.li.dir, filename.agg), compress = TRUE)
+            file.remove(file.path(agg.li.dir, filename.agg))
         }
         res.aggregate.list <- uwra.CP.counts.agg.CIs.li
         rm(uwra.CP.counts.agg.CIs.li)
         save(res.aggregate.list, file = file.path(agg.li.dir, "uwra_CP_counts_agg_li.RData"))
 
-        ## if(!compress.RData) {
-        ##     resaveRdaFiles(paths = aggregates.names.df$file.name, compress = "gzip")
-        ## }
-
         ## -------** Ratios
 
         message("\nMaking all women aggregate ratios")
+
+        ## -------*** Load
+
+        awra.res.aggregate.list <- get(load(file.path(agg.li.dir, "awra_CP_counts_agg_li.RData")))
+        mwra.res.aggregate.list <- get(load(file.path(agg.li.dir, "mwra_CP_counts_agg_li.RData")))
+        uwra.res.aggregate.list <- get(load(file.path(agg.li.dir, "uwra_CP_counts_agg_li.RData")))
+        rm(res.aggregate.list)
 
         ## -------*** Make Output Lists
 
@@ -1121,35 +1144,16 @@ GetAggregatesAllWomen <-
 
         for(agg in names(aggregates)) {
 
-            ## Load the aggregate counts for aw
-            load(file.path(agg.li.dir, "awra_CP_counts_agg_li.RData"))
-            awra.CP.counts.agg.W.Lg.t <- res.aggregate.list[[agg]][["W.Lg.t"]]
-            awra.CP.counts.agg <- res.aggregate.list[[agg]][["CP"]]
-                                # Object is called 'res.aggregate.list'
-                                # Choose only the elements needed and discard the rest
-
-            ## Load the aggregate counts for mw
-            load(file.path(agg.li.dir, "mwra_CP_counts_agg_li.RData"))
-            mwra.CP.counts.agg <- res.aggregate.list[[agg]][["CP"]]
-                                # Object is called 'res.aggregate.list'
-                                # Choose only the elements needed and discard the rest
-
-            ## Load the aggregate counts for uw
-            load(file.path(agg.li.dir, "uwra_CP_counts_agg_li.RData"))
-            uwra.CP.counts.agg <- res.aggregate.list[[agg]][["CP"]]
-                                # Object is called 'res.aggregate.list'
-                                # Choose only the elements needed and discard the rest
-
             ## Yearly estimates
             awra.CP.ratios.agg.CIs.li[[agg]][["CP"]] <-
                 InternalMakeRatios(ratios.names = ratios.names
-                                  ,counts.ar = awra.CP.counts.agg #already chosen only the '[[agg]][["CP"]]' component
-                                  ,tot.counts.mat = matrix(awra.CP.counts.agg.W.Lg.t
+                                  ,counts.ar = awra.res.aggregate.list[[agg]][["CP"]]
+                                  ,tot.counts.mat = matrix(awra.res.aggregate.list[[agg]][["W.Lg.t"]]
                                                           ,nrow = nrow(awra.CP.ratios.agg.CIs.li[[agg]][["CP"]][,1,])
                                                           ,ncol = ncol(awra.CP.ratios.agg.CIs.li[[agg]][["CP"]][,1,])
                                                            )
-                                  ,uwra.counts.ar = uwra.CP.counts.agg
-                                  ,mwra.counts.ar = mwra.CP.counts.agg
+                                  ,uwra.counts.ar = uwra.res.aggregate.list[[agg]][["CP"]]
+                                  ,mwra.counts.ar = mwra.res.aggregate.list[[agg]][["CP"]]
                                    )
 
             ## Change quantities
@@ -1184,6 +1188,11 @@ GetAggregatesAllWomen <-
                   ,function(z) CP.change.summ.f(z$CP)
                    )
 
+        ## -------*** Tidy Up
+
+        rm(mwra.res.aggregate.list)
+        rm(uwra.res.aggregate.list)
+
         ## -------** Probabilities
 
         message("\nMaking all women aggregate probabilities")
@@ -1201,15 +1210,10 @@ GetAggregatesAllWomen <-
 
         for(agg in names(aggregates)) {
 
-            ## Load the aggregate counts
-            load(file.path(agg.li.dir, "awra_CP_counts_agg_li.RData"))
-            res.aggregate.list <- res.aggregate.list[[agg]][["CP"]]
-                                # Choose only the elements needed and discard the rest
-
             ## Yearly estimates
             awra.CP.probs.agg.li[[agg]][["CP"]] <-
                 InternalMakeProbs(probs.names = probs.names
-                                 ,counts.ar = res.aggregate.list
+                                 ,counts.ar = awra.res.aggregate.list[[agg]][["CP"]]
                                   )
         }
 
@@ -1251,15 +1255,9 @@ GetAggregatesAllWomen <-
 
         for(agg in names(aggregates)) {
 
-            ## Load the aggregate counts
-            load(file.path(agg.li.dir, "awra_CP_counts_agg_li.RData"))
-            awra.CP.counts.agg.W.Lg.t <- res.aggregate.list[[agg]][["W.Lg.t"]]
-            res.aggregate.list <- res.aggregate.list[[agg]][["CP"]]
-                                # Choose only the elements needed and discard the rest
-
             ## Yearly estimates
             awra.CP.props.agg.CIs.li[[agg]][["CP"]] <-
-                res.aggregate.list / awra.CP.counts.agg.W.Lg.t
+                awra.res.aggregate.list[[agg]][["CP"]] / awra.res.aggregate.list[[agg]][["W.Lg.t"]]
 
             ## Change quantitites
             for(i in seq_len(nrow(years.change))) { # "2000-1990", etc.
@@ -1309,19 +1307,14 @@ GetAggregatesAllWomen <-
 
         for(agg in names(aggregates)) {
 
-            ## Load the aggregate counts
-            load(file.path(agg.li.dir, "awra_CP_counts_agg_li.RData"))
-            res.aggregate.list <- res.aggregate.list[[agg]][["CP"]]
-                                # Choose only the elements needed and discard the rest
-
             ## Change quantities
             for(i in seq_len(nrow(years.change))) { # "2000-1990", etc.
                 for(k in seq_len(n.iters)) {
                     a <- which(est.years == years.change[i,1])
                     b <- which(est.years == years.change[i,2])
                     awra.CP.changecounts.agg.CIs.li[[agg]][["CP"]][i, ,k] <-
-                        res.aggregate.list[b, ,k] -
-                        res.aggregate.list[a, ,k]
+                        awra.res.aggregate.list[[agg]][["CP"]][b, ,k] -
+                        awra.res.aggregate.list[[agg]][["CP"]][a, ,k]
                 }
             }
             for(i in seq_len(nrow(years.change2))) { # "(2000-1990) - (2010-2000)", etc.
@@ -1330,10 +1323,10 @@ GetAggregatesAllWomen <-
                     b <- which(est.years == years.change2[i,2])
                     c <- which(est.years == years.change2[i,3])
                     awra.CP.changecounts.agg.CIs.li[[agg]][["CP"]][nrow(years.change) + i, ,k] <-
-                        (res.aggregate.list[b, ,k] -
-                         res.aggregate.list[a, ,k]) -
-                        (res.aggregate.list[c, ,k] -
-                         res.aggregate.list[b, ,k])
+                        (awra.res.aggregate.list[[agg]][["CP"]][b, ,k] -
+                         awra.res.aggregate.list[[agg]][["CP"]][a, ,k]) -
+                        (awra.res.aggregate.list[[agg]][["CP"]][c, ,k] -
+                         awra.res.aggregate.list[[agg]][["CP"]][b, ,k])
                 }
             }
         }
@@ -1341,9 +1334,8 @@ GetAggregatesAllWomen <-
         ## -------*** Summarize
 
         ## Load aggregate counts
-        load(file.path(agg.li.dir, "awra_CP_counts_agg_li.RData"))
-        awra.CP.counts.agg.CIs.li <- res.aggregate.list
-        rm(res.aggregate.list)
+        awra.CP.counts.agg.CIs.li <- awra.res.aggregate.list
+        rm(awra.res.aggregate.list)
 
         ## Put denominator counts outside the aggregates in prep for export
         W.Lg.t <-
@@ -1587,28 +1579,30 @@ GetAggregatesAgeRatios <-
                 }
             }
 
+            ## -------** LOAD the aggregates
+
+            age.subset.res.aggregate.list <-
+                get(load(file.path(age.subset.aggtraj.dir,
+                                   paste0(marr, "_CP_counts_agg_li.RData"))))
+
+            age.total.res.aggregate.list <-
+                get(load(file.path(age.total.aggtraj.dir,
+                                   paste0(marr, "_CP_counts_agg_li.RData"))))
+
+            rm(res.aggregate.list) # remove the duplicate obj
+
             ## -------** Check saved aggregate count trajectories
 
-            ## Just load the first country from each to check dates.
-            subset1.aggregate <- get(load(file.path(age.subset.aggtraj.dir
-                                                   ,grep("CP_counts_agg_li", dir(age.subset.aggtraj.dir), value = TRUE)[1]
-                                                    )))
-            total1.aggregate <- get(load(file.path(age.total.aggtraj.dir
-                          ,grep("CP_counts_agg_li", dir(age.subset.aggtraj.dir), value = TRUE)[1]
-                           )))
-
-            if(!("CP" %in% names(subset1.aggregate))) subset1.aggregate <- subset1.aggregate[[1]]
-            if(!("CP" %in% names(total1.aggregate))) total1.aggregate <- total1.aggregate[[1]]
-
             ## Get number of iterations: Which is the smaller of mcmc arrays
-            n.iters <- min(dim(subset1.aggregate$CP)[3], dim(total1.aggregate$CP)[3])
+            n.iters <- min(dim(age.subset.res.aggregate.list[[1]]$CP)[3],
+                           dim(age.total.res.aggregate.list[[1]]$CP)[3])
 
             ## -------*** Estimation years
 
             ## -------**** Single years
 
-            age.subset.years <- dimnames(subset1.aggregate$CP)[[1]]
-            age.total.years <- dimnames(total1.aggregate$CP)[[1]]
+            age.subset.years <- dimnames(age.subset.res.aggregate.list[[1]]$CP)[[1]]
+            age.total.years <- dimnames(age.total.res.aggregate.list[[1]]$CP)[[1]]
 
             if(is.null(est.years)) est.years <- age.subset.years
 
@@ -1634,87 +1628,57 @@ GetAggregatesAgeRatios <-
 
             ## -------*** Aggregates saved
 
-            age.subset.agg.saved <-
-                sapply(strsplit(sapply(strsplit(dir(age.subset.aggtraj.dir,
-                                                    pattern = marr),
-                                                split = "\\."), function(z) {
-                    paste(head(z, -1), collapse = ".")
-                }),
-                split = "_"), function(z) {
-                    if(length(z) >= 6) paste(tail(z, -5), collapse = "_")
-                    else NA                 #There is a file
-                                #"[marr]_CP_counts_agg_li.RData"; i.e.,
-                                #no aggregate name.
-                })
+            age.subset.agg.saved <- names(age.subset.res.aggregate.list)
             age.subset.agg.saved <- na.omit(age.subset.agg.saved)
 
-            age.total.agg.saved <-
-                sapply(strsplit(sapply(strsplit(dir(age.total.aggtraj.dir,
-                                                    pattern = marr),
-                                                split = "\\."), function(z) {
-                    paste(head(z, -1), collapse = ".")
-                }),
-                split = "_"), function(z) {
-                    if(length(z) >= 6) paste(tail(z, -5), collapse = "_")
-                    else NA                 #For some reason there is a file
-                                #"uwra_CP_counts_agg_li.RData"; i.e.,
-                                #no aggregate name.
-                })
+            age.total.agg.saved <- names(age.total.res.aggregate.list)
             age.total.agg.saved <- na.omit(age.total.agg.saved)
 
-            agg.both.file.name <- intersect(age.subset.agg.saved, age.total.agg.saved)
-            agg.both.file.name <- intersect(agg.both.file.name, aggregates.names.df$file.name)
+            agg.both.agg.name <- intersect(age.subset.agg.saved, age.total.agg.saved)
 
             aggregates.names.df <-
-                aggregates.names.df[aggregates.names.df$file.name %in% agg.both.file.name,]
+                aggregates.names.df[aggregates.names.df$display.label %in% agg.both.agg.name,]
 
             ## -------*** CHECK
 
-            if(identical(as.double(length(agg.both.file.name)), 0)) {
+            if(identical(as.double(length(agg.both.agg.name)), 0)) {
                 stop("The age subset and age total (15--49) runs have no saved aggregates trajectories in common.")
             }
-
-            ## -------** Tidy Up
-
-            ## Memory useage has been a problem. This might help...
-            rm(list = c("subset1.aggregate", "total1.aggregate"))
 
             ## -------** AGGREGATES
 
             ## -------*** Make Output Lists
 
+            res.aggregate.age.ratio.list <-
+                InternalMakeAggLists(aggregates = agg.both.agg.name,
+                                     n.iters = n.iters,
+                                     years.names = age.subset.years,
+                                     d2.names = counts.names)
+
             ## These will eventually just have the CIs
             age.ratio.CP.ratios.CIs.li <-
-                lapply(agg.both.file.name,
+                lapply(agg.both.agg.name,
                        function(z) array(dim = c(5, length(est.years), length(counts.names)),
                                          dimnames = list(NULL, est.years, counts.names)))
             names(age.ratio.CP.ratios.CIs.li) <- aggregates.names.df$display.label
 
             age.ratio.CP.changeratios.CIs.li <-
-                lapply(agg.both.file.name, function(z) array(dim = c(6, length(changes.years.names)
+                lapply(agg.both.agg.name, function(z) array(dim = c(6, length(changes.years.names)
                                                , length(counts.names)),
                                          dimnames = list(NULL, changes.years.names, counts.names)))
             names(age.ratio.CP.changeratios.CIs.li) <- aggregates.names.df$display.label
 
             ## -------*** Loop over aggregates
 
-            for(x in seq_along(agg.both.file.name)) {
+            for(x in agg.both.agg.name) {
 
                 ## -------**** Load aggregates
 
-                load(file.path(age.subset.aggtraj.dir,
-                               paste0(marr, "_CP_counts_agg_li_",
-                                      agg.both.file.name[x], ".RData")
-                               ))
                 age.subset.CP.counts.j <-
-                    res.aggregate.list$CP[as.character(est.years), counts.names, 1:n.iters]
+                    age.subset.res.aggregate.list[[x]]$CP[as.character(est.years), counts.names, 1:n.iters]
 
-                load(file.path(age.total.aggtraj.dir,
-                               paste0(marr, "_CP_counts_agg_li_",
-                                      agg.both.file.name[x], ".RData")
-                               ))
                 age.total.CP.counts.j <-
-                    res.aggregate.list$CP[as.character(est.years), counts.names, 1:n.iters]
+                    age.total.res.aggregate.list[[x]]$CP[as.character(est.years), counts.names, 1:n.iters]
 
                 ## -------**** Calculate Age Ratios
 
@@ -1753,24 +1717,25 @@ GetAggregatesAgeRatios <-
 
                 ## -------**** Save aggregate trajectories
 
-                save(age.ratio.CP.ratios.j,
-                     file = file.path(age.subset.aggtraj.dir,
-                                      paste0(marr, "_age_ratios_",
-                                             agg.both.file.name[x], ".RData")))
+                res.aggregate.age.ratio.list[[x]] <- age.ratio.CP.ratios.j
 
                 ## -------**** Summarize ratios
 
                 ## Estimation years
-                age.ratio.CP.ratios.CIs.li[[aggregates.names.df[aggregates.names.df$file.name == agg.both.file.name[x],
-                                                          "display.label"]]] <-
+                age.ratio.CP.ratios.CIs.li[[aggregates.names.df[aggregates.names.df$display.label == x, "display.label"]]] <-
                     apply(age.ratio.CP.ratios.j, c(1, 2), "CP.summ.f")
 
                 ## Change quantities
-                age.ratio.CP.changeratios.CIs.li[[aggregates.names.df[aggregates.names.df$file.name == agg.both.file.name[x],
-                                                                "display.label"]]] <-
+                age.ratio.CP.changeratios.CIs.li[[aggregates.names.df[aggregates.names.df$display.label == x, "display.label"]]] <-
                     apply(age.ratio.CP.change.countratios.j, c(1, 2), "CP.change.summ.f")
 
             } ## END aggregate loop
+
+            ## -------*** Save the Full List of Aggregates
+
+            save(res.aggregate.age.ratio.list,
+                 file = file.path(age.subset.aggtraj.dir,
+                                   paste0(marr, "_CP_counts_age_ratios_agg_li.RData")))
 
             ## -------*** Prepare Outputs
 

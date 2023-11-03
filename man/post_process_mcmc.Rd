@@ -20,6 +20,7 @@ post_process_mcmc(
   model_diagnostics = TRUE,
   make_any_aggregates = TRUE,
   special_aggregates_name = NULL,
+  summarize_global_run = TRUE,
   age_ratios_age_total_run_name = NULL,
   age_ratios_age_total_output_folder_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
@@ -75,6 +76,8 @@ desired. There must be a corresponding file with name
 \file{\code{special_aggregates_name}.csv} in
 \code{input_data_folder_path} that defines the special
 aggregates. See \dQuote{Details}.}
+
+\item{summarize_global_run}{Logical; should the model summary for one-country runs be produced?}
 
 \item{age_ratios_age_total_run_name}{Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.}
 
