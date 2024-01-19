@@ -141,7 +141,7 @@ do_global_all_women_run(...,    #other arguments
 
 ### Survey Estimates and Classifications 
 
-Required and optional input data are listed in the table below. The required input data sets (for 2019) are supplied with the package as '.csv' files. Type 'Est.' (for 'Estimate') indicates an input that consists of survey-based estimates of a demographic indicator; type 'Class.' (for 'Classification') indicates an input that consists of definitions, or classifications, that group countries together or select subsets of countries for particular operations. To access the input files in _R_ see later. The arguments used in functions that require them are listed along with their defaults (second table).
+Required and optional input data are listed in the table below. The required input data sets are supplied with the package as '.csv' files. Type 'Est.' (for 'Estimate') indicates an input that consists of survey-based estimates of a demographic indicator; type 'Class.' (for 'Classification') indicates an input that consists of definitions, or classifications, that group countries together or select subsets of countries for particular operations. To access the input files in _R_ see later. The arguments used in functions that require them are listed along with their defaults (second table).
 
 |          | Type   | Input                                      | Argument                                |
 |----------+--------+--------------------------------------------+-----------------------------------------|
@@ -164,8 +164,8 @@ Sources and citations for the included files are in the next table. The default 
 
 | Input                                      | Source                                                                                                                                                |
 |--------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Prevalence estimates from national surveys | _World Contraceptive Use by Marital Status and Age, 2017_ [@un_desa_pd_WCUMA_2017]                                                                    |
-| Number of women by marital status and age  | _Estimates and Projections of Women of Reproductive Age Who Are Married or in a Union: 2018 Revision_ [@undesa_pd2018_estim_projec_women_reprod_age]. |
+| Prevalence estimates from national surveys | _World Contraceptive Use, 2022_ [@un_desa_pd_WCUMA_2022]                                                                    |
+| Number of women by marital status and age  | _Estimates and Projections of Women of Reproductive Age Who Are Married or in a Union 2022_ [@undesa_pd2022_estim_projec_women_reprod_age]. |
 | Country region information                 | Areas and regions: _Standard Country or Area Codes for Statistical Use (M49)_ [@UN_M49]; sexual activity among unmarried women: [@kantorova18_contr]. |
 
 
@@ -403,46 +403,47 @@ The lowest level of control over output generation is obtained by calling the Le
  ## Produce plots, tables
  make_results(unmarried_run_name)
  
-```
+``` 
 
 In the following sections two additional types of outputs are discussed: special aggregates and adjusted medians. The nature of these outputs is explained in the respective sections. The table below gives a summary of the function call sequences needed to produce various combinations of outputs from a completed model run, including these two additional types. The completed run could have been obtained from any of the `do_...` functions. In the example calls, default values of arguments are assumed and are not explicitly specified. It is further assumed that the appropriate `run_name`s are passed as the first argument to all functions.
 
-+-----------------------+--------------------------------+---------------------------------------------------------------+
+
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
 | Marital Group         | Output                         | Function call sequence                                                         |
-+=======================+================================+===============================================================+
++=======================+================================+================================================================================+
 | Married and unmarried | Standard aggregates            | `post_process_mcmc` \                                                          |
 |                       |                                | `make_results`                                                                 |
-+-----------------------+--------------------------------+--------------------------------------------------------------+
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
 |                       | Special aggregates             | `post_process_mcmc(..., special_aggregates_name = "[name]")` \                 |
 |                       |                                | `make_results(..., special_aggregates_name = "[name]")`                        |
-+-----------------------+--------------------------------+--------------------------------------------------------------+
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
 |                       | Adj. medians, country level    | `post_process_mcmc` \                                                          |
 |                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
-+-----------------------+--------------------------------+---------------------------------------------------------------+
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
 |                       | Adj. medians, std. aggregates  | `post_process_mcmc` \                                                          |
 |                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
-+-----------------------+--------------------------------+--------------------------------------------------------------+
-|                       | Adj. medians, spec. aggregates | `post_process_mcmc(..., special_aggregates_name = "[name]")`  \                |
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
+|                       | Adj. medians, spec. aggregates | `post_process_mcmc(..., special_aggregates_name = "[name]")` \                 |
 |                       |                                | `make_results(..., adjust_medians = TRUE, special_aggregates_name = "[name]")` |
-+-----------------------+--------------------------------+---------------------------------------------------------------+
-| All women             | Standard aggregates            | `combine_runs`       \                                                         |
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
+| All women             | Standard aggregates            | `combine_runs` \                                                               |
 |                       |                                | `make_results`                                                                 |
-+-----------------------+--------------------------------+---------------------------------------------------------------+
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
 |                       | Special aggregates             | `combine_runs(..., special_aggregates_name = "[name]")` \                      |
 |                       |                                | `make_results(..., special_aggregates_name = "[name]")`                        |
-+-----------------------+--------------------------------+---------------------------------------------------------------+
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
 |                       | Adj. medians, country level    | Adj. medians for married and unmarried \                                       |
 |                       |                                | `combine_runs(..., adjust_medians = TRUE)` \                                   |
 |                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
-+-----------------------+--------------------------------+---------------------------------------------------------------+
-|                       | Adj. medians, std. aggregates  | Adj. medians for married and unmarried   \                                     |
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
+|                       | Adj. medians, std. aggregates  | Adj. medians for married and unmarried \                                       |
 |                       |                                | `combine_runs(..., adjust_medians = TRUE)` \                                   |
 |                       |                                | `make_results(..., adjust_medians = TRUE)`                                     |
-+-----------------------+--------------------------------+--------------------------------------------------------------+
-|                       | Adj. medians, spec. aggregates | Adj. medians for married and unmarried   \                                     |
-|                       |                                | `combine_runs(..., adjust_medians = TRUE, special_aggregates_name = "[name]")` \ |
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
+|                       | Adj. medians, spec. aggregates | Adj. medians for married and unmarried \                                      \|
+|                       |                                | `combine_runs(..., adjust_medians = TRUE, special_aggregates_name = "[name]")`\|
 |                       |                                | `make_results(..., adjust_medians = TRUE, special_aggregates_name = "[name]")` |
-+-----------------------+--------------------------------+--------------------------------------------------------------+
++-----------------------+--------------------------------+--------------------------------------------------------------------------------+
 
 
 ## Special Aggregates 

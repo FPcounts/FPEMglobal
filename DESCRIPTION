@@ -2,8 +2,8 @@ Package: FPEMglobal
 Type: Package
 Title: Estimation of Contraceptive Use for All Women
 Version: 1.6.0.9000
-Date: 2022-07-20
-Authors@R: c(person("Mark", "Wheldon", email = "wheldon@un.org", role = c("aut", "cre")),
+Date: 2024-01-19
+Authors@R: c(person(given = c("Mark", "C."), "Wheldon", email = "wheldon@un.org", role = c("aut", "cre")),
              person("Jin Rou", "New", email = "lalkema@schoolph.umass.edu", role = "aut"),
              person("Niamh", "Cahill", email = "niamh.cahill@ucd.ie", role = "aut"), 
              person("Greg", "Gu", email = "gguranic@umass.edu", role = "aut"), 
@@ -13,7 +13,7 @@ Authors@R: c(person("Mark", "Wheldon", email = "wheldon@un.org", role = c("aut",
              person("ChuChu", "Wei", email = "chuchuwei@umass.edu", role = "ctb"),
              person("Kristin", "Bietsch", email = "KBietsch@avenirhealth.org", role = "ctb"),	     
              person("Marilou", "Vicente", email = "vicente@un.org", role = "ctb"))
-Description: Provides contraceptive use estimates for all (married/partnered and unmarried) women.
+Description: Implements the FPEMglobal model for producing estimates and projections of contraceptive use and unmet need for family planning among married, unmarried, and all women.
 URL: https://github.com/AvenirHealth/FPET-all-women
 BugReports: https://github.com/AvenirHealth/FPET-all-women/issues
 License: MIT
