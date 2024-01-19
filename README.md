@@ -26,7 +26,7 @@ Follow one of the following three options:
     remotes::install_github(repo = "https://github.com/FPcounts/FPEMglobal", 
 	                        ref = remotes::github_release(), 
                             build_manual = TRUE, build_vignettes = TRUE, dependencies = TRUE)
-```
+    ```
 
     `repo` is the only mandatory argument. If you encounter any problems you can try omitting any, or all, of the others. If you do not supply the `ref` argument, or if you change it, you may end up installing an old release or one that is in development and not fully tested. 
 
