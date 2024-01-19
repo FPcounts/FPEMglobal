@@ -23,11 +23,13 @@ Follow one of the following three options:
 2. In _R_, type:
 
     ```
-    remotes::install_github(repo = "https://github.com/FPcounts/FPEMglobal", ref = remotes::github_release(), 
+    remotes::install_github(repo = "https://github.com/FPcounts/FPEMglobal", 
+	                        ref = remotes::github_release(), 
                             build_manual = TRUE, build_vignettes = TRUE, dependencies = TRUE)
 ```
 
     `repo` is the only mandatory argument. If you encounter any problems you can try omitting any, or all, of the others. If you do not supply the `ref` argument, or if you change it, you may end up installing an old release or one that is in development and not fully tested. 
+
 
 
 ### 2. From the .zip File (Windows Only)
@@ -41,6 +43,7 @@ Follow one of the following three options:
     ```
 
     You will need to edit the first argument to ensure you enter the correct file path to the zip file. `<x.y.z>` should be replaced by the actual version number. You will also need to install any package depencencies according to the notices that come up.
+
 
 
 ### 3. From Source
@@ -57,6 +60,7 @@ You will need to have basic knowledge of _Git_, _GitHub_, and the command line i
 	In the last command, `<x.y.z>` should be replaced by the actual version number. 
 	
 	If you get errors related to the vignette, try modifying the first command as follows: `R CMD build --no-build-vignettes FPEMglobal`. If you are on Windows and you get an error after a line of output containing "i386" , try modifying the second command as follows: `R CMD INSTALL --no-multiarch FPEMglobal_<x.y.z>.tar.gz` (replacing `<x.y.z>` accordingly). If you still have problems, follow the instructions above to install from the zip file. 
+	
 	
 	
 ## Documentation
