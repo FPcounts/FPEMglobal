@@ -9,46 +9,54 @@ The views expressed herein are those of the authors and do not necessarily refle
 
 ## Installation
 
-Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v4.0.0 (64 bit) and _JAGS_ v4.3.0. 
+Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v4.0.0--v.4.3.1 (64 bit) and _JAGS_ v4.3.0--v4.3.1. 
 
-Follow _one_ of the following three options:
+**WARNING** Errors have been reported when using FPEMglobal with _JAGS_ v4.3.2. Fixing this is an open [issue](https://github.com/FPcounts/FPEMglobal/issues/3). 
+
+
+Follow one of the following three options:
 
 
 ### 1. Straight from GitHub
 
-You will need to install the _R_ package [remotes](https://cran.r-project.org/package=remotes). Then try 
+1. Make sure you have installed the _R_ package [remotes](https://cran.r-project.org/package=remotes). 
+2. In _R_, type:
 
-```
-remotes::install_github(repo = "https://github.com/FPcounts/FPEMglobal", 
-                        build_manual = TRUE, build_vignettes = TRUE, dependencies = TRUE)
+    ```
+    remotes::install_github(repo = "https://github.com/FPcounts/FPEMglobal", ref = remotes::github_release(), 
+                            build_manual = TRUE, build_vignettes = TRUE, dependencies = TRUE)
 ```
 
-`repo` is the only mandatory argument. If you encounter any problems you can try omitting any, or all, of the others. 
+    `repo` is the only mandatory argument. If you encounter any problems you can try omitting any, or all, of the others. If you do not supply the `ref` argument, or if you change it, you may end up installing an old release or one that is in development and not fully tested. 
 
 
 ### 2. From the .zip File (Windows Only)
 
-Download the file "FPEMglobal_1.2.0.zip" from the [release page](https://github.com/FPcounts/FPEMglobal/releases/tag/v1.2.0) (click "Assets" if it is not shown). To install, launch _R_ and type:
+1. Go to the [release page](https://github.com/FPcounts/FPEMglobal/releases)
+2. Download the zip file for the latest release (at the top of the list). It will have a filename of the form "FPEMglobal_x.y.z.zip" where "x.y.z" are numbers indicating the version. If the zip file is not visible, click "Assets". 
+3. Install the package: launch _R_ and type:
 
-```
-install.packages("[path/to/FPEMglobal_1.2.0.zip]", repos = NULL)
-```
+    ```
+    install.packages("[path/to/FPEMglobal_<x.y.z>.zip]", repos = NULL)
+    ```
 
-You will need to enter the correct file path to the zip file. You will also need to install any package depencencies according to the notices that come up.
+    You will need to edit the first argument to ensure you enter the correct file path to the zip file. `<x.y.z>` should be replaced by the actual version number. You will also need to install any package depencencies according to the notices that come up.
 
 
 ### 3. From Source
 
-To install from source try
+You will need to have basic knowledge of _Git_, _GitHub_, and the command line interface on your system to use this option. 
 
 1. Clone the repository to your local drive.
-2. Open a terminal or command prompt window in the directory containing the cloned repository (the directory containing the directory 'FPEMglobal').
+2. Open a terminal or command prompt window in the directory containing the cloned repository (the directory containing the directory "FPEMglobal").
 3. Issue the following commands:
     ```
 	R CMD build FPEMglobal
-	R CMD INSTALL FPEMglobal_1.2.0.tar.gz
+	R CMD INSTALL FPEMglobal_<x.y.z>.tar.gz
     ```
-	If you get errors related to the vignette, try modifying the first command as follows: `R CMD build --no-build-vignettes FPEMglobal`. If you are on Windows and you get an error after a line of output containing "i386" , try modifying the second command as follows: `R CMD INSTALL --no-multiarch FPEMglobal_1.2.0.tar.gz`. If you still have problems, follow the instructions above to install from the .zip file. 
+	In the last command, `<x.y.z>` should be replaced by the actual version number. 
+	
+	If you get errors related to the vignette, try modifying the first command as follows: `R CMD build --no-build-vignettes FPEMglobal`. If you are on Windows and you get an error after a line of output containing "i386" , try modifying the second command as follows: `R CMD INSTALL --no-multiarch FPEMglobal_<x.y.z>.tar.gz` (replacing `<x.y.z>` accordingly). If you still have problems, follow the instructions above to install from the zip file. 
 	
 	
 ## Documentation
