@@ -725,7 +725,7 @@ InternalRunOneChain <- function(#Do MCMC sampling
   #--- update MCMC ----------
   if (mcmc.meta$general$N.STEPS >1){
     for (i in 2:(mcmc.meta$general$N.STEPS)){
-      mod.upd <-rjags::update(mod.upd, parameters.to.save=unlist(mcmc.meta$parnames.list), # change JR, 20131104
+      mod.upd <-update(mod.upd, parameters.to.save=unlist(mcmc.meta$parnames.list), # change JR, 20131104
                        n.iter=mcmc.meta$general$N.ITER/mcmc.meta$general$N.STEPS,
                        n.thin=mcmc.meta$general$N.THIN)
       save(mod.upd, file = file.path(mcmc.meta$general$output.dir, "temp.JAGSobjects", paste0("jags_mod", filename.append, chainNum, "update_", i, ".Rdata"))) # change JR, 20140414 # change JR, 20140418

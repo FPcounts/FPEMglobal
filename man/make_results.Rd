@@ -89,6 +89,9 @@ the full set of maps are produced for each of the years
 listed. These must be in the range of \code{start_year} and
 \code{end_year} passed to \code{\link{post_process_mcmc}}.}
 
+\item{plot_parameters}{Logical. Should posterior quantiles of
+model parameters be added to the plots in legend boxes?}
+
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
 
