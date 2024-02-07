@@ -102,15 +102,25 @@ report_file_copy <- function(succeeded, filename, to_directory, from_directory,
 copy_data_files <- function(run_name, data_dir,
                             data_local = file.path("output", run_name, "data")) {
     if(!dir.exists(data_local)) dir.create(data_local, recursive = TRUE)
-    for(nm in list.files(data_dir, pattern = "\\.csv$")) {
+    for(nm in list.files(data_dir, pattern = "\\.csv$", recursive = TRUE)) {
         if(!is.null(data_dir)) {
-            succeeded <- file_copy2(from = file.path(data_dir, nm), to = data_local,
-                                   overwrite = FALSE)
+            succeeded <- file_copy2(from = file.path(data_dir, nm),
+                                    to = data_local,
+                                   overwrite = TRUE)
         } else {
             succeeded <- file_copy2(from = nm, to = data_local,
-                                   overwrite = FALSE)
+                                   overwrite = TRUE)
         }
         report_file_copy(succeeded, nm, data_local, data_dir)
+    }
+    ## Subdirectories
+    subdirs <- list.dirs(data_dir, full.names = FALSE, recursive = FALSE)
+    if (length(subdirs)) {
+        for (sd in subdirs) {
+            copy_data_files(run_name,
+                            file.path(data_dir, sd),
+                            data_local = file.path("output", run_name, "data", sd))
+        }
     }
 }
 
