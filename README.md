@@ -11,8 +11,6 @@ The views expressed herein are those of the authors and do not necessarily refle
 
 Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v4.0.0--v.4.3.1 (64 bit) and _JAGS_ v4.3.0--v4.3.1. 
 
-**WARNING** Errors have been reported when using FPEMglobal with _JAGS_ v4.3.2. Fixing this is an open [issue](https://github.com/FPcounts/FPEMglobal/issues/3). 
-
 
 Follow one of the following three options:
 
