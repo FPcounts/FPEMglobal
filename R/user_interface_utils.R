@@ -94,7 +94,7 @@ report_file_copy <- function(succeeded, filename, to_directory, from_directory,
                 file = log_file, sep = "", append = TRUE)
         } else {
             message("\n'", filename, "' NOT copied from '", from_directory,
-                    "', to '", new_filename, "'; it probably already exists.")
+                    "', to '", new_filename, "'.")
         }
     }
 }
@@ -128,11 +128,19 @@ copy_uwra_mwra_files <-
     function(filename, awra_output_folder_path, mwra_uwra_output_folder_path,
              new_filename = filename,
              return = FALSE) {
-        if(!dir.exists(mwra_uwra_output_folder_path)) stop("'", mwra_uwra_output_folder_path, "' does not exist.")
-        if(!dir.exists(awra_output_folder_path)) stop("'", awra_output_folder_path, "' does not exist.")
+        if (!dir.exists(mwra_uwra_output_folder_path)) stop("'", mwra_uwra_output_folder_path, "' does not exist.")
+        if (!dir.exists(awra_output_folder_path)) stop("'", awra_output_folder_path, "' does not exist.")
+        if (!identical(dirname(new_filename), ".")) {
+            to_path <- file.path(awra_output_folder_path, dirname(new_filename))
+            if (!dir.exists(to_path)) dir.create(to_path, recursive = TRUE)
+            to_filename <- basename(new_filename)
+        } else {
+            to_path <- awra_output_folder_path
+            to_filename <- new_filename
+        }
         succeeded <- file_copy2(from = file.path(mwra_uwra_output_folder_path, filename),
-                               to = file.path(awra_output_folder_path, new_filename),
-                               overwrite = FALSE)
+                                to = file.path(to_path, to_filename),
+                                overwrite = FALSE)
         report_file_copy(succeeded, filename, awra_output_folder_path, mwra_uwra_output_folder_path,
                          new_filename)
         if(return) return(succeeded)
