@@ -14,5 +14,6 @@ source("R/F_plotextra.R", local = TRUE)
 #' @import coda
 #' @import foreach
 #' @import MCMCpack
+#' @import rjags
 #'
 NULL
