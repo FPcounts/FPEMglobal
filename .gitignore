@@ -1,2 +1,3 @@
 .Rhistory
 inst/slowTests/output/*
+.Rproj.user
