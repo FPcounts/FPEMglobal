@@ -1808,23 +1808,8 @@ CompareAdjMedians <- function(run.name = "test",
                                               ,ifelse(!is.null(adj.method), paste0("_", adj.method), "")
                                               ,".csv"))
 
-                ## Need to keep names from getting too long!
-                fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
+            ## Need to keep names from getting too long!
+            fnm <- makeShortIndicatorFileName(fnm)
 
             if(all.women && all.womenize.table.name) {
                 fnm <- file.path(dirname(fnm), makeAWFileName(basename(fnm)))
@@ -1854,23 +1839,8 @@ CompareAdjMedians <- function(run.name = "test",
                                               ,ifelse(!is.null(adj.method), paste0("_", adj.method), "")
                                               ,".csv"))
 
-                ## Need to keep names from getting too long!
-                fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
+            ## Need to keep names from getting too long!
+            fnm <- makeShortIndicatorFileName(fnm)
 
             if(all.women && all.womenize.table.name) {
                 fnm <- file.path(dirname(fnm), makeAWFileName(basename(fnm)))
@@ -1898,23 +1868,8 @@ CompareAdjMedians <- function(run.name = "test",
                                               ,ifelse(!is.null(adj.method), paste0("_", adj.method), "")
                                               ,".csv"))
 
-                ## Need to keep names from getting too long!
-                fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
-                fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                           ,fnm, fixed = TRUE)
+            ## Need to keep names from getting too long!
+            fnm <- makeShortIndicatorFileName(fnm)
 
             if(all.women && all.womenize.table.name) {
                 fnm <- file.path(dirname(fnm), makeAWFileName(basename(fnm)))

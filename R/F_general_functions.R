@@ -64,6 +64,33 @@ makeFileName <- function(x, safe = "_", disallowed = "\\./|\\*|<|\\\\|>|:|\\||\\
     gsub(disallowed, safe, x = x)
 }
 
+
+##' Shorten indicator names for use in file names
+##'
+##' Need to keep names from getting too long!
+##' @param fnm file name
+##' @return shortened file name
+##' @author Mark Wheldon
+##' @noRd
+makeShortIndicatorFileName <- function(fnm) {
+      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
+                 ,fnm, fixed = TRUE)
+      fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
+                 ,fnm, fixed = TRUE)
+      fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
+                 ,fnm, fixed = TRUE)
+      fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
+                 ,fnm, fixed = TRUE)
+      fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
+                 ,fnm, fixed = TRUE)
+      fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
+                 ,fnm, fixed = TRUE)
+      fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
+                 ,fnm, fixed = TRUE)
+    return(fnm)
+}
+
+
 ##' Make subdirectory name for special aggregates
 ##'
 ##' @param file.aggregates
