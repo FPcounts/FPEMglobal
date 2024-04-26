@@ -193,8 +193,7 @@ GetTablesRes <- function(# Save csv's with CIs for proportions and counts
                  ,paste(c(unlist(strsplit(names(CI.Lg.Lcat.qt[[1]])[i]
                                          ,split = "/")))
                        ,collapse = "Over"))
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                 ,fnm, fixed = TRUE)
+      fnm <- makeShortIndicatorFileName(fnm)
 
         fnm <- gsub("region[s]*", "", fnm)
         fnm <- gsub("__", "_", fnm, fixed = TRUE)
@@ -354,22 +353,7 @@ GetTablesResAllWomen <-
                                          ,split = "/")))
                        ,collapse = "Over"))
       ## Need to keep names from getting too long!
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-           ,fnm, fixed = TRUE)
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
+      fnm <- makeShortIndicatorFileName(fnm)
 
         fnm <- gsub("region[s]*", "", fnm)
         fnm <- gsub("__", "_", fnm, fixed = TRUE)
@@ -511,22 +495,7 @@ GetTablesChange <- function(# Save csv's with CIs for change in proportions and 
                                          ,split = "/")))
                        ,collapse = "Over"))
       ## Need to keep names from getting too long!
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-           ,fnm, fixed = TRUE)
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
+      fnm <- makeShortIndicatorFileName(fnm)
 
         fnm <- gsub("region[s]*", "", fnm)
         fnm <- gsub("__", "_", fnm, fixed = TRUE)
@@ -629,22 +598,7 @@ GetTablesChangeAllWomen <- function(# Save csv's with CIs for change in proporti
                                          ,split = "/")))
                        ,collapse = "Over"))
       ## Need to keep names from getting too long!
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-           ,fnm, fixed = TRUE)
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
+      fnm <- makeShortIndicatorFileName(fnm)
 
         fnm <- gsub("region[s]*", "", fnm)
         fnm <- gsub("__", "_", fnm, fixed = TRUE)
@@ -775,23 +729,8 @@ GetLancetBigTable <- function(run.name = "test",
                   ,indicator.1, "_", indicator.2, "_"
                  ,paste(year1, year2, sep = "_"))
 
-         ## Need to keep names from getting too long!
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-           ,fnm, fixed = TRUE)
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
+    ## Need to keep names from getting too long!
+    fnm <- makeShortIndicatorFileName(fnm)
 
     fnm <- gsub("region[s]*", "", fnm)
     fnm <- gsub("__", "_", fnm, fixed = TRUE)
@@ -963,23 +902,8 @@ GetLancetBigTableAllWomen <- function(run.name = "test",
                   ,indicator.1, "_", indicator.2, "_"
                  ,paste(year1, year2, sep = "_"))
 
-         ## Need to keep names from getting too long!
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-           ,fnm, fixed = TRUE)
-      fnm <- gsub("Met Demand with Modern Methods", "MetDemModMeth"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Married Over All", "Mod-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Married Over All", "Trad-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Married Over All", "Unmet-MarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Modern Unmarried Over All", "Mod-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Trad Unmarried Over All", "Trad-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
-      fnm <- gsub("Unmet Unmarried Over All", "Unmet-UnmarriedOverAll"
-                 ,fnm, fixed = TRUE)
+    ## Need to keep names from getting too long!
+    fnm <- makeShortIndicatorFileName(fnm)
 
         fnm <- gsub("region[s]*", "", fnm)
         fnm <- gsub("__", "_", fnm, fixed = TRUE)

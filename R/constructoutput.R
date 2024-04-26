@@ -96,7 +96,7 @@ ConstructOutput <- function(# Construct output for MCMC run
                                                             #tripped me up at
                                                             #first.
 
-      ## Aggregates might fail if the existing 'res.country.rda' file doesn't have years that match 'start.year' and 'est.year'
+      ## Aggregates might fail if the existing 'res.country.rda' file doesn't have years that match 'start.year' and 'end.year'
       res.country.years <- dimnames(res.country$CIprop.Lg.Lcat.qt[[1]][[1]])[[2]]
       if (!identical(as.numeric(res.country.years), seq(start.year, end.year, by = 1)))
           warning("Years in the existing 'res.country.rda' file are '", toString(res.country.years),
