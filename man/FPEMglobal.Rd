@@ -2,5 +2,38 @@
 % Please edit documentation in R/FPEMglobal.R
 \docType{package}
 \name{FPEMglobal}
+\alias{FPEMglobal-package}
 \alias{FPEMglobal}
 \title{FPEMglobal: Contraceptive use package that provides estimates for all women. See vignette 'FPEMglobal-vignette' for explanation of use.}
+\description{
+Implements the FPEMglobal model for producing estimates and projections of contraceptive use and unmet need for family planning among married, unmarried, and all women.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/AvenirHealth/FPET-all-women}
+  \item Report bugs at \url{https://github.com/AvenirHealth/FPET-all-women/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Mark C. Wheldon \email{wheldon@un.org}
+
+Authors:
+\itemize{
+  \item Jin Rou New \email{lalkema@schoolph.umass.edu}
+  \item Niamh Cahill \email{niamh.cahill@ucd.ie}
+  \item Greg Gu \email{gguranic@umass.edu}
+  \item Andrew Tait \email{andrew.tait@decisionmechanics.com}
+  \item Sara Hertog \email{hertog@un.org}
+  \item Leontine Alkema \email{lalkema@schoolph.umass.edu}
+}
+
+Other contributors:
+\itemize{
+  \item ChuChu Wei \email{chuchuwei@umass.edu} [contributor]
+  \item Kristin Bietsch \email{KBietsch@avenirhealth.org} [contributor]
+  \item Marilou Vicente \email{vicente@un.org} [contributor]
+}
+
+}
