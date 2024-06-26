@@ -3522,6 +3522,7 @@ do_global_all_women_run <- function(## Describe the run
             denominator_counts_csv_filename = denominator_counts_csv_filename,
             region_information_csv_filename = region_information_csv_filename,
             countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
+            countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
             special_aggregates_name = special_aggregates_name,
             ## Outputs
             start_year = start_year,
