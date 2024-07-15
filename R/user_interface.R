@@ -1352,6 +1352,13 @@ make_results <- function(run_name = NULL,
         }
     }
 
+    ##---------------------------------------------------------------------
+    ## Save the values of function arguments for making results
+    ##---------------------------------------------------------------------
+
+    make_results_args <- mget(names(formals(make_results)))
+    save(make_results_args, file = file.path(output_folder_path, "make_results_args.RData"))
+
     ##----------------------------------------------------------------------------
     ## Log
     ##----------------------------------------------------------------------------
@@ -2580,11 +2587,11 @@ combine_runs <- function(## Describe the run
                          unmarried_women_run_name = NULL,
                          unmarried_women_run_output_folder_path = NULL,
                          unmarried_women_run_data_folder_path = file.path(unmarried_women_run_output_folder_path, "data"),
-                         region_information_csv_filename = "country_and_area_classification.csv",
+                         region_information_csv_filename = NULL,
                          special_aggregates_name = NULL,
                          denominator_counts_csv_filename = NULL,
-                         countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-                         countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+                         countries_for_aggregates_csv_filename = NULL,
+                         countries_in_CI_plots_csv_filename = NULL,
                          start_year = 1970.5,
                          end_year = 2030.5,
                          years_change = matrix(c(
@@ -2610,7 +2617,7 @@ combine_runs <- function(## Describe the run
                          age_ratios_age_total_unmarried_output_folder_path = NULL,
                          age_ratios_age_total_married_output_folder_path = NULL,
                          age_ratios_age_total_all_women_output_folder_path = NULL,
-                         age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
+                         age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
                          age_ratios_age_total_denominator_counts_folder_path = NULL,
                          run_name_override = NULL,
                          verbose = FALSE) {
@@ -2830,6 +2837,51 @@ combine_runs <- function(## Describe the run
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+
+    ##----------------------------------------------------------------------------
+    ## Get Filenames
+    ##----------------------------------------------------------------------------
+
+    ## Global MCMC Args
+
+    load(file.path(unmarried_women_run_output_folder_path, "global_mcmc_args.RData"))
+    global_mcmc_args_uwra <- global_mcmc_args
+
+    if (is.null(region_information_csv_filename)) {
+        region_information_csv_filename <-
+            gsub(paste0("^", global_mcmc_args_uwra$input_data_folder_path, "/"),
+                 "",
+                 global_mcmc_args_uwra$region_information_csv_filename)
+    }
+
+    ## Post-process Args
+
+    load(file.path(unmarried_women_run_output_folder_path, "post_process_args.RData"))
+    post_process_args_uwra <- post_process_args
+
+    if (is.null(countries_for_aggregates_csv_filename)) {
+        countries_for_aggregates_csv_filename <-
+            gsub(paste0("^", post_process_args_uwra$input_data_folder_path, "/"),
+                 "",
+                 post_process_args_uwra$countries_for_aggregates_csv_filename)
+    }
+
+    ## Make Results
+
+    make_res_args_file_path <-
+        file.path(unmarried_women_run_output_folder_path, "make_results_args.RData")
+
+    if (file.exists(make_res_args_file_path)) {
+        load(make_res_args_file_path)
+        make_results_args_uwra <- make_results_args
+        if (is.null(countries_in_CI_plots_csv_filename)) {
+            countries_in_CI_plots_csv_filename <- make_results_args_uwra$countries_in_CI_plots_csv_filename
+        }
+    } else {
+        if (is.null(countries_in_CI_plots_csv_filename)) {
+            countries_in_CI_plots_csv_filename <- countries_for_aggregates_csv_filename
+        }
+    }
 
     ##----------------------------------------------------------------------------
     ## Copy files needed by plotting and tabulation functions.
