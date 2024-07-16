@@ -3,7 +3,7 @@ Letter Code",Region Code,Region,Major area Code,Major area,"Developed
 region",Less Developed Regions,"Least developed
 country","Less developed regions, excluding least developed countries","Total population of less than 90,000 by mid-2015",FP2020 country,Sexual activity among unmarried,Sub SaharanAfrica,WPP small country,WCU data,Land Locked Developing Countries (LLDC),Small Island Developing States (SIDS)
 Afghanistan,4,AFG,34,Southern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,Yes,No
-Åland Islands,248,ALA,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
+Aland Islands,248,ALA,154,Northern Europe,150,Europe,Yes,No,No,No,Yes,No,0,No,Yes,No,No,No
 Albania,8,ALB,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Algeria,12,DZA,15,Northern Africa,2,Africa,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 American Samoa,16,ASM,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,Yes
@@ -58,10 +58,10 @@ Comoros,174,COM,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,
 Congo,178,COG,17,Middle Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
 Cook Islands,184,COK,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Costa Rica,188,CRI,13,Central America,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
-Côte d’Ivoire,384,CIV,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
+Cote d'Ivoire,384,CIV,11,Western Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,No,No
 Croatia,191,HRV,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Cuba,192,CUB,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
-Curaçao,531,CUW,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,No,No,Yes
+Curacao,531,CUW,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,No,No,Yes
 Cyprus,196,CYP,145,Western Asia,142,Asia,Yes,No,No,No,No,No,1,No,No,No,No,No
 Czechia,203,CZE,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Democratic People's Republic of Korea,408,PRK,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,Yes,1,No,No,Yes,No,No
@@ -182,11 +182,11 @@ Puerto Rico,630,PRI,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Y
 Qatar,634,QAT,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Republic of Korea,410,KOR,30,Eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
 Republic of Moldova,498,MDA,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,Yes,No
-Réunion,638,REU,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
+Reunion,638,REU,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,No,1,Yes,No,Yes,No,No
 Romania,642,ROU,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Russian Federation,643,RUS,151,Eastern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
 Rwanda,646,RWA,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
-Saint Barthélemy,652,BLM,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
+Saint Barth‚lemy,652,BLM,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,0,No,Yes,No,No,No
 Saint Helena,654,SHN,11,Western Africa,2,Africa,No,Yes,No,Yes,Yes,No,1,Yes,Yes,No,No,No
 Saint Kitts and Nevis,659,KNA,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,Yes,No,1,No,Yes,Yes,No,Yes
 Saint Lucia,662,LCA,29,Caribbean,419,Latin America and the Caribbean,No,Yes,No,Yes,No,No,1,No,No,Yes,No,Yes
@@ -222,7 +222,7 @@ Switzerland,756,CHE,155,Western Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes
 Syrian Arab Republic,760,SYR,145,Western Asia,142,Asia,No,Yes,No,Yes,No,No,0,No,No,Yes,No,No
 Tajikistan,762,TJK,143,Central Asia,142,Asia,No,Yes,No,Yes,No,Yes,0,No,No,Yes,Yes,No
 Thailand,764,THA,35,South-eastern Asia,142,Asia,No,Yes,No,Yes,No,No,1,No,No,Yes,No,No
-The former Yugoslav Republic of Macedonia,807,MKD,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,Yes,No
+North Macedonia,807,MKD,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,Yes,No
 Timor-Leste,626,TLS,35,South-eastern Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,No,Yes
 Togo,768,TGO,11,Western Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,No,No
 Tokelau,772,TKL,61,Polynesia,9,Oceania,No,Yes,No,Yes,Yes,No,1,No,Yes,No,No,No
@@ -251,3 +251,4 @@ Western Sahara,732,ESH,15,Northern Africa,2,Africa,No,Yes,No,Yes,No,Yes,0,No,No,
 Yemen,887,YEM,145,Western Asia,142,Asia,No,Yes,Yes,No,No,Yes,0,No,No,Yes,No,No
 Zambia,894,ZMB,14,Eastern Africa,2,Africa,No,Yes,Yes,No,No,Yes,1,Yes,No,Yes,Yes,No
 Zimbabwe,716,ZWE,14,Eastern Africa,2,Africa,No,Yes,No,Yes,No,Yes,1,Yes,No,Yes,Yes,No
+Kosovo (UN administered region under security council res. 1244),412,XKX,39,Southern Europe,150,Europe,Yes,No,No,No,No,No,1,No,No,Yes,No,No
