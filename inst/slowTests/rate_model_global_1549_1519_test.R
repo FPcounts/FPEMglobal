@@ -60,6 +60,9 @@ include_AR <- FALSE
 data_csv_filename_1549 <- "data_cp_model_all_women_SHORTFORTESTING_15-49.csv"
 data_csv_filename_1519 <- "data_cp_model_all_women_SHORTFORTESTING_15-19.csv"
 
+denominator_counts_csv_filename_1549 <- "number_of_women_15-49.csv"
+denominator_counts_csv_filename_1519 <- "OLD_number_of_women_15-19.csv"
+
 ###-----------------------------------------------------------------------------
 ### ** Outputs
 
@@ -110,6 +113,7 @@ all_women_1549_runs <-
         set_seed_chains = 1,
         ## Inputs
         data_csv_filename = data_csv_filename_1549,
+        denominator_counts_csv_filename = denominator_counts_csv_filename_1549,
         special_aggregates_name = special_aggregates_name,
         ## Outputs
         years_change = years_change,
