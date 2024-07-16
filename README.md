@@ -1,4 +1,4 @@
-# Global Family Planning Estimation Model (FPEMglobal)
+1# Global Family Planning Estimation Model (FPEMglobal)
 
 FPEMglobal is an _R_ package for producing estimates and projections of contraceptive use and unmet need for family planning among married, unmarried, and all women. 
 
@@ -9,7 +9,7 @@ The views expressed herein are those of the authors and do not necessarily refle
 
 ## Installation
 
-Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v4.0.0--v.4.3.1 (64 bit) and _JAGS_ v4.3.0--v4.3.1. 
+Ensure you have installed *both* [_R_](https://cran.r-project.org/index.html) and [_JAGS_](http://mcmc-jags.sourceforge.net/). FPEMglobal has been tested with _R_ v4.0.0--v.4.4.0 (64 bit) and _JAGS_ v4.3.0--v4.3.1. 
 
 
 Follow one of the following three options:
