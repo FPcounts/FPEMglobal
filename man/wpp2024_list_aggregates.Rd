@@ -5,8 +5,6 @@
 \alias{wpp2024_list_aggregates}
 \title{Country and Area Aggregation Lists from WPP 2024}
 \format{
-\subsection{\code{wpp2024_list_aggregates}}{
-
 \preformatted{1002 : List of 5
  $ ID          : int 1002
  $ RevisionID  : int 20
@@ -60,7 +58,6 @@ The \dQuote{Locations} data frames have the following structure:
  $ LocationID      : int  4 4 8 8 8 8 8 8 8 8 ...
  $ PrintName       : chr  "Afghanistan" "Afghanistan" "Albania" "Albania" ...
  $ ISO3166_1_alpha3: chr  "AFG" "AFG" "ALB" "ALB" ...}
-}
 }
 \source{
 United Nations, Department of Economic and Social Affairs, Population Division

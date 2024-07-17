@@ -6,14 +6,14 @@ source("R/user_interface.R", local = TRUE)
 source("R/F_plotextra.R", local = TRUE)
 ######################################################################
 
-#' FPEMglobal: Contraceptive use package that provides estimates for all women. See vignette 'FPEMglobal-vignette' for explanation of use.
-#'
-#' @docType package
-#' @name FPEMglobal
-#'
+#' @keywords internal
+"_PACKAGE"
+
 #' @import coda
 #' @import foreach
 #' @import MCMCpack
 #' @import rjags
-#'
+
+## usethis namespace: start
+## usethis namespace: end
 NULL
