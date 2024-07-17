@@ -39,13 +39,16 @@ get_all_age_groups <- function() {
 ## Define file names. Requires package 'here' to be installed.
 input_data_file_name <- function(age_group) {
     stopifnot(requireNamespace("here"))
-    fnames <- paste0("OLD_data_cp_model_all_women_", age_group, ".csv")
+    if (identical(age_group, "15-49"))
+        fnames <- paste0("data_cp_model_all_women_", age_group, ".csv")
+    else
+        fnames <- paste0("OLD_data_cp_model_all_women_", age_group, ".csv")
     here::here("inst", "extdata", fnames)
 }
 
 
 ## Create shortened input files
-make_shortened_input_file <- function(age_group = get_all_age_groups()[2:7], #don't overwrite existing 15-19 and 15-49
+make_shortened_input_file <- function(age_group = get_all_age_groups(),#[2:7], #don't overwrite existing 15-19 and 15-49
                                        shortn_fn = shorten_for_testing) {
     stopifnot(requireNamespace("here"))
     for (ag in age_group) {

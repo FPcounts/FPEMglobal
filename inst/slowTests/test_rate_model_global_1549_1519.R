@@ -58,7 +58,7 @@ include_AR <- FALSE
 ### ** Inputs
 
 data_csv_filename_1549 <- "data_cp_model_all_women_SHORTFORTESTING_15-49.csv"
-data_csv_filename_1519 <- "data_cp_model_all_women_SHORTFORTESTING_15-19.csv"
+data_csv_filename_1519 <- "OLD_data_cp_model_all_women_SHORTFORTESTING_15-19.csv"
 
 denominator_counts_csv_filename_1549 <- "number_of_women_15-49.csv"
 denominator_counts_csv_filename_1519 <- "OLD_number_of_women_15-19.csv"
@@ -83,7 +83,7 @@ years_change2 <- matrix(c(2005.5, 2010.5, 2015.5,
 adjust_medians <- TRUE
 plot_maps_shapefile_folder <- NULL
 plot_maps_years <- NULL
-special_aggregates_name <- "WHO_regions"
+special_aggregates_name <- "OLD_WHO_regions"
 model_diagnostics <- TRUE
 make_age_ratios <- TRUE
 verbose <- FALSE
