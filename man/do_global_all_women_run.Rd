@@ -16,10 +16,10 @@ do_global_all_women_run(
   run_in_parallel = isTRUE(length(chain_nums) > 1),
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-  region_information_csv_filename = "country_and_area_classification.csv",
+  region_information_csv_filename = "country_and_area_classification_pre2024.csv",
   denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
-  countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-  countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+  countries_for_aggregates_csv_filename = "countries_mwra_195_pre2024.csv",
+  countries_in_CI_plots_csv_filename = "countries_mwra_195_pre2024.csv",
   special_aggregates_name = NULL,
   start_year = 1970.5,
   end_year = 2030.5,
@@ -263,7 +263,7 @@ See \code{system.file("extdata", "data_cp_model_all_women_15-49.csv")} for
 how the prevalence data input should be formatted. Assume all columns are
 required.
 
-See \code{system.file("extdata", "country_and_area_classification.csv")} for
+See \code{system.file("extdata", "country_and_area_classification_pre2024.csv")} for
 how the country classification file should be formatted. Assume all columns
 are required.
 

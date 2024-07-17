@@ -13,11 +13,11 @@ combine_runs(
   unmarried_women_run_output_folder_path = NULL,
   unmarried_women_run_data_folder_path =
     file.path(unmarried_women_run_output_folder_path, "data"),
-  region_information_csv_filename = "country_and_area_classification.csv",
+  region_information_csv_filename = NULL,
   special_aggregates_name = NULL,
   denominator_counts_csv_filename = NULL,
-  countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-  countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+  countries_for_aggregates_csv_filename = NULL,
+  countries_in_CI_plots_csv_filename = NULL,
   start_year = 1970.5,
   end_year = 2030.5,
   years_change = matrix(c(1990.5, 2000.5, 2000.5, 2019.5, 2019.5, 2030.5, 2012.5, 2019.5,
@@ -33,7 +33,7 @@ combine_runs(
   age_ratios_age_total_unmarried_output_folder_path = NULL,
   age_ratios_age_total_married_output_folder_path = NULL,
   age_ratios_age_total_all_women_output_folder_path = NULL,
-  age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
+  age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   run_name_override = NULL,
   verbose = FALSE

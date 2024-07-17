@@ -1,0 +1,83 @@
+##' Country and Area Aggregation Lists from WPP 2024
+##'
+##' The list of country and area aggregation lists used in World
+##' Population Prospects (WPP), 2024 edition. These define the
+##' aggregates for which family planning indicators are tabulated, in
+##' addition to the individual countries and areas.
+##'
+##' \code{wpp2024_list_aggregates} is a named list, with each
+##' top-level element containing an aggregation list. The top-level
+##' names are the numeric identification codes for these aggregation
+##' lists, as used in the UNPD's data base.
+##'
+##' Each aggregation list is, itself, a list containing meta-data
+##' elements (e.g., the \dQuote{Name} of the aggregation list) and an
+##' element named \dQuote{Locations} containing a data frame. These
+##' \dQuote{Locations} data frames maps countries and areas to a set
+##' of aggregations specific to that aggregation list. The countries
+##' and areas, and the aggregations, are identified by their common
+##' names in the English language and various standard identification
+##' codes, including the M49 numeric code and ISO-3166 alpha codes.
+##'
+##' The first aggregation list, code 1002, is the most commonly used
+##' set of aggregations, and includes geographic regions and
+##' subregions, development groups, and World Bank Income and
+##' Investment groups.
+##'
+##' @format
+##' \preformatted{1002 : List of 5
+##'  $ ID          : int 1002
+##'  $ RevisionID  : int 20
+##'  $ RevisionName: chr "WPP Revision 2024 - WUP Revision 2018"
+##'  $ Name        : chr "Aggregations processing list"
+##'  $ Locations   :'data.frame':	2507 obs. of  14 variables:
+##' 5000 : List of 5
+##'  $ ID          : int 5000
+##'  $ RevisionID  : int 20
+##'  $ RevisionName: chr "WPP Revision 2024 - WUP Revision 2018"
+##'  $ Name        : chr "Special aggregations for geographical groups"
+##'  $ Locations   :'data.frame':	462 obs. of  14 variables:
+##' 5001 : List of 5
+##'  $ ID          : int 5001
+##'  $ RevisionID  : int 20
+##'  $ RevisionName: chr "WPP Revision 2024 - WUP Revision 2018"
+##'  $ Name        : chr "Special aggregations for economic/trade related groups"
+##'  $ Locations   :'data.frame':	1214 obs. of  14 variables:
+##' 5002 : List of 5
+##'  $ ID          : int 5002
+##'  $ RevisionID  : int 20
+##'  $ RevisionName: chr "WPP Revision 2024 - WUP Revision 2018"
+##'  $ Name        : chr "Special aggregations for political groups"
+##'  $ Locations   :'data.frame':	831 obs. of  14 variables:
+##' 5003 : List of 5
+##'  $ ID          : int 5003
+##'  $ RevisionID  : int 20
+##'  $ RevisionName: chr "WPP Revision 2024 - WUP Revision 2018"
+##'  $ Name        : chr "Special aggregations for U.N. related groups"
+##'  $ Locations   :'data.frame':	4130 obs. of  14 variables:
+##' 5006 : List of 5
+##'  $ ID          : int 5006
+##'  $ RevisionID  : int 20
+##'  $ RevisionName: chr "WPP Revision 2024 - WUP Revision 2018"
+##'  $ Name        : chr "DAS WPP groups of countries by timing of population peak"
+##'  $ Locations   :'data.frame':	474 obs. of  14 variables:}
+##'
+##' The \dQuote{Locations} data frames have the following structure:
+##' \preformatted{'data.frame':	2507 obs. of  14 variables:
+##'  $ ParentID        : int  5501 5504 900 901 908 925 1502 1517 1829 1859 ...
+##'  $ ParentTypeID    : int  3 22 1 5 2 3 22 22 23 22 ...
+##'  $ ParentTypeName  : chr  "Subregion" "Income Group" "World" "Development Group" ...
+##'  $ ParentPrintName : chr  "Southern Asia" "Low-and-Lower-middle-income countries" "World" "More developed regions" ...
+##'  $ TreeLevel       : int  0 4 0 0 0 0 4 4 0 4 ...
+##'  $ SortOrder       : int  0 0 0 0 0 0 0 0 0 0 ...
+##'  $ LocID           : int  4 4 8 8 8 8 8 8 8 8 ...
+##'  $ LocTypeID       : int  4 4 4 4 4 4 4 4 4 4 ...
+##'  $ LocTypeName     : chr  "Country/Area" "Country/Area" "Country/Area" "Country/Area" ...
+##'  $ LocPrintName    : chr  "Afghanistan" "Afghanistan" "Albania" "Albania" ...
+##'  $ ISO3Code        : chr  "AFG" "AFG" "ALB" "ALB" ...
+##'  $ LocationID      : int  4 4 8 8 8 8 8 8 8 8 ...
+##'  $ PrintName       : chr  "Afghanistan" "Afghanistan" "Albania" "Albania" ...
+##'  $ ISO3166_1_alpha3: chr  "AFG" "AFG" "ALB" "ALB" ...}
+##'
+##' @source United Nations, Department of Economic and Social Affairs, Population Division
+"wpp2024_list_aggregates"

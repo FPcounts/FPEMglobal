@@ -9,7 +9,7 @@ validate_denominator_counts_file(
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
   marital_group = c("married", "unmarried"),
-  countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+  countries_for_aggregates_csv_filename = "countries_mwra_195_pre2024.csv",
   output_folder_path = NULL,
   verbose = FALSE
 )

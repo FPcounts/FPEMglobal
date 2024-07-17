@@ -9,7 +9,7 @@ post_process_mcmc(
   output_folder_path = file.path("output", run_name),
   input_data_folder_path = NULL,
   denominator_counts_csv_filename = NULL,
-  countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+  countries_for_aggregates_csv_filename = "countries_mwra_195_pre2024.csv",
   start_year = 1970.5,
   end_year = 2030.5,
   years_change = matrix(c(1990.5, 2000.5, 2000.5, 2019.5, 2019.5, 2030.5, 2012.5, 2019.5,
