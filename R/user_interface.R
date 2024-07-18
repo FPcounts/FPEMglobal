@@ -2852,6 +2852,7 @@ combine_runs <- function(## Describe the run
             gsub(paste0("^", global_mcmc_args_uwra$input_data_folder_path, "/"),
                  "",
                  global_mcmc_args_uwra$region_information_csv_filename)
+        message("Using 'region_information_csv_filename' from the unmarried women run.")
     }
 
     ## Post-process Args
@@ -2864,6 +2865,15 @@ combine_runs <- function(## Describe the run
             gsub(paste0("^", post_process_args_uwra$input_data_folder_path, "/"),
                  "",
                  post_process_args_uwra$countries_for_aggregates_csv_filename)
+        message("Using 'countries_for_aggregates_csv_filename' from the unmarried women run.")
+    }
+
+    if (is.null(denominator_counts_csv_filename)) {
+        denominator_counts_csv_filename <-
+            gsub(paste0("^", post_process_args_uwra$input_data_folder_path, "/"),
+                 "",
+                 post_process_args_uwra$denominator_counts_csv_filename)
+        message("Using 'denominator_counts_csv_filename' from the unmarried women run.")
     }
 
     ## Make Results
@@ -2876,10 +2886,12 @@ combine_runs <- function(## Describe the run
         make_results_args_uwra <- make_results_args
         if (is.null(countries_in_CI_plots_csv_filename)) {
             countries_in_CI_plots_csv_filename <- make_results_args_uwra$countries_in_CI_plots_csv_filename
+        message("Using 'countries_in_CI_plots_csv_filename' from the unmarried women run.")
         }
     } else {
         if (is.null(countries_in_CI_plots_csv_filename)) {
             countries_in_CI_plots_csv_filename <- countries_for_aggregates_csv_filename
+        message("Using 'countries_in_CI_plots_csv_filename' set to value of 'countries_for_aggregates_csv_filename'.")
         }
     }
 
