@@ -2718,12 +2718,6 @@ combine_runs <- function(## Describe the run
     data_folder_path <- file.path(output_folder_path, "data")
     dir.create(data_folder_path, showWarnings = FALSE)
 
-    ## Make filepaths that need 'age_group'
-    if(is.null(denominator_counts_csv_filename)) {
-        denominator_counts_csv_filename <-
-            paste0("number_of_women_", mcmc.meta$general$age.group, ".csv")
-    }
-
     ##----------------------------------------------------------------------------
     ## Age ratios
     ##----------------------------------------------------------------------------

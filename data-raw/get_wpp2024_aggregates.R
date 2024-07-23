@@ -122,10 +122,40 @@ aggregate_types <-
 aggregate_types <- do.call("rbind", aggregate_types)
 
 ###-----------------------------------------------------------------------------
+### ** Development Groups
+
+dev_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
+                 ParentTypeID == 5)
+dev_agg <- data.frame(iso.country = dev_agg$LocationID, groupname = dev_agg$ParentPrintName)
+
+write.csv(dev_agg, file = file.path(extdata_dir, "aggregates_special_development_groups.csv"),
+          row.names = FALSE)
+
+###-----------------------------------------------------------------------------
+### ** SDG Regions
+
+sdg_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
+                 ParentTypeID == 23)
+sdg_agg <- data.frame(iso.country = sdg_agg$LocationID, groupname = sdg_agg$ParentPrintName)
+
+write.csv(sdg_agg, file = file.path(extdata_dir, "aggregates_special_sdg_regions.csv"),
+          row.names = FALSE)
+
+###-----------------------------------------------------------------------------
+### ** Special Other (SIDS, LLDC)
+
+spec_other_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
+                 ParentTypeID == 13)
+spec_other_agg <- data.frame(iso.country = spec_other_agg$LocationID, groupname = spec_other_agg$ParentPrintName)
+
+write.csv(spec_other_agg, file = file.path(extdata_dir, "aggregates_special_other.csv"),
+          row.names = FALSE)
+
+###-----------------------------------------------------------------------------
 ### ** World Bank Income Group
 
 wb_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
-                 ParentTypeID == subset(aggregate_types, ParentTypeName == "Income Group")$ParentTypeID)
+                 ParentTypeID == 22)
 wb_agg <- data.frame(iso.country = wb_agg$LocationID, groupname = wb_agg$ParentPrintName)
 
 write.csv(wb_agg, file = file.path(extdata_dir, "aggregates_special_world_bank_income_groups.csv"),

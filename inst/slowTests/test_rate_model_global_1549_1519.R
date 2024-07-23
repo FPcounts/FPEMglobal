@@ -243,8 +243,8 @@ make_results(run_name = run_name_override_unmarried_1519,
 combine_runs(married_women_run_name = run_name_override_married_1519,
              unmarried_women_run_name = run_name_override_unmarried_1519,
              run_name_override = run_name_override_all_women_1519,
-             ## ## Inputs
-             ## denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
+             ## Inputs
+             denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
              ## Results
              years_change = years_change,
              years_change2 = years_change2,
