@@ -22,11 +22,10 @@
 ###
 ### Country aggregation lists are saved as both .xlsx and .rda
 ### files. The .xlsx files are for user convenience. The .rda files
-### are for use in the package (these are also convenient for users
-### because they are under '/data'). There are no .csv files because
-### this is how non-ASCII characters in country names turn into
-### kryptonite and wreck all and everything about the package's
-### internal gummings.
+### are for potential use in the package (these are also convenient
+### for users because they are under '/data'). There are no .csv files
+### because this is how non-ASCII characters in country names turn
+### into kryptonite and wreck everything.
 ###
 ################################################################################
 
@@ -91,9 +90,9 @@ List_Aggregates <- setNames(nm = List_Aggregates_Codes)
 ###-----------------------------------------------------------------------------
 ### ** Query
 
-wpp2024_list_aggregates <-
+aggregates_list_wpp2024 <-
     lapply(List_Aggregates, function(myList) {
-        obj_name <- paste0("wpp2024_list_aggregates_", myList)
+        obj_name <- paste0("aggregates_list_wpp2024_", myList)
         eagle_URL <-
             paste0("https://popdiv.dfs.un.org/peps/pepxplorer/api/location/locationlist/",
                    WPP_RevID, "/", myList)
@@ -103,7 +102,31 @@ wpp2024_list_aggregates <-
                                   simplifyVector = TRUE, flatten = TRUE))
     })
 
-save(wpp2024_list_aggregates, file = file.path(data_dir, "wpp2024_list_aggregates.rda"))
+save(aggregates_list_wpp2024, file = file.path(data_dir, "aggregates_list_wpp2024.rda"))
 
-locations <- lapply(wpp2024_list_aggregates, function(z) data.table(z$Locations))
-openxlsx::write.xlsx(locations, file = file.path(extdata_dir, "wpp2024_list_aggregates.xlsx"), asTable = TRUE)
+locations <- lapply(aggregates_list_wpp2024, function(z) data.table(z$Locations))
+openxlsx::write.xlsx(locations, file = file.path(extdata_dir, "aggregates_list_wpp2024.xlsx"), asTable = TRUE)
+
+###-----------------------------------------------------------------------------
+### * Save Aggregates to FPEMglobal Special Aggregates Format
+
+## Made a small table giving the types of aggregates across all lists,
+## and their codes. These are called "ParentTypeID" and "ParentTypeName".
+
+aggregate_types <-
+    lapply(seq_along(aggregates_list_wpp2024), function(i, the_list, agg_names) {
+        data.frame(ListID = names(the_list)[i],
+                   ListName = names(agg_names)[match(names(the_list)[i], agg_names)],
+                   unique(the_list[[i]]$Locations[c("ParentTypeID", "ParentTypeName")]))
+    }, the_list = aggregates_list_wpp2024, agg_names = List_Aggregates_Codes)
+aggregate_types <- do.call("rbind", aggregate_types)
+
+###-----------------------------------------------------------------------------
+### ** World Bank Income Group
+
+wb_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
+                 ParentTypeID == subset(aggregate_types, ParentTypeName == "Income Group")$ParentTypeID)
+wb_agg <- data.frame(iso.country = wb_agg$LocationID, groupname = wb_agg$ParentPrintName)
+
+write.csv(wb_agg, file = file.path(extdata_dir, "aggregates_special_world_bank_income_groups.csv"),
+          row.names = FALSE)

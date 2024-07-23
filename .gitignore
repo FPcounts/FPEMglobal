@@ -1,4 +1,6 @@
 .Rhistory
 .Rproj.user
 desktop.ini
+inst/slowTests/*.Rout
 inst/slowTests/output/*
+
