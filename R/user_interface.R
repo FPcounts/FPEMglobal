@@ -2879,7 +2879,10 @@ combine_runs <- function(## Describe the run
         load(make_res_args_file_path)
         make_results_args_uwra <- make_results_args
         if (is.null(countries_in_CI_plots_csv_filename)) {
-            countries_in_CI_plots_csv_filename <- make_results_args_uwra$countries_in_CI_plots_csv_filename
+            countries_in_CI_plots_csv_filename <-
+                gsub(paste0("^", make_results_args_uwra$input_data_folder_path, "/"),
+                     "",
+                make_results_args_uwra$countries_in_CI_plots_csv_filename)
         message("Using 'countries_in_CI_plots_csv_filename' from the unmarried women run.")
         }
     } else {
@@ -2898,26 +2901,21 @@ combine_runs <- function(## Describe the run
     copy_uwra_mwra_files("mcmc.meta.rda", output_folder_path, unmarried_women_run_output_folder_path)
     copy_uwra_mwra_files("par.ciq.rda", output_folder_path, unmarried_women_run_output_folder_path)
 
-    if(!is.null(denominator_counts_csv_filename)) {
-        copy_uwra_mwra_files(denominator_counts_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
-    if(!is.null(region_information_csv_filename)) {
-        copy_uwra_mwra_files(region_information_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
-    if(!is.null(countries_for_aggregates_csv_filename)) {
-        copy_uwra_mwra_files(countries_for_aggregates_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
-    if(!is.null(countries_in_CI_plots_csv_filename)) {
-        copy_uwra_mwra_files(countries_in_CI_plots_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
+    copy_uwra_mwra_files(denominator_counts_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
+
+    copy_uwra_mwra_files(region_information_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
+
+    copy_uwra_mwra_files(countries_for_aggregates_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
+
+    copy_uwra_mwra_files(countries_in_CI_plots_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
 
     ## Add a label in 'mcmc.meta.rda' to mark this as an all women copy
     load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -4121,6 +4119,38 @@ do_global_validation_run <- function(run_desc = "",
 
     return(invisible(run_name_valid))
 
+}
+
+
+##' Add special aggregates to a global run of FPEM
+##'
+##' This is a convenience function to add (possibly more) special
+##' aggregates to a completed global run. It wraps calls to
+##' \code{\link{post_process_mcmc}} and \code{make_results}.
+##'
+##' @param output_folder_path
+##' @param countries_for_aggregates_csv_filename
+##' @param denominator_counts_csv_filename
+##' @param start_year
+##' @param end_year
+##' @param years_change
+##' @param years_change2
+##' @param model_diagnostics
+##' @param special_aggregates_name
+##' @param verbose
+##' @return
+##' @author Mark Wheldon
+add_special_aggregates <- function(output_folder_path,
+                                   countries_for_aggregates_csv_filename = NULL,
+                                   denominator_counts_csv_filename = NULL,
+                                   start_year = NULL,
+                                   end_year = NULL,
+                                   years_change = NULL,
+                                   years_change2 = NULL,
+                                   model_diagnostics = FALSE,
+                                   special_aggregates_name,
+                                   verbose = FALSE) {
+    stop("TO BE COMPLETED")
 }
 
 
