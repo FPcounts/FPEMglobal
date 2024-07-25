@@ -126,17 +126,43 @@ aggregate_types <- do.call("rbind", aggregate_types)
 
 dev_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
                  ParentTypeID == 5)
-dev_agg <- data.frame(iso.country = dev_agg$LocationID, groupname = dev_agg$ParentPrintName)
+dev_agg <- data.frame(iso.country = dev_agg$LocationID, groupname = dev_agg$ParentPrintName,
+                      iso.group = dev_agg$ParentID)
 
 write.csv(dev_agg, file = file.path(extdata_dir, "aggregates_special_development_groups.csv"),
           row.names = FALSE)
+
+###-----------------------------------------------------------------------------
+### ** Funds and Programmes
+
+for (fp in c("unfpa", "unicef")) {
+    fp_agg <- subset(aggregates_list_wpp2024$`5003`$Locations,
+                     ParentTypeID == 13 & grepl(paste0("^", toupper(fp), "[ :]+[A-Z]+"), ParentPrintName))
+    fp_agg <- data.frame(iso.country = fp_agg$LocationID, groupname = fp_agg$ParentPrintName,
+                      iso.group = fp_agg$ParentID)
+    write.csv(fp_agg, file = file.path(extdata_dir, paste0("aggregates_special_", fp, "_regions.csv")),
+              row.names = FALSE)
+}
+
+###-----------------------------------------------------------------------------
+### ** Regional Commissions
+
+for (rc in c("eca", "ece", "eclac", "escap", "escwa")) {
+    rc_agg <- subset(aggregates_list_wpp2024$`5003`$Locations,
+                     ParentTypeID == 13 & grepl(paste0("^", toupper(rc), "[ :]+[A-Z]+"), ParentPrintName))
+    rc_agg <- data.frame(iso.country = rc_agg$LocationID, groupname = rc_agg$ParentPrintName,
+                      iso.group = rc_agg$ParentID)
+    write.csv(rc_agg, file = file.path(extdata_dir, paste0("aggregates_special_", rc, "_regions.csv")),
+              row.names = FALSE)
+}
 
 ###-----------------------------------------------------------------------------
 ### ** SDG Regions
 
 sdg_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
                  ParentTypeID == 23)
-sdg_agg <- data.frame(iso.country = sdg_agg$LocationID, groupname = sdg_agg$ParentPrintName)
+sdg_agg <- data.frame(iso.country = sdg_agg$LocationID, groupname = sdg_agg$ParentPrintName,
+                      iso.group = sdg_agg$ParentID)
 
 write.csv(sdg_agg, file = file.path(extdata_dir, "aggregates_special_sdg_regions.csv"),
           row.names = FALSE)
@@ -146,7 +172,9 @@ write.csv(sdg_agg, file = file.path(extdata_dir, "aggregates_special_sdg_regions
 
 spec_other_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
                  ParentTypeID == 13)
-spec_other_agg <- data.frame(iso.country = spec_other_agg$LocationID, groupname = spec_other_agg$ParentPrintName)
+spec_other_agg <- data.frame(iso.country = spec_other_agg$LocationID,
+                             groupname = spec_other_agg$ParentPrintName,
+                      iso.group = spec_other_agg$ParentID)
 
 write.csv(spec_other_agg, file = file.path(extdata_dir, "aggregates_special_other.csv"),
           row.names = FALSE)
@@ -156,7 +184,19 @@ write.csv(spec_other_agg, file = file.path(extdata_dir, "aggregates_special_othe
 
 wb_agg <- subset(aggregates_list_wpp2024$`1002`$Locations,
                  ParentTypeID == 22)
-wb_agg <- data.frame(iso.country = wb_agg$LocationID, groupname = wb_agg$ParentPrintName)
+wb_agg <- data.frame(iso.country = wb_agg$LocationID, groupname = wb_agg$ParentPrintName,
+                      iso.group = wb_agg$ParentID)
 
 write.csv(wb_agg, file = file.path(extdata_dir, "aggregates_special_world_bank_income_groups.csv"),
+          row.names = FALSE)
+
+###-----------------------------------------------------------------------------
+### ** World Health Organization
+
+who_agg <- subset(aggregates_list_wpp2024$`5003`$Locations,
+                  ParentTypeID == 13 & grepl(paste0("^WHO[ :]+[A-Z]+"), ParentPrintName))
+who_agg <- data.frame(iso.country = who_agg$LocationID, groupname = who_agg$ParentPrintName,
+                      iso.group = who_agg$ParentID)
+
+write.csv(who_agg, file = file.path(extdata_dir, "aggregates_special_who_regions.csv"),
           row.names = FALSE)

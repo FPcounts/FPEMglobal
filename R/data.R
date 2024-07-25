@@ -5,7 +5,7 @@
 ##' aggregates for which family planning indicators are tabulated, in
 ##' addition to the individual countries and areas.
 ##'
-##' \code{wpp2024_list_aggregates} is a named list, with each
+##' \code{aggregates_list_wpp2024} is a named list, with each
 ##' top-level element containing an aggregation list. The top-level
 ##' names are the numeric identification codes for these aggregation
 ##' lists, as used in the UNPD's data base.
@@ -80,4 +80,4 @@
 ##'  $ ISO3166_1_alpha3: chr  "AFG" "AFG" "ALB" "ALB" ...}
 ##'
 ##' @source United Nations, Department of Economic and Social Affairs, Population Division
-"wpp2024_list_aggregates"
+"aggregates_list_wpp2024"

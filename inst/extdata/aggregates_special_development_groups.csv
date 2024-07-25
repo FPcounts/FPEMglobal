@@ -1,592 +1,592 @@
-"iso.country","groupname"
-8,"More developed regions"
-12,"Less developed regions"
-12,"Less developed regions, excluding least developed countries"
-12,"Less developed regions, excluding China"
-16,"Less developed regions"
-16,"Less developed regions, excluding least developed countries"
-16,"Less developed regions, excluding China"
-20,"More developed regions"
-24,"Less developed regions"
-24,"Least developed countries"
-24,"Less developed regions, excluding China"
-28,"Less developed regions"
-28,"Less developed regions, excluding least developed countries"
-28,"Less developed regions, excluding China"
-32,"Less developed regions"
-32,"Less developed regions, excluding China"
-32,"Less developed regions, excluding least developed countries"
-36,"More developed regions"
-40,"More developed regions"
-44,"Less developed regions"
-44,"Less developed regions, excluding least developed countries"
-44,"Less developed regions, excluding China"
-48,"Less developed regions"
-48,"Less developed regions, excluding least developed countries"
-48,"Less developed regions, excluding China"
-50,"Less developed regions"
-50,"Least developed countries"
-50,"Less developed regions, excluding China"
-51,"Less developed regions"
-4,"Less developed regions"
-4,"Least developed countries"
-4,"Less developed regions, excluding China"
-31,"Less developed regions"
-31,"Less developed regions, excluding least developed countries"
-31,"Less developed regions, excluding China"
-56,"More developed regions"
-60,"More developed regions"
-64,"Less developed regions"
-64,"Less developed regions, excluding least developed countries"
-64,"Less developed regions, excluding China"
-68,"Less developed regions"
-68,"Less developed regions, excluding least developed countries"
-68,"Less developed regions, excluding China"
-51,"Less developed regions, excluding least developed countries"
-51,"Less developed regions, excluding China"
-52,"Less developed regions"
-52,"Less developed regions, excluding least developed countries"
-52,"Less developed regions, excluding China"
-70,"More developed regions"
-72,"Less developed regions"
-72,"Less developed regions, excluding least developed countries"
-72,"Less developed regions, excluding China"
-76,"Less developed regions"
-76,"Less developed regions, excluding least developed countries"
-76,"Less developed regions, excluding China"
-84,"Less developed regions"
-84,"Less developed regions, excluding least developed countries"
-84,"Less developed regions, excluding China"
-90,"Less developed regions"
-90,"Least developed countries"
-90,"Less developed regions, excluding China"
-92,"Less developed regions"
-92,"Less developed regions, excluding least developed countries"
-92,"Less developed regions, excluding China"
-96,"Less developed regions"
-96,"Less developed regions, excluding China"
-96,"Less developed regions, excluding least developed countries"
-100,"More developed regions"
-104,"Less developed regions"
-104,"Least developed countries"
-104,"Less developed regions, excluding China"
-108,"Less developed regions"
-108,"Least developed countries"
-108,"Less developed regions, excluding China"
-112,"More developed regions"
-116,"Less developed regions"
-116,"Least developed countries"
-116,"Less developed regions, excluding China"
-120,"Less developed regions"
-120,"Less developed regions, excluding least developed countries"
-120,"Less developed regions, excluding China"
-124,"More developed regions"
-132,"Less developed regions"
-132,"Less developed regions, excluding least developed countries"
-132,"Less developed regions, excluding China"
-136,"Less developed regions"
-136,"Less developed regions, excluding least developed countries"
-136,"Less developed regions, excluding China"
-140,"Less developed regions"
-140,"Least developed countries"
-140,"Less developed regions, excluding China"
-144,"Less developed regions"
-144,"Less developed regions, excluding least developed countries"
-144,"Less developed regions, excluding China"
-148,"Less developed regions"
-148,"Least developed countries"
-148,"Less developed regions, excluding China"
-152,"Less developed regions"
-152,"Less developed regions, excluding least developed countries"
-152,"Less developed regions, excluding China"
-156,"Less developed regions"
-156,"Less developed regions, excluding least developed countries"
-158,"Less developed regions"
-158,"Less developed regions, excluding least developed countries"
-170,"Less developed regions"
-170,"Less developed regions, excluding least developed countries"
-170,"Less developed regions, excluding China"
-174,"Less developed regions"
-174,"Least developed countries"
-174,"Less developed regions, excluding China"
-175,"Less developed regions"
-175,"Less developed regions, excluding least developed countries"
-175,"Less developed regions, excluding China"
-178,"Less developed regions"
-178,"Less developed regions, excluding least developed countries"
-178,"Less developed regions, excluding China"
-180,"Less developed regions"
-180,"Least developed countries"
-180,"Less developed regions, excluding China"
-184,"Less developed regions"
-184,"Less developed regions, excluding least developed countries"
-184,"Less developed regions, excluding China"
-188,"Less developed regions"
-188,"Less developed regions, excluding least developed countries"
-188,"Less developed regions, excluding China"
-191,"More developed regions"
-192,"Less developed regions"
-231,"Least developed countries"
-231,"Less developed regions, excluding China"
-232,"Less developed regions"
-232,"Least developed countries"
-232,"Less developed regions, excluding China"
-233,"More developed regions"
-234,"More developed regions"
-238,"Less developed regions"
-238,"Less developed regions, excluding least developed countries"
-238,"Less developed regions, excluding China"
-242,"Less developed regions"
-242,"Less developed regions, excluding least developed countries"
-242,"Less developed regions, excluding China"
-246,"More developed regions"
-250,"More developed regions"
-254,"Less developed regions"
-254,"Less developed regions, excluding least developed countries"
-254,"Less developed regions, excluding China"
-258,"Less developed regions"
-258,"Less developed regions, excluding least developed countries"
-258,"Less developed regions, excluding China"
-262,"Less developed regions"
-262,"Least developed countries"
-262,"Less developed regions, excluding China"
-266,"Less developed regions"
-266,"Less developed regions, excluding least developed countries"
-266,"Less developed regions, excluding China"
-268,"Less developed regions"
-268,"Less developed regions, excluding least developed countries"
-268,"Less developed regions, excluding China"
-270,"Less developed regions"
-270,"Least developed countries"
-270,"Less developed regions, excluding China"
-275,"Less developed regions"
-275,"Less developed regions, excluding least developed countries"
-275,"Less developed regions, excluding China"
-276,"More developed regions"
-288,"Less developed regions"
-288,"Less developed regions, excluding least developed countries"
-288,"Less developed regions, excluding China"
-292,"More developed regions"
-296,"Less developed regions"
-296,"Least developed countries"
-296,"Less developed regions, excluding China"
-300,"More developed regions"
-304,"More developed regions"
-308,"Less developed regions"
-308,"Less developed regions, excluding least developed countries"
-308,"Less developed regions, excluding China"
-336,"More developed regions"
-340,"Less developed regions"
-340,"Less developed regions, excluding least developed countries"
-340,"Less developed regions, excluding China"
-344,"Less developed regions"
-344,"Less developed regions, excluding least developed countries"
-348,"More developed regions"
-352,"More developed regions"
-356,"Less developed regions"
-356,"Less developed regions, excluding least developed countries"
-356,"Less developed regions, excluding China"
-360,"Less developed regions"
-360,"Less developed regions, excluding least developed countries"
-360,"Less developed regions, excluding China"
-364,"Less developed regions"
-364,"Less developed regions, excluding least developed countries"
-364,"Less developed regions, excluding China"
-368,"Less developed regions"
-368,"Less developed regions, excluding least developed countries"
-368,"Less developed regions, excluding China"
-372,"More developed regions"
-376,"Less developed regions"
-376,"Less developed regions, excluding least developed countries"
-376,"Less developed regions, excluding China"
-380,"More developed regions"
-384,"Less developed regions"
-384,"Less developed regions, excluding least developed countries"
-384,"Less developed regions, excluding China"
-388,"Less developed regions"
-388,"Less developed regions, excluding least developed countries"
-388,"Less developed regions, excluding China"
-192,"Less developed regions, excluding least developed countries"
-192,"Less developed regions, excluding China"
-196,"Less developed regions"
-196,"Less developed regions, excluding least developed countries"
-196,"Less developed regions, excluding China"
-203,"More developed regions"
-204,"Less developed regions"
-204,"Least developed countries"
-204,"Less developed regions, excluding China"
-208,"More developed regions"
-212,"Less developed regions"
-218,"Less developed regions"
-218,"Less developed regions, excluding least developed countries"
-218,"Less developed regions, excluding China"
-222,"Less developed regions"
-222,"Less developed regions, excluding least developed countries"
-222,"Less developed regions, excluding China"
-226,"Less developed regions, excluding China"
-226,"Less developed regions, excluding least developed countries"
-226,"Less developed regions"
-231,"Less developed regions"
-316,"Less developed regions"
-316,"Less developed regions, excluding least developed countries"
-316,"Less developed regions, excluding China"
-320,"Less developed regions"
-320,"Less developed regions, excluding least developed countries"
-320,"Less developed regions, excluding China"
-324,"Less developed regions"
-324,"Least developed countries"
-324,"Less developed regions, excluding China"
-328,"Less developed regions"
-328,"Less developed regions, excluding least developed countries"
-328,"Less developed regions, excluding China"
-332,"Less developed regions"
-332,"Least developed countries"
-332,"Less developed regions, excluding China"
-212,"Less developed regions, excluding least developed countries"
-212,"Less developed regions, excluding China"
-214,"Less developed regions"
-214,"Less developed regions, excluding least developed countries"
-214,"Less developed regions, excluding China"
-392,"More developed regions"
-398,"Less developed regions"
-398,"Less developed regions, excluding least developed countries"
-398,"Less developed regions, excluding China"
-400,"Less developed regions"
-400,"Less developed regions, excluding least developed countries"
-400,"Less developed regions, excluding China"
-404,"Less developed regions"
-404,"Less developed regions, excluding least developed countries"
-404,"Less developed regions, excluding China"
-408,"Less developed regions"
-408,"Less developed regions, excluding least developed countries"
-408,"Less developed regions, excluding China"
-410,"Less developed regions"
-410,"Less developed regions, excluding least developed countries"
-410,"Less developed regions, excluding China"
-412,"More developed regions"
-414,"Less developed regions"
-414,"Less developed regions, excluding least developed countries"
-414,"Less developed regions, excluding China"
-417,"Less developed regions"
-417,"Less developed regions, excluding least developed countries"
-417,"Less developed regions, excluding China"
-428,"More developed regions"
-430,"Less developed regions"
-430,"Least developed countries"
-430,"Less developed regions, excluding China"
-434,"Less developed regions"
-434,"Less developed regions, excluding least developed countries"
-434,"Less developed regions, excluding China"
-438,"More developed regions"
-440,"More developed regions"
-442,"More developed regions"
-446,"Less developed regions"
-446,"Less developed regions, excluding least developed countries"
-450,"Less developed regions"
-450,"Least developed countries"
-450,"Less developed regions, excluding China"
-454,"Less developed regions"
-312,"Less developed regions"
-312,"Less developed regions, excluding least developed countries"
-312,"Less developed regions, excluding China"
-418,"Less developed regions"
-418,"Least developed countries"
-418,"Less developed regions, excluding China"
-422,"Less developed regions"
-422,"Less developed regions, excluding least developed countries"
-422,"Less developed regions, excluding China"
-426,"Less developed regions"
-426,"Least developed countries"
-426,"Less developed regions, excluding China"
-454,"Least developed countries"
-454,"Less developed regions, excluding China"
-458,"Less developed regions"
-458,"Less developed regions, excluding least developed countries"
-458,"Less developed regions, excluding China"
-462,"Less developed regions"
-462,"Less developed regions, excluding least developed countries"
-462,"Less developed regions, excluding China"
-470,"More developed regions"
-474,"Less developed regions"
-474,"Less developed regions, excluding least developed countries"
-474,"Less developed regions, excluding China"
-480,"Less developed regions, excluding least developed countries"
-480,"Less developed regions, excluding China"
-484,"Less developed regions"
-484,"Less developed regions, excluding least developed countries"
-484,"Less developed regions, excluding China"
-492,"More developed regions"
-496,"Less developed regions"
-496,"Less developed regions, excluding least developed countries"
-496,"Less developed regions, excluding China"
-478,"Less developed regions"
-478,"Least developed countries"
-478,"Less developed regions, excluding China"
-480,"Less developed regions"
-466,"Less developed regions"
-466,"Least developed countries"
-466,"Less developed regions, excluding China"
-498,"More developed regions"
-500,"Less developed regions, excluding least developed countries"
-500,"Less developed regions, excluding China"
-504,"Less developed regions"
-504,"Less developed regions, excluding least developed countries"
-504,"Less developed regions, excluding China"
-508,"Less developed regions"
-508,"Least developed countries"
-508,"Less developed regions, excluding China"
-512,"Less developed regions"
-512,"Less developed regions, excluding least developed countries"
-512,"Less developed regions, excluding China"
-516,"Less developed regions"
-516,"Less developed regions, excluding least developed countries"
-516,"Less developed regions, excluding China"
-520,"Less developed regions"
-520,"Less developed regions, excluding least developed countries"
-520,"Less developed regions, excluding China"
-524,"Less developed regions"
-499,"More developed regions"
-500,"Less developed regions"
-524,"Least developed countries"
-524,"Less developed regions, excluding China"
-528,"More developed regions"
-531,"Less developed regions"
-531,"Less developed regions, excluding least developed countries"
-531,"Less developed regions, excluding China"
-534,"Less developed regions, excluding China"
-534,"Less developed regions, excluding least developed countries"
-535,"Less developed regions"
-535,"Less developed regions, excluding least developed countries"
-535,"Less developed regions, excluding China"
-540,"Less developed regions"
-540,"Less developed regions, excluding least developed countries"
-540,"Less developed regions, excluding China"
-548,"Less developed regions"
-548,"Less developed regions, excluding least developed countries"
-548,"Less developed regions, excluding China"
-554,"More developed regions"
-558,"Less developed regions, excluding least developed countries"
-558,"Less developed regions, excluding China"
-558,"Less developed regions"
-562,"Less developed regions"
-562,"Least developed countries"
-562,"Less developed regions, excluding China"
-566,"Less developed regions"
-566,"Less developed regions, excluding least developed countries"
-566,"Less developed regions, excluding China"
-570,"Less developed regions"
-570,"Less developed regions, excluding least developed countries"
-570,"Less developed regions, excluding China"
-578,"More developed regions"
-580,"Less developed regions"
-580,"Less developed regions, excluding least developed countries"
-580,"Less developed regions, excluding China"
-583,"Less developed regions"
-583,"Less developed regions, excluding least developed countries"
-583,"Less developed regions, excluding China"
-584,"Less developed regions"
-584,"Less developed regions, excluding least developed countries"
-584,"Less developed regions, excluding China"
-585,"Less developed regions"
-585,"Less developed regions, excluding least developed countries"
-585,"Less developed regions, excluding China"
-586,"Less developed regions"
-586,"Less developed regions, excluding least developed countries"
-586,"Less developed regions, excluding China"
-591,"Less developed regions"
-591,"Less developed regions, excluding least developed countries"
-591,"Less developed regions, excluding China"
-598,"Less developed regions"
-598,"Less developed regions, excluding least developed countries"
-598,"Less developed regions, excluding China"
-600,"Less developed regions"
-600,"Less developed regions, excluding least developed countries"
-600,"Less developed regions, excluding China"
-604,"Less developed regions"
-604,"Less developed regions, excluding least developed countries"
-604,"Less developed regions, excluding China"
-608,"Less developed regions"
-608,"Less developed regions, excluding least developed countries"
-608,"Less developed regions, excluding China"
-616,"More developed regions"
-620,"More developed regions"
-624,"Less developed regions"
-624,"Least developed countries"
-624,"Less developed regions, excluding China"
-630,"Less developed regions, excluding least developed countries"
-630,"Less developed regions, excluding China"
-634,"Less developed regions"
-634,"Less developed regions, excluding least developed countries"
-634,"Less developed regions, excluding China"
-638,"Less developed regions"
-638,"Less developed regions, excluding least developed countries"
-638,"Less developed regions, excluding China"
-642,"More developed regions"
-643,"More developed regions"
-646,"Less developed regions"
-646,"Least developed countries"
-646,"Less developed regions, excluding China"
-652,"Less developed regions"
-652,"Less developed regions, excluding least developed countries"
-652,"Less developed regions, excluding China"
-654,"Less developed regions"
-654,"Less developed regions, excluding least developed countries"
-654,"Less developed regions, excluding China"
-659,"Less developed regions"
-626,"Less developed regions"
-626,"Least developed countries"
-626,"Less developed regions, excluding China"
-630,"Less developed regions"
-533,"Less developed regions"
-533,"Less developed regions, excluding least developed countries"
-533,"Less developed regions, excluding China"
-659,"Less developed regions, excluding China"
-659,"Less developed regions, excluding least developed countries"
-660,"Less developed regions"
-663,"Less developed regions"
-663,"Less developed regions, excluding least developed countries"
-663,"Less developed regions, excluding China"
-666,"More developed regions"
-670,"Less developed regions"
-670,"Less developed regions, excluding least developed countries"
-670,"Less developed regions, excluding China"
-660,"Less developed regions, excluding least developed countries"
-660,"Less developed regions, excluding China"
-662,"Less developed regions"
-662,"Less developed regions, excluding least developed countries"
-662,"Less developed regions, excluding China"
-674,"More developed regions"
-678,"Less developed regions"
-678,"Least developed countries"
-678,"Less developed regions, excluding China"
-682,"Less developed regions"
-682,"Less developed regions, excluding least developed countries"
-682,"Less developed regions, excluding China"
-686,"Less developed regions"
-686,"Least developed countries"
-686,"Less developed regions, excluding China"
-688,"More developed regions"
-690,"Less developed regions"
-690,"Less developed regions, excluding least developed countries"
-690,"Less developed regions, excluding China"
-702,"Less developed regions, excluding least developed countries"
-702,"Less developed regions, excluding China"
-703,"More developed regions"
-704,"Less developed regions"
-704,"Less developed regions, excluding least developed countries"
-704,"Less developed regions, excluding China"
-705,"More developed regions"
-706,"Less developed regions"
-706,"Least developed countries"
-706,"Less developed regions, excluding China"
-710,"Less developed regions"
-710,"Less developed regions, excluding least developed countries"
-710,"Less developed regions, excluding China"
-716,"Less developed regions"
-694,"Less developed regions"
-694,"Least developed countries"
-694,"Less developed regions, excluding China"
-702,"Less developed regions"
-716,"Less developed regions, excluding least developed countries"
-716,"Less developed regions, excluding China"
-724,"More developed regions"
-728,"Less developed regions"
-728,"Least developed countries"
-728,"Less developed regions, excluding China"
-729,"Less developed regions"
-729,"Least developed countries"
-729,"Less developed regions, excluding China"
-732,"Less developed regions"
-732,"Less developed regions, excluding least developed countries"
-732,"Less developed regions, excluding China"
-740,"Less developed regions"
-740,"Less developed regions, excluding least developed countries"
-740,"Less developed regions, excluding China"
-748,"Less developed regions"
-748,"Less developed regions, excluding least developed countries"
-748,"Less developed regions, excluding China"
-752,"More developed regions"
-756,"More developed regions"
-760,"Less developed regions"
-760,"Less developed regions, excluding China"
-760,"Less developed regions, excluding least developed countries"
-762,"Less developed regions"
-762,"Less developed regions, excluding least developed countries"
-762,"Less developed regions, excluding China"
-764,"Less developed regions"
-764,"Less developed regions, excluding least developed countries"
-764,"Less developed regions, excluding China"
-768,"Less developed regions"
-768,"Least developed countries"
-768,"Less developed regions, excluding China"
-772,"Less developed regions"
-772,"Less developed regions, excluding least developed countries"
-772,"Less developed regions, excluding China"
-776,"Less developed regions"
-776,"Less developed regions, excluding least developed countries"
-776,"Less developed regions, excluding China"
-780,"Less developed regions"
-780,"Less developed regions, excluding least developed countries"
-780,"Less developed regions, excluding China"
-784,"Less developed regions"
-784,"Less developed regions, excluding least developed countries"
-784,"Less developed regions, excluding China"
-788,"Less developed regions"
-788,"Less developed regions, excluding least developed countries"
-788,"Less developed regions, excluding China"
-792,"Less developed regions"
-792,"Less developed regions, excluding least developed countries"
-792,"Less developed regions, excluding China"
-795,"Less developed regions"
-795,"Less developed regions, excluding least developed countries"
-795,"Less developed regions, excluding China"
-798,"Less developed regions"
-798,"Least developed countries"
-798,"Less developed regions, excluding China"
-800,"Less developed regions"
-800,"Least developed countries"
-800,"Less developed regions, excluding China"
-804,"More developed regions"
-807,"More developed regions"
-818,"Less developed regions"
-818,"Less developed regions, excluding least developed countries"
-818,"Less developed regions, excluding China"
-826,"More developed regions"
-831,"More developed regions"
-832,"More developed regions"
-833,"More developed regions"
-834,"Less developed regions"
-834,"Least developed countries"
-834,"Less developed regions, excluding China"
-840,"More developed regions"
-850,"Less developed regions"
-850,"Less developed regions, excluding least developed countries"
-850,"Less developed regions, excluding China"
-796,"Less developed regions"
-796,"Less developed regions, excluding least developed countries"
-796,"Less developed regions, excluding China"
-854,"Less developed regions"
-854,"Least developed countries"
-854,"Less developed regions, excluding China"
-858,"Less developed regions"
-858,"Less developed regions, excluding least developed countries"
-858,"Less developed regions, excluding China"
-860,"Less developed regions"
-860,"Less developed regions, excluding least developed countries"
-860,"Less developed regions, excluding China"
-862,"Less developed regions"
-862,"Less developed regions, excluding least developed countries"
-862,"Less developed regions, excluding China"
-876,"Less developed regions"
-876,"Less developed regions, excluding least developed countries"
-876,"Less developed regions, excluding China"
-882,"Less developed regions"
-882,"Less developed regions, excluding least developed countries"
-882,"Less developed regions, excluding China"
-887,"Less developed regions"
-887,"Least developed countries"
-887,"Less developed regions, excluding China"
-894,"Less developed regions"
-894,"Least developed countries"
-894,"Less developed regions, excluding China"
-534,"Less developed regions"
+"iso.country","groupname","iso.group"
+8,"More developed regions",901
+12,"Less developed regions",902
+12,"Less developed regions, excluding least developed countries",934
+12,"Less developed regions, excluding China",948
+16,"Less developed regions",902
+16,"Less developed regions, excluding least developed countries",934
+16,"Less developed regions, excluding China",948
+20,"More developed regions",901
+24,"Less developed regions",902
+24,"Least developed countries",941
+24,"Less developed regions, excluding China",948
+28,"Less developed regions",902
+28,"Less developed regions, excluding least developed countries",934
+28,"Less developed regions, excluding China",948
+32,"Less developed regions",902
+32,"Less developed regions, excluding China",948
+32,"Less developed regions, excluding least developed countries",934
+36,"More developed regions",901
+40,"More developed regions",901
+44,"Less developed regions",902
+44,"Less developed regions, excluding least developed countries",934
+44,"Less developed regions, excluding China",948
+48,"Less developed regions",902
+48,"Less developed regions, excluding least developed countries",934
+48,"Less developed regions, excluding China",948
+50,"Less developed regions",902
+50,"Least developed countries",941
+50,"Less developed regions, excluding China",948
+51,"Less developed regions",902
+4,"Less developed regions",902
+4,"Least developed countries",941
+4,"Less developed regions, excluding China",948
+31,"Less developed regions",902
+31,"Less developed regions, excluding least developed countries",934
+31,"Less developed regions, excluding China",948
+56,"More developed regions",901
+60,"More developed regions",901
+64,"Less developed regions",902
+64,"Less developed regions, excluding least developed countries",934
+64,"Less developed regions, excluding China",948
+68,"Less developed regions",902
+68,"Less developed regions, excluding least developed countries",934
+68,"Less developed regions, excluding China",948
+51,"Less developed regions, excluding least developed countries",934
+51,"Less developed regions, excluding China",948
+52,"Less developed regions",902
+52,"Less developed regions, excluding least developed countries",934
+52,"Less developed regions, excluding China",948
+70,"More developed regions",901
+72,"Less developed regions",902
+72,"Less developed regions, excluding least developed countries",934
+72,"Less developed regions, excluding China",948
+76,"Less developed regions",902
+76,"Less developed regions, excluding least developed countries",934
+76,"Less developed regions, excluding China",948
+84,"Less developed regions",902
+84,"Less developed regions, excluding least developed countries",934
+84,"Less developed regions, excluding China",948
+90,"Less developed regions",902
+90,"Least developed countries",941
+90,"Less developed regions, excluding China",948
+92,"Less developed regions",902
+92,"Less developed regions, excluding least developed countries",934
+92,"Less developed regions, excluding China",948
+96,"Less developed regions",902
+96,"Less developed regions, excluding China",948
+96,"Less developed regions, excluding least developed countries",934
+100,"More developed regions",901
+104,"Less developed regions",902
+104,"Least developed countries",941
+104,"Less developed regions, excluding China",948
+108,"Less developed regions",902
+108,"Least developed countries",941
+108,"Less developed regions, excluding China",948
+112,"More developed regions",901
+116,"Less developed regions",902
+116,"Least developed countries",941
+116,"Less developed regions, excluding China",948
+120,"Less developed regions",902
+120,"Less developed regions, excluding least developed countries",934
+120,"Less developed regions, excluding China",948
+124,"More developed regions",901
+132,"Less developed regions",902
+132,"Less developed regions, excluding least developed countries",934
+132,"Less developed regions, excluding China",948
+136,"Less developed regions",902
+136,"Less developed regions, excluding least developed countries",934
+136,"Less developed regions, excluding China",948
+140,"Less developed regions",902
+140,"Least developed countries",941
+140,"Less developed regions, excluding China",948
+144,"Less developed regions",902
+144,"Less developed regions, excluding least developed countries",934
+144,"Less developed regions, excluding China",948
+148,"Less developed regions",902
+148,"Least developed countries",941
+148,"Less developed regions, excluding China",948
+152,"Less developed regions",902
+152,"Less developed regions, excluding least developed countries",934
+152,"Less developed regions, excluding China",948
+156,"Less developed regions",902
+156,"Less developed regions, excluding least developed countries",934
+158,"Less developed regions",902
+158,"Less developed regions, excluding least developed countries",934
+170,"Less developed regions",902
+170,"Less developed regions, excluding least developed countries",934
+170,"Less developed regions, excluding China",948
+174,"Less developed regions",902
+174,"Least developed countries",941
+174,"Less developed regions, excluding China",948
+175,"Less developed regions",902
+175,"Less developed regions, excluding least developed countries",934
+175,"Less developed regions, excluding China",948
+178,"Less developed regions",902
+178,"Less developed regions, excluding least developed countries",934
+178,"Less developed regions, excluding China",948
+180,"Less developed regions",902
+180,"Least developed countries",941
+180,"Less developed regions, excluding China",948
+184,"Less developed regions",902
+184,"Less developed regions, excluding least developed countries",934
+184,"Less developed regions, excluding China",948
+188,"Less developed regions",902
+188,"Less developed regions, excluding least developed countries",934
+188,"Less developed regions, excluding China",948
+191,"More developed regions",901
+192,"Less developed regions",902
+231,"Least developed countries",941
+231,"Less developed regions, excluding China",948
+232,"Less developed regions",902
+232,"Least developed countries",941
+232,"Less developed regions, excluding China",948
+233,"More developed regions",901
+234,"More developed regions",901
+238,"Less developed regions",902
+238,"Less developed regions, excluding least developed countries",934
+238,"Less developed regions, excluding China",948
+242,"Less developed regions",902
+242,"Less developed regions, excluding least developed countries",934
+242,"Less developed regions, excluding China",948
+246,"More developed regions",901
+250,"More developed regions",901
+254,"Less developed regions",902
+254,"Less developed regions, excluding least developed countries",934
+254,"Less developed regions, excluding China",948
+258,"Less developed regions",902
+258,"Less developed regions, excluding least developed countries",934
+258,"Less developed regions, excluding China",948
+262,"Less developed regions",902
+262,"Least developed countries",941
+262,"Less developed regions, excluding China",948
+266,"Less developed regions",902
+266,"Less developed regions, excluding least developed countries",934
+266,"Less developed regions, excluding China",948
+268,"Less developed regions",902
+268,"Less developed regions, excluding least developed countries",934
+268,"Less developed regions, excluding China",948
+270,"Less developed regions",902
+270,"Least developed countries",941
+270,"Less developed regions, excluding China",948
+275,"Less developed regions",902
+275,"Less developed regions, excluding least developed countries",934
+275,"Less developed regions, excluding China",948
+276,"More developed regions",901
+288,"Less developed regions",902
+288,"Less developed regions, excluding least developed countries",934
+288,"Less developed regions, excluding China",948
+292,"More developed regions",901
+296,"Less developed regions",902
+296,"Least developed countries",941
+296,"Less developed regions, excluding China",948
+300,"More developed regions",901
+304,"More developed regions",901
+308,"Less developed regions",902
+308,"Less developed regions, excluding least developed countries",934
+308,"Less developed regions, excluding China",948
+336,"More developed regions",901
+340,"Less developed regions",902
+340,"Less developed regions, excluding least developed countries",934
+340,"Less developed regions, excluding China",948
+344,"Less developed regions",902
+344,"Less developed regions, excluding least developed countries",934
+348,"More developed regions",901
+352,"More developed regions",901
+356,"Less developed regions",902
+356,"Less developed regions, excluding least developed countries",934
+356,"Less developed regions, excluding China",948
+360,"Less developed regions",902
+360,"Less developed regions, excluding least developed countries",934
+360,"Less developed regions, excluding China",948
+364,"Less developed regions",902
+364,"Less developed regions, excluding least developed countries",934
+364,"Less developed regions, excluding China",948
+368,"Less developed regions",902
+368,"Less developed regions, excluding least developed countries",934
+368,"Less developed regions, excluding China",948
+372,"More developed regions",901
+376,"Less developed regions",902
+376,"Less developed regions, excluding least developed countries",934
+376,"Less developed regions, excluding China",948
+380,"More developed regions",901
+384,"Less developed regions",902
+384,"Less developed regions, excluding least developed countries",934
+384,"Less developed regions, excluding China",948
+388,"Less developed regions",902
+388,"Less developed regions, excluding least developed countries",934
+388,"Less developed regions, excluding China",948
+192,"Less developed regions, excluding least developed countries",934
+192,"Less developed regions, excluding China",948
+196,"Less developed regions",902
+196,"Less developed regions, excluding least developed countries",934
+196,"Less developed regions, excluding China",948
+203,"More developed regions",901
+204,"Less developed regions",902
+204,"Least developed countries",941
+204,"Less developed regions, excluding China",948
+208,"More developed regions",901
+212,"Less developed regions",902
+218,"Less developed regions",902
+218,"Less developed regions, excluding least developed countries",934
+218,"Less developed regions, excluding China",948
+222,"Less developed regions",902
+222,"Less developed regions, excluding least developed countries",934
+222,"Less developed regions, excluding China",948
+226,"Less developed regions, excluding China",948
+226,"Less developed regions, excluding least developed countries",934
+226,"Less developed regions",902
+231,"Less developed regions",902
+316,"Less developed regions",902
+316,"Less developed regions, excluding least developed countries",934
+316,"Less developed regions, excluding China",948
+320,"Less developed regions",902
+320,"Less developed regions, excluding least developed countries",934
+320,"Less developed regions, excluding China",948
+324,"Less developed regions",902
+324,"Least developed countries",941
+324,"Less developed regions, excluding China",948
+328,"Less developed regions",902
+328,"Less developed regions, excluding least developed countries",934
+328,"Less developed regions, excluding China",948
+332,"Less developed regions",902
+332,"Least developed countries",941
+332,"Less developed regions, excluding China",948
+212,"Less developed regions, excluding least developed countries",934
+212,"Less developed regions, excluding China",948
+214,"Less developed regions",902
+214,"Less developed regions, excluding least developed countries",934
+214,"Less developed regions, excluding China",948
+392,"More developed regions",901
+398,"Less developed regions",902
+398,"Less developed regions, excluding least developed countries",934
+398,"Less developed regions, excluding China",948
+400,"Less developed regions",902
+400,"Less developed regions, excluding least developed countries",934
+400,"Less developed regions, excluding China",948
+404,"Less developed regions",902
+404,"Less developed regions, excluding least developed countries",934
+404,"Less developed regions, excluding China",948
+408,"Less developed regions",902
+408,"Less developed regions, excluding least developed countries",934
+408,"Less developed regions, excluding China",948
+410,"Less developed regions",902
+410,"Less developed regions, excluding least developed countries",934
+410,"Less developed regions, excluding China",948
+412,"More developed regions",901
+414,"Less developed regions",902
+414,"Less developed regions, excluding least developed countries",934
+414,"Less developed regions, excluding China",948
+417,"Less developed regions",902
+417,"Less developed regions, excluding least developed countries",934
+417,"Less developed regions, excluding China",948
+428,"More developed regions",901
+430,"Less developed regions",902
+430,"Least developed countries",941
+430,"Less developed regions, excluding China",948
+434,"Less developed regions",902
+434,"Less developed regions, excluding least developed countries",934
+434,"Less developed regions, excluding China",948
+438,"More developed regions",901
+440,"More developed regions",901
+442,"More developed regions",901
+446,"Less developed regions",902
+446,"Less developed regions, excluding least developed countries",934
+450,"Less developed regions",902
+450,"Least developed countries",941
+450,"Less developed regions, excluding China",948
+454,"Less developed regions",902
+312,"Less developed regions",902
+312,"Less developed regions, excluding least developed countries",934
+312,"Less developed regions, excluding China",948
+418,"Less developed regions",902
+418,"Least developed countries",941
+418,"Less developed regions, excluding China",948
+422,"Less developed regions",902
+422,"Less developed regions, excluding least developed countries",934
+422,"Less developed regions, excluding China",948
+426,"Less developed regions",902
+426,"Least developed countries",941
+426,"Less developed regions, excluding China",948
+454,"Least developed countries",941
+454,"Less developed regions, excluding China",948
+458,"Less developed regions",902
+458,"Less developed regions, excluding least developed countries",934
+458,"Less developed regions, excluding China",948
+462,"Less developed regions",902
+462,"Less developed regions, excluding least developed countries",934
+462,"Less developed regions, excluding China",948
+470,"More developed regions",901
+474,"Less developed regions",902
+474,"Less developed regions, excluding least developed countries",934
+474,"Less developed regions, excluding China",948
+480,"Less developed regions, excluding least developed countries",934
+480,"Less developed regions, excluding China",948
+484,"Less developed regions",902
+484,"Less developed regions, excluding least developed countries",934
+484,"Less developed regions, excluding China",948
+492,"More developed regions",901
+496,"Less developed regions",902
+496,"Less developed regions, excluding least developed countries",934
+496,"Less developed regions, excluding China",948
+478,"Less developed regions",902
+478,"Least developed countries",941
+478,"Less developed regions, excluding China",948
+480,"Less developed regions",902
+466,"Less developed regions",902
+466,"Least developed countries",941
+466,"Less developed regions, excluding China",948
+498,"More developed regions",901
+500,"Less developed regions, excluding least developed countries",934
+500,"Less developed regions, excluding China",948
+504,"Less developed regions",902
+504,"Less developed regions, excluding least developed countries",934
+504,"Less developed regions, excluding China",948
+508,"Less developed regions",902
+508,"Least developed countries",941
+508,"Less developed regions, excluding China",948
+512,"Less developed regions",902
+512,"Less developed regions, excluding least developed countries",934
+512,"Less developed regions, excluding China",948
+516,"Less developed regions",902
+516,"Less developed regions, excluding least developed countries",934
+516,"Less developed regions, excluding China",948
+520,"Less developed regions",902
+520,"Less developed regions, excluding least developed countries",934
+520,"Less developed regions, excluding China",948
+524,"Less developed regions",902
+499,"More developed regions",901
+500,"Less developed regions",902
+524,"Least developed countries",941
+524,"Less developed regions, excluding China",948
+528,"More developed regions",901
+531,"Less developed regions",902
+531,"Less developed regions, excluding least developed countries",934
+531,"Less developed regions, excluding China",948
+534,"Less developed regions, excluding China",948
+534,"Less developed regions, excluding least developed countries",934
+535,"Less developed regions",902
+535,"Less developed regions, excluding least developed countries",934
+535,"Less developed regions, excluding China",948
+540,"Less developed regions",902
+540,"Less developed regions, excluding least developed countries",934
+540,"Less developed regions, excluding China",948
+548,"Less developed regions",902
+548,"Less developed regions, excluding least developed countries",934
+548,"Less developed regions, excluding China",948
+554,"More developed regions",901
+558,"Less developed regions, excluding least developed countries",934
+558,"Less developed regions, excluding China",948
+558,"Less developed regions",902
+562,"Less developed regions",902
+562,"Least developed countries",941
+562,"Less developed regions, excluding China",948
+566,"Less developed regions",902
+566,"Less developed regions, excluding least developed countries",934
+566,"Less developed regions, excluding China",948
+570,"Less developed regions",902
+570,"Less developed regions, excluding least developed countries",934
+570,"Less developed regions, excluding China",948
+578,"More developed regions",901
+580,"Less developed regions",902
+580,"Less developed regions, excluding least developed countries",934
+580,"Less developed regions, excluding China",948
+583,"Less developed regions",902
+583,"Less developed regions, excluding least developed countries",934
+583,"Less developed regions, excluding China",948
+584,"Less developed regions",902
+584,"Less developed regions, excluding least developed countries",934
+584,"Less developed regions, excluding China",948
+585,"Less developed regions",902
+585,"Less developed regions, excluding least developed countries",934
+585,"Less developed regions, excluding China",948
+586,"Less developed regions",902
+586,"Less developed regions, excluding least developed countries",934
+586,"Less developed regions, excluding China",948
+591,"Less developed regions",902
+591,"Less developed regions, excluding least developed countries",934
+591,"Less developed regions, excluding China",948
+598,"Less developed regions",902
+598,"Less developed regions, excluding least developed countries",934
+598,"Less developed regions, excluding China",948
+600,"Less developed regions",902
+600,"Less developed regions, excluding least developed countries",934
+600,"Less developed regions, excluding China",948
+604,"Less developed regions",902
+604,"Less developed regions, excluding least developed countries",934
+604,"Less developed regions, excluding China",948
+608,"Less developed regions",902
+608,"Less developed regions, excluding least developed countries",934
+608,"Less developed regions, excluding China",948
+616,"More developed regions",901
+620,"More developed regions",901
+624,"Less developed regions",902
+624,"Least developed countries",941
+624,"Less developed regions, excluding China",948
+630,"Less developed regions, excluding least developed countries",934
+630,"Less developed regions, excluding China",948
+634,"Less developed regions",902
+634,"Less developed regions, excluding least developed countries",934
+634,"Less developed regions, excluding China",948
+638,"Less developed regions",902
+638,"Less developed regions, excluding least developed countries",934
+638,"Less developed regions, excluding China",948
+642,"More developed regions",901
+643,"More developed regions",901
+646,"Less developed regions",902
+646,"Least developed countries",941
+646,"Less developed regions, excluding China",948
+652,"Less developed regions",902
+652,"Less developed regions, excluding least developed countries",934
+652,"Less developed regions, excluding China",948
+654,"Less developed regions",902
+654,"Less developed regions, excluding least developed countries",934
+654,"Less developed regions, excluding China",948
+659,"Less developed regions",902
+626,"Less developed regions",902
+626,"Least developed countries",941
+626,"Less developed regions, excluding China",948
+630,"Less developed regions",902
+533,"Less developed regions",902
+533,"Less developed regions, excluding least developed countries",934
+533,"Less developed regions, excluding China",948
+659,"Less developed regions, excluding China",948
+659,"Less developed regions, excluding least developed countries",934
+660,"Less developed regions",902
+663,"Less developed regions",902
+663,"Less developed regions, excluding least developed countries",934
+663,"Less developed regions, excluding China",948
+666,"More developed regions",901
+670,"Less developed regions",902
+670,"Less developed regions, excluding least developed countries",934
+670,"Less developed regions, excluding China",948
+660,"Less developed regions, excluding least developed countries",934
+660,"Less developed regions, excluding China",948
+662,"Less developed regions",902
+662,"Less developed regions, excluding least developed countries",934
+662,"Less developed regions, excluding China",948
+674,"More developed regions",901
+678,"Less developed regions",902
+678,"Least developed countries",941
+678,"Less developed regions, excluding China",948
+682,"Less developed regions",902
+682,"Less developed regions, excluding least developed countries",934
+682,"Less developed regions, excluding China",948
+686,"Less developed regions",902
+686,"Least developed countries",941
+686,"Less developed regions, excluding China",948
+688,"More developed regions",901
+690,"Less developed regions",902
+690,"Less developed regions, excluding least developed countries",934
+690,"Less developed regions, excluding China",948
+702,"Less developed regions, excluding least developed countries",934
+702,"Less developed regions, excluding China",948
+703,"More developed regions",901
+704,"Less developed regions",902
+704,"Less developed regions, excluding least developed countries",934
+704,"Less developed regions, excluding China",948
+705,"More developed regions",901
+706,"Less developed regions",902
+706,"Least developed countries",941
+706,"Less developed regions, excluding China",948
+710,"Less developed regions",902
+710,"Less developed regions, excluding least developed countries",934
+710,"Less developed regions, excluding China",948
+716,"Less developed regions",902
+694,"Less developed regions",902
+694,"Least developed countries",941
+694,"Less developed regions, excluding China",948
+702,"Less developed regions",902
+716,"Less developed regions, excluding least developed countries",934
+716,"Less developed regions, excluding China",948
+724,"More developed regions",901
+728,"Less developed regions",902
+728,"Least developed countries",941
+728,"Less developed regions, excluding China",948
+729,"Less developed regions",902
+729,"Least developed countries",941
+729,"Less developed regions, excluding China",948
+732,"Less developed regions",902
+732,"Less developed regions, excluding least developed countries",934
+732,"Less developed regions, excluding China",948
+740,"Less developed regions",902
+740,"Less developed regions, excluding least developed countries",934
+740,"Less developed regions, excluding China",948
+748,"Less developed regions",902
+748,"Less developed regions, excluding least developed countries",934
+748,"Less developed regions, excluding China",948
+752,"More developed regions",901
+756,"More developed regions",901
+760,"Less developed regions",902
+760,"Less developed regions, excluding China",948
+760,"Less developed regions, excluding least developed countries",934
+762,"Less developed regions",902
+762,"Less developed regions, excluding least developed countries",934
+762,"Less developed regions, excluding China",948
+764,"Less developed regions",902
+764,"Less developed regions, excluding least developed countries",934
+764,"Less developed regions, excluding China",948
+768,"Less developed regions",902
+768,"Least developed countries",941
+768,"Less developed regions, excluding China",948
+772,"Less developed regions",902
+772,"Less developed regions, excluding least developed countries",934
+772,"Less developed regions, excluding China",948
+776,"Less developed regions",902
+776,"Less developed regions, excluding least developed countries",934
+776,"Less developed regions, excluding China",948
+780,"Less developed regions",902
+780,"Less developed regions, excluding least developed countries",934
+780,"Less developed regions, excluding China",948
+784,"Less developed regions",902
+784,"Less developed regions, excluding least developed countries",934
+784,"Less developed regions, excluding China",948
+788,"Less developed regions",902
+788,"Less developed regions, excluding least developed countries",934
+788,"Less developed regions, excluding China",948
+792,"Less developed regions",902
+792,"Less developed regions, excluding least developed countries",934
+792,"Less developed regions, excluding China",948
+795,"Less developed regions",902
+795,"Less developed regions, excluding least developed countries",934
+795,"Less developed regions, excluding China",948
+798,"Less developed regions",902
+798,"Least developed countries",941
+798,"Less developed regions, excluding China",948
+800,"Less developed regions",902
+800,"Least developed countries",941
+800,"Less developed regions, excluding China",948
+804,"More developed regions",901
+807,"More developed regions",901
+818,"Less developed regions",902
+818,"Less developed regions, excluding least developed countries",934
+818,"Less developed regions, excluding China",948
+826,"More developed regions",901
+831,"More developed regions",901
+832,"More developed regions",901
+833,"More developed regions",901
+834,"Less developed regions",902
+834,"Least developed countries",941
+834,"Less developed regions, excluding China",948
+840,"More developed regions",901
+850,"Less developed regions",902
+850,"Less developed regions, excluding least developed countries",934
+850,"Less developed regions, excluding China",948
+796,"Less developed regions",902
+796,"Less developed regions, excluding least developed countries",934
+796,"Less developed regions, excluding China",948
+854,"Less developed regions",902
+854,"Least developed countries",941
+854,"Less developed regions, excluding China",948
+858,"Less developed regions",902
+858,"Less developed regions, excluding least developed countries",934
+858,"Less developed regions, excluding China",948
+860,"Less developed regions",902
+860,"Less developed regions, excluding least developed countries",934
+860,"Less developed regions, excluding China",948
+862,"Less developed regions",902
+862,"Less developed regions, excluding least developed countries",934
+862,"Less developed regions, excluding China",948
+876,"Less developed regions",902
+876,"Less developed regions, excluding least developed countries",934
+876,"Less developed regions, excluding China",948
+882,"Less developed regions",902
+882,"Less developed regions, excluding least developed countries",934
+882,"Less developed regions, excluding China",948
+887,"Less developed regions",902
+887,"Least developed countries",941
+887,"Less developed regions, excluding China",948
+894,"Less developed regions",902
+894,"Least developed countries",941
+894,"Less developed regions, excluding China",948
+534,"Less developed regions",902
