@@ -1,7 +1,7 @@
 Package: FPEMglobal
 Type: Package
 Title: Family Planning Estimation Model - Global
-Version: 1.5.2
+Version: 1.5.2.9000
 Date: 2024-06-26
 Authors@R: c(person(given = c("Mark", "C."), "Wheldon", email = "wheldon@un.org", role = c("aut", "cre")),
              person("Jin Rou", "New", email = "lalkema@schoolph.umass.edu", role = "aut"),
