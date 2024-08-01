@@ -1,23 +1,28 @@
-##' Country and Area Aggregation Lists from WPP 2024
+##' Country and Area Aggregations from World Population Prosects 2024
 ##'
-##' The list of country and area aggregation lists used in World
-##' Population Prospects (WPP), 2024 edition. These define the
-##' aggregates for which family planning indicators are tabulated, in
-##' addition to the individual countries and areas.
-##'
-##' \code{aggregates_list_wpp2024} is a named list, with each
-##' top-level element containing an aggregation list. The top-level
-##' names are the numeric identification codes for these aggregation
-##' lists, as used in the UNPD's data base.
+##' A name list of country and area aggregations used in United
+##' Nations' World Population Prospects (\acronym{WPP}), 2024
+##' edition. The top-level names are the numeric identification codes
+##' for these aggregation lists, as used in the UNPD's data base.
 ##'
 ##' Each aggregation list is, itself, a list containing meta-data
-##' elements (e.g., the \dQuote{Name} of the aggregation list) and an
-##' element named \dQuote{Locations} containing a data frame. These
-##' \dQuote{Locations} data frames maps countries and areas to a set
-##' of aggregations specific to that aggregation list. The countries
-##' and areas, and the aggregations, are identified by their common
+##' elements. The most relevant is the \dQuote{Name} element, which
+##' gives the name of the aggregation set.
+##'
+##' The \dQuote{Locations} elements contain data frames with one row
+##' per country/area. They indicate the aggregation group memberships
+##' for each location within that aggregation set. The countries and
+##' areas, and the aggregation groups, are identified by their common
 ##' names in the English language and various standard identification
-##' codes, including the M49 numeric code and ISO-3166 alpha codes.
+##' codes, including the M49 numeric code and ISO-3166 alpha
+##' codes. The most relevant data frame variables are:
+##'
+##' | Column name | Description |
+##' | ----------- | ----------- |
+##' | `ParentPrintName` | Name of the aggregation group |
+##' | `PrintName` | Informal name of the country/area in English |
+##' | `LocID` | M49 numeric code of the country/area |
+##' | `ISO3Code` | Three-letter alpha code of the country/area |
 ##'
 ##' The first aggregation list, code 1002, is the most commonly used
 ##' set of aggregations, and includes geographic regions and
@@ -80,4 +85,56 @@
 ##'  $ ISO3166_1_alpha3: chr  "AFG" "AFG" "ALB" "ALB" ...}
 ##'
 ##' @source United Nations, Department of Economic and Social Affairs, Population Division
-"aggregates_list_wpp2024"
+##'
+##' @family special aggregations
+##'
+##' @references
+##'
+##' United Nations. (2024). *World Population Prospects: The 2024
+##' Revision*. United Nations, Department of Economic and Social
+##' Affairs, Population Division. \url{https://population.un.org/wpp/}
+"aggregates_wpp2024_list"
+
+
+
+##' Country and Area Aggregations from World Fertility Report 2024
+##'
+##' A data frame containing the aggregations of countries and areas
+##' used in United Nations' *World Fertility Report* (\acronym{WFR}), 2024
+##' edition. These are defined by the year in which the total
+##' fertility rate (\acronym{TFR}) reached 2.1, births per woman, or
+##' is expected to reach 2.1 based on the medium projection scenario
+##' in World Population Prospects (\acronym{WPP}), 2024 edition:
+##'
+##' \describe{
+##' \item{Before 1994}{Countries reaching low fertility before 1994}
+##' \item{1994-2054}{Countries reaching low fertility between 1994 and 2054}
+##' \item{After 2054}{Countries potentially reaching low fertility later in the century after 2054}
+##' }
+##'
+##' \code{aggregates_wfr2024_locations} is a data frame containing the
+##' single aggregation list for this set. The format is similar to the
+##' \dQuote{Locations} elements of the lists in
+##' \code{\link{aggregates_wpp2024_list}}.
+##'
+##' @format
+##' \preformatted{'data.frame':	237 obs. of  6 variables:
+##' $ LocID          : num  108 174 262 232 231 404 450 454 480 175 ...
+##' $ LocTypeID      : int  4 4 4 4 4 4 4 4 4 4 ...
+##' $ LocTypeName    : chr  "Country/Area" "Country/Area" "Country/Area" "Country/Area" ...
+##' $ LocationID     : num  108 174 262 232 231 404 450 454 480 175 ...
+##' $ ParentPrintName: chr  "After 2054" "After 2054" "1994-2054" "After 2054" ...
+##'
+##' @source United Nations, Department of Economic and Social Affairs, Population Division
+##'
+##' @family special aggregations
+##'
+##' @references
+##'
+##' United Nations. (in prep.). *World Fertility Report 2024*. New York: United
+##' Nations Department of Economic and Social Affairs, Population
+##' Division.
+##'
+"aggregates_wfr2024_locations"
+
+
