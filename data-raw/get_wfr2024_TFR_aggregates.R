@@ -77,9 +77,11 @@ save(aggregates_wfr2024_locations, file = file.path(data_dir, "aggregates_wfr202
 
 aggregates_wfr2024_csv <-
     data.frame(iso.country = aggregates_wfr2024_locations$LocID,
-               iso.group = NA,
+               iso.group = "",
                groupname = aggregates_wfr2024_locations$ParentPrintName)
 
+aggregates_wfr2024_csv <- aggregates_wfr2024_csv[order(aggregates_wfr2024_csv$iso.country), ]
+
 write.csv(aggregates_wfr2024_csv,
-          file = file.path(extdata_dir, "aggregates_special_wfr2024.xlsx"),
+          file = file.path(extdata_dir, "aggregates_special_wfr2024.csv"),
           row.names = FALSE)
