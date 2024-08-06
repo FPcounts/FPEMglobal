@@ -211,3 +211,15 @@ marital_age_group_param_defaults <- function(marital_group, age_group, model_fam
                 EA_bias_negative = EA_bias_negative,
                 HW_bias_negative = HW_bias_negative))
 }
+
+###-----------------------------------------------------------------------------
+### * 'extdata' Files
+
+make_pkg_dir_entry <- function(filename, type = "extdata") {
+    list(filename = filename,
+         filepath = system.file("extdata", filename, package = "FPEMglobal"))
+}
+
+get_all_spec_agg_csv <- function(pattern = "^aggregates_special_.+\\.csv$") {
+    grep(pattern, dir(system.file("extdata", package = "FPEMglobal")), value = TRUE)
+}

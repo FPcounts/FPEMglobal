@@ -4404,16 +4404,6 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 }
 
 
-
-## Make sure output directory is valid.
-##
-## 'post_processed' is 'TRUE' by default because an un-processed
-## directory doesn't even have 'mcmc.array.rda', which means it's
-## unlikely to be used.
-
-
-
-
 ##' Check that a directory is a valid FPEMglobal output directory
 ##'
 ##' Checks the content of \code{output_dir} to make sure certain
@@ -4538,3 +4528,46 @@ assert_valid_output_dir <- function(output_folder_path,
     if (verbose) message("'", output_folder_path, "' is a valid output directory.")
     return(invisible(output_folder_path))
 }
+
+
+##' List of files included with package
+##'
+##' FPEMglobal comes bundled with all the input data files needed to
+##' re-produce published model runs. This function will return a list
+##' giving the filenames and paths to these files. They are grouped by
+##' the package functions that take them as inputs. See
+##' \dQuote{Description} for further details.
+##'
+##' The files in the list are:
+##' \description{
+##'   \item{model_run_inputs}{
+##'     \description{
+##'       \item{input_data_1549}{Raw input data for ages 15--49}
+##'       \item{region_information}{Regional and other aggregations of countries; used in model hierarchy.}
+##'     }
+##'   }
+##'   \item{post_process_inputs}{
+##'     \description{
+##'       \item{denominator_counts_1549}{Number of women by marital status, aged 15--49. These are used to convert proportions into counts, which are then used to construct the aggregates.}
+##'       \item{countries_for_aggregates}{Countries that are included in the set used to construct all aggregates. This set originally contained 195 countries but has grown slightly.}
+##'     }
+##'   }
+##'  \description{special_aggregates}{List of all files defining special aggregates, including SDG geographic regions and World Bank investment groups.}
+##' }
+##'
+##' @return A nested list containing filenames and paths.
+##' @author Mark Wheldon
+##' @export
+pkg_files_included <- function() {
+    list(model_run_inputs =
+             list(input_data_1549 = make_pkg_dir_entry("data_cp_model_all_women_15-49.csv", type = "extdata"),
+                  region_information = make_pkg_dir_entry("country_and_area_classification_pre2024.csv", type = "extdata")),
+         post_process_inputs =
+             list(denominator_counts_1549 = make_pkg_dir_entry("number_of_women_15-49.csv"),
+                  countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195_pre2024.csv")
+                  ),
+         special_aggregates =
+             lapply(get_all_spec_agg_csv(), make_pkg_dir_entry)
+         )
+}
+
