@@ -13,7 +13,7 @@ post_process_mcmc(
   start_year = 1970.5,
   end_year = 2030.5,
   years_change = matrix(c(1990.5, 2000.5, 2000.5, 2019.5, 2019.5, 2030.5, 2012.5, 2019.5,
-    2012.5, 2019.5, 2012.5, 2020.5), ncol = 2, byrow = TRUE),
+    2012.5, 2020.5), ncol = 2, byrow = TRUE),
   years_change2 = matrix(c(2005.5, 2010.5, 2015.5, 2000.5, 2005.5, 2010.5, 1995.5,
     2000.5, 2005.5, 1990.5, 1995.5, 2000.5, 1990.5, 2000.5, 2010.5, 2000.5, 2010.5,
     2019.5), ncol = 3, byrow = TRUE),
@@ -25,6 +25,7 @@ post_process_mcmc(
   age_ratios_age_total_output_folder_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
+  overwrite_existing_results = FALSE,
   verbose = FALSE
 )
 }
@@ -39,14 +40,16 @@ should be saved. If \code{NULL}, defaults to
 \emph{all} input data (except any map shapefiles). If
 \code{NULL} the value is taken from
 \code{file.path(output_folder_path, "global_mcmc_args.RData")}
-if that file exists, otherwise \code{file.path(output_folder_path, "data")}.}
+if that file exists, otherwise
+\code{file.path(output_folder_path, "data")}.}
 
 \item{denominator_counts_csv_filename}{Name of the \file{.csv}
 file containing estimates and projections of the number of
 women by marital status, age, and year. See \dQuote{Details}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in constructing country aggregates.}
+\file{.csv} file listing countries that will be used in
+constructing country aggregates.}
 
 \item{start_year}{Estimates and projections are produced for a
 specified time interval. This is the start year of that
@@ -65,7 +68,8 @@ indicators are desired.}
 change-in-changes.}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
-and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.}
+and WAIC be computed? These are not re-done if the folder
+\sQuote{\code{output_folder_path}/convergence} exists.}
 
 \item{make_any_aggregates}{Logical. Should country aggregates of
 any kind (including default aggregates) be produced?}
@@ -77,23 +81,43 @@ desired. There must be a corresponding file with name
 \code{input_data_folder_path} that defines the special
 aggregates. See \dQuote{Details}.}
 
-\item{summarize_global_run}{Logical; should the model summary for one-country runs be produced?}
+\item{summarize_global_run}{Logical; should the model summary for
+one-country runs be produced?}
 
-\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.}
+\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to
+use as the denominator for age ratios. Calculate ratios of
+users in a subset age range (e.g., 15--19) to users in the
+total age range (15--49) from this run. Requires a completed
+15--49 run.}
 
-\item{age_ratios_age_total_output_folder_path}{Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
+\item{age_ratios_age_total_output_folder_path}{Alternative way of
+specifying the run to use to make age ratios (see
+\code{age_ratios_age_total_run_name}. File path to output
 directory of the 15--49 run to use to make age ratios.}
 
-\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of
-the \file{.csv} file containing estimates and projections of
-the number of women by marital status, age, and year, for the
-age group 15--49. Only used if \code{make_age_ratios} is
-\code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.}
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name
+of the \file{.csv} file containing estimates and projections
+of the number of women by marital status, age, and year, for
+the age group 15--49. Only used if \code{make_age_ratios} is
+\code{TRUE}. Searched for in
+\code{age_ratios_age_total_denominator_counts_folder_path}.}
 
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
+\code{file.path(age_ratios_age_total_output_folder_path,
+    "data")}.}
+
+\item{overwrite_existing_results}{Logical; should post-processed
+results already in the output folder be overwritten? If all of
+the following files are already present,
+\code{post_process_mcmc} will exit unless this argument is
+\code{TRUE} (default is \code{FALSE}): "res.country.rda",
+"res.aggregate.rda", "par.ciq.rda". This might be useful if,
+for example, you wish to re-process a completed run with a
+different \code{satrt_year} or \code{end_year}. It is
+\emph{not} necessary to set this to \code{TRUE} to add extra
+aggregates.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
@@ -133,17 +157,17 @@ for the required format. Assum all columns are required.
 vignette("FPEMglobal_Intro")
 }
 \references{
-UN DESA Statistics Division,
-(2017) \emph{Standard Country or Area Codes for Statistical
-Use (M49)}. United Nations, Department of Economic and Social
-Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/}
+UN DESA Statistics Division, (2017) \emph{Standard
+Country or Area Codes for Statistical Use (M49)}. United
+Nations, Department of Economic and Social Affairs.
+\url{https://unstats.un.org/unsd/methodology/m49/}
 }
 \seealso{
 \code{\link{do_global_run}} (which calls this function)
 to generate MCMC results for married or unmarried women,
 post-process, and produce results all in one call;
-\code{\link{combine_runs}} to create all women results
-from married and unmarried women runs;
+\code{\link{combine_runs}} to create all women results from
+married and unmarried women runs;
 \code{\link{do_global_all_women_run}} to do married,
 unmarried, \emph{and all women runs}, and produce results, all
 in one call.

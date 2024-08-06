@@ -84,7 +84,8 @@ file containing estimates and projections of the number of
 women by marital status, age, and year. See \dQuote{Details}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in constructing country aggregates.}
+\file{.csv} file listing countries that will be used in
+constructing country aggregates.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
@@ -136,16 +137,18 @@ age ratios.}
 to output directory of the all women 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of
-the \file{.csv} file containing estimates and projections of
-the number of women by marital status, age, and year, for the
-age group 15--49. Only used if \code{make_age_ratios} is
-\code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.}
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name
+of the \file{.csv} file containing estimates and projections
+of the number of women by marital status, age, and year, for
+the age group 15--49. Only used if \code{make_age_ratios} is
+\code{TRUE}. Searched for in
+\code{age_ratios_age_total_denominator_counts_folder_path}.}
 
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
+\code{file.path(age_ratios_age_total_output_folder_path,
+    "data")}.}
 
 \item{run_name_override}{Character. User defined run name to
 override default generation. \code{run_desc} is ignored if

@@ -4539,20 +4539,20 @@ assert_valid_output_dir <- function(output_folder_path,
 ##' \dQuote{Description} for further details.
 ##'
 ##' The files in the list are:
-##' \description{
+##' \describe{
 ##'   \item{model_run_inputs}{
-##'     \description{
+##'     \describe{
 ##'       \item{input_data_1549}{Raw input data for ages 15--49}
 ##'       \item{region_information}{Regional and other aggregations of countries; used in model hierarchy.}
 ##'     }
 ##'   }
 ##'   \item{post_process_inputs}{
-##'     \description{
+##'     \describe{
 ##'       \item{denominator_counts_1549}{Number of women by marital status, aged 15--49. These are used to convert proportions into counts, which are then used to construct the aggregates.}
 ##'       \item{countries_for_aggregates}{Countries that are included in the set used to construct all aggregates. This set originally contained 195 countries but has grown slightly.}
 ##'     }
 ##'   }
-##'  \description{special_aggregates}{List of all files defining special aggregates, including SDG geographic regions and World Bank investment groups.}
+##'  \describe{special_aggregates}{List of all files defining special aggregates, including SDG geographic regions and World Bank investment groups.}
 ##' }
 ##'
 ##' @return A nested list containing filenames and paths.
