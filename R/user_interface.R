@@ -4567,7 +4567,7 @@ pkg_files_included <- function() {
                   countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195.csv")
                   ),
          special_aggregates =
-             lapply(get_all_spec_agg_csv(), make_pkg_dir_entry)
+             setNames(lapply(get_all_spec_agg_csv(), make_pkg_dir_entry), nm = get_all_spec_agg_names())
          )
 }
 

@@ -223,3 +223,7 @@ make_pkg_dir_entry <- function(filename, type = "extdata") {
 get_all_spec_agg_csv <- function(pattern = "^aggregates_special_.+\\.csv$") {
     grep(pattern, dir(system.file("extdata", package = "FPEMglobal")), value = TRUE)
 }
+
+get_all_spec_agg_names <- function(pattern = "^aggregates_special_.+\\.csv$") {
+    gsub(pattern = "\\.csv", replacement = "", x = get_all_spec_agg_csv(pattern = pattern))
+}
