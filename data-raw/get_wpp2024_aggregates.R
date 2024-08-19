@@ -174,7 +174,17 @@ spec_other_agg <- subset(aggregates_wpp2024_list$`1002`$Locations,
                  ParentTypeID == 13)
 spec_other_agg <- data.frame(iso.country = spec_other_agg$LocationID,
                              groupname = spec_other_agg$ParentPrintName,
-                      iso.group = spec_other_agg$ParentID)
+                             iso.group = spec_other_agg$ParentID)
+
+## "SIDS Pacific" is in the "5000" sheet. This is a glitch for WPP 2024.
+if ("SIDS Pacific" %in% aggregates_wpp2024_list$`5000`$Locations$ParentPrintName) {
+    sids_pacific <- subset(aggregates_wpp2024_list$`5000`$Locations,
+                           ParentTypeID == 13 & ParentPrintName == "SIDS Pacific")
+    sids_pacific <- data.frame(iso.country = sids_pacific$LocationID,
+                               groupname = sids_pacific$ParentPrintName,
+                               iso.group = sids_pacific$ParentID)
+    spec_other_agg <- rbind(spec_other_agg, sids_pacific)
+}
 
 write.csv(spec_other_agg, file = file.path(extdata_dir, "aggregates_special_other.csv"),
           row.names = FALSE)
