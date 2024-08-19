@@ -575,22 +575,24 @@ add_global_mcmc <- function(run_name,
 ##' included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")}
 ##' for the required format. Assum all columns are required.
 ##'
-##' @references UN DESA Statistics Division,
-##'     (2017) \emph{Standard Country or Area Codes for Statistical
-##'     Use (M49)}. United Nations, Department of Economic and Social
-##'     Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/}
+##' @references UN DESA Statistics Division, (2017) \emph{Standard
+##'     Country or Area Codes for Statistical Use (M49)}. United
+##'     Nations, Department of Economic and Social Affairs.
+##'     \url{https://unstats.un.org/unsd/methodology/m49/}
 ##' @param run_name The name of the run to post-process.
 ##' @param output_folder_path
 ##' @param input_data_folder_path File path to folder containing
 ##'     \emph{all} input data (except any map shapefiles). If
 ##'     \code{NULL} the value is taken from
 ##'     \code{file.path(output_folder_path, "global_mcmc_args.RData")}
-##'     if that file exists, otherwise \code{file.path(output_folder_path, "data")}.
+##'     if that file exists, otherwise
+##'     \code{file.path(output_folder_path, "data")}.
 ##' @param denominator_counts_csv_filename Name of the \file{.csv}
 ##'     file containing estimates and projections of the number of
 ##'     women by marital status, age, and year. See \dQuote{Details}.
 ##' @param countries_for_aggregates_csv_filename Name of the
-##'     \file{.csv} file listing countries that will be used in constructing country aggregates.
+##'     \file{.csv} file listing countries that will be used in
+##'     constructing country aggregates.
 ##' @param start_year Estimates and projections are produced for a
 ##'     specified time interval. This is the start year of that
 ##'     interval.
@@ -604,7 +606,8 @@ add_global_mcmc <- function(run_name,
 ##'     (as rows) among which to compute probabilistic estimates of
 ##'     change-in-changes.
 ##' @param model_diagnostics Logical; should convergence diagnostics
-##'     and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.
+##'     and WAIC be computed? These are not re-done if the folder
+##'     \sQuote{\code{output_folder_path}/convergence} exists.
 ##' @param make_any_aggregates Logical. Should country aggregates of
 ##'     any kind (including default aggregates) be produced?
 ##' @param special_aggregates_name Character vector of names
@@ -613,19 +616,38 @@ add_global_mcmc <- function(run_name,
 ##'     \file{\code{special_aggregates_name}.csv} in
 ##'     \code{input_data_folder_path} that defines the special
 ##'     aggregates. See \dQuote{Details}.
-##' @param summarize_global_run Logical; should the model summary for one-country runs be produced?
-##' @param age_ratios_age_total_run_name Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.
-##' @param age_ratios_age_total_output_folder_path Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
+##' @param summarize_global_run Logical; should the model summary for
+##'     one-country runs be produced?
+##' @param age_ratios_age_total_run_name Run name of the 15--49 run to
+##'     use as the denominator for age ratios. Calculate ratios of
+##'     users in a subset age range (e.g., 15--19) to users in the
+##'     total age range (15--49) from this run. Requires a completed
+##'     15--49 run.
+##' @param age_ratios_age_total_output_folder_path Alternative way of
+##'     specifying the run to use to make age ratios (see
+##'     \code{age_ratios_age_total_run_name}. File path to output
 ##'     directory of the 15--49 run to use to make age ratios.
-##' @param age_ratios_age_total_denominator_counts_csv_filename Name of
-##'     the \file{.csv} file containing estimates and projections of
-##'     the number of women by marital status, age, and year, for the
-##'     age group 15--49. Only used if \code{make_age_ratios} is
-##'     \code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.
+##' @param age_ratios_age_total_denominator_counts_csv_filename Name
+##'     of the \file{.csv} file containing estimates and projections
+##'     of the number of women by marital status, age, and year, for
+##'     the age group 15--49. Only used if \code{make_age_ratios} is
+##'     \code{TRUE}. Searched for in
+##'     \code{age_ratios_age_total_denominator_counts_folder_path}.
 ##' @param age_ratios_age_total_denominator_counts_folder_path Path to
 ##'     \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 ##'     \code{NULL}, defaults to
-##'     \code{file.path(age_ratios_age_total_output_folder_path, "data")}.
+##'     \code{file.path(age_ratios_age_total_output_folder_path,
+##'     "data")}.
+##' @param overwrite_existing_results Logical; should post-processed
+##'     results already in the output folder be overwritten? If all of
+##'     the following files are already present,
+##'     \code{post_process_mcmc} will exit unless this argument is
+##'     \code{TRUE} (default is \code{FALSE}): "res.country.rda",
+##'     "res.aggregate.rda", "par.ciq.rda". This might be useful if,
+##'     for example, you wish to re-process a completed run with a
+##'     different \code{satrt_year} or \code{end_year}. It is
+##'     \emph{not} necessary to set this to \code{TRUE} to add extra
+##'     aggregates.
 ##' @inheritParams do_global_mcmc
 ##' @return The run name (invisibly). The function is mainly called
 ##'     for its side effects.
@@ -633,8 +655,8 @@ add_global_mcmc <- function(run_name,
 ##' @seealso \code{\link{do_global_run}} (which calls this function)
 ##'     to generate MCMC results for married or unmarried women,
 ##'     post-process, and produce results all in one call;
-##'     \code{\link{combine_runs}} to create all women results
-##'     from married and unmarried women runs;
+##'     \code{\link{combine_runs}} to create all women results from
+##'     married and unmarried women runs;
 ##'     \code{\link{do_global_all_women_run}} to do married,
 ##'     unmarried, \emph{and all women runs}, and produce results, all
 ##'     in one call.
@@ -651,7 +673,6 @@ post_process_mcmc <- function(run_name = NULL,
                                   1990.5, 2000.5,
                                   2000.5, 2019.5,
                                   2019.5, 2030.5,
-                                  2012.5, 2019.5,
                                   2012.5, 2019.5,
                                   2012.5, 2020.5),
                                   ncol = 2, byrow = TRUE),
@@ -670,6 +691,7 @@ post_process_mcmc <- function(run_name = NULL,
                               age_ratios_age_total_output_folder_path = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
+                              overwrite_existing_results = FALSE,
                               verbose = FALSE) {
 
     ##----------------------------------------------------------------------------
@@ -810,9 +832,10 @@ post_process_mcmc <- function(run_name = NULL,
 
     if (!file.exists(file.path(output_folder_path, "res.country.rda"))
         || !file.exists(file.path(output_folder_path, "res.aggregate.rda"))
-        || !file.exists(file.path(output_folder_path, "par.ciq.rda"))) {
+        || !file.exists(file.path(output_folder_path, "par.ciq.rda"))
+        || isTRUE(overwrite_existing_results)) {
 
-        message("\nConstructing output objects, including standard aggregates.")
+        message("\nConstructing output objects, including standard aggregates if requested.")
 
         if(!file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
             if (!dir.exists(file.path(output_folder_path, "countrytrajectories")) &&
@@ -4381,16 +4404,6 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 }
 
 
-
-## Make sure output directory is valid.
-##
-## 'post_processed' is 'TRUE' by default because an un-processed
-## directory doesn't even have 'mcmc.array.rda', which means it's
-## unlikely to be used.
-
-
-
-
 ##' Check that a directory is a valid FPEMglobal output directory
 ##'
 ##' Checks the content of \code{output_dir} to make sure certain
@@ -4515,3 +4528,46 @@ assert_valid_output_dir <- function(output_folder_path,
     if (verbose) message("'", output_folder_path, "' is a valid output directory.")
     return(invisible(output_folder_path))
 }
+
+
+##' List of files included with package
+##'
+##' FPEMglobal comes bundled with all the input data files needed to
+##' re-produce published model runs. This function will return a list
+##' giving the filenames and paths to these files. They are grouped by
+##' the package functions that take them as inputs. See
+##' \dQuote{Description} for further details.
+##'
+##' The files in the list are:
+##' \describe{
+##'   \item{model_run_inputs}{
+##'     \describe{
+##'       \item{input_data_1549}{Raw input data for ages 15--49}
+##'       \item{region_information}{Regional and other aggregations of countries; used in model hierarchy.}
+##'     }
+##'   }
+##'   \item{post_process_inputs}{
+##'     \describe{
+##'       \item{denominator_counts_1549}{Number of women by marital status, aged 15--49. These are used to convert proportions into counts, which are then used to construct the aggregates.}
+##'       \item{countries_for_aggregates}{Countries that are included in the set used to construct all aggregates. This set originally contained 195 countries but has grown slightly.}
+##'     }
+##'   }
+##'  \describe{special_aggregates}{List of all files defining special aggregates, including SDG geographic regions and World Bank investment groups.}
+##' }
+##'
+##' @return A nested list containing filenames and paths.
+##' @author Mark Wheldon
+##' @export
+pkg_files_included <- function() {
+    list(model_run_inputs =
+             list(input_data_1549 = make_pkg_dir_entry("data_cp_model_all_women_15-49.csv", type = "extdata"),
+                  region_information = make_pkg_dir_entry("country_and_area_classification_pre2024.csv", type = "extdata")),
+         post_process_inputs =
+             list(denominator_counts_1549 = make_pkg_dir_entry("number_of_women_15-49.csv"),
+                  countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195_pre2024.csv")
+                  ),
+         special_aggregates =
+             lapply(get_all_spec_agg_csv(), make_pkg_dir_entry)
+         )
+}
+

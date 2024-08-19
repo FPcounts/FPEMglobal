@@ -125,7 +125,8 @@ file with denominator counts (married and unmarried) for this
     \code{age_group}, ".csv")}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in constructing country aggregates.}
+\file{.csv} file listing countries that will be used in
+constructing country aggregates.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
@@ -197,7 +198,8 @@ listed. These must be in the range of \code{start_year} and
 produced in addition to unadjusted outputs?}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
-and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.}
+and WAIC be computed? These are not re-done if the folder
+\sQuote{\code{output_folder_path}/convergence} exists.}
 
 \item{include_AR}{Logical; should the auto-regressive component of
 the model be estimated. Used mainly for testing.}
@@ -225,16 +227,18 @@ age ratios.}
 to output directory of the all women 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of
-the \file{.csv} file containing estimates and projections of
-the number of women by marital status, age, and year, for the
-age group 15--49. Only used if \code{make_age_ratios} is
-\code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.}
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name
+of the \file{.csv} file containing estimates and projections
+of the number of women by marital status, age, and year, for
+the age group 15--49. Only used if \code{make_age_ratios} is
+\code{TRUE}. Searched for in
+\code{age_ratios_age_total_denominator_counts_folder_path}.}
 
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
+\code{file.path(age_ratios_age_total_output_folder_path,
+    "data")}.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
