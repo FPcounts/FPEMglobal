@@ -93,7 +93,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                                              input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                              denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
                                              marital_group = c("married", "unmarried"),
-                                             countries_for_aggregates_csv_filename = "countries_mwra_195_pre2024.csv",
+                                             countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
                                              output_folder_path = NULL,
                                              verbose = FALSE) {
     model_family <- "rate"
@@ -297,7 +297,7 @@ do_global_mcmc <- function(run_desc = "",
                            run_in_parallel = isTRUE(length(chain_nums) > 1),
                            input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                            data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-                           region_information_csv_filename = "country_and_area_classification_pre2024.csv",
+                           region_information_csv_filename = "country_and_area_classification.csv",
                            output_folder_path = NULL,
                            include_AR = TRUE,
                            verbose = FALSE) {
@@ -666,7 +666,7 @@ post_process_mcmc <- function(run_name = NULL,
                               output_folder_path = file.path("output", run_name),
                               input_data_folder_path = NULL,
                               denominator_counts_csv_filename = NULL,
-                              countries_for_aggregates_csv_filename = "countries_mwra_195_pre2024.csv",
+                              countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
                               start_year = 1970.5,
                               end_year = 2030.5,
                               years_change = matrix(c(
@@ -1121,7 +1121,7 @@ post_process_mcmc <- function(run_name = NULL,
 make_results <- function(run_name = NULL,
                          output_folder_path = file.path("output", run_name),
                          input_data_folder_path = NULL,
-                         countries_in_CI_plots_csv_filename = "countries_mwra_195_pre2024.csv",
+                         countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                          CI_plots_years = NULL,
                          plot_diagnostic_CI_plots = FALSE,
                          make_all_bar_charts = NULL,
@@ -2260,10 +2260,10 @@ do_global_run <- function(## Describe the run
                           run_in_parallel = isTRUE(length(chain_nums) > 1),
                           input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                           data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-                          region_information_csv_filename = "country_and_area_classification_pre2024.csv",
+                          region_information_csv_filename = "country_and_area_classification.csv",
                           denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
-                          countries_for_aggregates_csv_filename = "countries_mwra_195_pre2024.csv",
-                          countries_in_CI_plots_csv_filename = "countries_mwra_195_pre2024.csv",
+                          countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                           special_aggregates_name = NULL,
                           output_folder_path = NULL,
                           start_year = 1970.5,
@@ -3229,7 +3229,7 @@ combine_runs <- function(## Describe the run
 ##' how the prevalence data input should be formatted. Assume all columns are
 ##' required.
 ##'
-##' See \code{system.file("extdata", "country_and_area_classification_pre2024.csv")} for
+##' See \code{system.file("extdata", "country_and_area_classification.csv")} for
 ##' how the country classification file should be formatted. Assume all columns
 ##' are required.
 ##'
@@ -3271,10 +3271,10 @@ do_global_all_women_run <- function(## Describe the run
                                     input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                     data_csv_filename = paste0("data_cp_model_all_women_",
                                                                age_group, ".csv"),
-                                    region_information_csv_filename = "country_and_area_classification_pre2024.csv",
+                                    region_information_csv_filename = "country_and_area_classification.csv",
                                     denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
-                                    countries_for_aggregates_csv_filename = "countries_mwra_195_pre2024.csv",
-                                    countries_in_CI_plots_csv_filename = "countries_mwra_195_pre2024.csv",
+                                    countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
+                                    countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                                     special_aggregates_name = NULL,
                                     start_year = 1970.5,
                                     end_year = 2030.5,
@@ -4561,10 +4561,10 @@ assert_valid_output_dir <- function(output_folder_path,
 pkg_files_included <- function() {
     list(model_run_inputs =
              list(input_data_1549 = make_pkg_dir_entry("data_cp_model_all_women_15-49.csv", type = "extdata"),
-                  region_information = make_pkg_dir_entry("country_and_area_classification_pre2024.csv", type = "extdata")),
+                  region_information = make_pkg_dir_entry("country_and_area_classification.csv", type = "extdata")),
          post_process_inputs =
              list(denominator_counts_1549 = make_pkg_dir_entry("number_of_women_15-49.csv"),
-                  countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195_pre2024.csv")
+                  countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195.csv")
                   ),
          special_aggregates =
              lapply(get_all_spec_agg_csv(), make_pkg_dir_entry)
