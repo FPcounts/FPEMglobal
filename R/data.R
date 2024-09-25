@@ -1,6 +1,6 @@
 ##' Country and Area Aggregations from World Population Prosects 2024
 ##'
-##' A name list of country and area aggregations used in United
+##' A named list of country and area aggregations used in United
 ##' Nations' World Population Prospects (\acronym{WPP}), 2024
 ##' edition. The top-level names are the numeric identification codes
 ##' for these aggregation lists, as used in the UNPD's data base.

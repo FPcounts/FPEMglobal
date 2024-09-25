@@ -115,8 +115,9 @@ aggregates_wpp2024_list <-
 
 save(aggregates_wpp2024_list, file = file.path(data_dir, "aggregates_wpp2024_list.rda"))
 
-locations <- lapply(aggregates_wpp2024_list, function(z) data.table(z$Locations))
-openxlsx::write.xlsx(locations, file = file.path(extdata_dir, "aggregates_wpp2024_list.xlsx"), asTable = TRUE)
+## The .xlsx file will show up as a new change every time it's regenerated, so comment out.
+## locations <- lapply(aggregates_wpp2024_list, function(z) data.table(z$Locations))
+## openxlsx::write.xlsx(locations, file = file.path(extdata_dir, "aggregates_wpp2024_list.xlsx"), asTable = TRUE)
 
 ###-----------------------------------------------------------------------------
 ### * Save Aggregates to FPEMglobal Special Aggregates Format
