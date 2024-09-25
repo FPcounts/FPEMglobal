@@ -215,9 +215,14 @@ marital_age_group_param_defaults <- function(marital_group, age_group, model_fam
 ###-----------------------------------------------------------------------------
 ### * 'extdata' Files
 
-make_pkg_dir_entry <- function(filename, type = "extdata") {
-    list(filename = filename,
-         filepath = system.file("extdata", filename, package = "FPEMglobal"))
+make_pkg_dir_entry <- function(filename, result = c("filename", "filepath")) {
+    if (identical(length(result), 1L)) {
+    return(list(filename = filename,
+                filepath = system.file("extdata", filename, package = "FPEMglobal"))[[result]])
+        } else {
+    return(list(filename = filename,
+                filepath = system.file("extdata", filename, package = "FPEMglobal"))[result])
+        }
 }
 
 get_all_spec_agg_csv <- function(pattern = "^aggregates_special_.+\\.csv$") {

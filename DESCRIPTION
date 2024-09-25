@@ -44,9 +44,11 @@ Suggests:
     rgdal,
     knitr,
     rmarkdown,
-    bookdown
+    bookdown,
+    testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
+Config/testthat/edition: 3

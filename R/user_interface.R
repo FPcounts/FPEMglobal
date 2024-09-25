@@ -4550,6 +4550,7 @@ assert_valid_output_dir <- function(output_folder_path,
 ##'     \describe{
 ##'       \item{denominator_counts_1549}{Number of women by marital status, aged 15--49. These are used to convert proportions into counts, which are then used to construct the aggregates.}
 ##'       \item{countries_for_aggregates}{Countries that are included in the set used to construct all aggregates. This set originally contained 195 countries but has grown slightly.}
+##'       \item{countries_for_output_unpd_185}{Subset of countries for which UNPD published some results.}
 ##'     }
 ##'   }
 ##'  \describe{special_aggregates}{List of all files defining special aggregates, including SDG geographic regions and World Bank investment groups.}
@@ -4558,16 +4559,18 @@ assert_valid_output_dir <- function(output_folder_path,
 ##' @return A nested list containing filenames and paths.
 ##' @author Mark Wheldon
 ##' @export
-pkg_files_included <- function() {
+pkg_files_included <- function(result = c("filename", "filepath")) {
+    result <- match.arg(result, several.ok = TRUE)
     list(model_run_inputs =
-             list(input_data_1549 = make_pkg_dir_entry("data_cp_model_all_women_15-49.csv", type = "extdata"),
-                  region_information = make_pkg_dir_entry("country_and_area_classification.csv", type = "extdata")),
+             list(input_data_1549 = make_pkg_dir_entry("data_cp_model_all_women_15-49.csv", result = result),
+                  region_information = make_pkg_dir_entry("country_and_area_classification.csv", result = result)),
          post_process_inputs =
-             list(denominator_counts_1549 = make_pkg_dir_entry("number_of_women_15-49.csv"),
-                  countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195.csv")
-                  ),
+             list(denominator_counts_1549 = make_pkg_dir_entry("number_of_women_15-49.csv", result = result),
+                  countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195.csv", result = result),
+                  countries_for_output_unpd_185 = make_pkg_dir_entry("countries_unpd_185.csv", result = result)),
          special_aggregates =
-             setNames(lapply(get_all_spec_agg_csv(), make_pkg_dir_entry), nm = get_all_spec_agg_names())
+             setNames(lapply(get_all_spec_agg_csv(), make_pkg_dir_entry, result = result),
+                      nm = get_all_spec_agg_names())
          )
 }
 

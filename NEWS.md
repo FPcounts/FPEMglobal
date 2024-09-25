@@ -1,3 +1,5 @@
+# FPEMglobal 1.5.3
+
 # FPEMglobal 1.2.0
 
 * New function `compare_runs_CI_plots()`, a wrapper for `PlotComparison()`.

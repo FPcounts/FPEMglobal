@@ -4,7 +4,7 @@
 \alias{pkg_files_included}
 \title{List of files included with package}
 \usage{
-pkg_files_included()
+pkg_files_included(result = c("filename", "filepath"))
 }
 \value{
 A nested list containing filenames and paths.
@@ -29,6 +29,7 @@ The files in the list are:
 \describe{
 \item{denominator_counts_1549}{Number of women by marital status, aged 15--49. These are used to convert proportions into counts, which are then used to construct the aggregates.}
 \item{countries_for_aggregates}{Countries that are included in the set used to construct all aggregates. This set originally contained 195 countries but has grown slightly.}
+\item{countries_for_output_unpd_185}{Subset of countries for which UNPD published some results.}
 }
 }
 \describe{special_aggregates}{List of all files defining special aggregates, including SDG geographic regions and World Bank investment groups.}
