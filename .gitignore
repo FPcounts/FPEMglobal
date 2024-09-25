@@ -4,3 +4,4 @@ desktop.ini
 inst/slowTests/*.Rout
 inst/slowTests/output/*
 
+inst/doc

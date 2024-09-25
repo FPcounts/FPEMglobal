@@ -36,11 +36,12 @@
               "lubridate", "RJSONIO", "dplyr", "httr", "jsonlite",
               "RCurl",
               "here", "keyring")
-sink_ <- lapply(.packages, function(z) stopifnot(require(package = z, character.only = TRUE)))
+.sink <- lapply(.packages, function(z) stopifnot(require(package = z, character.only = TRUE)))
 
 ###-----------------------------------------------------------------------------
 ### * Functions
 
+## Used later to pull out certain rows from the main WPP table.
 get_wpp_agg <- function(agg_list, agg_set_code = "1002", parent_type_id, parent_print_name_grep = NULL) {
     x <- subset(agg_list[[agg_set_code]]$Locations, ParentTypeID == parent_type_id)
     if (!is.null(parent_print_name_grep))
@@ -103,7 +104,6 @@ List_Aggregates <- setNames(nm = List_Aggregates_Codes)
 
 aggregates_wpp2024_list <-
     lapply(List_Aggregates, function(myList) {
-        obj_name <- paste0("aggregates_wpp2024_list_", myList)
         eagle_URL <-
             paste0("https://popdiv.dfs.un.org/peps/pepxplorer/api/location/locationlist/",
                    WPP_RevID, "/", myList)
@@ -200,6 +200,9 @@ spec_other_agg <- subset(aggregates_wpp2024_list$`1002`$Locations,
 spec_other_agg <- data.frame(iso.country = spec_other_agg$LocationID,
                              groupname = spec_other_agg$ParentPrintName,
                              iso.group = spec_other_agg$ParentID)
+
+## "SIDS Pacific" occurs as a 'country' in the "1002" sheet. This is a glitch for WPP 2024.
+spec_other_agg <- spec_other_agg[spec_other_agg$iso.country != 2092, ]
 
 ## "SIDS Pacific" is in the "5000" sheet. This is a glitch for WPP 2024.
 if ("SIDS Pacific" %in% aggregates_wpp2024_list$`5000`$Locations$ParentPrintName) {
