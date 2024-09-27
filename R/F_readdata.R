@@ -673,11 +673,6 @@ ReadDataAll <-
              ##<< Do first pass run of run with SS data?
              do.SS.run.first.pass = do.SS.run.first.pass,
 
-             ##<< csv file with ISO 3-character and 3-digit country codes, only
-             ##used to convert iso.country.select into 3-digit country code if
-             ##given in 3-character country code.
-             countrycodes.csv = "data/Country-names-and-codes.csv",
-
              write.model.fun = "WriteModel",
 
              ##<<If not NULL, summary results are written to this HTML file.
@@ -1121,13 +1116,11 @@ ReadDataAll <-
             reg.country.info.c <-
                 InternalGetRegionInfoForCountry(iso.c = country.info$iso.c,
                                                 country.info = country.info.temp, #Use '.temp' because 'country.info' has had training set countries removed
-                                                countrycodes.csv = countrycodes.csv
                                                ,write.model.fun = write.model.fun)
         } else {
             reg.country.info.c <-
                 InternalGetRegionInfoForCountry(iso.c = iso.country.select,
                                                 country.info = country.info.temp,#Use '.temp' because 'country.info' has had training set countries removed
-                                                countrycodes.csv = countrycodes.csv
                                                ,write.model.fun = write.model.fun)
         }
 
@@ -1214,14 +1207,12 @@ ReadDataAll <-
                 reg.country.info.c.no.data <-
                     InternalGetRegionInfoForCountry(iso.c = country.info.temp$ISO.code[iso.no.data], #make sure it's numeric
                                                     country.info = country.info.temp,#Use '.temp' because 'country.info' has had training set countries removed
-                                                    countrycodes.csv = countrycodes.csv
                                                     #,no.data = TRUE #numeric codes for (sub)regions not created
                                                    ,write.model.fun = write.model.fun)
             } else {
                 reg.country.info.c.no.data <-
                     InternalGetRegionInfoForCountry(iso.c = iso.no.data.select, #make sure it's numeric
                                                     country.info = country.info.temp,#Use '.temp' because 'country.info' has had training set countries removed
-                                                    countrycodes.csv = countrycodes.csv
                                                     #,no.data = TRUE #numeric codes for (sub)regions not created
                                                    ,write.model.fun = write.model.fun)
             }
@@ -1734,19 +1725,14 @@ InternalGetRegionInfoForCountry <- function(# Find (sub)region info for country 
   ### Find (sub)region info for country vector
   iso.c,
   country.info, ##<< csv with region info
-  countrycodes.csv ##<< csv with country codes info
- ,no.data = FALSE
- ,write.model.fun = "WriteModel"
+ no.data = FALSE,
+ write.model.fun = "WriteModel"
   ){
 
     regions <- country.info
                                         # change JR, 20140404
     if (!all(grepl("[[:digit:]]", iso.c))) {
-        if (all(grepl("[[:alpha:]]", iso.c))) {
-            iso.c <- InternalGetCountryCodes(iso.c = iso.c, countrycodes.csv = countrycodes.csv)
-        } else {
-            stop("Elements of iso.c must be all alphabet letters or all digits.")
-        }
+            stop("Elements of iso.c must be all digits.")
     }
 
     C <- length(iso.c)
@@ -1867,33 +1853,6 @@ InternalGetRegionInfoForCountry <- function(# Find (sub)region info for country 
     ## part of Object \code{\link{country.info}}.
     return(reg.country.info.c)
 }
-###----------------------------------------------------------------------------------
-
-### COMMENTED OUT 2024-09-27. This function is never used in practice,
-### it calls the 'join()' function which is not in the standard
-### packages, and the 'countrycodes.csv' argument requires a file that does not exist.
-
-## InternalGetCountryCodes <- function(# Get ISO 3-digit country codes from character codes and vice versa.
-##   ### Get vector of 3-digit country codes from character codes and vice versa.
-##   iso.c,
-##   countrycodes.csv ##<< csv file with ISO 3-character and 3-digit country codes
-## ) {
-##   # change JR, 20140404
-##   countrycodes <- read.csv(countrycodes.csv, header = TRUE, stringsAsFactors = FALSE)
-##   countrycodes$ISO.code <- as.character(countrycodes$ISO.code)
-##   iso.c <- as.character(iso.c)
-##   if (all(grepl("[[:digit:]]", iso.c))) {
-##     iso.c.output <- join(data.frame(ISO.code = iso.c), countrycodes)$Country.letter.code
-##   } else if (all(grepl("[[:alpha:]]", iso.c))) {
-##     iso.c.output <- join(data.frame(Country.letter.code = iso.c), countrycodes)$ISO.code
-##   } else {
-##     stop("Elements of iso.c must be all alphabet letters or all digits.")
-##   }
-##   if (any(is.na(iso.c.output)))
-##     warning(paste0("The country code(s) ", paste(iso.c[is.na(iso.c.output)], collapse = ", "),
-##                    " cannot be found in countrycodes.csv!"))
-##   return(iso.c.output)
-## }
 ###----------------------------------------------------------------------------------
 ## [MCW-2017-02-08-1] :: Created to harmonize the numbering of model clusters across countries with data and those without.
 InternalFixNumericClusterCodes <- function(country.info, country.info.no.data)
