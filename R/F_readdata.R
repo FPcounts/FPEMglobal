@@ -1868,27 +1868,32 @@ InternalGetRegionInfoForCountry <- function(# Find (sub)region info for country 
     return(reg.country.info.c)
 }
 ###----------------------------------------------------------------------------------
-InternalGetCountryCodes <- function(# Get ISO 3-digit country codes from character codes and vice versa.
-  ### Get vector of 3-digit country codes from character codes and vice versa.
-  iso.c,
-  countrycodes.csv ##<< csv file with ISO 3-character and 3-digit country codes
-) {
-  # change JR, 20140404
-  countrycodes <- read.csv(countrycodes.csv, header = T, stringsAsFactors = F)
-  countrycodes$ISO.code <- as.character(countrycodes$ISO.code)
-  iso.c <- as.character(iso.c)
-  if (all(grepl("[[:digit:]]", iso.c))) {
-    iso.c.output <- join(data.frame(ISO.code = iso.c), countrycodes)$Country.letter.code
-  } else if (all(grepl("[[:alpha:]]", iso.c))) {
-    iso.c.output <- join(data.frame(Country.letter.code = iso.c), countrycodes)$ISO.code
-  } else {
-    stop("Elements of iso.c must be all alphabet letters or all digits.")
-  }
-  if (any(is.na(iso.c.output)))
-    warning(paste0("The country code(s) ", paste(iso.c[is.na(iso.c.output)], collapse = ", "),
-                   " cannot be found in countrycodes.csv!"))
-  return(iso.c.output)
-}
+
+### COMMENTED OUT 2024-09-27. This function is never used in practice,
+### it calls the 'join()' function which is not in the standard
+### packages, and the 'countrycodes.csv' argument requires a file that does not exist.
+
+## InternalGetCountryCodes <- function(# Get ISO 3-digit country codes from character codes and vice versa.
+##   ### Get vector of 3-digit country codes from character codes and vice versa.
+##   iso.c,
+##   countrycodes.csv ##<< csv file with ISO 3-character and 3-digit country codes
+## ) {
+##   # change JR, 20140404
+##   countrycodes <- read.csv(countrycodes.csv, header = TRUE, stringsAsFactors = FALSE)
+##   countrycodes$ISO.code <- as.character(countrycodes$ISO.code)
+##   iso.c <- as.character(iso.c)
+##   if (all(grepl("[[:digit:]]", iso.c))) {
+##     iso.c.output <- join(data.frame(ISO.code = iso.c), countrycodes)$Country.letter.code
+##   } else if (all(grepl("[[:alpha:]]", iso.c))) {
+##     iso.c.output <- join(data.frame(Country.letter.code = iso.c), countrycodes)$ISO.code
+##   } else {
+##     stop("Elements of iso.c must be all alphabet letters or all digits.")
+##   }
+##   if (any(is.na(iso.c.output)))
+##     warning(paste0("The country code(s) ", paste(iso.c[is.na(iso.c.output)], collapse = ", "),
+##                    " cannot be found in countrycodes.csv!"))
+##   return(iso.c.output)
+## }
 ###----------------------------------------------------------------------------------
 ## [MCW-2017-02-08-1] :: Created to harmonize the numbering of model clusters across countries with data and those without.
 InternalFixNumericClusterCodes <- function(country.info, country.info.no.data)
