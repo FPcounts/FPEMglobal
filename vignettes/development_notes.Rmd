@@ -1,0 +1,58 @@
+---
+title: "Development Notes"
+author: "Mark Wheldon"
+date: |
+    | `r Sys.Date()`
+    | (`r paste0("_FPEMglobal_ version ", packageVersion("FPEMglobal"), ")")`
+output:
+    function(...) rmarkdown::html_vignette(..., css=c(system.file("rmarkdown", "templates", "html_vignette", "resources", "vignette.css", package = "rmarkdown"), "vignette2.css")):
+      toc: true
+bibliography: bibliography.bib
+csl: 'apa-single-spaced.csl'
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Country Aggregates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE
+)
+
+ ## set global chunk options
+options(formatR.arrow=TRUE,width=80)
+```
+
+```{r setup}
+library(FPEMglobal)
+```
+
+<!-- 
+STYLE CONVENTIONS
+- Filenames: single quoted
+- Software: italics
+-->
+
+
+---
+
+You can access this vignette from the *R* console by typing `vignette("development_notes", package = "FPEMglobal")`.
+
+---
+
+
+# Description
+
+This document contains detailed descriptions of changes made over successive revisions of the package that are too long or arcane for the NEWS file. It is intended mainly for use by package developers to keep a record of these revisions. 
+
+
+
+
+
+
+
+# References {-}

@@ -17,6 +17,10 @@ add_special_aggregates(
   verbose = FALSE
 )
 }
+\arguments{
+\item{verbose}{Logical; print lots and lots of messages about
+progress?}
+}
 \description{
 This is a convenience function to add (possibly more) special
 aggregates to a completed global run. It wraps calls to

@@ -1098,7 +1098,8 @@ post_process_mcmc <- function(run_name = NULL,
 ##' @param unmarried_women_output_folder_path Path to directory
 ##'     containing outputs for a unmarried women run. See
 ##'     \code{married_women_output_folder_path}.
-##' @param verbose
+##' @param verbose Logical; print lots and lots of messages about
+##'     progress?
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
 ##' @return Either \code{run_name} invisibly as a character string or,
@@ -4160,7 +4161,8 @@ do_global_validation_run <- function(run_desc = "",
 ##' @param years_change2
 ##' @param model_diagnostics
 ##' @param special_aggregates_name
-##' @param verbose
+##' @param verbose Logical; print lots and lots of messages about
+##'     progress?
 ##' @return
 ##' @author Mark Wheldon
 add_special_aggregates <- function(output_folder_path,

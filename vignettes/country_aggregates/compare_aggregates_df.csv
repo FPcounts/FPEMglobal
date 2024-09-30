@@ -1,44 +1,25 @@
 "aggregate_type","agg_source_1","groupname_1","agg_source_2","groupname_2","criterion","codes","names","TotPop2024LessThan90k"
 "development_groups","WPP 2024","[development_groups] Least developed countries","Hard-coded","Least developed countries","Not in WPP 2024",64,"Bhutan",FALSE
 "development_groups","WPP 2024","[development_groups] Least developed countries","Hard-coded","Least developed countries","Not in WPP 2024",548,"Vanuatu",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in Hard-coded",156,"China",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in Hard-coded",196,"Cyprus",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in Hard-coded",376,"Israel",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in WPP 2024",74,"Bouvet Island",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in WPP 2024",86,"British Indian Ocean Territory",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in WPP 2024",260,"French Southern Territories",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing (excl. China)","Not in WPP 2024",612,"Pitcairn",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in Hard-coded",196,"Cyprus",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in Hard-coded",376,"Israel",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in WPP 2024",74,"Bouvet Island",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in WPP 2024",86,"British Indian Ocean Territory",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in WPP 2024",260,"French Southern Territories",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries","Not in WPP 2024",612,"Pitcairn",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in Hard-coded",196,"Cyprus",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in Hard-coded",376,"Israel",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in WPP 2024",74,"Bouvet Island",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in WPP 2024",86,"British Indian Ocean Territory",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in WPP 2024",260,"French Southern Territories",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Less developed countries","Not in WPP 2024",612,"Pitcairn",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in Hard-coded",196,"Cyprus",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in Hard-coded",376,"Israel",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",74,"Bouvet Island",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",86,"British Indian Ocean Territory",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",260,"French Southern Territories",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",344,"China, Hong Kong SAR",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",446,"China, Macao SAR",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Less developed countries, excluding China","Not in WPP 2024",612,"Pitcairn",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in Hard-coded",196,"Cyprus",FALSE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in Hard-coded",376,"Israel",FALSE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in WPP 2024",74,"Bouvet Island",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in WPP 2024",86,"British Indian Ocean Territory",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in WPP 2024",260,"French Southern Territories",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions","Hard-coded","Developing countries / Less developed countries","Not in WPP 2024",612,"Pitcairn",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in Hard-coded",196,"Cyprus",FALSE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in Hard-coded",376,"Israel",FALSE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",74,"Bouvet Island",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",86,"British Indian Ocean Territory",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",260,"French Southern Territories",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",344,"China, Hong Kong SAR",FALSE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",446,"China, Macao SAR",FALSE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
+"development_groups","WPP 2024","[development_groups] Less developed regions, excluding China","Hard-coded","Developing (excl. China) / Less developed countries, excluding China","Not in WPP 2024",612,"Pitcairn",TRUE
 "development_groups","WPP 2024","[development_groups] Less developed regions, excluding least developed countries","Hard-coded","Other developing countries","Not in Hard-coded",64,"Bhutan",FALSE
 "development_groups","WPP 2024","[development_groups] Less developed regions, excluding least developed countries","Hard-coded","Other developing countries","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
 "development_groups","WPP 2024","[development_groups] Less developed regions, excluding least developed countries","Hard-coded","Other developing countries","Not in Hard-coded",196,"Cyprus",FALSE
@@ -50,26 +31,16 @@
 "development_groups","WPP 2024","[development_groups] Less developed regions, excluding least developed countries","Hard-coded","Other developing countries","Not in WPP 2024",260,"French Southern Territories",TRUE
 "development_groups","WPP 2024","[development_groups] Less developed regions, excluding least developed countries","Hard-coded","Other developing countries","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
 "development_groups","WPP 2024","[development_groups] Less developed regions, excluding least developed countries","Hard-coded","Other developing countries","Not in WPP 2024",612,"Pitcairn",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in Hard-coded",412,"Kosovo (under UNSC res. 1244)",FALSE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",162,"Christmas Island",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",166,"Cocos (Keeling) Islands",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",196,"Cyprus",FALSE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",248,"Aland Islands",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",334,"Heard Island and McDonald Islands",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",376,"Israel",FALSE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",574,"Norfolk Island",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",680,"Sark",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries","Not in WPP 2024",744,"Svalbard and Jan Mayen Islands",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in Hard-coded",412,"Kosovo (under UNSC res. 1244)",FALSE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",162,"Christmas Island",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",166,"Cocos (Keeling) Islands",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",196,"Cyprus",FALSE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",248,"Aland Islands",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",334,"Heard Island and McDonald Islands",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",376,"Israel",FALSE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",574,"Norfolk Island",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",680,"Sark",TRUE
-"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","More developed countries","Not in WPP 2024",744,"Svalbard and Jan Mayen Islands",TRUE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in Hard-coded",412,"Kosovo (under UNSC res. 1244)",FALSE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",162,"Christmas Island",TRUE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",166,"Cocos (Keeling) Islands",TRUE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",196,"Cyprus",FALSE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",248,"Aland Islands",TRUE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",334,"Heard Island and McDonald Islands",TRUE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",376,"Israel",FALSE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",574,"Norfolk Island",TRUE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",680,"Sark",TRUE
+"development_groups","WPP 2024","[development_groups] More developed regions","Hard-coded","Developed countries / More developed countries","Not in WPP 2024",744,"Svalbard and Jan Mayen Islands",TRUE
 "development_groups","WPP 2024","[development_groups] Least developed countries","Country classifications file","[development_groups] Least developed country","Not in WPP 2024",64,"Bhutan",FALSE
 "development_groups","WPP 2024","[development_groups] Least developed countries","Country classifications file","[development_groups] Least developed country","Not in WPP 2024",548,"Vanuatu",FALSE
 "development_groups","WPP 2024","[development_groups] Less developed regions","Country classifications file","[development_groups] Less Developed Regions","Not in Country classifications file",196,"Cyprus",FALSE
@@ -110,16 +81,6 @@
 "development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[December 2021] Developing","Not in WPP 2024",260,"French Southern Territories",TRUE
 "development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[December 2021] Developing","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
 "development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[December 2021] Developing","Not in WPP 2024",612,"Pitcairn",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",158,"China, Taiwan Province of China",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",196,"Cyprus",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",376,"Israel",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",410,"Republic of Korea",FALSE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in WPP 2024",74,"Bouvet Island",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in WPP 2024",86,"British Indian Ocean Territory",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in WPP 2024",260,"French Southern Territories",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
-"development_groups","WPP 2024","[development_groups] Less developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in WPP 2024",612,"Pitcairn",TRUE
 "development_groups","WPP 2024","[development_groups] More developed regions","UNSD M49 (Dev/Dev'ing)","[December 2021] Developed","Not in UNSD M49 (Dev/Dev'ing)",412,"Kosovo (under UNSC res. 1244)",FALSE
 "development_groups","WPP 2024","[development_groups] More developed regions","UNSD M49 (Dev/Dev'ing)","[December 2021] Developed","Not in WPP 2024",162,"Christmas Island",TRUE
 "development_groups","WPP 2024","[development_groups] More developed regions","UNSD M49 (Dev/Dev'ing)","[December 2021] Developed","Not in WPP 2024",166,"Cocos (Keeling) Islands",TRUE
@@ -141,25 +102,14 @@
 "development_groups","WPP 2024","[development_groups] More developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in WPP 2024",574,"Norfolk Island",TRUE
 "development_groups","WPP 2024","[development_groups] More developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in WPP 2024",680,"Sark",TRUE
 "development_groups","WPP 2024","[development_groups] More developed regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in WPP 2024",744,"Svalbard and Jan Mayen Islands",TRUE
-"development_groups","Hard-coded","Developed countries","Country classifications file","[development_groups] Developed region","Not in Hard-coded",412,"Kosovo (under UNSC res. 1244)",FALSE
-"development_groups","Hard-coded","Developing (excl. China)","Country classifications file","[development_groups] Less Developed Regions","Not in Hard-coded",156,"China",FALSE
-"development_groups","Hard-coded","Developing (excl. China)","Country classifications file","[development_groups] Less Developed Regions","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
-"development_groups","Hard-coded","Developing countries","Country classifications file","[development_groups] Less Developed Regions","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
-"development_groups","Hard-coded","Less developed countries","Country classifications file","[development_groups] Less Developed Regions","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
-"development_groups","Hard-coded","More developed countries","Country classifications file","[development_groups] Developed region","Not in Hard-coded",412,"Kosovo (under UNSC res. 1244)",FALSE
+"development_groups","Hard-coded","Developed countries / More developed countries","Country classifications file","[development_groups] Developed region","Not in Hard-coded",412,"Kosovo (under UNSC res. 1244)",FALSE
+"development_groups","Hard-coded","Developing countries / Less developed countries","Country classifications file","[development_groups] Less Developed Regions","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
 "development_groups","Hard-coded","Other developing countries","Country classifications file","[development_groups] Less developed regions, excluding least developed countries","Not in Hard-coded",158,"China, Taiwan Province of China",FALSE
-"development_groups","Hard-coded","Developed countries","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in Hard-coded",410,"Republic of Korea",FALSE
-"development_groups","Hard-coded","Developing (excl. China)","UNSD M49 (Dev/Dev'ing)","[December 2021] Developing","Not in Hard-coded",156,"China",FALSE
-"development_groups","Hard-coded","Developing (excl. China)","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in Hard-coded",156,"China",FALSE
-"development_groups","Hard-coded","Developing (excl. China)","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",410,"Republic of Korea",FALSE
-"development_groups","Hard-coded","Less developed countries","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",410,"Republic of Korea",FALSE
-"development_groups","Hard-coded","More developed countries","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in Hard-coded",410,"Republic of Korea",FALSE
+"development_groups","Hard-coded","Developed countries / More developed countries","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in Hard-coded",410,"Republic of Korea",FALSE
 "development_groups","Country classifications file","[development_groups] Developed region","UNSD M49 (Dev/Dev'ing)","[December 2021] Developed","Not in UNSD M49 (Dev/Dev'ing)",412,"Kosovo (under UNSC res. 1244)",FALSE
 "development_groups","Country classifications file","[development_groups] Developed region","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in Country classifications file",410,"Republic of Korea",FALSE
 "development_groups","Country classifications file","[development_groups] Developed region","UNSD M49 (Dev/Dev'ing)","[May 2022] Developed","Not in UNSD M49 (Dev/Dev'ing)",412,"Kosovo (under UNSC res. 1244)",FALSE
 "development_groups","Country classifications file","[development_groups] Less Developed Regions","UNSD M49 (Dev/Dev'ing)","[December 2021] Developing","Not in UNSD M49 (Dev/Dev'ing)",158,"China, Taiwan Province of China",FALSE
-"development_groups","Country classifications file","[development_groups] Less Developed Regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",158,"China, Taiwan Province of China",FALSE
-"development_groups","Country classifications file","[development_groups] Less Developed Regions","UNSD M49 (Dev/Dev'ing)","[May 2022] Developing","Not in UNSD M49 (Dev/Dev'ing)",410,"Republic of Korea",FALSE
 "other","WPP 2024","[other] SIDS Pacific","Hard-coded","Mela-Micro-Polynesia","Not in Hard-coded",626,"Timor-Leste",FALSE
 "other","WPP 2024","[other] SIDS Pacific","Hard-coded","Mela-Micro-Polynesia","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
 "other","WPP 2024","[other] SIDS Pacific","Hard-coded","Mela-Micro-Polynesia","Not in WPP 2024",612,"Pitcairn",TRUE
@@ -202,7 +152,7 @@
 "sdg_regions","WPP 2024","[sdg_regions] Europe and Northern America","Legacy special aggregates","[SDG_regions_level_1] Northern America and Europe","Not in Legacy special aggregates",412,"Kosovo (under UNSC res. 1244)",FALSE
 "sdg_regions","WPP 2024","[sdg_regions] Europe and Northern America","Legacy special aggregates","[SDG_regions_level_1] Northern America and Europe","Not in WPP 2024",248,"Aland Islands",TRUE
 "sdg_regions","WPP 2024","[sdg_regions] Europe and Northern America","Legacy special aggregates","[SDG_regions_level_1] Northern America and Europe","Not in WPP 2024",744,"Svalbard and Jan Mayen Islands",TRUE
-"sdg_regions","WPP 2024","[sdg_regions] Europe and Northern America","Legacy special aggregates","[SDG_regions_level_1] Northern America and Europe","Not in WPP 2024",830,"Channel Islands",NA
+"sdg_regions","WPP 2024","[sdg_regions] Europe and Northern America","Legacy special aggregates","[SDG_regions_level_1] Northern America and Europe","Not in WPP 2024",830,"Channel Islands",FALSE
 "sdg_regions","WPP 2024","[sdg_regions] Latin America and the Caribbean","Legacy special aggregates","[SDG_regions_level_1] Latin America and the Caribbean","Not in WPP 2024",239,"South Georgia and the South Sandwich Islands",TRUE
 "sdg_regions","WPP 2024","[sdg_regions] Oceania (excluding Australia and New Zealand)","Legacy special aggregates","[SDG_regions_level_2] Oceania excluding Australia and New Zealand","Not in WPP 2024",581,"United States Minor Outlying Islands",TRUE
 "sdg_regions","WPP 2024","[sdg_regions] Oceania (excluding Australia and New Zealand)","Legacy special aggregates","[SDG_regions_level_2] Oceania excluding Australia and New Zealand","Not in WPP 2024",612,"Pitcairn",TRUE
