@@ -107,9 +107,9 @@ aggregates_wpp2024_list <-
         eagle_URL <-
             paste0("https://popdiv.dfs.un.org/peps/pepxplorer/api/location/locationlist/",
                    WPP_RevID, "/", myList)
-        json_file <- httr::GET(eagle_URL, authenticate(user, pw, type="any"))
+        json_file <- httr::GET(eagle_URL, httr::authenticate(user, pw, type="any"))
         ## transform json object back into text and flatten it
-        return(jsonlite::fromJSON(content(json_file, 'text'),
+        return(jsonlite::fromJSON(httr::content(json_file, 'text'),
                                   simplifyVector = TRUE, flatten = TRUE))
     })
 
