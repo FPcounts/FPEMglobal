@@ -29,7 +29,6 @@ run_name_override_married_1549 <- "test_1c_1549_married"
 run_name_override_unmarried_1549 <- "test_1c_1549_unmarried"
 run_name_override_all_women_1549 <- "test_1c_1549_all_women"
 
-run_name_override_1519 <- "test_1c_2"
 run_name_override_married_1519 <- "test_1c_1519_married"
 run_name_override_unmarried_1519 <- "test_1c_1519_unmarried"
 run_name_override_all_women_1519 <- "test_1c_1519_all_women"
@@ -59,6 +58,9 @@ include_AR <- FALSE
 
 ###-----------------------------------------------------------------------------
 ### ** Inputs
+
+## NOTE!! Updating the input data sets? You'll need to re-install the package
+## unless you supply the full path to the main function.
 
 data_csv_filename_1549 <- "data_cp_model_all_women_SHORTFORTESTING_15-49.csv"
 data_csv_filename_1519 <- "OLD_data_cp_model_all_women_SHORTFORTESTING_15-19.csv"

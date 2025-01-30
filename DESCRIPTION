@@ -3,7 +3,8 @@ Type: Package
 Title: Family Planning Estimation Model - Global
 Version: 1.5.2.9000
 Date: 2024-06-26
-Authors@R: c(person(given = c("Mark", "C."), "Wheldon", email = "wheldon@un.org", role = c("aut", "cre")),
+Authors@R: c(person(given = c("Mark", "C."), "Wheldon", email = "wheldon@un.org", role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0002-6897-9644")),
              person("Jin Rou", "New", email = "lalkema@schoolph.umass.edu", role = "aut"),
              person("Niamh", "Cahill", email = "niamh.cahill@ucd.ie", role = "aut"),
              person("Greg", "Gu", email = "gguranic@umass.edu", role = "aut"),
