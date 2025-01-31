@@ -1,8 +1,1 @@
-linters: linters_with_defaults(
-    line_length_linter = line_length_linter(120),
-    object_length_linter = object_length_linter(length = 80),
-    object_name_linter = object_name_linter(styles = c("symbols", "CamelCase", "camelCase", "snake_case", "SNAKE_CASE", "dotted.case", "lowercase", "UPPERCASE"))
-  )
-exclusions: list(
-    "R"
-  )
+linters: linters_with_tags(tags = "common_mistakes")
