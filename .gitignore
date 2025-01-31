@@ -5,5 +5,3 @@ inst/slowTests/*.Rout
 inst/slowTests/output/*
 
 inst/doc
-
-.lintr
