@@ -51,7 +51,8 @@ do_global_all_women_run(
   age_ratios_age_total_all_women_output_folder_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose"),
+  .extra_config = NULL
 )
 }
 \arguments{
@@ -103,21 +104,19 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
+as-is. Otherwise, \code{file.path(input_data_folder_path,
+  data_csv_filename)} will be passed. The default value points to the data
+directory supplied with the package.}
 
-\item{data_csv_filename}{Filename of the \file{.csv} file
-containing country-level prevalence data. See
+\item{data_csv_filename}{Filename of the \file{.csv} file containing
+country-level prevalence data. See \dQuote{Details}.}
+
+\item{region_information_csv_filename}{Filename of the \file{.csv} file
+containing classifications of countries in sub-regions, regions, etc. See
 \dQuote{Details}.}
-
-\item{region_information_csv_filename}{Filename of the \file{.csv}
-file containing classifications of countries in sub-regions,
-regions, etc. See \dQuote{Details}.}
 
 \item{denominator_counts_csv_filename}{File path. Filepath to \file{.csv}
 file with denominator counts (married and unmarried) for this
@@ -201,8 +200,8 @@ produced in addition to unadjusted outputs?}
 and WAIC be computed? These are not re-done if the folder
 \sQuote{\code{output_folder_path}/convergence} exists.}
 
-\item{include_AR}{Logical; should the auto-regressive component of
-the model be estimated. Used mainly for testing.}
+\item{include_AR}{Logical; should the auto-regressive component of the model
+be estimated. Used mainly for testing.}
 
 \item{age_ratios_age_total_run_name_prefix}{Run name prefix for married, unmarried, and all women runs. Results will be searched for in \file{output/\code{age_ratios_age_total_run_name_prefix}_\var{[marital_group]}_15-49}.}
 
@@ -240,8 +239,11 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \code{file.path(age_ratios_age_total_output_folder_path,
     "data")}.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
+
+\item{.extra_config}{An optional list of extra arguments for finer control. This
+is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
+should ordinarily not modify the default.}
 }
 \value{
 A \emph{list} of run names for married, unmarried, and all women

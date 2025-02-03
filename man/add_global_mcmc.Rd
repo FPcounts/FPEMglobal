@@ -9,7 +9,7 @@ add_global_mcmc(
   chain_nums = 2,
   output_folder_path = file.path("output", run_name),
   run_in_parallel = isTRUE(length(chain_nums) > 1),
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
@@ -19,9 +19,8 @@ add_global_mcmc(
 \code{\link{do_global_mcmc}}, this can be a scalar. It must \emph{not}
 be the number identifying a chain already created. See \dQuote{Description}.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_folder_path}{Filepath to directory where outputs should be
+saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
 \item{run_in_parallel}{Logical. Determines if MCMC chains are run
 in parallel. Parallel running requires package
@@ -35,8 +34,7 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run is returned invisibly as a character string. MCMC chains are

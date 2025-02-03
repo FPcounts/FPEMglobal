@@ -11,7 +11,7 @@ validate_denominator_counts_file(
   marital_group = c("married", "unmarried"),
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
   output_folder_path = NULL,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
@@ -25,23 +25,20 @@ to name of the file containing prevalence data if
 from the denominator counts file if post-processing is done
 (see \code{\link{post_process_mcmc}}).}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
+as-is. Otherwise, \code{file.path(input_data_folder_path,
+  data_csv_filename)} will be passed. The default value points to the data
+directory supplied with the package.}
 
 \item{marital_group}{Character. The marital group for which a run
 of the model is desired.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_folder_path}{Filepath to directory where outputs should be
+saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 The processed denominator counts file is returned \emph{invisibly} as a data frame.

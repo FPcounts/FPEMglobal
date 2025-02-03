@@ -9,7 +9,7 @@ validate_input_file(
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   marital_group = c("married", "unmarried"),
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
@@ -23,23 +23,20 @@ to name of the file containing prevalence data if
 from the denominator counts file if post-processing is done
 (see \code{\link{post_process_mcmc}}).}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
+as-is. Otherwise, \code{file.path(input_data_folder_path,
+  data_csv_filename)} will be passed. The default value points to the data
+directory supplied with the package.}
 
-\item{data_csv_filename}{Filename of the \file{.csv} file
-containing country-level prevalence data. See
-\dQuote{Details}.}
+\item{data_csv_filename}{Filename of the \file{.csv} file containing
+country-level prevalence data. See \dQuote{Details}.}
 
 \item{marital_group}{Character. The marital group for which a run
 of the model is desired.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 If all checks pass, the processed input file is returned \emph{invisibly} as a data frame.

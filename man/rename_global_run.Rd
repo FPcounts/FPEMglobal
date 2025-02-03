@@ -9,7 +9,7 @@ rename_global_run(
   new_run_name,
   output_folder_path = NULL,
   ignore = "^data$",
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
@@ -22,8 +22,7 @@ rename_global_run(
 
 \item{ignore}{Regular expression. Files and directories with names that match will not be renamed.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 Called for side effect only.

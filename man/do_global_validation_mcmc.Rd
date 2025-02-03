@@ -31,7 +31,7 @@ do_global_validation_mcmc(
   chain_nums = 1:3,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
   output_folder_path = NULL,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
@@ -129,12 +129,10 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_folder_path}{Filepath to directory where outputs should be
+saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 
 \item{run_name_to_validate_output_folder}{File path to results of
 run \code{run_name_to_validate}.}

@@ -26,15 +26,14 @@ post_process_mcmc(
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   overwrite_existing_results = FALSE,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
 \item{run_name}{The name of the run to post-process.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_folder_path}{Filepath to directory where outputs should be
+saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
 \item{input_data_folder_path}{File path to folder containing
 \emph{all} input data (except any map shapefiles). If
@@ -119,8 +118,7 @@ different \code{satrt_year} or \code{end_year}. It is
 \emph{not} necessary to set this to \code{TRUE} to add extra
 aggregates.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 The run name (invisibly). The function is mainly called

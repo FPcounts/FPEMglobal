@@ -27,23 +27,21 @@ make_results(
   validation_keep_all = TRUE,
   validation_return_res_as_df = FALSE,
   all_women = NULL,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
 \item{run_name}{The name of the run to post-process.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_folder_path}{Filepath to directory where outputs should be
+saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
+as-is. Otherwise, \code{file.path(input_data_folder_path,
+  data_csv_filename)} will be passed. The default value points to the data
+directory supplied with the package.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main

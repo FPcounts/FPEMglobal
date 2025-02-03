@@ -95,8 +95,8 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
                 ,stringsAsFactors = FALSE, strip.white = TRUE
                  )
 
-    cat(names(data.raw), "\n")
-    cat("no. rows in dataset: ", nrow(data.raw), "\n")
+    if (print.messages) message(names(data.raw), "\n")
+    if (print.messages) message("no. rows in dataset: ", nrow(data.raw), "\n")
 
     ## -------* Column Names
 
@@ -203,7 +203,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
 
     if(is.null(marital.group)) {
         marital.group <- "MWRA"
-        warning("'marital.group' is 'NULL', setting 'marital.group' to 'MWRA'.")
+        if (print.warnings) warning("'marital.group' is 'NULL', setting 'marital.group' to 'MWRA'.")
     }
     idx_iu <- !(data.raw[,in_union_col_name] %in% c(0, 1))
         if(sum(idx_iu) > 0) {
@@ -221,7 +221,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
         stop("marital group must be NULL, 'MWRA' or 'UWRA'")
     }
 
-    cat("no. rows in dataset matching marital group ", marital.group, ": ", nrow(data.raw), "\n", sep = "")
+    if (print.messages) message("no. rows in dataset matching marital group ", marital.group, ": ", nrow(data.raw), "\n", sep = "")
 
     ## -------* Delete rows with no ISO and country name
 
@@ -286,14 +286,14 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
         if(sum(trad.round) > 0) {
             data.raw[, cp_trad_col_name][trad.round] <- 0.1
             data.raw$rounded.up <- trad.round | data.raw$rounded.up
-            message(paste0("There are ", sum(trad.round, na.rm = TRUE), " observations with missing prevalence for CP Traditional but non-missing for modern. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
+            if (print.messages) message(paste0("There are ", sum(trad.round, na.rm = TRUE), " observations with missing prevalence for CP Traditional but non-missing for modern. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
                            paste(rows_in_orig_input[trad.round], collapse = ", "), "\n\t\tThese will be ROUNDED UP to 0.1 percent."))
         }
         mod.round <- mod.na & !trad.na
         if(sum(mod.round) > 0) {
             data.raw[, cp_mod_col_name][mod.round] <- 0.1
             data.raw$rounded.up <- mod.round | data.raw$rounded.up
-            message(paste0("There are ", sum(mod.round, na.rm = TRUE), " observations with missing prevalence for CP Modern but non-missing for traditional. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
+            if (print.messages) message(paste0("There are ", sum(mod.round, na.rm = TRUE), " observations with missing prevalence for CP Modern but non-missing for traditional. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
                            paste(rows_in_orig_input[mod.round], collapse = ", "), "\n\t\tThese will be ROUNDED UP to 0.1 percent."))
         }
     }
@@ -306,7 +306,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     if(sum(modern.zero, na.rm = TRUE) > 0) {
         data.raw[, cp_mod_col_name][modern.zero] <- 0.1
         data.raw$rounded.up <- modern.zero | data.raw$rounded.up
-        message(paste0("There are ", sum(modern.zero, na.rm = TRUE), " observations with modern prevalence of zero. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
+        if (print.messages) message(paste0("There are ", sum(modern.zero, na.rm = TRUE), " observations with modern prevalence of zero. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
                        paste(rows_in_orig_input[modern.zero], collapse = ", "), "\n\t\tThese will be ROUNDED UP to 0.1 percent."))
     }
 
@@ -316,7 +316,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     if(sum(trad.zero, na.rm = TRUE) > 0) {
         data.raw[, cp_trad_col_name][trad.zero] <- 0.1
         data.raw$rounded.up <- trad.zero | data.raw$rounded.up
-        message(paste0("There are ", sum(trad.zero, na.rm = TRUE), " observations with traditional prevalence of zero. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
+        if (print.messages) message(paste0("There are ", sum(trad.zero, na.rm = TRUE), " observations with traditional prevalence of zero. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
                        paste(rows_in_orig_input[trad.zero], collapse = ", "), "\n\t\tThese will be ROUNDED UP to 0.1 percent."))
     }
 
@@ -326,7 +326,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     if(sum(any.zero, na.rm = TRUE) > 0) {
         data.raw[, cp_any_col_name][any.zero] <- 0.1
         data.raw$rounded.up <- any.zero | data.raw$rounded.up
-        message(paste0("There are ", sum(any.zero, na.rm = TRUE), " observations with prevalence (any method) of zero. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
+        if (print.messages) message(paste0("There are ", sum(any.zero, na.rm = TRUE), " observations with prevalence (any method) of zero. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
                        paste(rows_in_orig_input[any.zero], collapse = ", "), "\n\t\tThese will be ROUNDED UP to 0.1 percent."))
     }
 
@@ -337,7 +337,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     mod.neq.any <- (is.na(data.raw[, cp_trad_col_name]) | is.nan(data.raw[, cp_trad_col_name])) & !is.na(data.raw[, cp_mod_col_name]) & !is.na(data.raw[, cp_any_col_name]) &
         (round(data.raw[, cp_mod_col_name], 9) != round(data.raw[, cp_any_col_name], 9))
     if(sum(mod.neq.any, na.rm = TRUE) > 0) {
-        message(paste0("There are ", sum(mod.neq.any, na.rm = TRUE), " observations with traditional prevalence missing but Modern and Any are not. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
+        if (print.messages) message(paste0("There are ", sum(mod.neq.any, na.rm = TRUE), " observations with traditional prevalence missing but Modern and Any are not. \n\tIn the input data file, these are in rows (ignoring header):\n\t\t",
                        paste(rows_in_orig_input[mod.neq.any], collapse = ", "), "\n\t\tTRADITIONAL prevalences for these observations HAVE BEEN SET TO 'ANY' - 'MODERN' and these observations WILL contribute to estimates of the modern/traditional breakdown."))
         data.raw[mod.neq.any,]$Contraceptive.use.TRADITIONAL <-
             data.raw[mod.neq.any,]$Contraceptive.use.ANY - data.raw[mod.neq.any,]$Contraceptive.use.MODERN
@@ -348,7 +348,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
     ## If 'TRADITIONAL' is blank AND 'MODERN' = 'ANY' after rounding, set 'MODERN' to blank as well
     trad.blank <- (is.na(data.raw[, cp_trad_col_name]) | is.nan(data.raw[, cp_trad_col_name])) & !is.na(data.raw[, cp_mod_col_name]) & !is.na(data.raw[, cp_any_col_name]) & (round(data.raw[, cp_mod_col_name], 9) == round(data.raw[, cp_any_col_name], 9))
     if(sum(trad.blank, na.rm = TRUE) > 0) {
-        message(paste0("There are ", sum(trad.blank, na.rm = TRUE), " observations with traditional prevalence missing. In the input data file, these are in rows (ignoring header):\n\t\t",
+        if (print.messages) message(paste0("There are ", sum(trad.blank, na.rm = TRUE), " observations with traditional prevalence missing. In the input data file, these are in rows (ignoring header):\n\t\t",
                        paste(rows_in_orig_input[trad.blank], collapse = ", "), "\n\t\tMODERN prevalences for these observations HAVE ALSO BEEN SET TO MISSING and these observations will NOT contribute to estimates of the modern/traditional breakdown."))
         data.raw[trad.blank,]$Contraceptive.use.MODERN <- NA
     }
@@ -371,7 +371,7 @@ PreprocessData <- function(# Pre-process contraceptive prevalence data
         data.raw[, unmet_col_name][unmet.zero] <-
             sapply(100 - data.raw[, cp_any_col_name][unmet.zero],
                    function(z) min(0.1, z))
-        message(paste0("There are ", sum(unmet.zero, na.rm = TRUE), " observations with unmet need of zero. In the input data file, these are in rows (ignoring header):\n\t\t",
+        if (print.messages) message(paste0("There are ", sum(unmet.zero, na.rm = TRUE), " observations with unmet need of zero. In the input data file, these are in rows (ignoring header):\n\t\t",
                        paste(rows_in_orig_input[unmet.zero], collapse = ", "), "\n\t\tThese will be ROUNDED UP to 0.1 percent."))
     }
 
@@ -703,12 +703,12 @@ ReadDataAll <-
 
         ## -------** Function arguments
 
-        if (!is.null(iso.country.select) & is.null(name.country.select)) # change JR, 20140409
+        if (!is.null(iso.country.select) && is.null(name.country.select)) # change JR, 20140409
             stop("name.country.select cannot be NULL if iso.country.select is non-NULL.")
 
         ## Create new html file
         if (!is.null(html.file)){
-            cat("", file = html.file, append = F)
+            cat("", file = html.file, append = FALSE)
             print(paste("Summary stats written to", html.file))
         }
 
@@ -777,7 +777,7 @@ ReadDataAll <-
         ## [MCW-2017-06-23-2] :: Check that all countries in the input data are in the classifications file.
         not.in.cinfo <-
             unique(data.unsorted$ISO.code)[!(unique(data.unsorted$ISO.code) %in% country.info.temp$ISO.code)]
-        if(length(not.in.cinfo > 0)) stop("Country with ISO code ", not.in.cinfo, " is in the input data file but not in the country classifications file. Fix and re-run")
+        if(length(not.in.cinfo) > 0) stop("Country with ISO code ", not.in.cinfo, " is in the input data file but not in the country classifications file. Fix and re-run")
 
         ## -------* Make Data Frame to Contain Data
 

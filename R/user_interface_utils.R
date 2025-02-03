@@ -71,6 +71,32 @@ check_run_name_conflicts <- function(run_name, output_folder_path) {
 }
 
 ###-----------------------------------------------------------------------------
+### * Make Input File Paths
+
+##' Construct path to an input file
+##'
+##' Standardizes the way \code{input_[...]_folder_path} and
+##' \code{[...]_filename} are combined to form the full path to an input file.
+##' This is mainly for internal use by this and other packages.
+##'
+##' If \code{input_folder_path} is not \code{NULL}, it is used to form the file
+##' path by prefixing it to \code{input_filename}. Otherwise, just
+##' \code{input_filename} is returned.
+##'
+##' @param input_folder_path Path to the folder containing \code{input_filename}.
+##' @param input_filename The name of the input file (incl. extension).
+##' @param check (Logical) Should a warning be given if the file does not exist?
+##' @return The full file path.
+##' @author Mark C Wheldon
+##' @noRd
+make_input_file_path <- function(input_folder_path = NULL, input_filename, check = TRUE) {
+    if(!is.null(input_folder_path))
+        return(checkmate::assert_file_exists(file.path(input_folder_path, input_filename)))
+    else
+        return(checkmate::assert_file_exists(input_filename))
+}
+
+###-----------------------------------------------------------------------------
 ### * Copy Various Files
 
 file_copy2 <- function(from, to, overwrite, ...) {

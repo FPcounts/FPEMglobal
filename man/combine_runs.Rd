@@ -36,7 +36,7 @@ combine_runs(
   age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   run_name_override = NULL,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
@@ -44,9 +44,8 @@ combine_runs(
 auto-generated \code{run_name}. Ignored if
 \code{run_name_override} is non-\code{NULL}.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_folder_path}{Filepath to directory where outputs should be
+saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
 \item{married_women_run_name}{Run name of the married women run to
 be combined. Ignored if
@@ -68,9 +67,9 @@ containing results for the unmarried women run to be
 combined. (Only used if \code{special_aggregates_name} is
 non-\code{NULL}).}
 
-\item{region_information_csv_filename}{Filename of the \file{.csv}
-file containing classifications of countries in sub-regions,
-regions, etc. See \dQuote{Details}.}
+\item{region_information_csv_filename}{Filename of the \file{.csv} file
+containing classifications of countries in sub-regions, regions, etc. See
+\dQuote{Details}.}
 
 \item{special_aggregates_name}{Character vector of names
 (\emph{not} filenames) of any speical aggregates
@@ -154,8 +153,7 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 override default generation. \code{run_desc} is ignored if
 this is non-\code{NULL}.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run returned invisibly as a character

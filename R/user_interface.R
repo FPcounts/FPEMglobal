@@ -24,12 +24,10 @@ validate_input_file <- function(age_group = "15-49",
                                 input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                 data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
                                 marital_group = c("married", "unmarried"),
-                                verbose = FALSE) {
+                                verbose = getOption("FPEMglobal.verbose")) {
 
-    if(!is.null(input_data_folder_path)) {
-        data_csv_filename <- file.path(input_data_folder_path, data_csv_filename)
-    }
-    if(!file.exists(data_csv_filename)) stop("'data_csv_filename' does not exist.")
+    data_csv_filename <-
+        make_input_file_path(input_data_folder_path, data_csv_filename)
 
     model_family <- "rate"
     model_name <- NULL
@@ -63,12 +61,12 @@ validate_input_file <- function(age_group = "15-49",
                         PreprocessData(data.csv = data_csv_filename,
                                        write.model.fun = marital_group_param_set$write_model_fun,
                                        print.messages = verbose,
-                                       print.warnings = verbose,
+                                       print.warnings = TRUE,
                                        return.processed.data.frame = TRUE,
                                        marital.group = switch(mg, "married" = "MWRA", "unmarried" = "UWRA")),
                         check.names = FALSE)
     }
-    message("'", data_csv_filename, "' is valid.")
+    if (verbose) message("'", data_csv_filename, "' is valid.")
     return(invisible(out_df))
 }
 
@@ -95,16 +93,15 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                                              marital_group = c("married", "unmarried"),
                                              countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
                                              output_folder_path = NULL,
-                                             verbose = FALSE) {
+                                             verbose = getOption("FPEMglobal.verbose")) {
     model_family <- "rate"
     model_name <- NULL
 
     marital_group <- match.arg(marital_group, several.ok = TRUE)
 
     ## Read in the denominator counts
-
     if (identical(denominator_counts_csv_filename, "res.country.rda")) {
-        message("Reading denominator counts from '", file.path(output_folder_path, "res.country.rda"), "'.")
+        if (verbose) message("Reading denominator counts from '", file.path(output_folder_path, "res.country.rda"), "'.")
         stopifnot (!is.null(output_folder_path) || !length(dir(output_folder_path)) ||
                    !identical(length(marital_group), 1L))
         res_country_list <- get(load(file.path(output_folder_path, "res.country.rda")))
@@ -120,21 +117,19 @@ validate_denominator_counts_file <- function(age_group = "15-49",
         out_df <- cbind(out_df, In.union = mg_in_union)
 
     } else {
-        if(!is.null(input_data_folder_path)) {
-            denominator_counts_csv_filename <- file.path(input_data_folder_path, denominator_counts_csv_filename)
-        }
-        if(!file.exists(denominator_counts_csv_filename)) stop("'denominator_counts_csv_filename' does not exist.")
-        message("Reading denominator counts from '", file.path(denominator_counts_csv_filename), "'.")
+        denominator_counts_csv_file_path <-
+            make_input_file_path(input_data_folder_path, denominator_counts_csv_filename)
+        if (verbose) message("Reading denominator counts from '", file.path(denominator_counts_csv_filename), "'.")
+    }
 
-        out_df <- data.frame()
-        for (mg in marital_group) {
-            if (identical(marital_group, "married")) mg_in_union <- 1
-            else mg_in_union <- 0
-            out_df <- rbind(out_df,
-                            data.frame(extractDenominators(denominator_counts_csv_filename,
-                                                           in_union = mg_in_union),
-                                       In.union = mg_in_union))
-        }
+    out_df <- data.frame()
+    for (mg in marital_group) {
+        if (identical(marital_group, "married")) mg_in_union <- 1
+        else mg_in_union <- 0
+        out_df <- rbind(out_df,
+                        data.frame(extractDenominators(denominator_counts_csv_file_path,
+                                                       in_union = mg_in_union),
+                                   In.union = mg_in_union))
     }
 
     ## Check denominator counts
@@ -155,18 +150,14 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 
     ## Check aggregates
     if (is.character(countries_for_aggregates_csv_filename)) {
-        if(!is.null(input_data_folder_path)) {
-            countries_for_aggregates_csv_filename <-
-                file.path(input_data_folder_path, countries_for_aggregates_csv_filename)
-        }
-        if(!file.exists(countries_for_aggregates_csv_filename))
-            stop("'countries_for_aggregates_csv_filename' does not exist.")
-        countries_for_aggregates <- read.csv(countries_for_aggregates_csv_filename, row.names = NULL)
+        countries_for_aggregates_csv_file_path <-
+            make_input_file_path(input_data_folder_path, countries_for_aggregates_csv_filename)
+        countries_for_aggregates <- read.csv(countries_for_aggregates_csv_file_path, row.names = NULL)
         isos_not_in_data <-
             unique(countries_for_aggregates$ISO.Code)[!unique(countries_for_aggregates$ISO.Code) %in% out_df$ISO.code]
         if (length(isos_not_in_data))
             stop("ISOs ",
-                    toString(isos_not_in_data),
+                 toString(isos_not_in_data),
                  " are listed in 'countries_for_aggregates_csv_filename' but are not in denominator counts file.")
         out_df_sum <- cbind(out_df[, c("ISO.code", "Country", "In.union")],
                             sum = rowSums(out_df[, which(!colnames(out_df) %in% c("ISO.code", "Country", "In.union"))]))
@@ -175,8 +166,8 @@ validate_denominator_counts_file <- function(age_group = "15-49",
             unique(countries_for_aggregates$ISO.Code)[unique(countries_for_aggregates$ISO.Code) %in% out_df_sum_zero]
         if (length(isos_zero_pop)) {
             msg <- paste0("The following countries appear in the file '",
-                 countries_for_aggregates_csv_filename,
-                 "' but their denominator counts are all zero:\n", toString(out_df_sum[out_df_sum_zero, "Country"]))
+                          countries_for_aggregates_csv_filename,
+                          "' but their denominator counts are all zero:\n", toString(out_df_sum[out_df_sum_zero, "Country"]))
             if (grepl("res\\.country\\.rda", denominator_counts_csv_filename))
                 msg <- paste0(msg, "\nNote: denominator counts were read from '",
                               denominator_counts_csv_filename,
@@ -185,10 +176,10 @@ validate_denominator_counts_file <- function(age_group = "15-49",
             ## NOTE: Output might be truncated (see ?stop).
         }
     }
-    message("'", denominator_counts_csv_filename, "' is valid.")
+
+    if (verbose) message("'", denominator_counts_csv_filename, "' is valid.")
     return(invisible(out_df))
 }
-
 
 
 ##' Generate MCMC chains for global run of FPEM
@@ -244,44 +235,40 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 ##' #endif
 ##' Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 ##' is not available.
-##' @param input_data_folder_path File path to folder containing
-##'     \emph{all} input data (except any map shapefiles). If
-##'     \code{NULL} the value of \code{data_csv_filename}, etc., will
-##'     be passed to \code{\link{file.path}} as-is. Otherwise,
-##'     \code{file.path(input_data_folder_path, data_csv_filename)}
-##'     will be passed. The default value points to the data directory
-##'     supplied with the package.
-##' @param data_csv_filename Filename of the \file{.csv} file
-##'     containing country-level prevalence data. See
-##'     \dQuote{Details}.
-##' @param region_information_csv_filename Filename of the \file{.csv}
-##'     file containing classifications of countries in sub-regions,
-##'     regions, etc. See \dQuote{Details}.
-##' @param output_folder_path Filepath to directory where outputs
-##'     should be saved. If \code{NULL}, defaults to
-##'     \code{file.path("output", run_name)}.
-##' @param include_AR Logical; should the auto-regressive component of
-##'     the model be estimated. Used mainly for testing.
-##' @param verbose Logical; print lots and lots of messages about
-##'     progress?
-##' @return A name for the run returned invisibly as a character
-##'     string. MCMC chains are saved to the directory
-##'     \file{\code{output_folder_path}/temp.JAGSobjects}. They need
-##'     to be post-processed with \code{\link{post_process_mcmc}}. The
-##'     run name (and path to outputs, if not the default) must be
-##'     passed to \code{\link{post_process_mcmc}} to locate find the
-##'     saved chains for processing. Run names for married and
-##'     unmarried runs must also be passed to
-##'     \code{\link{combine_runs}} to generate all women MCMC results.
+##' @param input_data_folder_path File path to folder containing \emph{all}
+##'   input data (except any map shapefiles). If \code{NULL} the value of
+##'   \code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
+##'   as-is. Otherwise, \code{file.path(input_data_folder_path,
+##'   data_csv_filename)} will be passed. The default value points to the data
+##'   directory supplied with the package.
+##' @param data_csv_filename Filename of the \file{.csv} file containing
+##'   country-level prevalence data. See \dQuote{Details}.
+##' @param region_information_csv_filename Filename of the \file{.csv} file
+##'   containing classifications of countries in sub-regions, regions, etc. See
+##'   \dQuote{Details}.
+##' @param output_folder_path Filepath to directory where outputs should be
+##'   saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.
+##' @param include_AR Logical; should the auto-regressive component of the model
+##'   be estimated. Used mainly for testing.
+##' @param verbose Logical; print lots and lots of messages about progress?
+##' @param .extra_config An optional list of extra arguments for finer control. This
+##'   is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
+##'   should ordinarily not modify the default.
+##' @return A name for the run returned invisibly as a character string. MCMC
+##'   chains are saved to the directory
+##'   \file{\code{output_folder_path}/temp.JAGSobjects}. They need to be
+##'   post-processed with \code{\link[FPEMglobal]{post_process_mcmc}}. The run name (and
+##'   path to outputs, if not the default) must be passed to
+##'   \code{\link[FPEMglobal]{post_process_mcmc}} to locate the saved chains for
+##'   processing. Run names for married and unmarried runs must also be passed
+##'   to \code{\link[FPEMglobal]{combine_runs}} to generate all women MCMC results.
 ##' @author Mark Wheldon, Andrew Tait
-##' @seealso \code{\link{do_global_run}} (which calls this function)
-##'     to generate MCMC results for married or unmarried women,
-##'     post-process, and produce results all in one call;
-##'     \code{\link{combine_runs}} to create all women results from
-##'     married and unmarried women runs;
-##'     \code{\link{do_global_all_women_run}} to do married,
-##'     unmarried, \emph{and all women runs}, and produce results, all
-##'     in one call.
+##' @seealso \code{\link{do_global_run}} (which calls this function) to generate
+##'   MCMC results for married or unmarried women, post-process, and produce
+##'   results all in one call; \code{\link{combine_runs}} to create all women
+##'   results from married and unmarried women runs;
+##'   \code{\link{do_global_all_women_run}} to do married, unmarried, \emph{and
+##'   all women runs}, and produce results, all in one call.
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_mcmc <- function(run_desc = "",
@@ -300,7 +287,8 @@ do_global_mcmc <- function(run_desc = "",
                            region_information_csv_filename = "country_and_area_classification.csv",
                            output_folder_path = NULL,
                            include_AR = TRUE,
-                           verbose = FALSE) {
+                           verbose = getOption("FPEMglobal.verbose"),
+                           .extra_config = NULL) {
 
     ##---------------------------------------------------------------------
     ## Run name and output paths
@@ -328,18 +316,10 @@ do_global_mcmc <- function(run_desc = "",
     ##---------------------------------------------------------------------
     ## Make paths to input data
 
-    if(!is.null(input_data_folder_path)) {
-        data_csv_filename <- file.path(input_data_folder_path, data_csv_filename)
-        region_information_csv_filename <-
-            file.path(input_data_folder_path, region_information_csv_filename)
-    }
-    if(!file.exists(data_csv_filename)) stop("'data_csv_filename' ",
-                                             data_csv_filename,
-                                             " does not exist.")
-    if(!file.exists(region_information_csv_filename))
-        stop("'region_information_csv_filename' ",
-             region_information_csv_filename,
-             " does not exist.")
+    data_csv_file_path <-
+        make_input_file_path(input_data_folder_path, data_csv_filename)
+    region_information_csv_file_path <-
+        make_input_file_path(input_data_folder_path, region_information_csv_filename)
 
     ##---------------------------------------------------------------------
     ## Parallelization mechanism
@@ -394,6 +374,22 @@ do_global_mcmc <- function(run_desc = "",
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
+    ## ---------------------------------------------------------------------
+    ## .extra_config
+
+    ## These are the variables that the '.extra_config' argument can alter.
+
+    if (is.null(.extra_config)) {
+        .extra_config = list(one_country_run = FALSE, one_country_iso = NULL)
+    } else {
+        checkmate::assert_list(x = .extra_config)
+        checkmate::assert_names(x = .extra_config,
+                                type = "named",
+                                must.include = c("one_country_run", "one_country_iso"))
+        checkmate::assert_logical(.extra_config[["one_country_run"]])
+        checkmate::assert_numeric(.extra_config[["one_country_iso"]])
+    }
+
     ##---------------------------------------------------------------------
     ## Save the values of function arguments so same arguments can be used for validations
 
@@ -418,10 +414,12 @@ do_global_mcmc <- function(run_desc = "",
         N.THIN = thinning,
         run.on.server = run_in_parallel,
         run.name =  run_name,
-        data.csv = data_csv_filename,
-        regioninfo.csv = region_information_csv_filename,
+        data.csv = data_csv_file_path,
+        regioninfo.csv = region_information_csv_file_path,
         output.dir = output_folder_path,
         ChainNums = chain_nums,
+        do.country.specific.run = .extra_config$one_country_run,
+        iso.country.select = .extra_config$one_country_iso,
         disagg.RN.PMA = TRUE,
         write.model.fun = marital_group_param_set$write_model_fun,
         include.AR = include_AR,
@@ -481,7 +479,7 @@ add_global_mcmc <- function(run_name,
                             chain_nums = 2,
                             output_folder_path = file.path("output", run_name),
                             run_in_parallel = isTRUE(length(chain_nums) > 1),
-                            verbose = FALSE) {
+                            verbose = getOption("FPEMglobal.verbose")) {
 
     if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
 
@@ -692,7 +690,7 @@ post_process_mcmc <- function(run_name = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
                               overwrite_existing_results = FALSE,
-                              verbose = FALSE) {
+                              verbose = getOption("FPEMglobal.verbose")) {
 
     ##----------------------------------------------------------------------------
     ## Meta Info
@@ -730,16 +728,11 @@ post_process_mcmc <- function(run_name = NULL,
     }
 
     ## Make paths to input data
-    if(!is.null(input_data_folder_path)) {
-        countries_for_aggregates_csv_filename <-
-            file.path(input_data_folder_path, countries_for_aggregates_csv_filename)
-        denominator_counts_csv_filename <-
-            file.path(input_data_folder_path, denominator_counts_csv_filename)
-    }
-    if(!file.exists(countries_for_aggregates_csv_filename))
-        stop("can't find ", countries_for_aggregates_csv_filename)
-    if(!file.exists(denominator_counts_csv_filename))
-        stop("can't find ", denominator_counts_csv_filename)
+    countries_for_aggregates_csv_file_path <-
+        make_input_file_path(input_data_folder_path, countries_for_aggregates_csv_filename)
+
+    denominator_counts_csv_file_path <-
+        make_input_file_path(input_data_folder_path, denominator_counts_csv_filename)
 
     ## All women run?
     if(isTRUE(mcmc.meta$general$all.women.run.copy)) {
@@ -752,7 +745,7 @@ post_process_mcmc <- function(run_name = NULL,
         denom_file_to_validate <- "res.country.rda"
     else denom_file_to_validate <- denominator_counts_csv_filename
     validate_denominator_counts_file(age_group = NULL,
-                                     input_data_folder_path = NULL,
+                                     input_data_folder_path = input_data_folder_path,
                                      denominator_counts_csv_filename = denom_file_to_validate,
                                      output_folder_path = output_folder_path,
                                      marital_group = switch(mcmc.meta$general$marital.group,
@@ -845,8 +838,8 @@ post_process_mcmc <- function(run_name = NULL,
 
         ConstructOutput(
             run.name = run_name,
-            WRA.csv = denominator_counts_csv_filename,
-            countries.to.include.in.aggregates.csv = countries_for_aggregates_csv_filename,
+            WRA.csv = denominator_counts_csv_file_path,
+            countries.to.include.in.aggregates.csv = countries_for_aggregates_csv_file_path,
             output.dir = output_folder_path,
             start.year = start_year,
             end.year = end_year,
@@ -884,7 +877,7 @@ post_process_mcmc <- function(run_name = NULL,
                                      file.aggregates = file.agg,
                                      years.change = years_change,
                                      years.change2 = years_change2,
-                                     countries.to.include.in.aggregates.csv = countries_for_aggregates_csv_filename,
+                                     countries.to.include.in.aggregates.csv = countries_for_aggregates_csv_file_path,
                                      verbose = verbose
                                      )
             save(res.new, file = res.fname)
@@ -913,7 +906,7 @@ post_process_mcmc <- function(run_name = NULL,
                                age.ratio.output.dir = output_folder_path,
                                est.years = NULL,
                                run.name = run_name,
-                               age.subset.WRA.csv = denominator_counts_csv_filename,
+                               age.subset.WRA.csv = denominator_counts_csv_file_path,
                                age.total.WRA.csv = file.path(age_ratios_age_total_denominator_counts_folder_path,
                                                              age_ratios_age_total_denominator_counts_csv_filename),
                                years.change = years_change,
@@ -1141,7 +1134,7 @@ make_results <- function(run_name = NULL,
                          validation_keep_all = TRUE,
                          validation_return_res_as_df = FALSE,
                          all_women = NULL,
-                         verbose = FALSE) {
+                         verbose = getOption("FPEMglobal.verbose")) {
 
     ##----------------------------------------------------------------------------
     ## Meta information
@@ -1186,11 +1179,11 @@ make_results <- function(run_name = NULL,
         input_data_folder_path <- file.path(output_folder_path, "data")
 
     ## Countries to plot
-    if(!is.null(input_data_folder_path) && !is.null(countries_in_CI_plots_csv_filename)) {
-        countries_in_CI_plots_csv_filename <-
-            file.path(input_data_folder_path, countries_in_CI_plots_csv_filename)
+    if(!is.null(countries_in_CI_plots_csv_filename)) {
+        countries_in_CI_plots_csv_file_path <-
+            make_input_file_path(input_data_folder_path, countries_in_CI_plots_csv_filename)
     }
-    if(!file.exists(countries_in_CI_plots_csv_filename)) {
+    if(!file.exists(countries_in_CI_plots_csv_file_path)) {
         msg <- paste0("can't find 'countries_in_CI_plots_csv_filename' (",
                       countries_in_CI_plots_csv_filename, ")")
         if (all_women)
@@ -1519,7 +1512,7 @@ make_results <- function(run_name = NULL,
                     layout.style = "UNPD",
                     cex.symbols = list(SS = 1.5, add.info = 4, no.info = 2),
                     non.std.symbol = 24,
-                    select.c.csv = countries_in_CI_plots_csv_filename,
+                    select.c.csv = countries_in_CI_plots_csv_file_path,
                     all.womenize.fig.name = FALSE,
                     hide.CP.tot.lt.1pc = TRUE,
                     plot.prior.post = plot_prior_post,
@@ -2299,13 +2292,14 @@ do_global_run <- function(## Describe the run
                           run_name_override = NULL,
                           model_diagnostics = TRUE,
                           include_AR = TRUE,
-                          verbose = FALSE) {
+                          verbose = getOption("FPEMglobal.verbose"),
+          .extra_config = NULL) {
 
     ##-----------------------------------------------------------------------------
     ## Set-up
 
     if (identical(length(chain_nums), 1L))
-        message("Only a single chain has been requested; post-processing will *not* be done and results will *not* be produced.")
+        warning("Only a single chain has been requested; post-processing will *not* be done and results will *not* be produced.")
 
     marital_group <- match.arg(marital_group)
 
@@ -2322,13 +2316,11 @@ do_global_run <- function(## Describe the run
     ## Check input files
 
     ## Denominators
-    if (!is.null(input_data_folder_path)) {
-        verifyDenominators(x = file.path(input_data_folder_path, denominator_counts_csv_filename),
-                           in_union = which(c("unmarried", "married") == marital_group) - 1)
-    } else {
-        verifyDenominators(x = file.path(denominator_counts_csv_filename),
-                           in_union = which(c("unmarried", "married") == marital_group) - 1)
-    }
+    denominator_counts_csv_file_path <-
+        make_input_file_path(input_data_folder_path, denominator_counts_csv_filename)
+
+    verifyDenominators(x = denominator_counts_csv_file_path,
+                       in_union = which(c("unmarried", "married") == marital_group) - 1)
 
     ## Validate denominators. Checks that denominators needed for aggregates are present.
     validate_denominator_counts_file(age_group = age_group,
@@ -2461,7 +2453,8 @@ do_global_run <- function(## Describe the run
                        region_information_csv_filename = region_information_csv_filename,
                        output_folder_path = output_folder_path,
                        include_AR = include_AR,
-                       verbose = verbose)
+                       verbose = verbose,
+                       .extra_config = .extra_config)
 
     ##-----------------------------------------------------------------------------
     ## STOP if only one chain
@@ -2644,7 +2637,7 @@ combine_runs <- function(## Describe the run
                          age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
                          age_ratios_age_total_denominator_counts_folder_path = NULL,
                          run_name_override = NULL,
-                         verbose = FALSE) {
+                         verbose = getOption("FPEMglobal.verbose")) {
 
     ##----------------------------------------------------------------------------
     ## Meta information
@@ -3313,7 +3306,8 @@ do_global_all_women_run <- function(## Describe the run
                                     age_ratios_age_total_all_women_output_folder_path = NULL,
                                     age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                                     age_ratios_age_total_denominator_counts_folder_path = NULL,
-                                    verbose = FALSE) {
+                                    verbose = getOption("FPEMglobal.verbose"),
+                                    .extra_config = NULL) {
 
     ##---------------------------------------------------------------------
     ## Run Names with Common Time Stamp
@@ -3524,7 +3518,9 @@ do_global_all_women_run <- function(## Describe the run
             run_name_override = run_name_override_married,
             model_diagnostics = model_diagnostics,
             include_AR = include_AR,
-            verbose = verbose)
+          verbose = verbose,
+          ## Control list
+          .extra_config = .extra_config)
 
     ## --------------------------------------------------------------------
     ## Unmarried
@@ -3572,7 +3568,9 @@ do_global_all_women_run <- function(## Describe the run
             run_name_override = run_name_override_unmarried,
             model_diagnostics = model_diagnostics,
             include_AR = include_AR,
-            verbose = verbose)
+            verbose = verbose,
+          ## Control list
+          .extra_config = .extra_config)
 
     ##-----------------------------------------------------------------------------
     ## STOP if only one chain
@@ -3788,7 +3786,7 @@ do_global_validation_mcmc <-
              chain_nums = 1:3,
              run_in_parallel = isTRUE(length(chain_nums) > 1),
              output_folder_path = NULL,
-             verbose = FALSE) {
+             verbose = getOption("FPEMglobal.verbose")) {
 
         ## --------------------------------------------------------------------
         ## Parallelization mechanism
@@ -3998,7 +3996,7 @@ do_global_validation_run <- function(run_desc = "",
                                      chain_nums = 1:3,
                                      run_in_parallel = isTRUE(length(chain_nums) > 1),
                                      output_folder_path = NULL,
-                                     verbose = FALSE) {
+                                     verbose = getOption("FPEMglobal.verbose")) {
 
     ##----------------------------------------------------------------------------
     ## Must choose a validation exercise
@@ -4174,7 +4172,7 @@ add_special_aggregates <- function(output_folder_path,
                                    years_change2 = NULL,
                                    model_diagnostics = FALSE,
                                    special_aggregates_name,
-                                   verbose = FALSE) {
+                                   verbose = getOption("FPEMglobal.verbose")) {
     stop("TO BE COMPLETED")
 }
 
@@ -4207,7 +4205,7 @@ add_special_aggregates <- function(output_folder_path,
 rename_global_run <- function(run_name,
                               new_run_name,
                               output_folder_path = NULL,
-                              ignore = "^data$", verbose = FALSE) {
+                              ignore = "^data$", verbose = getOption("FPEMglobal.verbose")) {
 
     ##-----------------------------------------------------------------------------
     ## Set-up
@@ -4348,7 +4346,7 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
                                   plot_data = NULL,
                                   all_women = NULL,
                                   compare_aggregates = TRUE,
-                                  verbose = FALSE) {
+                                  verbose = getOption("FPEMglobal.verbose")) {
 
     message("Plotting comparison of ", run_name_1, " and ", run_name_2)
 
@@ -4441,7 +4439,7 @@ assert_valid_output_dir <- function(output_folder_path,
                                     made_results = post_processed,
                                     adjusted_medians = post_processed,
                                     age_ratios = NULL,
-                                    verbose = FALSE) {
+                                    verbose = getOption("FPEMglobal.verbose")) {
 
     ## --------------------
     ## RECURSE

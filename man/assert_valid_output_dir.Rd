@@ -11,7 +11,7 @@ assert_valid_output_dir(
   made_results = post_processed,
   adjusted_medians = post_processed,
   age_ratios = NULL,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{

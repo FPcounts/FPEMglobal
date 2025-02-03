@@ -15,7 +15,7 @@ compare_runs_CI_plots(
   plot_data = NULL,
   all_women = NULL,
   compare_aggregates = TRUE,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{

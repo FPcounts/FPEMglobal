@@ -2,9 +2,9 @@
 # F_runMCMC.R
 # Leontine Alkema and Jin Rou New
 #--------------------------------------------------------------------------
-RunMCMC <- function(# Start MCMC sampling
-### Start MCMC sampling for the CP model and save mcmc.meta and JAGS objects to \code{output.dir}.
-                    run.name = "test", ##<< Run name, used to create a directory \code{output/run.name}
+
+# Start MCMC sampling for the CP model and save mcmc.meta and JAGS objects to \code{output.dir}.
+RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory \code{output/run.name}
                     ## with JAGS output (after MCMC sampling), and estimates (in next steps).
                     N.ITER = ifelse(!do.country.specific.run, 80000, 40000), ##<< Number of iterations, NOT including burn-in.
                     N.STEPS = 4, ##<< For each N.ITER/N.STEPS iterations, the iterations will be saved.
@@ -13,7 +13,7 @@ RunMCMC <- function(# Start MCMC sampling
                     ChainNums = seq(1,5), ##<< IDs of chains to run in series
                     ## (the IDs need to be numeric because they are used to set the seed).
                     do.country.specific.run = FALSE, ##<< Logical: execute a country-specific (as opposed to global) run? # change JR, 20131104
-  do.country.specific.targets.run = FALSE, ##<< Logical: execute a country-specific (as opposed to global) run for targets? # change JR, 20150301
+                    do.country.specific.targets.run = FALSE, ##<< Logical: execute a country-specific (as opposed to global) run for targets? # change JR, 20150301
                     iso.select = NULL, ##<< (For country/subpopulation-specific run) Numeric or 3-character ISO country code for country/subpopulation to select
                     ## one country/subpopulation to run the model for, or if NULL, all countries/subpopulations in data are selected. Should be of length 1
                     ## if \code{do.country.specific.run} is \code{TRUE} # change JR, 20131104
@@ -82,8 +82,8 @@ RunMCMC <- function(# Start MCMC sampling
                     ,age.group = "15-49"
                     ## Use 'sink' to write to logfile.txt?
                     ,sink.seed.logfile = TRUE
-  , verbose = TRUE
-                    ){
+                    ,verbose = TRUE
+                    ) {
 
     ## -------* SET-UP
 
@@ -132,7 +132,7 @@ RunMCMC <- function(# Start MCMC sampling
     ## as.numeric(as.Date("2012-03-09"))
     message("\nRandom seed passed to JAGS is '", seed.MCMC, "'. The random seed for each chain is '", seed.MCMC, "' multiplied by the chain number.")
 
-      #######Argument for country specific RUNS!!!!
+  ##Argument for country specific RUNS!!!!
   ##Matching characters in the datsets to make sure ISO codes are correct
   if (!is.null(iso.select)) { # change JR, 20131104
     if (!(all(grepl("[[:alpha:]]", iso.select)) || all(grepl("[[:digit:]]", iso.select)))) {
@@ -148,11 +148,11 @@ RunMCMC <- function(# Start MCMC sampling
     }
   }
 
-  ##details<< Object \code{data.global} is loaded or created, which is NULL if this run is not country-specific.
-    if (do.country.specific.run || do.country.specific.targets.run) { # change JR, 20150301
+    ##details<< Object \code{data.global} is loaded or created, which is NULL if this run is not country-specific.
+       if (do.country.specific.run || do.country.specific.targets.run) { # change JR, 20150301
         message("\n'do.country.specific.run' or 'do.country.specific.targets.run' is TRUE.")
         if (is.null(run.name.global)) {
-            run.name.global <- "Run20140520" # change JR, 2010612
+            run.name.global <- "DEFAULT_RUN_NAME" # change JR, 2010612
             if (!file.exists(file.path("data/data.global.rda"))) {
                 cat(paste0("Error: No default data.global file in data folder. Run global run first or specify run.name.global!\n"))
                 return(invisible())

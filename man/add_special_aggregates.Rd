@@ -14,7 +14,7 @@ add_special_aggregates(
   years_change2 = NULL,
   model_diagnostics = FALSE,
   special_aggregates_name,
-  verbose = FALSE
+  verbose = getOption("FPEMglobal.verbose")
 )
 }
 \arguments{
