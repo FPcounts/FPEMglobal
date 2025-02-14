@@ -152,7 +152,7 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
        if (do.country.specific.run || do.country.specific.targets.run) { # change JR, 20150301
         message("\n'do.country.specific.run' or 'do.country.specific.targets.run' is TRUE.")
         if (is.null(run.name.global)) {
-            run.name.global <- "DEFAULT_RUN_NAME" # change JR, 2010612
+            run.name.global <- "Run20140520" # change JR, 2010612
             if (!file.exists(file.path("data/data.global.rda"))) {
                 cat(paste0("Error: No default data.global file in data folder. Run global run first or specify run.name.global!\n"))
                 return(invisible())

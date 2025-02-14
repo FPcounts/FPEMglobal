@@ -101,9 +101,10 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 
     ## Read in the denominator counts
     if (identical(denominator_counts_csv_filename, "res.country.rda")) {
-        if (verbose) message("Reading denominator counts from '", file.path(output_folder_path, "res.country.rda"), "'.")
         stopifnot (!is.null(output_folder_path) || !length(dir(output_folder_path)) ||
                    !identical(length(marital_group), 1L))
+        denominator_counts_csv_file_path <- make_input_file_path(output_folder_path, "res.country.rda")
+        if (verbose) message("Reading denominator counts from '", denominator_counts_csv_file_path, "'.")
         res_country_list <- get(load(file.path(output_folder_path, "res.country.rda")))
         out_df <- data.frame(ISO.code = res_country_list$iso.g,
                              Country = names(res_country_list$W.Lg.t),
@@ -120,16 +121,15 @@ validate_denominator_counts_file <- function(age_group = "15-49",
         denominator_counts_csv_file_path <-
             make_input_file_path(input_data_folder_path, denominator_counts_csv_filename)
         if (verbose) message("Reading denominator counts from '", file.path(denominator_counts_csv_filename), "'.")
-    }
-
-    out_df <- data.frame()
-    for (mg in marital_group) {
-        if (identical(marital_group, "married")) mg_in_union <- 1
-        else mg_in_union <- 0
-        out_df <- rbind(out_df,
-                        data.frame(extractDenominators(denominator_counts_csv_file_path,
-                                                       in_union = mg_in_union),
-                                   In.union = mg_in_union))
+        out_df <- data.frame()
+        for (mg in marital_group) {
+            if (identical(marital_group, "married")) mg_in_union <- 1
+            else mg_in_union <- 0
+            out_df <- rbind(out_df,
+                            data.frame(extractDenominators(denominator_counts_csv_file_path,
+                                                           in_union = mg_in_union),
+                                       In.union = mg_in_union))
+        }
     }
 
     ## Check denominator counts
@@ -173,7 +173,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                               denominator_counts_csv_filename,
                               "'. If you are using new denominator counts in a .csv file you will need to delete 'res.country.rda' and re-run 'post_process_mcmc'.")
             stop(msg)
-            ## NOTE: Output might be truncated (see ?stop).
+            ## Output might be truncated (see ?stop).
         }
     }
 
@@ -290,7 +290,7 @@ do_global_mcmc <- function(run_desc = "",
                            verbose = getOption("FPEMglobal.verbose"),
                            .extra_config = NULL) {
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Run name and output paths
 
     marital_group <- match.arg(marital_group)
@@ -313,7 +313,7 @@ do_global_mcmc <- function(run_desc = "",
         }
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Make paths to input data
 
     data_csv_file_path <-
@@ -321,7 +321,7 @@ do_global_mcmc <- function(run_desc = "",
     region_information_csv_file_path <-
         make_input_file_path(input_data_folder_path, region_information_csv_filename)
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Parallelization mechanism
 
     if (run_in_parallel) {
@@ -354,7 +354,7 @@ do_global_mcmc <- function(run_desc = "",
         }
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Marital group specific arguments
 
     model_family <- "rate"
@@ -364,7 +364,7 @@ do_global_mcmc <- function(run_desc = "",
         marital_age_group_param_defaults(marital_group, age_group, model_family,
                                          model_name)
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Log
 
     msg <- paste0("Starting MCMC sampler for run ", run_name)
@@ -379,32 +379,44 @@ do_global_mcmc <- function(run_desc = "",
 
     ## These are the variables that the '.extra_config' argument can alter.
 
+    extra_config_defaults <-
+        list(
+            one_country_run = formals(FPEMglobal:::RunMCMC)$do.country.specific.run,
+            one_country_iso = formals(FPEMglobal:::RunMCMC)$iso.select,
+            global_run_output_folder = formals(FPEMglobal:::RunMCMC)$data_global_file_path,
+            global_run_output_summary_filename = formals(FPEMglobal:::RunMCMC)$data_global_file_path
+        )
+
     if (is.null(.extra_config)) {
-        .extra_config = list(one_country_run = FALSE, one_country_iso = NULL)
+        .extra_config =  extra_config_defaults
     } else {
         checkmate::assert_list(x = .extra_config)
-        checkmate::assert_names(x = .extra_config,
-                                type = "named",
-                                must.include = c("one_country_run", "one_country_iso"))
+        checkmate::assert_names(
+            x = .extra_config,
+            type = "named",
+            must.include = names(extra_config_defaults)
+        )
         checkmate::assert_logical(.extra_config[["one_country_run"]])
         checkmate::assert_numeric(.extra_config[["one_country_iso"]])
+        checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
+        checkmate::assert_file_exists(.extra_config[["global_run_output_summary_filename"]])
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Save the values of function arguments so same arguments can be used for validations
 
     global_mcmc_args <- c(mget(names(formals(do_global_mcmc))), marital_group_param_set,
                           list(run_name = run_name))
     save(global_mcmc_args, file = file.path(output_folder_path, "global_mcmc_args.RData"))
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Copy to Output
 
     output_data_folder_path <- file.path(output_folder_path, "data")
     copy_data_files(run_name = run_name, data_dir = input_data_folder_path,
                     data_local = output_data_folder_path)
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Make MCMC chains
 
     RunMCMC(
@@ -445,7 +457,7 @@ do_global_mcmc <- function(run_desc = "",
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Return
 
     return(invisible(run_name))
@@ -483,7 +495,7 @@ add_global_mcmc <- function(run_name,
 
     if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Meta Info
 
     load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -496,7 +508,7 @@ add_global_mcmc <- function(run_name,
         }
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## LOG
 
     msg <- paste0("Adding MCMC chains to run ", run_name)
@@ -506,7 +518,7 @@ add_global_mcmc <- function(run_name,
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Parallelization mechanism
 
     if (run_in_parallel) {
@@ -525,7 +537,7 @@ add_global_mcmc <- function(run_name,
         }
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Add Chains
 
     AddMCMCChain(run.name = run_name,
@@ -692,7 +704,7 @@ post_process_mcmc <- function(run_name = NULL,
                               overwrite_existing_results = FALSE,
                               verbose = getOption("FPEMglobal.verbose")) {
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Meta Info
 
     if (is.null(output_folder_path) && is.null(run_name))
@@ -799,14 +811,14 @@ post_process_mcmc <- function(run_name = NULL,
         if(!file.exists(file.agg)) stop("'", file.agg, "' does not exist.")
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Save the values of function arguments for making results
 
     post_process_args <- mget(names(formals(post_process_mcmc)))
     save(post_process_args, file = file.path(output_folder_path, "post_process_args.RData"))
 
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Construct output
 
     ## Make MCMC array
@@ -918,7 +930,7 @@ post_process_mcmc <- function(run_name = NULL,
         }
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Summarize global run
 
     if (summarize_global_run) {
@@ -937,7 +949,7 @@ post_process_mcmc <- function(run_name = NULL,
         }
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Check convergence
 
     if(model_diagnostics) {
@@ -967,7 +979,7 @@ post_process_mcmc <- function(run_name = NULL,
         }
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## LOG
 
     msg <- paste0("Finished post-processing run ", run_name)
@@ -976,7 +988,7 @@ post_process_mcmc <- function(run_name = NULL,
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Return
 
     return(invisible(run_name))
@@ -1136,9 +1148,9 @@ make_results <- function(run_name = NULL,
                          all_women = NULL,
                          verbose = getOption("FPEMglobal.verbose")) {
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Meta information
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     ## Output folder path
     if (is.null(output_folder_path) && is.null(run_name))
@@ -1271,9 +1283,9 @@ make_results <- function(run_name = NULL,
         }
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Adjusted medians??
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     if(adjust_medians) adjust_medians_method <- "mod_tot_unmet" #only one
 
@@ -1341,9 +1353,9 @@ make_results <- function(run_name = NULL,
         }
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Special aggregates
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     if (!is.null(special_aggregates_name) && make_any_aggregates) {
         for (name.agg in special_aggregates_name) {
@@ -1369,16 +1381,16 @@ make_results <- function(run_name = NULL,
         }
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Save the values of function arguments for making results
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
 
     make_results_args <- mget(names(formals(make_results)))
     save(make_results_args, file = file.path(output_folder_path, "make_results_args.RData"))
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Log
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     msg <- paste0("Making results for run ", run_name)
     message(msg)
@@ -1386,9 +1398,9 @@ make_results <- function(run_name = NULL,
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Validation Run
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     if(validation_run) {
 
@@ -1419,9 +1431,9 @@ make_results <- function(run_name = NULL,
 
     } else {
 
-        ##----------------------------------------------------------------------------
+        ## ----------------------------------------------------------------------------
         ## Non-Validation
-        ##----------------------------------------------------------------------------
+        ## ----------------------------------------------------------------------------
 
         ##............................................................................
         ## Create plots
@@ -2184,9 +2196,9 @@ make_results <- function(run_name = NULL,
             }
         }
 
-        ##----------------------------------------------------------------------------
+        ## ----------------------------------------------------------------------------
         ## Log
-        ##----------------------------------------------------------------------------
+        ## ----------------------------------------------------------------------------
 
         msg <- paste0("Finished making results for run ", run_name)
         message(msg)
@@ -2194,9 +2206,9 @@ make_results <- function(run_name = NULL,
             msg,
             file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-        ##----------------------------------------------------------------------------
+        ## ----------------------------------------------------------------------------
         ## Return
-        ##----------------------------------------------------------------------------
+        ## ----------------------------------------------------------------------------
 
         return(invisible(run_name))
     }
@@ -2295,7 +2307,7 @@ do_global_run <- function(## Describe the run
                           verbose = getOption("FPEMglobal.verbose"),
           .extra_config = NULL) {
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Set-up
 
     if (identical(length(chain_nums), 1L))
@@ -2312,7 +2324,7 @@ do_global_run <- function(## Describe the run
     ## 'post_process_mcmc' needs it.
     output_data_folder_path <- file.path(output_folder_path, "data")
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Check input files
 
     ## Denominators
@@ -2433,7 +2445,7 @@ do_global_run <- function(## Describe the run
                  "')")
     }
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## MCMC Chains
 
     run_name <-
@@ -2456,7 +2468,7 @@ do_global_run <- function(## Describe the run
                        verbose = verbose,
                        .extra_config = .extra_config)
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## STOP if only one chain
 
     if (identical(length(chain_nums), 1L)) {
@@ -2465,11 +2477,11 @@ do_global_run <- function(## Describe the run
     }
 
     ##
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
 
     ## More than one chain >> continue >>
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Post-Process
 
     ## Meta Info
@@ -2491,7 +2503,7 @@ do_global_run <- function(## Describe the run
                       age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
                       verbose = verbose)
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Plots, Tables
 
     if(make_any_results) {
@@ -2513,7 +2525,7 @@ do_global_run <- function(## Describe the run
 
     }
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Finish
 
     ## if(!interactive()) copy_Rout_files(run_name = run_name)
@@ -2639,9 +2651,9 @@ combine_runs <- function(## Describe the run
                          run_name_override = NULL,
                          verbose = getOption("FPEMglobal.verbose")) {
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Meta information
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     ## Married and Unmarried
     if(is.null(married_women_run_output_folder_path)) {
@@ -2673,9 +2685,9 @@ combine_runs <- function(## Describe the run
     ## Age group
     age_group <- mcmc.meta$general$age.group
 
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
     ## run_name and output folder
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
 
     ## Four ways:
     ##
@@ -2735,9 +2747,9 @@ combine_runs <- function(## Describe the run
     data_folder_path <- file.path(output_folder_path, "data")
     dir.create(data_folder_path, showWarnings = FALSE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Age ratios
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     ## Age ratios
     if((!is.null(age_ratios_age_total_married_run_name) ||
@@ -2831,17 +2843,17 @@ combine_runs <- function(## Describe the run
         }
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Save the values of function arguments for make_results()
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     combine_runs_args <- c(mget(names(formals(combine_runs))),
                            list(run_name = run_name))
     save(combine_runs_args, file = file.path(output_folder_path, "combine_runs_args.RData"))
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## LOG
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     msg <- paste0("Combining runs in ", married_women_run_output_folder_path, " and ", unmarried_women_run_output_folder_path)
     message(msg)
@@ -2849,9 +2861,9 @@ combine_runs <- function(## Describe the run
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Get Filenames
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     ## Global MCMC Args
 
@@ -2909,9 +2921,9 @@ combine_runs <- function(## Describe the run
         }
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Copy files needed by plotting and tabulation functions.
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     ## Do it here because the output directory is created by 'ConstructOutputAllWomen()'.
 
@@ -2942,9 +2954,9 @@ combine_runs <- function(## Describe the run
     mcmc.meta$general$all.women.run.copy <- TRUE
     save(mcmc.meta, file = file.path(output_folder_path, "mcmc.meta.rda"))
 
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
     ## Adjust medians
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
 
     ## Check that unmarried, married results for adj medians are
     ## available. Country, UNPD aggregates and special aggregates.
@@ -3025,9 +3037,9 @@ combine_runs <- function(## Describe the run
         }
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Validate denominators. Checks that denominators needed for aggregates are present.
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     validate_denominator_counts_file(age_group = age_group,
                                      input_data_folder_path = data_folder_path,
@@ -3043,9 +3055,9 @@ combine_runs <- function(## Describe the run
                                      marital_group = "unmarried",
                                      countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
 
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
     ## Construct output for all women
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
 
     for(fn in c("res.country.all.women.rda", "res.aggregate.all.women.rda")) {
         if(file.exists(file.path(output_folder_path, fn))) {
@@ -3069,9 +3081,9 @@ combine_runs <- function(## Describe the run
                             output_exists_warnings = FALSE
                             )
 
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
     ## Special aggregates
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
 
     if (!is.null(special_aggregates_name) && make_any_aggregates) {
 
@@ -3106,9 +3118,9 @@ combine_runs <- function(## Describe the run
         }
     }
 
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
     ## Age ratios (incl. for aggregates)
-    ##--------------------------------------------------------------------------
+    ## --------------------------------------------------------------------------
 
     if(make_age_ratios) {
 
@@ -3179,9 +3191,9 @@ combine_runs <- function(## Describe the run
 
     ## if(!interactive()) copy_Rout_files(run_name = run_name)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## LOG
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     msg <- paste0("Finished combining runs ", married_women_run_output_folder_path, " and ", unmarried_women_run_output_folder_path)
     message(msg)
@@ -3189,9 +3201,9 @@ combine_runs <- function(## Describe the run
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Return
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
 
     return(invisible(run_name))
 }
@@ -3309,7 +3321,7 @@ do_global_all_women_run <- function(## Describe the run
                                     verbose = getOption("FPEMglobal.verbose"),
                                     .extra_config = NULL) {
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Run Names with Common Time Stamp
 
     if (identical(length(chain_nums), 1L)) {
@@ -3328,7 +3340,7 @@ do_global_all_women_run <- function(## Describe the run
         run_name_override_all_women <- make_run_name("all_women", age_group, run_desc)
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## Check output doesn't already exist
 
     for(rn in c(run_name_override_married, run_name_override_unmarried,
@@ -3345,7 +3357,7 @@ do_global_all_women_run <- function(## Describe the run
         }
     }
 
-    ##----------------------------------------------------------------------
+    ## ----------------------------------------------------------------------
     ## Age ratios
 
     if(identical(age_group, "15-49")) {
@@ -3572,7 +3584,7 @@ do_global_all_women_run <- function(## Describe the run
           ## Control list
           .extra_config = .extra_config)
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## STOP if only one chain
 
     if (identical(length(chain_nums), 1L)) {
@@ -3581,7 +3593,7 @@ do_global_all_women_run <- function(## Describe the run
     }
 
     ##
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
 
     ## More than one chain >> continue >>
 
@@ -3805,7 +3817,7 @@ do_global_validation_mcmc <-
             }
         }
 
-        ##----------------------------------------------------------------------------
+        ## ----------------------------------------------------------------------------
         ## Meta information
 
         ## Get information about the run being validated (should
@@ -3875,7 +3887,7 @@ do_global_validation_mcmc <-
             }
         }
 
-        ##-----------------------------------------------------------------------------
+        ## -----------------------------------------------------------------------------
         ## Copy to Output
 
         output_data_folder_path <- file.path(output_folder_path, "data")
@@ -3932,7 +3944,7 @@ do_global_validation_mcmc <-
             sink.seed.logfile = FALSE
         )
 
-        ##-----------------------------------------------------------------------------
+        ## -----------------------------------------------------------------------------
         ## Return
 
         return(invisible(run_name))
@@ -3998,14 +4010,14 @@ do_global_validation_run <- function(run_desc = "",
                                      output_folder_path = NULL,
                                      verbose = getOption("FPEMglobal.verbose")) {
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Must choose a validation exercise
 
     if(!identical(as.double(sum(at_random, at_end, exclude_unmet_only, at_random_no_data, leave_iso_out)), 1)) {
         stop("You must choose exactly one validation exercise. Exactly one of 'at_random', 'at_end', 'exclude_unmet_only', 'at_random_no_data', 'leave_iso_out' must be TRUE.")
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Meta information
 
     ## Get information about the run being validated (should
@@ -4072,7 +4084,7 @@ do_global_validation_run <- function(run_desc = "",
         output_folder_path <- file.path("output", run_name)
     }
 
-    ##---------------------------------------------------------------------
+    ## ---------------------------------------------------------------------
     ## MCMC
 
     message("\nDoing validation run.")
@@ -4106,7 +4118,7 @@ do_global_validation_run <- function(run_desc = "",
                                   output_folder_path = output_folder_path,
                                   verbose = verbose)
 
-    ##---------------------------------------------------------------------------
+    ## ---------------------------------------------------------------------------
     ##  Post-Process
 
     post_process_mcmc(run_name = run_name_valid,
@@ -4126,7 +4138,7 @@ do_global_validation_run <- function(run_desc = "",
                       age_ratios_age_total_denominator_counts_folder_path = NULL,
                       verbose = verbose)
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ##  Plots, Tables
 
     make_results(run_name = run_name_valid,
@@ -4134,7 +4146,7 @@ do_global_validation_run <- function(run_desc = "",
                  output_folder_path = output_folder_path,
                  verbose = verbose)
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Finish
 
     ## if(!interactive()) copy_Rout_files(run_name = run_name_valid)
@@ -4207,12 +4219,12 @@ rename_global_run <- function(run_name,
                               output_folder_path = NULL,
                               ignore = "^data$", verbose = getOption("FPEMglobal.verbose")) {
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Set-up
 
     if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Functions
 
     crawl_and_rename <- function(dir_path, run_name = run_name,
@@ -4242,7 +4254,7 @@ rename_global_run <- function(run_name,
         }
     }
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Rename
 
     ## 'global_mcmc_args' object
@@ -4283,7 +4295,7 @@ rename_global_run <- function(run_name,
 
     crawl_and_rename(output_folder_path, run_name, new_run_name, ignore = ignore)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## LOG
 
     msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name)
@@ -4292,7 +4304,7 @@ rename_global_run <- function(run_name,
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Return
 
     return(new_run_name)
@@ -4350,7 +4362,7 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 
     message("Plotting comparison of ", run_name_1, " and ", run_name_2)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Meta Info
 
     load(file.path(run_1_output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -4365,7 +4377,7 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
         stop("Both runs must be either 'all women' runs or not.")
     if (!is.logical(all_women)) all_women <- isTRUE(run_1_mcmc_meta$general$all.women.run.copy)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Set values
 
     ## Directories
@@ -4389,7 +4401,7 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
         warning("Plots will be labelled as 'married' women results.")
     }
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Plots
 
     PlotComparison(run.name2 = run_2_plot_label,
