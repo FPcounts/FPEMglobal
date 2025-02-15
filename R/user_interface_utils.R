@@ -7,17 +7,63 @@
 ################################################################################
 
 ###-----------------------------------------------------------------------------
+### * Check Args
+
+validate_extra_config <- function(.extra_config) {
+    ## These are the variables that the '.extra_config' argument can alter.
+    extra_config_defaults <-
+        list(
+            one_country_run = formals(FPEMglobal:::RunMCMC)$do.country.specific.run,
+            one_country_iso = formals(FPEMglobal:::RunMCMC)$iso.select,
+            global_run_output_folder_path = formals(FPEMglobal:::RunMCMC)$data_global_file_path
+        )
+
+    if (is.null(.extra_config)) {
+        .extra_config = extra_config_defaults
+    } else {
+        checkmate::assert_list(x = .extra_config, names = "named")
+        checkmate::assert_subset(
+            x = names(.extra_config),
+            choices = names(extra_config_defaults)
+        )
+        checkmate::assert_logical(.extra_config[["one_country_run"]])
+        checkmate::assert_numeric(.extra_config[["one_country_iso"]])
+        checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
+
+        global_run_summary_file_path <-
+            make_global_summary_file_path(.extra_config$global_run_output_folder_path, check = FALSE)
+        if (!file.exists(global_run_summary_file_path))
+            stop(toString("The global run summary file '", global_run_summary_file_path,
+                          "' could not be found. If the global run has been done, you might need to run 'FPEMglobal:::SummariseGlobalRun()'"))
+    }
+    return(.extra_config)
+}
+
+###-----------------------------------------------------------------------------
 ### * Make Run Name
 
+## Make country code always 3 digits by prefixing zeros.
+expand_country_code <- function(x) {
+    x <- as.character(as.numeric(x))
+    paste0(paste(rep("0", 3 - nchar(x)), collapse = ""), x)
+}
+
 make_run_name <- function(marital_group, age_group, run_note = NULL,
-                          run_name_override = NULL) {
-    if(is.null(run_name_override)) {
-        run_name <- format(Sys.time(), "%y%m%d_%H%M%S")
-    } else {
-        run_name <- run_name_override
-    }
-    if(isTRUE(nchar(run_note) > 0)) run_name <- paste(run_name, run_note, sep = "_")
+                          run_name_override = NULL, .extra_config = NULL) {
+
+    ## If an override is given, just return it.
+    if (!is.null(run_name_override)) return(run_name_override)
+
+    ## Otherwise... construct run name
+    run_name <- format(Sys.time(), "%y%m%d_%H%M%S")
+    if (isTRUE(nchar(run_note) > 0)) run_name <- paste(run_name, run_note, sep = "_")
     run_name <- paste(run_name, age_group, marital_group, sep = "_")
+
+    .extra_config <- validate_extra_config(.extra_config)
+    if (.extra_config$one_country_run) {
+        run_name <- paste0(run_name, "_1c-",
+                          expand_country_code(.extra_config$one_country_iso))
+    }
     return(run_name)
 }
 
@@ -71,7 +117,7 @@ check_run_name_conflicts <- function(run_name, output_folder_path) {
 }
 
 ###-----------------------------------------------------------------------------
-### * Make Input File Paths
+### * Make File Paths
 
 ##' Construct path to an input file
 ##'
@@ -90,10 +136,43 @@ check_run_name_conflicts <- function(run_name, output_folder_path) {
 ##' @author Mark C Wheldon
 ##' @noRd
 make_input_file_path <- function(input_folder_path = NULL, input_filename, check = TRUE) {
-    if(!is.null(input_folder_path))
-        return(checkmate::assert_file_exists(file.path(input_folder_path, input_filename)))
+    if (!is.null(input_folder_path))
+        full_path <- file.path(input_folder_path, input_filename)
     else
-        return(checkmate::assert_file_exists(input_filename))
+        full_path <- input_filename
+
+    if (check)
+        return(checkmate::assert_file_exists(full_path))
+    else
+        return(full_path)
+}
+
+
+##' Construct path to global summary file
+##'
+##' Defines the file name for, and constructs a file path pointing to, the
+##' summary of a global run. This file is used as the input to a one-country
+##' run. It contains the posterior means of hierarchical parameters.
+##'
+##' @param output_folder_path Optional path to folder containing the file. By
+##'     default, only file filename will be returned.
+##' @param check (Logical) Should a warning be given if the file does not exist?
+##' @return File path as a character string.
+##' @author Mark C Wheldon
+##' @export
+make_global_summary_file_path <- function(output_folder_path = NULL, check = TRUE) {
+    ## This is hard-coded in runMCMC.R/RunMCMC()
+    data_global_filename <- "data.global.rda"
+
+    if (!is.null(output_folder_path))
+        full_path <- file.path(output_folder_path, data_global_filename)
+    else
+        full_path <- data_global_filename
+
+    if (check)
+        return(checkmate::assert_file_exists(full_path))
+    else
+        return(full_path)
 }
 
 ###-----------------------------------------------------------------------------

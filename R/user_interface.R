@@ -291,12 +291,18 @@ do_global_mcmc <- function(run_desc = "",
                            .extra_config = NULL) {
 
     ## ---------------------------------------------------------------------
+    ## .extra_config
+
+    ## Need to do this first because it's used in other sections.
+    .extra_config <- validate_extra_config(.extra_config)
+
+    ## ---------------------------------------------------------------------
     ## Run name and output paths
 
     marital_group <- match.arg(marital_group)
-
-    if(!is.null(run_name_override)) run_name <- run_name_override
-    else run_name <- make_run_name(marital_group, age_group, run_desc)
+    run_name <- make_run_name(marital_group, age_group, run_desc,
+                                   run_name_override = run_name_override,
+                                   .extra_config = .extra_config)
 
     message("\nThis run has 'run_name': ", run_name)
 
@@ -373,34 +379,6 @@ do_global_mcmc <- function(run_desc = "",
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
-
-    ## ---------------------------------------------------------------------
-    ## .extra_config
-
-    ## These are the variables that the '.extra_config' argument can alter.
-
-    extra_config_defaults <-
-        list(
-            one_country_run = formals(FPEMglobal:::RunMCMC)$do.country.specific.run,
-            one_country_iso = formals(FPEMglobal:::RunMCMC)$iso.select,
-            global_run_output_folder = formals(FPEMglobal:::RunMCMC)$data_global_file_path,
-            global_run_output_summary_filename = formals(FPEMglobal:::RunMCMC)$data_global_file_path
-        )
-
-    if (is.null(.extra_config)) {
-        .extra_config =  extra_config_defaults
-    } else {
-        checkmate::assert_list(x = .extra_config)
-        checkmate::assert_names(
-            x = .extra_config,
-            type = "named",
-            must.include = names(extra_config_defaults)
-        )
-        checkmate::assert_logical(.extra_config[["one_country_run"]])
-        checkmate::assert_numeric(.extra_config[["one_country_iso"]])
-        checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
-        checkmate::assert_file_exists(.extra_config[["global_run_output_summary_filename"]])
-    }
 
     ## ---------------------------------------------------------------------
     ## Save the values of function arguments so same arguments can be used for validations
@@ -730,11 +708,11 @@ post_process_mcmc <- function(run_name = NULL,
         msg,
         file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    if(is.null(input_data_folder_path))
+    if (is.null(input_data_folder_path))
         input_data_folder_path <- file.path(output_folder_path, "data")
 
     ## Make filepaths that need 'age_group'
-    if(is.null(denominator_counts_csv_filename)) {
+    if (is.null(denominator_counts_csv_filename)) {
         denominator_counts_csv_filename <-
             paste0("number_of_women_", mcmc.meta$general$age.group, ".csv")
     }
@@ -2315,8 +2293,9 @@ do_global_run <- function(## Describe the run
 
     marital_group <- match.arg(marital_group)
 
-    if(!is.null(run_name_override)) run_name <- run_name_override
-    else run_name <- make_run_name(marital_group, age_group, run_desc)
+    run_name <- make_run_name(marital_group, age_group, run_desc,
+                                   run_name_override = run_name_override,
+                                   .extra_config = .extra_config)
 
     if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
 
@@ -2708,15 +2687,10 @@ combine_runs <- function(## Describe the run
     ## 4. Specify both 'run_name_override' and 'output_folder_path'. If you are
     ## adding to an existing run this will throw an error.
 
-    if (is.null(run_name_override) && is.null(output_folder_path)) {
-        run_name <- make_run_name("all_women", age_group, run_desc)
-        output_folder_path <- file.path("output", run_name)
-        if (dir.exists(output_folder_path))
-            check_run_name_conflicts(run_name, output_folder_path)
-        else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
-
-    } else if (!is.null(run_name_override) && is.null(output_folder_path)) {
-        run_name <- run_name_override
+    if (is.null(output_folder_path)) {
+        ## This combines 1 and 2:
+        run_name <- make_run_name("all_women", age_group, run_desc,
+                                  run_name_override = run_name_override)
         output_folder_path <- file.path("output", run_name)
         if (dir.exists(output_folder_path))
             check_run_name_conflicts(run_name, output_folder_path)
