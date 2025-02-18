@@ -20,12 +20,11 @@
 ###
 ### NOTES
 ###
-### Country aggregation lists are saved as both .xlsx and .rda
-### files. The .xlsx files are for user convenience. The .rda files
-### are for potential use in the package (these are also convenient
-### for users because they are under '/data'). There are no .csv files
-### because this is how non-ASCII characters in country names turn
-### into kryptonite and wreck everything.
+### Country aggregation lists are saved as both .xlsx and .rda files. The .xlsx
+### files are for user convenience. The .rda files are for potential use in the
+### package (these are also convenient for users because they are under
+### '/data'). Be careful with the .csv files because this is how non-ASCII
+### characters in country names turn into kryptonite and wreck everything.
 ###
 ################################################################################
 
