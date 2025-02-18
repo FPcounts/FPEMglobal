@@ -116,7 +116,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                    !identical(length(marital_group), 1L))
         denominator_counts_csv_file_path <-
             make_input_aux_data_file_path(output_folder_path, "res.country.rda",
-                                          .extra_config = .extra_config)
+                                          ...)
         if (verbose) message("Reading denominator counts from '", denominator_counts_csv_file_path, "'.")
         res_country_list <- get(load(file.path(output_folder_path, "res.country.rda")))
         out_df <- data.frame(ISO.code = res_country_list$iso.g,
@@ -133,7 +133,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
     } else {
         denominator_counts_csv_file_path <-
             make_input_aux_data_file_path(input_data_folder_path, denominator_counts_csv_filename,
-                                          .extra_config = .extra_config)
+                                          ...)
         if (verbose) message("Reading denominator counts from '", file.path(denominator_counts_csv_filename), "'.")
         out_df <- data.frame()
         for (mg in marital_group) {
@@ -2318,7 +2318,7 @@ do_global_run <- function(## Describe the run
 
     run_name <- make_run_name(marital_group, age_group, run_desc,
                                    run_name_override = run_name_override,
-                                   .extra_config = .extra_config)
+                                   ...)
 
     if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
 
