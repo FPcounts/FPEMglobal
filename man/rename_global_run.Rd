@@ -7,7 +7,8 @@
 rename_global_run(
   run_name,
   new_run_name,
-  output_folder_path = NULL,
+  output_folder_path = file.path("output", run_name),
+  rename_output_folder = missing(output_folder_path),
   ignore = "^data$",
   verbose = getOption("FPEMglobal.verbose")
 )
@@ -17,10 +18,14 @@ rename_global_run(
 
 \item{new_run_name}{Character. New run name.}
 
-\item{output_folder_path}{Filepath to directory where outputs are saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_folder_path}{Filepath to directory where outputs are saved. If
+\code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
-\item{ignore}{Regular expression. Files and directories with names that match will not be renamed.}
+\item{rename_output_folder}{Logical. Should an attempt be made to rename the
+output folder? See \dQuote{Details}.}
+
+\item{ignore}{Regular expression. Files and directories with names that
+match will not be renamed.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 }
@@ -28,8 +33,13 @@ rename_global_run(
 Called for side effect only.
 }
 \description{
-Renames the files and directories , and meta data, of a global run of FPEM for a single
-marital group.
+Renames the files and directories , and meta data, of a global run of FPEM
+for a single marital group.
+}
+\details{
+If \code{rename_output_folder = TRUE}, an attempt is made to rename the
+output folder. All matches of \code{run_name} are replaced with
+\code{new_run_name}.
 }
 \section{Note}{
  If you modify \code{ignore} make sure

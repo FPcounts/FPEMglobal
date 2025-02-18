@@ -10,26 +10,41 @@
 ### * Check Args
 
 validate_extra_config <- function(.extra_config) {
+
     ## These are the variables that the '.extra_config' argument can alter.
     extra_config_defaults <-
         list(
             one_country_run = formals(FPEMglobal:::RunMCMC)$do.country.specific.run,
             one_country_iso = formals(FPEMglobal:::RunMCMC)$iso.select,
-            global_run_output_folder_path = formals(FPEMglobal:::RunMCMC)$data_global_file_path
+            global_run_output_folder_path = formals(FPEMglobal:::RunMCMC)$data_global_file_path,
+            use_global_run_data_files = FALSE
         )
 
-    if (is.null(.extra_config)) {
+    if (!length(.extra_config)) {
         .extra_config = extra_config_defaults
     } else {
-        checkmate::assert_list(x = .extra_config, names = "named")
-        checkmate::assert_subset(
-            x = names(.extra_config),
-            choices = names(extra_config_defaults)
-        )
-        checkmate::assert_logical(.extra_config[["one_country_run"]])
-        checkmate::assert_numeric(.extra_config[["one_country_iso"]])
-        checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
+        if (!isTRUE(check_res_list <- checkmate::test_list(x = .extra_config, names = "named"))) {
+            stop("Invalid use of '...' argument.",  "\n", check_res_list)
+        }
+        if (!isTRUE(check_res_list_names <-
+                        checkmate::test_subset(
+                                       x = names(.extra_config),
+                                       choices = names(extra_config_defaults)))) {
+            msg <- paste0("The following are not valid argument names: ",
+                          toString(names(.extra_config)[!names(.extra_config) %in% names(extra_config_defaults)]),
+                          "\n---\n",
+                          "Invalid use of '...' argument.",  "\n",
+                          toString(check_res_list_names))
+        }
+    }
 
+    checkmate::assert_logical(.extra_config[["one_country_run"]])
+    checkmate::assert_numeric(.extra_config[["one_country_iso"]], null.ok = TRUE)
+    if (!is.null(.extra_config[["global_run_output_folder_path"]]))
+        checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
+    checkmate::assert_logical(.extra_config[["use_global_run_data_files"]])
+
+    if (.extra_config$one_country_run) {
         global_run_summary_file_path <-
             make_global_summary_file_path(.extra_config$global_run_output_folder_path, check = FALSE)
         if (!file.exists(global_run_summary_file_path))
@@ -49,7 +64,7 @@ expand_country_code <- function(x) {
 }
 
 make_run_name <- function(marital_group, age_group, run_note = NULL,
-                          run_name_override = NULL, .extra_config = NULL) {
+                          run_name_override = NULL, ...) {
 
     ## If an override is given, just return it.
     if (!is.null(run_name_override)) return(run_name_override)
@@ -59,7 +74,7 @@ make_run_name <- function(marital_group, age_group, run_note = NULL,
     if (isTRUE(nchar(run_note) > 0)) run_name <- paste(run_name, run_note, sep = "_")
     run_name <- paste(run_name, age_group, marital_group, sep = "_")
 
-    .extra_config <- validate_extra_config(.extra_config)
+    .extra_config <- validate_extra_config(list(...))
     if (.extra_config$one_country_run) {
         run_name <- paste0(run_name, "_1c-",
                           expand_country_code(.extra_config$one_country_iso))
@@ -124,7 +139,7 @@ check_run_name_conflicts <- function(run_name, output_folder_path) {
 ##' Standardizes the way \code{input_[...]_folder_path} and
 ##' \code{[...]_filename} are combined to form the full path to an input file.
 ##' This is mainly for internal use by this and other packages.
-##'
+##'x
 ##' If \code{input_folder_path} is not \code{NULL}, it is used to form the file
 ##' path by prefixing it to \code{input_filename}. Otherwise, just
 ##' \code{input_filename} is returned.
@@ -145,6 +160,30 @@ make_input_file_path <- function(input_folder_path = NULL, input_filename, check
         return(checkmate::assert_file_exists(full_path))
     else
         return(full_path)
+}
+
+## Thin wrapper for semantic consistency with 'make_input_aux_data_file_path()'.
+make_input_data_file_path <- function(...) {
+    make_input_file_path(...)
+}
+
+## Variant of 'make_input_file_path()' that allows for different input
+## directories for the auxiliary files, like the region info, aggregates, etc.
+make_input_aux_data_file_path <- function(input_folder_path = NULL, input_filename, check = TRUE,
+                                          ...) {
+
+    .extra_config <- validate_extra_config(list(...))
+
+    if (.extra_config$use_global_run_data_files) {
+        input_folder_path <-
+            file.path(.extra_config$global_run_output_folder_path, "data")
+        if (!isTRUE(checkmate::check_directory_exists(input_folder_path)))
+            stop("'use_global_run_data_files' is 'TRUE' but the directory '",
+                 toString(input_folder_path),
+                 "' does not exist.")
+    }
+    make_input_file_path(input_folder_path = input_folder_path,
+                         input_filename = input_filename, check = check)
 }
 
 
@@ -205,16 +244,17 @@ report_file_copy <- function(succeeded, filename, to_directory, from_directory,
 }
 
 copy_data_files <- function(run_name, data_dir,
-                            data_local = file.path("output", run_name, "data")) {
+                            data_local = file.path("output", run_name, "data"),
+                            overwrite = FALSE) {
     if(!dir.exists(data_local)) dir.create(data_local, recursive = TRUE)
     for(nm in list.files(data_dir, pattern = "\\.csv$", recursive = TRUE)) {
         if(!is.null(data_dir)) {
             succeeded <- file_copy2(from = file.path(data_dir, nm),
                                     to = data_local,
-                                   overwrite = TRUE)
+                                   overwrite = overwrite)
         } else {
             succeeded <- file_copy2(from = nm, to = data_local,
-                                   overwrite = TRUE)
+                                   overwrite = overwrite)
         }
         report_file_copy(succeeded, nm, data_local, data_dir)
     }
@@ -224,7 +264,8 @@ copy_data_files <- function(run_name, data_dir,
         for (sd in subdirs) {
             copy_data_files(run_name,
                             file.path(data_dir, sd),
-                            data_local = file.path("output", run_name, "data", sd))
+                            data_local = file.path("output", run_name, "data", sd),
+                            overwrite = overwrite)
         }
     }
 }
@@ -337,3 +378,4 @@ get_all_spec_agg_csv <- function(pattern = "^aggregates_special_.+\\.csv$") {
 get_all_spec_agg_names <- function(pattern = "^aggregates_special_.+\\.csv$") {
     gsub(pattern = "\\.csv", replacement = "", x = get_all_spec_agg_csv(pattern = pattern))
 }
+

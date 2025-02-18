@@ -11,7 +11,8 @@ validate_denominator_counts_file(
   marital_group = c("married", "unmarried"),
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
   output_folder_path = NULL,
-  verbose = getOption("FPEMglobal.verbose")
+  verbose = getOption("FPEMglobal.verbose"),
+  ...
 )
 }
 \arguments{
@@ -39,6 +40,10 @@ of the model is desired.}
 saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
+
+\item{...}{An optional list of extra arguments for finer control. This
+is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
+should not pass any values in here; doing so will result in an error.}
 }
 \value{
 The processed denominator counts file is returned \emph{invisibly} as a data frame.

@@ -27,7 +27,7 @@ validate_input_file <- function(age_group = "15-49",
                                 verbose = getOption("FPEMglobal.verbose")) {
 
     data_csv_filename <-
-        make_input_file_path(input_data_folder_path, data_csv_filename)
+        make_input_data_file_path(input_data_folder_path, data_csv_filename)
 
     model_family <- "rate"
     model_name <- NULL
@@ -93,7 +93,18 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                                              marital_group = c("married", "unmarried"),
                                              countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
                                              output_folder_path = NULL,
-                                             verbose = getOption("FPEMglobal.verbose")) {
+                                             verbose = getOption("FPEMglobal.verbose"),
+                                             ...) {
+
+    ## ---------------------------------------------------------------------
+    ## .extra_config
+
+    ## Need to do this first because it's used in other sections.
+    .extra_config <- validate_extra_config(list(...))
+
+    ## ---------------------------------------------------------------------
+    ## MAIN
+
     model_family <- "rate"
     model_name <- NULL
 
@@ -103,7 +114,9 @@ validate_denominator_counts_file <- function(age_group = "15-49",
     if (identical(denominator_counts_csv_filename, "res.country.rda")) {
         stopifnot (!is.null(output_folder_path) || !length(dir(output_folder_path)) ||
                    !identical(length(marital_group), 1L))
-        denominator_counts_csv_file_path <- make_input_file_path(output_folder_path, "res.country.rda")
+        denominator_counts_csv_file_path <-
+            make_input_aux_data_file_path(output_folder_path, "res.country.rda",
+                                          .extra_config = .extra_config)
         if (verbose) message("Reading denominator counts from '", denominator_counts_csv_file_path, "'.")
         res_country_list <- get(load(file.path(output_folder_path, "res.country.rda")))
         out_df <- data.frame(ISO.code = res_country_list$iso.g,
@@ -119,7 +132,8 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 
     } else {
         denominator_counts_csv_file_path <-
-            make_input_file_path(input_data_folder_path, denominator_counts_csv_filename)
+            make_input_aux_data_file_path(input_data_folder_path, denominator_counts_csv_filename,
+                                          .extra_config = .extra_config)
         if (verbose) message("Reading denominator counts from '", file.path(denominator_counts_csv_filename), "'.")
         out_df <- data.frame()
         for (mg in marital_group) {
@@ -251,9 +265,9 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 ##' @param include_AR Logical; should the auto-regressive component of the model
 ##'   be estimated. Used mainly for testing.
 ##' @param verbose Logical; print lots and lots of messages about progress?
-##' @param .extra_config An optional list of extra arguments for finer control. This
+##' @param ... An optional list of extra arguments for finer control. This
 ##'   is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
-##'   should ordinarily not modify the default.
+##'   should not pass any values in here; doing so will result in an error.
 ##' @return A name for the run returned invisibly as a character string. MCMC
 ##'   chains are saved to the directory
 ##'   \file{\code{output_folder_path}/temp.JAGSobjects}. They need to be
@@ -288,13 +302,14 @@ do_global_mcmc <- function(run_desc = "",
                            output_folder_path = NULL,
                            include_AR = TRUE,
                            verbose = getOption("FPEMglobal.verbose"),
-                           .extra_config = NULL) {
+                           ...) {
 
     ## ---------------------------------------------------------------------
     ## .extra_config
 
-    ## Need to do this first because it's used in other sections.
-    .extra_config <- validate_extra_config(.extra_config)
+    ## Do this right now to validate the dots. '.extra_config' is used in call
+    ## to 'RunMCMC()'. For all other functions, pass '...' directly.
+    .extra_config <- validate_extra_config(list(...))
 
     ## ---------------------------------------------------------------------
     ## Run name and output paths
@@ -302,7 +317,7 @@ do_global_mcmc <- function(run_desc = "",
     marital_group <- match.arg(marital_group)
     run_name <- make_run_name(marital_group, age_group, run_desc,
                                    run_name_override = run_name_override,
-                                   .extra_config = .extra_config)
+                                   ...)
 
     message("\nThis run has 'run_name': ", run_name)
 
@@ -323,9 +338,11 @@ do_global_mcmc <- function(run_desc = "",
     ## Make paths to input data
 
     data_csv_file_path <-
-        make_input_file_path(input_data_folder_path, data_csv_filename)
+        make_input_data_file_path(input_data_folder_path, data_csv_filename)
+
     region_information_csv_file_path <-
-        make_input_file_path(input_data_folder_path, region_information_csv_filename)
+        make_input_aux_data_file_path(input_data_folder_path, region_information_csv_filename,
+                                      ...)
 
     ## ---------------------------------------------------------------------
     ## Parallelization mechanism
@@ -2283,7 +2300,13 @@ do_global_run <- function(## Describe the run
                           model_diagnostics = TRUE,
                           include_AR = TRUE,
                           verbose = getOption("FPEMglobal.verbose"),
-          .extra_config = NULL) {
+                          ...) {
+
+    ## ---------------------------------------------------------------------
+    ## .extra_config
+
+    ## Do this first to validate only - pass '...' to other functions.
+    .not_used <- validate_extra_config(list(...))
 
     ## -----------------------------------------------------------------------------
     ## Set-up
@@ -2445,7 +2468,7 @@ do_global_run <- function(## Describe the run
                        output_folder_path = output_folder_path,
                        include_AR = include_AR,
                        verbose = verbose,
-                       .extra_config = .extra_config)
+                       ...)
 
     ## -----------------------------------------------------------------------------
     ## STOP if only one chain
@@ -3293,7 +3316,13 @@ do_global_all_women_run <- function(## Describe the run
                                     age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                                     age_ratios_age_total_denominator_counts_folder_path = NULL,
                                     verbose = getOption("FPEMglobal.verbose"),
-                                    .extra_config = NULL) {
+                                    ...) {
+
+    ## ---------------------------------------------------------------------
+    ## .extra_config
+
+    ## Do this first to validate only - pass '...' to other functions.
+    .not_used <- validate_extra_config(list(...))
 
     ## ---------------------------------------------------------------------
     ## Run Names with Common Time Stamp
@@ -3506,7 +3535,7 @@ do_global_all_women_run <- function(## Describe the run
             include_AR = include_AR,
           verbose = verbose,
           ## Control list
-          .extra_config = .extra_config)
+          ...)
 
     ## --------------------------------------------------------------------
     ## Unmarried
@@ -3556,7 +3585,7 @@ do_global_all_women_run <- function(## Describe the run
             include_AR = include_AR,
             verbose = verbose,
           ## Control list
-          .extra_config = .extra_config)
+          ...)
 
     ## -----------------------------------------------------------------------------
     ## STOP if only one chain
@@ -4172,8 +4201,12 @@ add_special_aggregates <- function(output_folder_path,
 
 ##' Rename global run
 ##'
-##' Renames the files and directories , and meta data, of a global run of FPEM for a single
-##' marital group.
+##' Renames the files and directories , and meta data, of a global run of FPEM
+##' for a single marital group.
+##'
+##' If \code{rename_output_folder = TRUE}, an attempt is made to rename the
+##' output folder. All matches of \code{run_name} are replaced with
+##' \code{new_run_name}.
 ##'
 ##' @section Note: If you modify \code{ignore} make sure
 ##'     \file{\code{output_folder_path}/data} still matches; it is not
@@ -4182,21 +4215,26 @@ add_special_aggregates <- function(output_folder_path,
 ##' @inheritParams do_global_mcmc
 ##' @param run_name Character. Name of run to be renamed.
 ##' @param new_run_name Character. New run name.
-##' @param output_folder_path Filepath to directory where outputs are saved. If \code{NULL}, defaults to
-##'     \code{file.path("output", run_name)}.
-##' @param ignore Regular expression. Files and directories with names that match will not be renamed.
+##' @param output_folder_path Filepath to directory where outputs are saved. If
+##'     \code{NULL}, defaults to \code{file.path("output", run_name)}.
+##' @param rename_output_folder Logical. Should an attempt be made to rename the
+##'     output folder? See \dQuote{Details}.
+##' @param ignore Regular expression. Files and directories with names that
+##'     match will not be renamed.
 ##' @return Called for side effect only.
 ##' @author Mark Wheldon
 ##' @export
 rename_global_run <- function(run_name,
                               new_run_name,
-                              output_folder_path = NULL,
+                              output_folder_path = file.path("output", run_name),
+                              rename_output_folder = missing(output_folder_path),
                               ignore = "^data$", verbose = getOption("FPEMglobal.verbose")) {
 
     ## -----------------------------------------------------------------------------
     ## Set-up
 
-    if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
+    ## if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
+    checkmate::assert_directory_exists(output_folder_path)
 
     ## -----------------------------------------------------------------------------
     ## Functions
@@ -4229,7 +4267,7 @@ rename_global_run <- function(run_name,
     }
 
     ## -----------------------------------------------------------------------------
-    ## Rename
+    ## Rename Files
 
     ## 'global_mcmc_args' object
     global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
@@ -4270,13 +4308,28 @@ rename_global_run <- function(run_name,
     crawl_and_rename(output_folder_path, run_name, new_run_name, ignore = ignore)
 
     ## ----------------------------------------------------------------------------
+    ## Rename output folder
+
+    if (rename_output_folder) {
+        new_output_folder_path <-
+            gsub(run_name, new_run_name, output_folder_path, fixed = TRUE)
+        success_rename_output_folder <-
+            file.rename(from = output_folder_path,
+                        to = new_output_folder_path)
+    } else {
+        new_output_folder_path <- output_folder_path
+    }
+
+    ## ----------------------------------------------------------------------------
     ## LOG
 
-    msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name)
-    message(msg)
+    msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name, ".")
+    if (rename_output_folder)
+        msg <- paste0(msg, " Output folder renamed to '", new_output_folder_path, "'.")
+    if (verbose) message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
-        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+        file = file.path(new_output_folder_path, "log.txt"), sep = "", append = TRUE)
 
     ## ----------------------------------------------------------------------------
     ## Return

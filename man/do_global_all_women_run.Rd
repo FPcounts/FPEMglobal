@@ -52,7 +52,7 @@ do_global_all_women_run(
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   verbose = getOption("FPEMglobal.verbose"),
-  .extra_config = NULL
+  ...
 )
 }
 \arguments{
@@ -241,9 +241,9 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 
-\item{.extra_config}{An optional list of extra arguments for finer control. This
+\item{...}{An optional list of extra arguments for finer control. This
 is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
-should ordinarily not modify the default.}
+should not pass any values in here; doing so will result in an error.}
 }
 \value{
 A \emph{list} of run names for married, unmarried, and all women

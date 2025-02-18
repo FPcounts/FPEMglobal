@@ -48,7 +48,7 @@ do_global_run(
   model_diagnostics = TRUE,
   include_AR = TRUE,
   verbose = getOption("FPEMglobal.verbose"),
-  .extra_config = NULL
+  ...
 )
 }
 \arguments{
@@ -238,9 +238,9 @@ be estimated. Used mainly for testing.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 
-\item{.extra_config}{An optional list of extra arguments for finer control. This
+\item{...}{An optional list of extra arguments for finer control. This
 is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
-should ordinarily not modify the default.}
+should not pass any values in here; doing so will result in an error.}
 }
 \value{
 A name for the run, \code{run_name}, returned invisibly as a
