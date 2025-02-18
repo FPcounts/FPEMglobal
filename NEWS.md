@@ -1,4 +1,9 @@
+# FPEMglobal (development version)
+
 # FPEMglobal 1.5.3
+
+* Updated Regional Commission aggregates with versions released 2024-12-19.
+  These have a small number of new groups and are used in SDG reporting in 2025.
 
 # FPEMglobal 1.2.0
 

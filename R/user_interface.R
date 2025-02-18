@@ -165,7 +165,7 @@ validate_denominator_counts_file <- function(age_group = "15-49",
     ## Check aggregates
     if (is.character(countries_for_aggregates_csv_filename)) {
         countries_for_aggregates_csv_file_path <-
-            make_input_file_path(input_data_folder_path, countries_for_aggregates_csv_filename)
+            make_input_aux_data_file_path(input_data_folder_path, countries_for_aggregates_csv_filename, ...)
         countries_for_aggregates <- read.csv(countries_for_aggregates_csv_file_path, row.names = NULL)
         isos_not_in_data <-
             unique(countries_for_aggregates$ISO.Code)[!unique(countries_for_aggregates$ISO.Code) %in% out_df$ISO.code]
@@ -697,7 +697,8 @@ post_process_mcmc <- function(run_name = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
                               overwrite_existing_results = FALSE,
-                              verbose = getOption("FPEMglobal.verbose")) {
+                              verbose = getOption("FPEMglobal.verbose"),
+                              ...) {
 
     ## ----------------------------------------------------------------------------
     ## Meta Info
@@ -736,10 +737,12 @@ post_process_mcmc <- function(run_name = NULL,
 
     ## Make paths to input data
     countries_for_aggregates_csv_file_path <-
-        make_input_file_path(input_data_folder_path, countries_for_aggregates_csv_filename)
+        make_input_aux_data_file_path(input_data_folder_path, countries_for_aggregates_csv_filename,
+                             ...)
 
     denominator_counts_csv_file_path <-
-        make_input_file_path(input_data_folder_path, denominator_counts_csv_filename)
+        make_input_aux_data_file_path(input_data_folder_path, denominator_counts_csv_filename,
+                                      ...)
 
     ## All women run?
     if(isTRUE(mcmc.meta$general$all.women.run.copy)) {
@@ -759,7 +762,8 @@ post_process_mcmc <- function(run_name = NULL,
                                                             "MWRA" = "married",
                                                             "UWRA" = "unmarried",
                                                             "AWRA" = c("married", "unmarried")),
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
+                                     ...)
 
     ## Age ratios
     if(!is.null(age_ratios_age_total_run_name) || !is.null(age_ratios_age_total_output_folder_path)) {
@@ -1141,7 +1145,8 @@ make_results <- function(run_name = NULL,
                          validation_keep_all = TRUE,
                          validation_return_res_as_df = FALSE,
                          all_women = NULL,
-                         verbose = getOption("FPEMglobal.verbose")) {
+                         verbose = getOption("FPEMglobal.verbose"),
+                         ...) {
 
     ## ----------------------------------------------------------------------------
     ## Meta information
@@ -1188,7 +1193,8 @@ make_results <- function(run_name = NULL,
     ## Countries to plot
     if(!is.null(countries_in_CI_plots_csv_filename)) {
         countries_in_CI_plots_csv_file_path <-
-            make_input_file_path(input_data_folder_path, countries_in_CI_plots_csv_filename)
+            make_input_aux_data_file_path(input_data_folder_path, countries_in_CI_plots_csv_filename,
+                                 ...)
     }
     if(!file.exists(countries_in_CI_plots_csv_file_path)) {
         msg <- paste0("can't find 'countries_in_CI_plots_csv_filename' (",
@@ -2331,7 +2337,8 @@ do_global_run <- function(## Describe the run
 
     ## Denominators
     denominator_counts_csv_file_path <-
-        make_input_file_path(input_data_folder_path, denominator_counts_csv_filename)
+        make_input_aux_data_file_path(input_data_folder_path, denominator_counts_csv_filename,
+                             ...)
 
     verifyDenominators(x = denominator_counts_csv_file_path,
                        in_union = which(c("unmarried", "married") == marital_group) - 1)
@@ -2344,7 +2351,8 @@ do_global_run <- function(## Describe the run
                                                             "MWRA" = "married",
                                                             "UWRA" = "unmarried",
                                                             "AWRA" = c("married", "unmarried")),
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
+                                     ...)
 
     ## If model does not handle missing data must not have missing inputs.
     tmp_model_name <- marital_age_group_param_defaults(marital_group = marital_group,
@@ -2503,7 +2511,8 @@ do_global_run <- function(## Describe the run
                       age_ratios_age_total_output_folder_path = age_ratios_age_total_output_folder_path,
                       age_ratios_age_total_denominator_counts_csv_filename = age_ratios_age_total_denominator_counts_csv_filename,
                       age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
-                      verbose = verbose)
+                      verbose = verbose,
+                      ...)
 
     ## -----------------------------------------------------------------------------
     ## Plots, Tables
@@ -2523,7 +2532,8 @@ do_global_run <- function(## Describe the run
                      make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
                      make_age_ratios = make_age_ratios,
-                     verbose = verbose)
+                     verbose = verbose,
+                     ...)
 
     }
 
@@ -2713,7 +2723,8 @@ combine_runs <- function(## Describe the run
     if (is.null(output_folder_path)) {
         ## This combines 1 and 2:
         run_name <- make_run_name("all_women", age_group, run_desc,
-                                  run_name_override = run_name_override)
+                                  run_name_override = run_name_override,
+                                  ...)
         output_folder_path <- file.path("output", run_name)
         if (dir.exists(output_folder_path))
             check_run_name_conflicts(run_name, output_folder_path)
@@ -2724,7 +2735,8 @@ combine_runs <- function(## Describe the run
             file.path(output_folder_path, "combine_runs_args.RData")
         if (file.exists(combine_runs_filepath))
             run_name <- get_run_name_from_args(get(load(combine_runs_filepath)))
-        else run_name <- make_run_name("all_women", age_group, run_desc)
+        else run_name <- make_run_name("all_women", age_group, run_desc,
+                                       ...)
         if (dir.exists(output_folder_path))
             check_run_name_conflicts(run_name, output_folder_path)
         else dir.create(output_folder_path, recursive = TRUE, showWarnings = FALSE)
@@ -3043,14 +3055,16 @@ combine_runs <- function(## Describe the run
                                      denominator_counts_csv_filename = "res.country.rda",
                                      output_folder_path = married_women_run_output_folder_path,
                                      marital_group = "married",
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
+                                     ...)
 
     validate_denominator_counts_file(age_group = age_group,
                                      input_data_folder_path = data_folder_path,
                                      denominator_counts_csv_filename = "res.country.rda",
                                      output_folder_path = unmarried_women_run_output_folder_path,
                                      marital_group = "unmarried",
-                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename)
+                                     countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
+                                     ...)
 
     ## --------------------------------------------------------------------------
     ## Construct output for all women
@@ -3334,13 +3348,16 @@ do_global_all_women_run <- function(## Describe the run
     systime <- format(Sys.time(), "%y%m%d_%H%M%S")
 
     if(is.null(run_name_override_married)) {
-        run_name_override_married <- make_run_name("married", age_group, run_desc)
+        run_name_override_married <- make_run_name("married", age_group, run_desc,
+                                                   ...)
     }
     if(is.null(run_name_override_unmarried)) {
-        run_name_override_unmarried <- make_run_name("unmarried", age_group, run_desc)
+        run_name_override_unmarried <- make_run_name("unmarried", age_group, run_desc,
+                                                     ...)
     }
     if(is.null(run_name_override_all_women)) {
-        run_name_override_all_women <- make_run_name("all_women", age_group, run_desc)
+        run_name_override_all_women <- make_run_name("all_women", age_group, run_desc,
+                                                     ...)
     }
 
     ## ---------------------------------------------------------------------
@@ -3380,21 +3397,24 @@ do_global_all_women_run <- function(## Describe the run
                 age_ratios_age_total_married_run_name <-
                     make_run_name(marital_group = "married",
                                   age_group = "15-49",
-                                  run_name_override = age_ratios_age_total_run_name_prefix
+                                  run_name_override = age_ratios_age_total_run_name_prefix,
+                                  ...
                                   )
             }
             if(is.null(age_ratios_age_total_unmarried_run_name)) {
                 age_ratios_age_total_unmarried_run_name <-
                     make_run_name(marital_group = "unmarried",
                                   age_group = "15-49",
-                                  run_name_override = age_ratios_age_total_run_name_prefix
+                                  run_name_override = age_ratios_age_total_run_name_prefix,
+                                  ...
                                   )
             }
             if(is.null(age_ratios_age_total_all_women_run_name)) {
                 age_ratios_age_total_all_women_run_name <-
                     make_run_name(marital_group = "all_women",
                                   age_group = "15-49",
-                                  run_name_override = age_ratios_age_total_run_name_prefix
+                                  run_name_override = age_ratios_age_total_run_name_prefix,
+                                  ...
                                   )
             }
         }
@@ -3634,7 +3654,8 @@ do_global_all_women_run <- function(## Describe the run
             age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
             ## Advanced
             run_name_override = run_name_override_all_women,
-            verbose = verbose)
+            verbose = verbose,
+            ...)
 
     make_results(run_name = all_women_run_name,
                  input_data_folder_path = file.path("output", unmarried_run_name, "data"),
@@ -3649,7 +3670,8 @@ do_global_all_women_run <- function(## Describe the run
                  make_any_aggregates = make_any_aggregates,
                  special_aggregates_name = special_aggregates_name,
                  make_age_ratios = make_age_ratios,
-                 verbose = verbose)
+                 verbose = verbose,
+                 ...)
 
     ## --------------------------------------------------------------------
     ## Age Ratios
@@ -3674,7 +3696,8 @@ do_global_all_women_run <- function(## Describe the run
                      make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
                      make_age_ratios = make_age_ratios,
-                     verbose = verbose)
+                     verbose = verbose,
+                     ...)
 
         make_results(run_name = unmarried_run_name,
                      input_data_folder_path = file.path("output", unmarried_run_name, "data"),
@@ -3689,7 +3712,8 @@ do_global_all_women_run <- function(## Describe the run
                      make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
                      make_age_ratios = make_age_ratios,
-                     verbose = verbose)
+                     verbose = verbose,
+                     ...)
 
     }
 
