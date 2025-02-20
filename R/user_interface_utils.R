@@ -20,6 +20,8 @@ validate_extra_config <- function(.extra_config) {
             use_global_run_data_files = FALSE
         )
 
+    ## Check that the elements of '.extra_config' are allowed by comparing names
+    ## with those in default list above.
     if (!length(.extra_config)) {
         .extra_config = extra_config_defaults
     } else {
@@ -38,19 +40,36 @@ validate_extra_config <- function(.extra_config) {
         }
     }
 
+    ## Check type of elements
     checkmate::assert_logical(.extra_config[["one_country_run"]])
     checkmate::assert_numeric(.extra_config[["one_country_iso"]], null.ok = TRUE)
     if (!is.null(.extra_config[["global_run_output_folder_path"]]))
         checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
     checkmate::assert_logical(.extra_config[["use_global_run_data_files"]])
 
-    if (.extra_config$one_country_run) {
+    ## Check that the global summary file exists
+    if (.extra_config[["one_country_run"]]) {
         global_run_summary_file_path <-
-            make_global_summary_file_path(.extra_config$global_run_output_folder_path, check = FALSE)
+            make_global_summary_file_path(.extra_config[["global_run_output_folder_path"]], check = FALSE)
         if (!file.exists(global_run_summary_file_path))
-            stop(toString("The global run summary file '", global_run_summary_file_path,
-                          "' could not be found. If the global run has been done, you might need to run 'FPEMglobal:::SummariseGlobalRun()'"))
+            stop("The global run summary file '", global_run_summary_file_path,
+                 "' could not be found. If the global run has been done, you might need to run 'FPEMglobal:::SummariseGlobalRun()'")
     }
+
+    ## Check that the global input data directory exists and is not empty
+    if (.extra_config[["use_global_run_data_files"]]) {
+        global_data_dir <- file.path(.extra_config[["global_run_output_folder_path"]], "data")
+        if (!dir.exists(global_data_dir))
+            stop("'global_run_output_folder_path' is 'TRUE' but the global data directory '",
+                 global_data_dir,
+                 "' does not exist.")
+        if (!any(grepl("\\.csv", list.files(global_data_dir))))
+            warning("'global_run_output_folder_path' is 'TRUE' but the global data directory '",
+                    global_data_dir,
+                    "' does not contain any '.csv' files.")
+        .extra_config[["global_run_data_files_folder_path"]] <- global_data_dir
+        }
+
     return(.extra_config)
 }
 
@@ -139,7 +158,7 @@ check_run_name_conflicts <- function(run_name, output_folder_path) {
 ##' Standardizes the way \code{input_[...]_folder_path} and
 ##' \code{[...]_filename} are combined to form the full path to an input file.
 ##' This is mainly for internal use by this and other packages.
-##'x
+##'
 ##' If \code{input_folder_path} is not \code{NULL}, it is used to form the file
 ##' path by prefixing it to \code{input_filename}. Otherwise, just
 ##' \code{input_filename} is returned.
@@ -150,7 +169,7 @@ check_run_name_conflicts <- function(run_name, output_folder_path) {
 ##' @return The full file path.
 ##' @author Mark C Wheldon
 ##' @noRd
-make_input_file_path <- function(input_folder_path = NULL, input_filename, check = TRUE) {
+make_input_file_path <- function(input_folder_path = NULL, input_filename = "", check = TRUE) {
     if (!is.null(input_folder_path))
         full_path <- file.path(input_folder_path, input_filename)
     else
@@ -169,19 +188,14 @@ make_input_data_file_path <- function(...) {
 
 ## Variant of 'make_input_file_path()' that allows for different input
 ## directories for the auxiliary files, like the region info, aggregates, etc.
-make_input_aux_data_file_path <- function(input_folder_path = NULL, input_filename, check = TRUE,
+make_input_aux_data_file_path <- function(input_folder_path = NULL, input_filename = "", check = TRUE,
                                           ...) {
 
     .extra_config <- validate_extra_config(list(...))
 
-    if (.extra_config$use_global_run_data_files) {
-        input_folder_path <-
-            file.path(.extra_config$global_run_output_folder_path, "data")
-        if (!isTRUE(checkmate::check_directory_exists(input_folder_path)))
-            stop("'use_global_run_data_files' is 'TRUE' but the directory '",
-                 toString(input_folder_path),
-                 "' does not exist.")
-    }
+    if (.extra_config[["use_global_run_data_files"]])
+        input_folder_path <- .extra_config[["global_run_data_files_folder_path"]]
+
     make_input_file_path(input_folder_path = input_folder_path,
                          input_filename = input_filename, check = check)
 }
@@ -198,7 +212,7 @@ make_input_aux_data_file_path <- function(input_folder_path = NULL, input_filena
 ##' @param check (Logical) Should a warning be given if the file does not exist?
 ##' @return File path as a character string.
 ##' @author Mark C Wheldon
-##' @export
+##' @noRd
 make_global_summary_file_path <- function(output_folder_path = NULL, check = TRUE) {
     ## This is hard-coded in runMCMC.R/RunMCMC()
     data_global_filename <- "data.global.rda"
@@ -217,59 +231,102 @@ make_global_summary_file_path <- function(output_folder_path = NULL, check = TRU
 ###-----------------------------------------------------------------------------
 ### * Copy Various Files
 
+## Wrapper to 'file.copy()'. Returns 'NA' if source file does not exist.
 file_copy2 <- function(from, to, overwrite, ...) {
-    if(!file.exists(from)) out <- NA
+    if (!file.exists(from)) out <- NA
     else out <- file.copy(from = from, to = to, overwrite = overwrite, ...)
     out
-    }
+}
 
-report_file_copy <- function(succeeded, filename, to_directory, from_directory,
+
+## Check and report result of attempting to copy files.
+report_file_copy <- function(succeeded, filename, from_dir, to_dir,
                              new_filename = filename,
-                             log_file = file.path(to_directory, "log.txt")) {
-    if(is.na(succeeded) || !is.logical(succeeded)) {
-        stop("\n'", filename, "' not found in '", from_directory, "'.")
+                             log_file = file.path(to_dir, "log.txt")) {
+    if (is.na(succeeded) || !is.logical(succeeded)) {
+        stop("\n'", filename, "' not found in '", from_dir, "'.")
     } else {
-        if(succeeded) {
-            message("\n'", filename, "' copied from '", from_directory,
+        if (succeeded) {
+            message("\n'", filename, "' copied from '", from_dir,
                     "', saved as '", new_filename, "'.")
             cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"),
-                ": '", filename, "' copied from '", basename(from_directory),
+                ": '", filename, "' copied from '", basename(from_dir),
                 "', saved as '", new_filename, "'.",
                 file = log_file, sep = "", append = TRUE)
         } else {
-            message("\n'", filename, "' NOT copied from '", from_directory,
+            message("\n'", filename, "' NOT copied from '", from_dir,
                     "', to '", new_filename, "'.")
         }
     }
 }
 
-copy_data_files <- function(run_name, data_dir,
-                            data_local = file.path("output", run_name, "data"),
-                            overwrite = FALSE) {
-    if(!dir.exists(data_local)) dir.create(data_local, recursive = TRUE)
-    for(nm in list.files(data_dir, pattern = "\\.csv$", recursive = TRUE)) {
-        if(!is.null(data_dir)) {
-            succeeded <- file_copy2(from = file.path(data_dir, nm),
-                                    to = data_local,
-                                   overwrite = overwrite)
-        } else {
-            succeeded <- file_copy2(from = nm, to = data_local,
-                                   overwrite = overwrite)
-        }
-        report_file_copy(succeeded, nm, data_local, data_dir)
+
+## Copy all .csv data files from a 'from' directory to a run directory. This
+## will be commonly used to copy all .csv files in "./input" to
+## "./output/<run_name>/data".
+copy_csv_data_files <- function(run_name, from_dir = "input",
+                            to_dir = file.path("output", run_name, "data"),
+                            overwrite = FALSE,
+                            ...) {
+
+    ## -------* Check args
+
+    .extra_config <- validate_extra_config(list(...))
+
+    ## -------* Handle .extra_config
+
+    if (isTRUE(.extra_config$use_global_run_data_files)) {
+        global_run_file_names <-
+            list.files(make_input_aux_data_file_path(NULL, "", check = FALSE, ...),
+                       pattern = "\\.csv")
+        local_input_file_names <-
+            list.files(from_dir, pattern = "\\.csv")
+
+        local_duplicates <-
+            local_input_file_names[local_input_file_names %in% global_run_file_names]
+        if (length(local_duplicates))
+            stop("'use_global_run_data_files' is 'TRUE' but the local input directory ('",
+                 from_dir,
+                 "') contains the following files which were also found in the global run data directory ('",
+                 .extra_config$global_run_data_files_folder_path,
+                 "'): '\n",
+                 toString(local_duplicates, width = 80),
+                 "'.\n",
+                 "\tIf you want to use some of the files in the local data directory and some in the global run data directory, copy all input files to the local input directory and set 'use_global_run_data_files' to 'FALSE'.")
     }
-    ## Subdirectories
-    subdirs <- list.dirs(data_dir, full.names = FALSE, recursive = FALSE)
+
+    ## -------* Do the copying
+
+    if (!dir.exists(to_dir)) dir.create(to_dir, recursive = TRUE)
+
+    for (nm in list.files(make_input_aux_data_file_path(
+                   input_folder_path = from_dir,
+                   input_filename = "",
+                   check = FALSE, ...),
+                   pattern = "\\.csv$", recursive = FALSE)) {
+        succeeded <-
+            file_copy2(from = make_input_aux_data_file_path(input_folder_path = from_dir,
+                                                            input_filename = nm,
+                                                            check = FALSE, ...),
+                       to = to_dir,
+                       overwrite = overwrite)
+        report_file_copy(succeeded, nm, from_dir, to_dir)
+    }
+
+    ## Recurse into subdirectories
+    subdirs <- list.dirs(from_dir, full.names = FALSE, recursive = FALSE)
     if (length(subdirs)) {
         for (sd in subdirs) {
-            copy_data_files(run_name,
-                            file.path(data_dir, sd),
-                            data_local = file.path("output", run_name, "data", sd),
-                            overwrite = overwrite)
+            copy_csv_data_files(run_name,
+                            from_dir = file.path(from_dir, sd),
+                            to_dir = file.path(to_dir, sd),
+                            overwrite = overwrite, ...)
         }
     }
 }
 
+
+## Copy married and unmarried files to an all women run directory.
 copy_uwra_mwra_files <-
     function(filename, awra_output_folder_path, mwra_uwra_output_folder_path,
              new_filename = filename,
@@ -287,7 +344,7 @@ copy_uwra_mwra_files <-
         succeeded <- file_copy2(from = file.path(mwra_uwra_output_folder_path, filename),
                                 to = file.path(to_path, to_filename),
                                 overwrite = FALSE)
-        report_file_copy(succeeded, filename, awra_output_folder_path, mwra_uwra_output_folder_path,
+        report_file_copy(succeeded, filename, mwra_uwra_output_folder_path, awra_output_folder_path,
                          new_filename)
         if(return) return(succeeded)
     }
@@ -378,4 +435,3 @@ get_all_spec_agg_csv <- function(pattern = "^aggregates_special_.+\\.csv$") {
 get_all_spec_agg_names <- function(pattern = "^aggregates_special_.+\\.csv$") {
     gsub(pattern = "\\.csv", replacement = "", x = get_all_spec_agg_csv(pattern = pattern))
 }
-

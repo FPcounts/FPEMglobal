@@ -408,8 +408,8 @@ do_global_mcmc <- function(run_desc = "",
     ## Copy to Output
 
     output_data_folder_path <- file.path(output_folder_path, "data")
-    copy_data_files(run_name = run_name, data_dir = input_data_folder_path,
-                    data_local = output_data_folder_path)
+    copy_csv_data_files(run_name = run_name, from_dir = input_data_folder_path,
+                    to_local = output_data_folder_path, ...)
 
     ## ---------------------------------------------------------------------
     ## Make MCMC chains
@@ -3918,9 +3918,9 @@ do_global_validation_mcmc <-
         ## Copy to Output
 
         output_data_folder_path <- file.path(output_folder_path, "data")
-        copy_data_files(run_name = run_name,
-                        data_dir = file.path(run_name_to_validate_output_folder_path, "data"),
-                        data_local = output_data_folder_path)
+        copy_csv_data_files(run_name = run_name,
+                        from_dir = file.path(run_name_to_validate_output_folder_path, "data"),
+                        to_dir = output_data_folder_path)
 
         ## --------------------------------------------------------------------
         ## Make MCMC chains
