@@ -26,7 +26,8 @@ post_process_mcmc(
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   overwrite_existing_results = FALSE,
-  verbose = getOption("FPEMglobal.verbose")
+  verbose = getOption("FPEMglobal.verbose"),
+  ...
 )
 }
 \arguments{
@@ -119,6 +120,10 @@ different \code{satrt_year} or \code{end_year}. It is
 aggregates.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
+
+\item{...}{An optional list of extra arguments for finer control. This
+is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
+should not pass any values in here; doing so will result in an error.}
 }
 \value{
 The run name (invisibly). The function is mainly called

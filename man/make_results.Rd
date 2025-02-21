@@ -27,7 +27,8 @@ make_results(
   validation_keep_all = TRUE,
   validation_return_res_as_df = FALSE,
   all_women = NULL,
-  verbose = getOption("FPEMglobal.verbose")
+  verbose = getOption("FPEMglobal.verbose"),
+  ...
 )
 }
 \arguments{
@@ -121,6 +122,10 @@ string.}
 
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
+
+\item{...}{An optional list of extra arguments for finer control. This
+is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
+should not pass any values in here; doing so will result in an error.}
 
 \item{married_women_run_name}{Run name of a married women
 run. Relevant if \code{\link{make_results}} is being run on an

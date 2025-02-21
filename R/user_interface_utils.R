@@ -9,6 +9,16 @@
 ###-----------------------------------------------------------------------------
 ### * Check Args
 
+##' Validate 'extra arguments' supplied via '...'
+##'
+##' The main user interface functions (e.g., \code{\link{do_global_mcmc}}) have
+##' a \code{...} argument. This is so that extra arguments for doing one-country
+##' runs can be passed in and the \pkg{FPEMglobal} functions re-used, rather
+##' than duplicated them in the \pkg{FPEMcountry} package.
+##' @param .extra_config The \code{...} as a list. Coercion to a list needs to
+##'     be done by the caller.
+##' @return The validated \code{...} as a list.
+##' @author Mark C Wheldon
 validate_extra_config <- function(.extra_config) {
 
     ## These are the variables that the '.extra_config' argument can alter.
@@ -50,7 +60,8 @@ validate_extra_config <- function(.extra_config) {
     ## Check that the global summary file exists
     if (.extra_config[["one_country_run"]]) {
         global_run_summary_file_path <-
-            make_global_summary_file_path(.extra_config[["global_run_output_folder_path"]], check = FALSE)
+            make_global_summary_file_external_path(folder_path = .extra_config[["global_run_output_folder_path"]],
+                                          check = FALSE)
         if (!file.exists(global_run_summary_file_path))
             stop("The global run summary file '", global_run_summary_file_path,
                  "' could not be found. If the global run has been done, you might need to run 'FPEMglobal:::SummariseGlobalRun()'")
@@ -165,7 +176,7 @@ check_run_name_conflicts <- function(run_name, output_folder_path) {
 ##'
 ##' @param input_folder_path Path to the folder containing \code{input_filename}.
 ##' @param input_filename The name of the input file (incl. extension).
-##' @param check (Logical) Should a warning be given if the file does not exist?
+##' @param check (Logical) Should an error be given if the file does not exist?
 ##' @return The full file path.
 ##' @author Mark C Wheldon
 ##' @noRd
@@ -204,23 +215,69 @@ make_input_aux_data_file_path <- function(input_folder_path = NULL, input_filena
 ##' Construct path to global summary file
 ##'
 ##' Defines the file name for, and constructs a file path pointing to, the
-##' summary of a global run. This file is used as the input to a one-country
-##' run. It contains the posterior means of hierarchical parameters.
+##' summary of a global run. This is an \filename{.rda} file which contains the
+##' posterior means of hierarchical parameters. It is used as the input to a
+##' one-country run.
 ##'
-##' @param output_folder_path Optional path to folder containing the file. By
+##' \describe{\item{\code{get_global_summary_file_name()}}{This defines the
+##' filename of the global summary file that is expected by \code{RunMCMC()}. It
+##' is hard-coded and cannot be changed.}
+##'
+##' \item{\code{get_global_summary_file_local_path()}}{This defines the path to
+##' the global summary file that is expected by \code{RunMCMC()}. It is
+##' hard-coded and cannot be changed.}
+##'
+##' \item{\code{make_global_summary_file_external_path()}}{Creates the path to
+##' the global summary file stored in the output folder of a global run. The
+##' global run output folder is passed in via the argument
+##' `global_run_output_folder_path`}
+##' }
+##'
+##' @param folder_path Optional path to folder containing the file. By
 ##'     default, only file filename will be returned.
-##' @param check (Logical) Should a warning be given if the file does not exist?
+##' @param check (Logical) Should an error be given if the file does not exist?
 ##' @return File path as a character string.
 ##' @author Mark C Wheldon
+##'
+##' @examples
+##' get_global_summary_file_name()
+##'
+##' make_global_summary_file_external_path("test", check = FALSE)
+##'
 ##' @noRd
-make_global_summary_file_path <- function(output_folder_path = NULL, check = TRUE) {
+get_global_summary_file_name <- function() {
     ## This is hard-coded in runMCMC.R/RunMCMC()
-    data_global_filename <- "data.global.rda"
+    return("data.global.rda")
+}
 
-    if (!is.null(output_folder_path))
-        full_path <- file.path(output_folder_path, data_global_filename)
-    else
-        full_path <- data_global_filename
+get_global_summary_file_local_path <- function() {
+    ## This is hard-coded in runMCMC.R/RunMCMC()
+    return(file.path("data", get_global_summary_file_name()))
+}
+
+##' @rdname get_global_summary_file_name
+make_global_summary_file_external_path <- function(folder_path = NULL, check = !is.null(folder_path), ...) {
+
+    data_global_filename <- get_global_summary_file_name()
+
+    ## This function is called by 'validate_extra_config()', so there are two
+    ## modes of operation:
+    ##
+    ## 1) The folder path is passed in explicitly. This *must* be the way
+    ## 'validate_extra_config()' calls this function.
+    ##
+    ## 2) The folder path is read from '...'.
+
+    if (!is.null(folder_path)) {
+        ## Explicit folder path:
+        full_path <- file.path(folder_path, data_global_filename)
+    } else {
+        ## Taken from '...'
+        .extra_config <- validate_extra_config(list(...))
+        full_path <-
+            file.path(.extra_config$global_run_output_folder_path,
+                      data_global_filename)
+    }
 
     if (check)
         return(checkmate::assert_file_exists(full_path))
@@ -230,6 +287,9 @@ make_global_summary_file_path <- function(output_folder_path = NULL, check = TRU
 
 ###-----------------------------------------------------------------------------
 ### * Copy Various Files
+
+###-----------------------------------------------------------------------------
+### ** Copy Utilities
 
 ## Wrapper to 'file.copy()'. Returns 'NA' if source file does not exist.
 file_copy2 <- function(from, to, overwrite, ...) {
@@ -242,24 +302,28 @@ file_copy2 <- function(from, to, overwrite, ...) {
 ## Check and report result of attempting to copy files.
 report_file_copy <- function(succeeded, filename, from_dir, to_dir,
                              new_filename = filename,
-                             log_file = file.path(to_dir, "log.txt")) {
+                             log_file = file.path(to_dir, "log.txt"),
+                             verbose = getOption("FPEMglobal.verbose")) {
     if (is.na(succeeded) || !is.logical(succeeded)) {
         stop("\n'", filename, "' not found in '", from_dir, "'.")
     } else {
         if (succeeded) {
-            message("\n'", filename, "' copied from '", from_dir,
+            if (verbose) message("\n'", filename, "' copied from '", from_dir,
                     "', saved as '", new_filename, "'.")
             cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"),
                 ": '", filename, "' copied from '", basename(from_dir),
                 "', saved as '", new_filename, "'.",
                 file = log_file, sep = "", append = TRUE)
         } else {
-            message("\n'", filename, "' NOT copied from '", from_dir,
+            if (verbose) message("\n'", filename, "' NOT copied from '", from_dir,
                     "', to '", new_filename, "'.")
         }
     }
 }
 
+
+###-----------------------------------------------------------------------------
+### ** Copy Sets of Files
 
 ## Copy all .csv data files from a 'from' directory to a run directory. This
 ## will be commonly used to copy all .csv files in "./input" to
@@ -267,6 +331,7 @@ report_file_copy <- function(succeeded, filename, from_dir, to_dir,
 copy_csv_data_files <- function(run_name, from_dir = "input",
                             to_dir = file.path("output", run_name, "data"),
                             overwrite = FALSE,
+                            verbose = getOption("FPEMglobal.verbose"),
                             ...) {
 
     ## -------* Check args
@@ -304,13 +369,12 @@ copy_csv_data_files <- function(run_name, from_dir = "input",
                    input_filename = "",
                    check = FALSE, ...),
                    pattern = "\\.csv$", recursive = FALSE)) {
+        from_dir <- make_input_aux_data_file_path(input_folder_path = from_dir,
+                                                  input_filename = nm,
+                                                  check = FALSE, ...)
         succeeded <-
-            file_copy2(from = make_input_aux_data_file_path(input_folder_path = from_dir,
-                                                            input_filename = nm,
-                                                            check = FALSE, ...),
-                       to = to_dir,
-                       overwrite = overwrite)
-        report_file_copy(succeeded, nm, from_dir, to_dir)
+            file_copy2(from = from_dir, to = to_dir, overwrite = overwrite)
+        report_file_copy(succeeded, nm, from_dir, to_dir, verbose = verbose)
     }
 
     ## Recurse into subdirectories
@@ -323,6 +387,7 @@ copy_csv_data_files <- function(run_name, from_dir = "input",
                             overwrite = overwrite, ...)
         }
     }
+    return(invisible(succeeded))
 }
 
 
@@ -330,7 +395,7 @@ copy_csv_data_files <- function(run_name, from_dir = "input",
 copy_uwra_mwra_files <-
     function(filename, awra_output_folder_path, mwra_uwra_output_folder_path,
              new_filename = filename,
-             return = FALSE) {
+             verbose = getOption("FPEMglobal.verbose")) {
         if (!dir.exists(mwra_uwra_output_folder_path)) stop("'", mwra_uwra_output_folder_path, "' does not exist.")
         if (!dir.exists(awra_output_folder_path)) stop("'", awra_output_folder_path, "' does not exist.")
         if (!identical(dirname(new_filename), ".")) {
@@ -345,9 +410,39 @@ copy_uwra_mwra_files <-
                                 to = file.path(to_path, to_filename),
                                 overwrite = FALSE)
         report_file_copy(succeeded, filename, mwra_uwra_output_folder_path, awra_output_folder_path,
-                         new_filename)
-        if(return) return(succeeded)
+                         new_filename, verbose = verbose)
+
+        return(invisible(succeeded))
     }
+
+
+## Copy the 'data.global.rda' file for a one-country run.
+## Note: If this isn't a one-country run, nothing happens.
+copy_global_run_summary_file <- function(output_folder_path, ...) {
+
+    .extra_config <- validate_extra_config(list(...))
+
+    ## If not a one-country run, do nothing.
+    if (!.extra_config$one_country_run) return(invisible(TRUE))
+
+    else {
+        local_data_file_path <-
+            file.path(output_folder_path, get_global_summary_file_local_path())
+        global_summary_file_external_path <-
+            make_global_summary_file_external_path(...)
+
+        succeeded <- file_copy2(from = global_summary_file_external_path,
+                                to = local_data_file_path,
+                                overwrite = FALSE)
+        report_file_copy(succeeded,
+                         filename = basename(global_summary_file_external_path),
+                         from_dir = dirname(global_summary_file_external_path),
+                         to_dir = dirname(local_data_file_path),
+                         new_filename = basename(global_summary_file_external_path),
+                         verbose = verbose)
+        return(invisible(succeeded))
+    }
+}
 
 ###-----------------------------------------------------------------------------
 ### * Determine Parameter Values

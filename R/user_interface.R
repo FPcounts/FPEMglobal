@@ -409,44 +409,48 @@ do_global_mcmc <- function(run_desc = "",
 
     output_data_folder_path <- file.path(output_folder_path, "data")
     copy_csv_data_files(run_name = run_name, from_dir = input_data_folder_path,
-                    to_local = output_data_folder_path, ...)
+                        to_local = output_data_folder_path, verbose = verbose, ...)
+
+    ## For one-country runs (does nothing if a global run)
+    copy_global_run_summary_file(output_folder_path, ...)
 
     ## ---------------------------------------------------------------------
     ## Make MCMC chains
 
-    RunMCMC(
-        N.ITER = estimation_iterations,
-        N.BURNIN = burn_in_iterations,
-        N.STEPS = steps_before_progress_report,
-        N.THIN = thinning,
-        run.on.server = run_in_parallel,
-        run.name =  run_name,
-        data.csv = data_csv_file_path,
-        regioninfo.csv = region_information_csv_file_path,
-        output.dir = output_folder_path,
-        ChainNums = chain_nums,
-        do.country.specific.run = .extra_config$one_country_run,
-        iso.country.select = .extra_config$one_country_iso,
-        disagg.RN.PMA = TRUE,
-        write.model.fun = marital_group_param_set$write_model_fun,
-        include.AR = include_AR,
-        seed.MCMC = set_seed_chains,
-        marital.group = switch(marital_group, "married" = "MWRA", "unmarried" = "UWRA"),
-        age.group = age_group,
-        uwra.z.priors = marital_group_param_set$uwra_z_priors,
-        uwra.Omega.priors = marital_group_param_set$uwra_Omega_priors,
-        uwra.kappa.c.priors = marital_group_param_set$uwra_kappa_c_priors,
-        include.c.no.data = ModelFunctionInclNoData(marital_group_param_set$write_model_fun),
-        timing.world.priors = marital_group_param_set$timing_world_priors,
-        EA.bias.negative = marital_group_param_set$EA_bias_negative,
-        HW.bias.negative = marital_group_param_set$HW_bias_negative,
-        sink.seed.logfile = FALSE,
-        verbose = verbose
-    )
+    RunMCMC_result <-
+        RunMCMC(
+            N.ITER = estimation_iterations,
+            N.BURNIN = burn_in_iterations,
+            N.STEPS = steps_before_progress_report,
+            N.THIN = thinning,
+            run.on.server = run_in_parallel,
+            run.name =  run_name,
+            data.csv = data_csv_file_path,
+            regioninfo.csv = region_information_csv_file_path,
+            output.dir = output_folder_path,
+            ChainNums = chain_nums,
+            do.country.specific.run = .extra_config$one_country_run,
+            iso.country.select = .extra_config$one_country_iso,
+            disagg.RN.PMA = TRUE,
+            write.model.fun = marital_group_param_set$write_model_fun,
+            include.AR = include_AR,
+            seed.MCMC = set_seed_chains,
+            marital.group = switch(marital_group, "married" = "MWRA", "unmarried" = "UWRA"),
+            age.group = age_group,
+            uwra.z.priors = marital_group_param_set$uwra_z_priors,
+            uwra.Omega.priors = marital_group_param_set$uwra_Omega_priors,
+            uwra.kappa.c.priors = marital_group_param_set$uwra_kappa_c_priors,
+            include.c.no.data = ModelFunctionInclNoData(marital_group_param_set$write_model_fun),
+            timing.world.priors = marital_group_param_set$timing_world_priors,
+            EA.bias.negative = marital_group_param_set$EA_bias_negative,
+            HW.bias.negative = marital_group_param_set$HW_bias_negative,
+            sink.seed.logfile = FALSE,
+            verbose = verbose
+        )
 
     ## LOG
     msg <- paste0("MCMC sampling completed for run ", run_name)
-    message(msg)
+    if (isTRUE(RunMCMC_result)) message(msg)
 
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -900,7 +904,7 @@ post_process_mcmc <- function(run_name = NULL,
             copy_uwra_mwra_files(basename(file.agg),
                                  awra_output_folder_path = output_data_folder_path, #<- TO DIRECTORY
                                  mwra_uwra_output_folder_path = input_data_folder_path, #<- FROM DIRECTORY
-                                 )
+                                 verbose = verbose)
         }
     }
 
@@ -2308,12 +2312,6 @@ do_global_run <- function(## Describe the run
                           verbose = getOption("FPEMglobal.verbose"),
                           ...) {
 
-    ## ---------------------------------------------------------------------
-    ## .extra_config
-
-    ## Do this first to validate only - pass '...' to other functions.
-    .not_used <- validate_extra_config(list(...))
-
     ## -----------------------------------------------------------------------------
     ## Set-up
 
@@ -2936,24 +2934,32 @@ combine_runs <- function(## Describe the run
 
     ## Do it here because the output directory is created by 'ConstructOutputAllWomen()'.
 
-    copy_uwra_mwra_files("mcmc.meta.rda", output_folder_path, unmarried_women_run_output_folder_path)
-    copy_uwra_mwra_files("par.ciq.rda", output_folder_path, unmarried_women_run_output_folder_path)
+    copy_uwra_mwra_files("mcmc.meta.rda", output_folder_path,
+                         unmarried_women_run_output_folder_path,
+                         verbose = verbose)
+    copy_uwra_mwra_files("par.ciq.rda", output_folder_path,
+                         unmarried_women_run_output_folder_path,
+                         verbose = verbose)
 
     copy_uwra_mwra_files(denominator_counts_csv_filename,
                          data_folder_path,
-                         file.path(unmarried_women_run_output_folder_path, "data"))
+                         file.path(unmarried_women_run_output_folder_path, "data"),
+                         verbose = verbose)
 
     copy_uwra_mwra_files(region_information_csv_filename,
                          data_folder_path,
-                         file.path(unmarried_women_run_output_folder_path, "data"))
+                         file.path(unmarried_women_run_output_folder_path, "data"),
+                         verbose = verbose)
 
     copy_uwra_mwra_files(countries_for_aggregates_csv_filename,
                          data_folder_path,
-                         file.path(unmarried_women_run_output_folder_path, "data"))
+                         file.path(unmarried_women_run_output_folder_path, "data"),
+                         verbose = verbose)
 
     copy_uwra_mwra_files(countries_in_CI_plots_csv_filename,
                          data_folder_path,
-                         file.path(unmarried_women_run_output_folder_path, "data"))
+                         file.path(unmarried_women_run_output_folder_path, "data"),
+                         verbose = verbose)
 
     ## Add a label in 'mcmc.meta.rda' to mark this as an all women copy
     load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -3000,14 +3006,16 @@ combine_runs <- function(## Describe the run
                              output_folder_path,
                              married_women_run_output_folder_path,
                              new_filename = makeFileName(paste0("mwra_", "res.country.adj-",
-                                                                adjust_medians_method, ".rda"))
+                                                                adjust_medians_method, ".rda")),
+                             verbose = verbose
                              )
         if (make_any_aggregates) {
             copy_uwra_mwra_files(makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda")),
                                  output_folder_path,
                                  married_women_run_output_folder_path,
                                  new_filename = makeFileName(paste0("mwra_", "res.UNPDaggregate.adj-",
-                                                                    adjust_medians_method, ".rda"))
+                                                                    adjust_medians_method, ".rda")),
+                                 verbose = verbose
                                  )
         }
 
@@ -3016,14 +3024,16 @@ combine_runs <- function(## Describe the run
                              output_folder_path,
                              unmarried_women_run_output_folder_path,
                              new_filename = makeFileName(paste0("uwra_", "res.country.adj-",
-                                                                adjust_medians_method, ".rda"))
+                                                                adjust_medians_method, ".rda")),
+                             verbose = verbose
                              )
         if (make_any_aggregates) {
             copy_uwra_mwra_files(makeFileName(paste0("res.UNPDaggregate.adj-", adjust_medians_method, ".rda")),
                                  output_folder_path,
                                  unmarried_women_run_output_folder_path,
                                  new_filename = makeFileName(paste0("uwra_", "res.UNPDaggregate.adj-",
-                                                                    adjust_medians_method, ".rda"))
+                                                                    adjust_medians_method, ".rda")),
+                                 verbose = verbose
                                  )
         }
 
@@ -3037,11 +3047,13 @@ combine_runs <- function(## Describe the run
                 copy_uwra_mwra_files(file_agg,
                                      output_folder_path,
                                      married_women_run_output_folder_path,
-                                     new_filename = makeFileName(paste0("mwra_", file_agg)))
+                                     new_filename = makeFileName(paste0("mwra_", file_agg)),
+                                     verbose = verbose)
                 copy_uwra_mwra_files(file_agg,
                                      output_folder_path,
                                      unmarried_women_run_output_folder_path,
-                                     new_filename = makeFileName(paste0("uwra_", file_agg)))
+                                     new_filename = makeFileName(paste0("uwra_", file_agg)),
+                                     verbose = verbose)
             }
         }
     }
@@ -3104,7 +3116,8 @@ combine_runs <- function(## Describe the run
 
             copy_uwra_mwra_files(file_agg,
                                  data_folder_path,
-                                 unmarried_women_run_data_folder_path)
+                                 unmarried_women_run_data_folder_path,
+                                 verbose = verbose)
 
             message("\nMaking aggregates for ", name.agg, " from ", file_agg, ".")
 
@@ -3331,12 +3344,6 @@ do_global_all_women_run <- function(## Describe the run
                                     age_ratios_age_total_denominator_counts_folder_path = NULL,
                                     verbose = getOption("FPEMglobal.verbose"),
                                     ...) {
-
-    ## ---------------------------------------------------------------------
-    ## .extra_config
-
-    ## Do this first to validate only - pass '...' to other functions.
-    .not_used <- validate_extra_config(list(...))
 
     ## ---------------------------------------------------------------------
     ## Run Names with Common Time Stamp
@@ -3920,7 +3927,7 @@ do_global_validation_mcmc <-
         output_data_folder_path <- file.path(output_folder_path, "data")
         copy_csv_data_files(run_name = run_name,
                         from_dir = file.path(run_name_to_validate_output_folder_path, "data"),
-                        to_dir = output_data_folder_path)
+                        to_dir = output_data_folder_path, verbose = verbose)
 
         ## --------------------------------------------------------------------
         ## Make MCMC chains
@@ -3929,47 +3936,56 @@ do_global_validation_mcmc <-
         cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": This run validates '", run_name_to_validate, "'.",
             file = file.path(output_folder_path, "log.txt"), append = TRUE)
 
-        RunMCMC(
-            N.ITER = estimation_iterations,
-            N.BURNIN = burn_in_iterations,
-            N.STEPS = steps_before_progress_report,
-            N.THIN = thinning,
-            run.on.server = run_in_parallel,
-            run.name =  run_name,
-            data.csv = global_run_input_data_csv,
-            regioninfo.csv = global_run_region_info_csv,
-            output.dir = output_folder_path,
-            ChainNums = chain_nums,
-            disagg.RN.PMA = TRUE,
-            write.model.fun = global_mcmc_meta$general$write.model.fun,
-            include.AR = global_mcmc_meta$include.AR,
-            marital.group = global_mcmc_meta$general$marital.group,
-            age.group = global_mcmc_meta$general$age.group,
-            uwra.z.priors = global_mcmc_args$uwra_z_priors,
-            uwra.Omega.priors = global_mcmc_args$uwra_Omega_priors,
-            uwra.kappa.c.priors = global_mcmc_args$uwra_kappa_c_priors,
-            include.c.no.data = FALSE,   #Never for validation
-            timing.world.priors = global_mcmc_args$timing_world_priors,
-            EA.bias.negative = global_mcmc_meta$general$EA.bias.negative,
-            HW.bias.negative = global_mcmc_meta$general$HW.bias.negative,
-            ## Validation Parameters
-            exclude.unmet.only = exclude_unmet_only,
-            exclude.unmet.only.test.prop = exclude_unmet_only_test_prop,
-            at.random = at_random,
-            at.random.min.c = at_random_min_c,
-            at.random.test.prop = at_random_test_prop,
-            at.end = at_end,
-            at.end.not.1.obs.c = at_end_not_1_obs_c,
-            at.random.no.data = at_random_no_data,
-            at.random.no.data.strata = at_random_no_data_strata,
-            at.random.no.data.test.prop = at_random_no_data_test_prop,
-            leave.iso.out = leave_iso_out,
-            leave.iso.out.iso.test = leave_iso_out_iso_test,
-            year.cutoff = year_cutoff,
-            seed.validation = seed_validation,
-            generate.new.set = generate_new_set,
-            sink.seed.logfile = FALSE
-        )
+        RunMCMC_result <-
+            RunMCMC(
+                N.ITER = estimation_iterations,
+                N.BURNIN = burn_in_iterations,
+                N.STEPS = steps_before_progress_report,
+                N.THIN = thinning,
+                run.on.server = run_in_parallel,
+                run.name =  run_name,
+                data.csv = global_run_input_data_csv,
+                regioninfo.csv = global_run_region_info_csv,
+                output.dir = output_folder_path,
+                ChainNums = chain_nums,
+                disagg.RN.PMA = TRUE,
+                write.model.fun = global_mcmc_meta$general$write.model.fun,
+                include.AR = global_mcmc_meta$include.AR,
+                marital.group = global_mcmc_meta$general$marital.group,
+                age.group = global_mcmc_meta$general$age.group,
+                uwra.z.priors = global_mcmc_args$uwra_z_priors,
+                uwra.Omega.priors = global_mcmc_args$uwra_Omega_priors,
+                uwra.kappa.c.priors = global_mcmc_args$uwra_kappa_c_priors,
+                include.c.no.data = FALSE,   #Never for validation
+                timing.world.priors = global_mcmc_args$timing_world_priors,
+                EA.bias.negative = global_mcmc_meta$general$EA.bias.negative,
+                HW.bias.negative = global_mcmc_meta$general$HW.bias.negative,
+                ## Validation Parameters
+                exclude.unmet.only = exclude_unmet_only,
+                exclude.unmet.only.test.prop = exclude_unmet_only_test_prop,
+                at.random = at_random,
+                at.random.min.c = at_random_min_c,
+                at.random.test.prop = at_random_test_prop,
+                at.end = at_end,
+                at.end.not.1.obs.c = at_end_not_1_obs_c,
+                at.random.no.data = at_random_no_data,
+                at.random.no.data.strata = at_random_no_data_strata,
+                at.random.no.data.test.prop = at_random_no_data_test_prop,
+                leave.iso.out = leave_iso_out,
+                leave.iso.out.iso.test = leave_iso_out_iso_test,
+                year.cutoff = year_cutoff,
+                seed.validation = seed_validation,
+                generate.new.set = generate_new_set,
+                sink.seed.logfile = FALSE
+            )
+
+        ## LOG
+        msg <- paste0("Validation completed for run ", run_name)
+        if (isTRUE(RunMCMC_result)) message(msg)
+
+        cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+            msg,
+            file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
 
         ## -----------------------------------------------------------------------------
         ## Return

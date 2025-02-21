@@ -114,7 +114,7 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
     if (file.exists(file.path(output.dir, "mcmc.meta.rda"))){
         cat(paste("The output directory", output.dir, "already contains an MCMC.meta (and probably an older MCMC run).\n"))
         cat(paste("Delete files in this directory or choose a different run.name/output directory,\n"))
-        return(invisible())
+        return(invisible(FALSE))
     }
     dir.create(output.dir, showWarnings = FALSE)
     if (run.jags) # change JR, 20131105
@@ -137,16 +137,26 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
   if (!is.null(iso.select)) { # change JR, 20131104
     if (!(all(grepl("[[:alpha:]]", iso.select)) || all(grepl("[[:digit:]]", iso.select)))) {
       stop("iso.select: Must be NULL, else numeric or character ISO country code.")
-      return(invisible())
+      return(invisible(FALSE))
     }
   }
 
   if (!is.null(iso.country.select)) { # change JR, 20140404
     if (!(all(grepl("[[:alpha:]]", iso.country.select)) || all(grepl("[[:digit:]]", iso.country.select)))) {
       stop("iso.country.select: Must be NULL, else numeric or character ISO country code.")
-      return(invisible())
+      return(invisible(FALSE))
     }
   }
+
+## !!!!!!!!!!!!!!!!!!!!!! HERE HERE HERE: FAILS because "data/data.global.rda"
+## !!!!!!!!!!!!!!!!!!!!!! is looked for in "." instead of "./output/<run_name>".
+##
+## !!!!!!!!!!!!!!!!!!!!!! SUGGEST the following: Modify the code below so that
+## !!!!!!!!!!!!!!!!!!!!!! if 'run.name.global' is a special sentinel value,
+## !!!!!!!!!!!!!!!!!!!!!! 'data.global.rda' is searched for in "./input". In the
+## !!!!!!!!!!!!!!!!!!!!!! call to 'RunMCMC()' in 'do_global_mcmc()', set
+## !!!!!!!!!!!!!!!!!!!!!! 'run.name.global' to the sentinel value if it's a
+## !!!!!!!!!!!!!!!!!!!!!! one-country run.
 
     ##details<< Object \code{data.global} is loaded or created, which is NULL if this run is not country-specific.
        if (do.country.specific.run || do.country.specific.targets.run) { # change JR, 20150301
@@ -155,7 +165,7 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
             run.name.global <- "Run20140520" # change JR, 2010612
             if (!file.exists(file.path("data/data.global.rda"))) {
                 cat(paste0("Error: No default data.global file in data folder. Run global run first or specify run.name.global!\n"))
-                return(invisible())
+                return(invisible(FALSE))
             } else {
                 load(file.path("data/data.global.rda"))
                 cat(paste0("Default global run loaded.\n"))
@@ -163,7 +173,7 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
             if (do.country.specific.targets.run) { # change JR, 20150301
                 if (!file.exists(file.path("data/data.logratios.rda"))) {
                     cat(paste0("Error: No default data.logratios file in data folder. Run global run first or specify run.name.global!\n"))
-                    return(invisible())
+                    return(invisible(FALSE))
                 } else {
                     load(file.path("data/data.logratios.rda"))
                     cat(paste0("Default data.logratios loaded.\n"))
@@ -196,7 +206,7 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
     if (!is.null(iso.country.select)) { # change JR, 20140404
         if (!(all(grepl("[[:alpha:]]", iso.country.select)) | all(grepl("[[:digit:]]", iso.country.select)))) {
             error("iso.country.select: Must be NULL, else numeric or character ISO country code.")
-            return(invisible())
+            return(invisible(FALSE))
         }
     }
 
@@ -632,6 +642,9 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
         cat("All chains have finished!\n")
     }
     ##value<< NULL (mcmc.meta is saved to output.dir, and JAGS objects are saved in their own directory).
+
+    ## ADDED 2025-02-21, MCW.
+    return(invisible(TRUE))
 }## end function
 
 #-----------------------------------------------------

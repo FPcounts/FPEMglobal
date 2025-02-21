@@ -13,6 +13,20 @@
 ################################################################################
 
 ###-----------------------------------------------------------------------------
+### * Validation
+
+test_that("`validate_extra_config()` works", {
+
+    ## Null inputs
+    expect_no_error(validate_extra_config(list()))
+
+    ## Basic error: list missing some elements
+    expect_error(validate_extra_config(list(one_country_run = TRUE)),
+                 "Assertion on '\\.extra_config")
+})
+
+
+###-----------------------------------------------------------------------------
 ### * Copying Files
 
 test_that("`copy_csv_data_files()` works (without '...')", {
@@ -53,7 +67,7 @@ test_that("`copy_csv_data_files()` works with '...')", {
 
     ## Must have the global run summary file
     global_run_summary_file_path <-
-        make_global_summary_file_path(global_run_output_folder_path, check = FALSE)
+        make_global_summary_file_external_path(global_run_output_folder_path, check = FALSE)
     nothing <- "0"
     expect_no_error(save(list = "nothing", file = global_run_summary_file_path))
 
@@ -79,7 +93,18 @@ test_that("`copy_csv_data_files()` works with '...')", {
 
     ## -------** Test with Duplicate Files
 
-        ## ### UP TO HERE!!
-## stopifnot(file.create(file.path(paths_list$input_path,)))
+    ## Make duplicate file
+    duplicate_csv_file_path <- file.path(paths_list$input_path, "global_input.csv")
+    stopifnot(file.create(duplicate_csv_file_path))
+    expect_no_error(writeLines("COL1,COL2\ni,j", duplicate_csv_file_path))
 
+    ## Test
+    expect_error(copy_csv_data_files(run_name = test_run_name,
+                        from_dir = paths_list$input_path,
+                        to_dir = paths_list$output_path,
+                        one_country_run = TRUE,
+                        use_global_run_data_files = TRUE,
+                        global_run_output_folder_path = global_run_output_folder_path
+                        ),
+                 "'use_global_run_data_files' is 'TRUE' but the local input directory")
 })
