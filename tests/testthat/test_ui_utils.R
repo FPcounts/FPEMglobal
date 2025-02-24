@@ -86,7 +86,7 @@ test_that("`copy_csv_data_files()` works with '...')", {
                                         from_dir = paths_list$input_path,
                                         to_dir = paths_list$output_path,
                                         one_country_run = TRUE,
-                                        use_global_run_data_files = TRUE,
+                                        use_global_run_aux_data_files = TRUE,
                                         global_run_output_folder_path = global_run_output_folder_path
                                         ))
     expect_true(file.exists(file.path(paths_list$output_path, global_run_csv_file_name)))
@@ -103,8 +103,8 @@ test_that("`copy_csv_data_files()` works with '...')", {
                         from_dir = paths_list$input_path,
                         to_dir = paths_list$output_path,
                         one_country_run = TRUE,
-                        use_global_run_data_files = TRUE,
+                        use_global_run_aux_data_files = TRUE,
                         global_run_output_folder_path = global_run_output_folder_path
                         ),
-                 "'use_global_run_data_files' is 'TRUE' but the local input directory")
+                 "'use_global_run_aux_data_files' is 'TRUE' but the local input directory")
 })

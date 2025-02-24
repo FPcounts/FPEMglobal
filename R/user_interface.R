@@ -250,39 +250,41 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 ##' Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 ##' is not available.
 ##' @param input_data_folder_path File path to folder containing \emph{all}
-##'   input data (except any map shapefiles). If \code{NULL} the value of
-##'   \code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
-##'   as-is. Otherwise, \code{file.path(input_data_folder_path,
-##'   data_csv_filename)} will be passed. The default value points to the data
-##'   directory supplied with the package.
+##'     input data (except any map shapefiles). If \code{NULL} the value of
+##'     \code{data_csv_filename}, etc., will be passed to
+##'     \code{\link{file.path}} as-is. Otherwise,
+##'     \code{file.path(input_data_folder_path, data_csv_filename)} will be
+##'     passed. The default value points to the data directory supplied with the
+##'     package.
 ##' @param data_csv_filename Filename of the \file{.csv} file containing
-##'   country-level prevalence data. See \dQuote{Details}.
+##'     country-level prevalence data. See \dQuote{Details}.
 ##' @param region_information_csv_filename Filename of the \file{.csv} file
-##'   containing classifications of countries in sub-regions, regions, etc. See
-##'   \dQuote{Details}.
+##'     containing classifications of countries in sub-regions, regions, etc.
+##'     See \dQuote{Details}.
 ##' @param output_folder_path Filepath to directory where outputs should be
-##'   saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.
+##'     saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.
 ##' @param include_AR Logical; should the auto-regressive component of the model
-##'   be estimated. Used mainly for testing.
+##'     be estimated. Used mainly for testing.
 ##' @param verbose Logical; print lots and lots of messages about progress?
-##' @param ... An optional list of extra arguments for finer control. This
-##'   is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
-##'   should not pass any values in here; doing so will result in an error.
+##' @param ... Optional extra arguments for finer control. This is intended for
+##'     use by other packages (e.g., \pkg{{FPEMcountry}}); users should not pass
+##'     any values in here; doing so will probably result in an error.
 ##' @return A name for the run returned invisibly as a character string. MCMC
-##'   chains are saved to the directory
-##'   \file{\code{output_folder_path}/temp.JAGSobjects}. They need to be
-##'   post-processed with \code{\link[FPEMglobal]{post_process_mcmc}}. The run name (and
-##'   path to outputs, if not the default) must be passed to
-##'   \code{\link[FPEMglobal]{post_process_mcmc}} to locate the saved chains for
-##'   processing. Run names for married and unmarried runs must also be passed
-##'   to \code{\link[FPEMglobal]{combine_runs}} to generate all women MCMC results.
+##'     chains are saved to the directory
+##'     \file{\code{output_folder_path}/temp.JAGSobjects}. They need to be
+##'     post-processed with \code{\link[FPEMglobal]{post_process_mcmc}}. The run
+##'     name (and path to outputs, if not the default) must be passed to
+##'     \code{\link[FPEMglobal]{post_process_mcmc}} to locate the saved chains
+##'     for processing. Run names for married and unmarried runs must also be
+##'     passed to \code{\link[FPEMglobal]{combine_runs}} to generate all women
+##'     MCMC results.
 ##' @author Mark Wheldon, Andrew Tait
 ##' @seealso \code{\link{do_global_run}} (which calls this function) to generate
-##'   MCMC results for married or unmarried women, post-process, and produce
-##'   results all in one call; \code{\link{combine_runs}} to create all women
-##'   results from married and unmarried women runs;
-##'   \code{\link{do_global_all_women_run}} to do married, unmarried, \emph{and
-##'   all women runs}, and produce results, all in one call.
+##'     MCMC results for married or unmarried women, post-process, and produce
+##'     results all in one call; \code{\link{combine_runs}} to create all women
+##'     results from married and unmarried women runs;
+##'     \code{\link{do_global_all_women_run}} to do married, unmarried,
+##'     \emph{and all women runs}, and produce results, all in one call.
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_mcmc <- function(run_desc = "",

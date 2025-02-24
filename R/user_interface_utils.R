@@ -27,7 +27,7 @@ validate_extra_config <- function(.extra_config) {
             one_country_run = formals(FPEMglobal:::RunMCMC)$do.country.specific.run,
             one_country_iso = formals(FPEMglobal:::RunMCMC)$iso.select,
             global_run_output_folder_path = formals(FPEMglobal:::RunMCMC)$data_global_file_path,
-            use_global_run_data_files = FALSE
+            use_global_run_aux_data_files = FALSE
         )
 
     ## Check that the elements of '.extra_config' are allowed by comparing names
@@ -55,7 +55,7 @@ validate_extra_config <- function(.extra_config) {
     checkmate::assert_numeric(.extra_config[["one_country_iso"]], null.ok = TRUE)
     if (!is.null(.extra_config[["global_run_output_folder_path"]]))
         checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
-    checkmate::assert_logical(.extra_config[["use_global_run_data_files"]])
+    checkmate::assert_logical(.extra_config[["use_global_run_aux_data_files"]])
 
     ## Check that the global summary file exists
     if (.extra_config[["one_country_run"]]) {
@@ -68,7 +68,7 @@ validate_extra_config <- function(.extra_config) {
     }
 
     ## Check that the global input data directory exists and is not empty
-    if (.extra_config[["use_global_run_data_files"]]) {
+    if (.extra_config[["use_global_run_aux_data_files"]]) {
         global_data_dir <- file.path(.extra_config[["global_run_output_folder_path"]], "data")
         if (!dir.exists(global_data_dir))
             stop("'global_run_output_folder_path' is 'TRUE' but the global data directory '",
@@ -204,7 +204,7 @@ make_input_aux_data_file_path <- function(input_folder_path = NULL, input_filena
 
     .extra_config <- validate_extra_config(list(...))
 
-    if (.extra_config[["use_global_run_data_files"]])
+    if (.extra_config[["use_global_run_aux_data_files"]])
         input_folder_path <- .extra_config[["global_run_data_files_folder_path"]]
 
     make_input_file_path(input_folder_path = input_folder_path,
@@ -256,7 +256,8 @@ get_global_summary_file_local_path <- function() {
 }
 
 ##' @rdname get_global_summary_file_name
-make_global_summary_file_external_path <- function(folder_path = NULL, check = !is.null(folder_path), ...) {
+make_global_summary_file_external_path <-
+    function(folder_path = NULL, check = !is.null(folder_path), ...) {
 
     data_global_filename <- get_global_summary_file_name()
 
@@ -275,7 +276,7 @@ make_global_summary_file_external_path <- function(folder_path = NULL, check = !
         ## Taken from '...'
         .extra_config <- validate_extra_config(list(...))
         full_path <-
-            file.path(.extra_config$global_run_output_folder_path,
+            file.path(.extra_config[["global_run_output_folder_path"]],
                       data_global_filename)
     }
 
@@ -340,7 +341,7 @@ copy_csv_data_files <- function(run_name, from_dir = "input",
 
     ## -------* Handle .extra_config
 
-    if (isTRUE(.extra_config$use_global_run_data_files)) {
+    if (isTRUE(.extra_config$use_global_run_aux_data_files)) {
         global_run_file_names <-
             list.files(make_input_aux_data_file_path(NULL, "", check = FALSE, ...),
                        pattern = "\\.csv")
@@ -350,14 +351,15 @@ copy_csv_data_files <- function(run_name, from_dir = "input",
         local_duplicates <-
             local_input_file_names[local_input_file_names %in% global_run_file_names]
         if (length(local_duplicates))
-            stop("'use_global_run_data_files' is 'TRUE' but the local input directory ('",
+            stop("'use_global_run_aux_data_files' is 'TRUE' but the local input directory ('",
                  from_dir,
                  "') contains the following files which were also found in the global run data directory ('",
                  .extra_config$global_run_data_files_folder_path,
                  "'): '\n",
-                 toString(local_duplicates, width = 80),
+                 toString(local_duplicates, width = 5 * 80),
                  "'.\n",
-                 "\tIf you want to use some of the files in the local data directory and some in the global run data directory, copy all input files to the local input directory and set 'use_global_run_data_files' to 'FALSE'.")
+                 "\t- If you want to use the global run data files, but the local input directory contains files with the same names, create a different local input directory, e.g., './input_one_country', and copy the one-country prevalence data there.",
+                 "\t- If you want to use some of the files in the local data directory and some in the global run data directory, copy all input files to the local input directory and set 'use_global_run_aux_data_files' to 'FALSE'.")
     }
 
     ## -------* Do the copying
