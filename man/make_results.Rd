@@ -39,10 +39,11 @@ saved. If \code{NULL}, defaults to \code{file.path("output", run_name)}.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
-\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
-as-is. Otherwise, \code{file.path(input_data_folder_path,
-  data_csv_filename)} will be passed. The default value points to the data
-directory supplied with the package.}
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
@@ -123,9 +124,9 @@ string.}
 \item{verbose}{Logical; print lots and lots of messages about
 progress?}
 
-\item{...}{An optional list of extra arguments for finer control. This
-is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
-should not pass any values in here; doing so will result in an error.}
+\item{...}{Optional extra arguments for finer control. This is intended for
+use by other packages (e.g., \pkg{{FPEMcountry}}); users should not pass
+any values in here; doing so will probably result in an error.}
 
 \item{married_women_run_name}{Run name of a married women
 run. Relevant if \code{\link{make_results}} is being run on an

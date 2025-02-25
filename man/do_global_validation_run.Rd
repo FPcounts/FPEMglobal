@@ -49,10 +49,11 @@ validate.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
-\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
-as-is. Otherwise, \code{file.path(input_data_folder_path,
-  data_csv_filename)} will be passed. The default value points to the data
-directory supplied with the package.}
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
 \item{exclude_unmet_only}{Logical; do validtion exercise leaving
 out unmet need observations? See details.}

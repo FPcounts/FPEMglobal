@@ -68,8 +68,8 @@ combined. (Only used if \code{special_aggregates_name} is
 non-\code{NULL}).}
 
 \item{region_information_csv_filename}{Filename of the \file{.csv} file
-containing classifications of countries in sub-regions, regions, etc. See
-\dQuote{Details}.}
+containing classifications of countries in sub-regions, regions, etc.
+See \dQuote{Details}.}
 
 \item{special_aggregates_name}{Character vector of names
 (\emph{not} filenames) of any speical aggregates

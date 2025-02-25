@@ -66,7 +66,8 @@ validate_extra_config <- function(.extra_config) {
             file.path(.extra_config[["global_run_output_folder_path"]],
                       "global_mcmc_args.RData")
         if (file.exists(global_args_file_path)) {
-            global_run_recorded_name <- get(load(global_args_file_path))$run_name
+            global_run_recorded_name <-
+                get_run_name_from_args(get(load(global_args_file_path)))
             if (!identical(global_run_recorded_name, .extra_config[["global_run_name"]])) {
                 stop("'global_run_name' is not the same as the run name recorded in '",
                      global_args_file_path,
@@ -147,13 +148,8 @@ convert_run_name <- function(run_name, from = c("married", "unmarried", "all_wom
 ##' @author Mark Wheldon
 ##' @export
 get_run_name_from_args <- function(args) {
-    if (!is.null(args$renamed) && args$renamed && length(args$rename_list)) {
-        source_element <- "rename_list"
-        out <- args$rename_list[1]
-    } else {
-        out <- args$run_name
+    out <- args$run_name
         source_element <- "run_name"
-    }
     if (is.null(out))
         stop("run name cannot be determined from '",
              source_element, "' in '",

@@ -5,7 +5,7 @@
 \title{Rename global run}
 \usage{
 rename_global_run(
-  run_name,
+  run_name = NULL,
   new_run_name,
   output_folder_path = file.path("output", run_name),
   rename_output_folder = missing(output_folder_path),
@@ -14,7 +14,9 @@ rename_global_run(
 )
 }
 \arguments{
-\item{run_name}{Character. Name of run to be renamed.}
+\item{run_name}{Character. Name of run to be renamed. If this is \code{NULL}
+(default), the run name will be taken from the
+\filename{global_mcmc_args.RData} file in \code{output_folder_path}.}
 
 \item{new_run_name}{Character. New run name.}
 
@@ -40,6 +42,17 @@ for a single marital group.
 If \code{rename_output_folder = TRUE}, an attempt is made to rename the
 output folder. All matches of \code{run_name} are replaced with
 \code{new_run_name}.
+
+If found, the files \filename{global_mcmc_args.RData},
+\filename{post_process_args.RData}, and \filename{combine_runs_args.RData},
+all in \code{output_folder_path} are modified as follows:
+
+\enumerate{
+\item The element \code{run_name} is replaced with the \code{new_run_name}.
+\item Element \code{renamed} is set to \code{TRUE} (it is created if it doesn't already exist).
+\item Element \code{rename_list}, a character vector, is augmented by adding
+the old run name (as per \code{run_name}) to the front as the first element.
+}
 }
 \section{Note}{
  If you modify \code{ignore} make sure

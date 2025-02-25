@@ -105,17 +105,18 @@ is not available.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
-\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
-as-is. Otherwise, \code{file.path(input_data_folder_path,
-  data_csv_filename)} will be passed. The default value points to the data
-directory supplied with the package.}
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
 \item{data_csv_filename}{Filename of the \file{.csv} file containing
 country-level prevalence data. See \dQuote{Details}.}
 
 \item{region_information_csv_filename}{Filename of the \file{.csv} file
-containing classifications of countries in sub-regions, regions, etc. See
-\dQuote{Details}.}
+containing classifications of countries in sub-regions, regions, etc.
+See \dQuote{Details}.}
 
 \item{denominator_counts_csv_filename}{Name of the \file{.csv}
 file containing estimates and projections of the number of
@@ -238,9 +239,9 @@ be estimated. Used mainly for testing.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 
-\item{...}{An optional list of extra arguments for finer control. This
-is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
-should not pass any values in here; doing so will result in an error.}
+\item{...}{Optional extra arguments for finer control. This is intended for
+use by other packages (e.g., \pkg{{FPEMcountry}}); users should not pass
+any values in here; doing so will probably result in an error.}
 }
 \value{
 A name for the run, \code{run_name}, returned invisibly as a

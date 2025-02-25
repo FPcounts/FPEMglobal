@@ -317,12 +317,6 @@ new_run_names <-
     mapply(function(y, z) rename_global_run(run_name = y, new_run_name = z, verbose = verbose),
            runs_1549_all_women, lapply(runs_1549_all_women, function(z) paste0(z, "_RENAMED")))
 
-post_process_mcmc(output_folder_path = file.path("output", "test_1549_married"))
-make_results(output_folder_path = file.path("output", "test_1549_married"))
-
-
-
-
 
 ### RESET DIRECTORY
 setwd(owd)

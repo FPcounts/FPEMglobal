@@ -25,10 +25,11 @@ from the denominator counts file if post-processing is done
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
-\code{data_csv_filename}, etc., will be passed to \code{\link{file.path}}
-as-is. Otherwise, \code{file.path(input_data_folder_path,
-  data_csv_filename)} will be passed. The default value points to the data
-directory supplied with the package.}
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
 \item{data_csv_filename}{Filename of the \file{.csv} file containing
 country-level prevalence data. See \dQuote{Details}.}

@@ -121,9 +121,9 @@ aggregates.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 
-\item{...}{An optional list of extra arguments for finer control. This
-is intended for use by other packages (e.g., \pkg{{FPEMcountry}}); users
-should not pass any values in here; doing so will result in an error.}
+\item{...}{Optional extra arguments for finer control. This is intended for
+use by other packages (e.g., \pkg{{FPEMcountry}}); users should not pass
+any values in here; doing so will probably result in an error.}
 }
 \value{
 The run name (invisibly). The function is mainly called
