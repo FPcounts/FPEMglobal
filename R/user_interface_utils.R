@@ -26,6 +26,7 @@ validate_extra_config <- function(.extra_config) {
         list(
             one_country_run = formals(FPEMglobal:::RunMCMC)$do.country.specific.run,
             one_country_iso = formals(FPEMglobal:::RunMCMC)$iso.select,
+            global_run_name = formals(FPEMglobal:::RunMCMC)$run.name.global,
             global_run_output_folder_path = formals(FPEMglobal:::RunMCMC)$data_global_file_path,
             use_global_run_aux_data_files = FALSE
         )
@@ -50,12 +51,29 @@ validate_extra_config <- function(.extra_config) {
         }
     }
 
-    ## Check type of elements
+    ## Check types of elements
     checkmate::assert_logical(.extra_config[["one_country_run"]])
     checkmate::assert_numeric(.extra_config[["one_country_iso"]], null.ok = TRUE)
+    checkmate::assert_character(.extra_config[["global_run_name"]], null.ok = TRUE)
     if (!is.null(.extra_config[["global_run_output_folder_path"]]))
         checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
     checkmate::assert_logical(.extra_config[["use_global_run_aux_data_files"]])
+
+    ## Check that global run name matches what's in the global run meta info
+    if (!is.null(.extra_config[["global_run_name"]]) &&
+        !is.null(.extra_config[["global_run_output_folder_path"]])) {
+        global_args_file_path <-
+            file.path(.extra_config[["global_run_output_folder_path"]],
+                      "global_mcmc_args.RData")
+        if (file.exists(global_args_file_path)) {
+            global_run_recorded_name <- get(load(global_args_file_path))$run_name
+            if (!identical(global_run_recorded_name, .extra_config[["global_run_name"]])) {
+                stop("'global_run_name' is not the same as the run name recorded in '",
+                     global_args_file_path,
+                     "'.")
+                }
+        }
+    }
 
     ## Check that the global summary file exists
     if (.extra_config[["one_country_run"]]) {
@@ -217,49 +235,31 @@ make_input_aux_data_file_path <- function(input_folder_path = NULL, input_filena
 ##' Defines the file name for, and constructs a file path pointing to, the
 ##' summary of a global run. This is an \filename{.rda} file which contains the
 ##' posterior means of hierarchical parameters. It is used as the input to a
-##' one-country run.
+##' one-country run. The global run output folder is passed in via the argument
+##' `global_run_output_folder_path` (see \dQuote{Details}) for more information.
 ##'
-##' \describe{\item{\code{get_global_summary_file_name()}}{This defines the
-##' filename of the global summary file that is expected by \code{RunMCMC()}. It
-##' is hard-coded and cannot be changed.}
-##'
-##' \item{\code{get_global_summary_file_local_path()}}{This defines the path to
-##' the global summary file that is expected by \code{RunMCMC()}. It is
-##' hard-coded and cannot be changed.}
-##'
-##' \item{\code{make_global_summary_file_external_path()}}{Creates the path to
-##' the global summary file stored in the output folder of a global run. The
-##' global run output folder is passed in via the argument
-##' `global_run_output_folder_path`}
-##' }
+##' \code{make_global_summary_file_external_path()} Creates the path to the
+##' global summary file stored in the output folder of a global run.
+##' \emph{Either} supply the explicit folder containing the summary file via the
+##' \code{folder_path} argument, or supply the path to the main global run
+##' output folder via the argument \code{global_run_output_folder_path} (which
+##' can be part of the \code{...}).
 ##'
 ##' @param folder_path Optional path to folder containing the file. By
 ##'     default, only file filename will be returned.
-##' @param check (Logical) Should an error be given if the file does not exist?
+##' @param check (Logical) Should an error be thrown if the file does not exist?
 ##' @return File path as a character string.
 ##' @author Mark C Wheldon
 ##'
 ##' @examples
-##' get_global_summary_file_name()
-##'
 ##' make_global_summary_file_external_path("test", check = FALSE)
 ##'
 ##' @noRd
-get_global_summary_file_name <- function() {
-    ## This is hard-coded in runMCMC.R/RunMCMC()
-    return("data.global.rda")
-}
-
-get_global_summary_file_local_path <- function() {
-    ## This is hard-coded in runMCMC.R/RunMCMC()
-    return(file.path("data", get_global_summary_file_name()))
-}
-
-##' @rdname get_global_summary_file_name
 make_global_summary_file_external_path <-
     function(folder_path = NULL, check = !is.null(folder_path), ...) {
 
-    data_global_filename <- get_global_summary_file_name()
+        ## This is hard-coded in runMCMC.R/RunMCMC()
+        data_global_filename <- "data.global.rda"
 
     ## This function is called by 'validate_extra_config()', so there are two
     ## modes of operation:

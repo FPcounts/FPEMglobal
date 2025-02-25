@@ -148,18 +148,8 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
     }
   }
 
-## !!!!!!!!!!!!!!!!!!!!!! HERE HERE HERE: FAILS because "data/data.global.rda"
-## !!!!!!!!!!!!!!!!!!!!!! is looked for in "." instead of "./output/<run_name>".
-##
-## !!!!!!!!!!!!!!!!!!!!!! SUGGEST the following: Modify the code below so that
-## !!!!!!!!!!!!!!!!!!!!!! if 'run.name.global' is a special sentinel value,
-## !!!!!!!!!!!!!!!!!!!!!! 'data.global.rda' is searched for in "./input". In the
-## !!!!!!!!!!!!!!!!!!!!!! call to 'RunMCMC()' in 'do_global_mcmc()', set
-## !!!!!!!!!!!!!!!!!!!!!! 'run.name.global' to the sentinel value if it's a
-## !!!!!!!!!!!!!!!!!!!!!! one-country run.
-
     ##details<< Object \code{data.global} is loaded or created, which is NULL if this run is not country-specific.
-       if (do.country.specific.run || do.country.specific.targets.run) { # change JR, 20150301
+    if (do.country.specific.run || do.country.specific.targets.run) { # change JR, 20150301
         message("\n'do.country.specific.run' or 'do.country.specific.targets.run' is TRUE.")
         if (is.null(run.name.global)) {
             run.name.global <- "Run20140520" # change JR, 2010612
@@ -180,22 +170,34 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
                 }
             }
         } else {
-            if(is.null(data_global_file_path)) {
-                data_global_file_path <- file.path("output", run.name.global, "data.global.rda")
-            }
+            ## ADDED: MCW 2025-02-25
+            ##
+            ## Implements one-country run using 'new' user interface.
+            ## 'run.name.global' is never NULL in that case, so will end up
+            ## here.
+            ##
+            if (!is.null(data_global_file_path)) {
 
-            cat("data.global.rda path:", data_global_file_path, "\n", file = stderr())
+                if (verbose) message("data.global.rda path: '", data_global_file_path, "'.")
+                load(data_global_file_path)
+                if (verbose) message("Global run '", run.name.global, "' loaded.")
 
-            if (!file.exists(data_global_file_path))
-                SummariseGlobalRun(run.name = run.name.global, write.model.fun = write.model.fun)
-            load(file.path("output", run.name.global, "data.global.rda"))
-
-            cat(paste0("Global run ", run.name.global, " loaded.\n"))
-            if (do.country.specific.targets.run) { # change JR, 20150301
-                load(file.path("output", run.name.global, "data.logratios.rda"))
-                cat(paste0("Log ratio info list of ", run.name.global, " loaded.\n"))
             } else {
-                data.logratios <- NULL # change JR, 20150301
+                data_global_file_path <- file.path("output", run.name.global, "data.global.rda")
+
+                cat("data.global.rda path:", data_global_file_path, "\n", file = stderr())
+
+                if (!file.exists(data_global_file_path))
+                    SummariseGlobalRun(run.name = run.name.global, write.model.fun = write.model.fun)
+                load(file.path("output", run.name.global, "data.global.rda"))
+
+                cat(paste0("Global run ", run.name.global, " loaded.\n"))
+                if (do.country.specific.targets.run) { # change JR, 20150301
+                    load(file.path("output", run.name.global, "data.logratios.rda"))
+                    cat(paste0("Log ratio info list of ", run.name.global, " loaded.\n"))
+                } else {
+                    data.logratios <- NULL # change JR, 20150301
+                }
             }
         }
     } else {
