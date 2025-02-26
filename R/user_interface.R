@@ -410,11 +410,13 @@ do_global_mcmc <- function(run_desc = "",
     ## Copy to Output
 
     output_data_folder_path <- file.path(output_folder_path, "data")
-    copy_csv_data_files(run_name = run_name, from_dir = input_data_folder_path,
-                        to_local = output_data_folder_path, verbose = verbose, ...)
+    copy_csv_data_files(run_name = run_name,
+                        from_dir = input_data_folder_path,
+                        to_local = output_data_folder_path,
+                        verbose = verbose, ...)
 
     ## For one-country runs (does nothing if a global run)
-    copy_global_run_summary_file(output_folder_path, ...)
+    copy_global_run_summary_file(output_data_folder_path, verbose = verbose, ...)
 
     ## ---------------------------------------------------------------------
     ## Make MCMC chains
@@ -433,6 +435,9 @@ do_global_mcmc <- function(run_desc = "",
             ChainNums = chain_nums,
             do.country.specific.run = .extra_config$one_country_run,
             iso.country.select = .extra_config$one_country_iso,
+            run.name.global = .extra_config$global_run_name,
+            data_global_file_path = FPEMglobal:::make_global_summary_file_external_path(..., check = FALSE), # already checked
+            file.path(.extra_config$global_run_output_folder_path, "data.global.rda"),
             disagg.RN.PMA = TRUE,
             write.model.fun = marital_group_param_set$write_model_fun,
             include.AR = include_AR,
@@ -453,6 +458,7 @@ do_global_mcmc <- function(run_desc = "",
     ## LOG
     msg <- paste0("MCMC sampling completed for run ", run_name)
     if (isTRUE(RunMCMC_result)) message(msg)
+    else stop("Internal function 'RunMCMC()' failed.")
 
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -503,7 +509,7 @@ add_global_mcmc <- function(run_name,
 
     if (sum(is.element(chain_nums, mcmc.meta$general$ChainNums))>0){
         chain_nums <- setdiff(chain_nums, mcmc.meta$general$ChainNums)
-        if (sum(chain_nums)==0){
+        if (sum(chain_nums)==0) {
             stop("MCMC run(s) for 'chain_nums' = ", chain_nums, " and 'run_name' = ", run_name
                 ," already exist(s)!", "\n")
         }

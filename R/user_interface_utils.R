@@ -21,12 +21,13 @@
 ##' @author Mark C Wheldon
 validate_extra_config <- function(.extra_config) {
 
+    ## -------* General Checks
+
     ## These are the variables that the '.extra_config' argument can alter.
     extra_config_defaults <-
         list(
             one_country_run = formals(FPEMglobal:::RunMCMC)$do.country.specific.run,
             one_country_iso = formals(FPEMglobal:::RunMCMC)$iso.select,
-            global_run_name = formals(FPEMglobal:::RunMCMC)$run.name.global,
             global_run_output_folder_path = formals(FPEMglobal:::RunMCMC)$data_global_file_path,
             use_global_run_aux_data_files = FALSE
         )
@@ -49,59 +50,65 @@ validate_extra_config <- function(.extra_config) {
                           "Invalid use of '...' argument.",  "\n",
                           toString(check_res_list_names))
         }
+        checkmate::assert_logical(.extra_config[["one_country_run"]])
+        checkmate::assert_numeric(.extra_config[["one_country_iso"]], null.ok = TRUE)
+        checkmate::assert_character(.extra_config[["global_run_output_folder_path"]], null.ok = TRUE)
+        checkmate::assert_logical(.extra_config[["use_global_run_aux_data_files"]])
     }
 
-    ## Check types of elements
-    checkmate::assert_logical(.extra_config[["one_country_run"]])
-    checkmate::assert_numeric(.extra_config[["one_country_iso"]], null.ok = TRUE)
-    checkmate::assert_character(.extra_config[["global_run_name"]], null.ok = TRUE)
-    if (!is.null(.extra_config[["global_run_output_folder_path"]]))
-        checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
-    checkmate::assert_logical(.extra_config[["use_global_run_aux_data_files"]])
+    ## -------* Checks for One-Country Runs
 
-    ## Check that global run name matches what's in the global run meta info
-    if (!is.null(.extra_config[["global_run_name"]]) &&
-        !is.null(.extra_config[["global_run_output_folder_path"]])) {
-        global_args_file_path <-
-            file.path(.extra_config[["global_run_output_folder_path"]],
-                      "global_mcmc_args.RData")
-        if (file.exists(global_args_file_path)) {
-            global_run_recorded_name <-
-                get_run_name_from_args(get(load(global_args_file_path)))
-            if (!identical(global_run_recorded_name, .extra_config[["global_run_name"]])) {
-                stop("'global_run_name' is not the same as the run name recorded in '",
-                     global_args_file_path,
-                     "'.")
-                }
-        }
-    }
-
-    ## Check that the global summary file exists
     if (.extra_config[["one_country_run"]]) {
+        msg <- "This is a one-country run"
+
+        ## -------** Check types of elements
+
+        checkmate::assert_directory_exists(.extra_config[["global_run_output_folder_path"]])
+
+        ## -------** Check Files and Directories
+
+        ## ISO is set
+        if (is.null(.extra_config[["one_country_iso"]]))
+            stop(msg, " but 'one_country_iso' is 'NULL'.")
+
+        ## 'global_run_output_folder_path' is set.
+        if (is.null(.extra_config[["global_run_output_folder_path"]]))
+            stop(msg, " but 'global_run_output_folder_path' is 'NULL'.")
+
+        ## Check that the global summary file exists
         global_run_summary_file_path <-
             make_global_summary_file_external_path(folder_path = .extra_config[["global_run_output_folder_path"]],
-                                          check = FALSE)
+                                                   check = FALSE)
         if (!file.exists(global_run_summary_file_path))
-            stop("The global run summary file '", global_run_summary_file_path,
+            stop(msg, " but the global run summary file '", global_run_summary_file_path,
                  "' could not be found. If the global run has been done, you might need to run 'FPEMglobal:::SummariseGlobalRun()'")
-    }
 
-    ## Check that the global input data directory exists and is not empty
-    if (.extra_config[["use_global_run_aux_data_files"]]) {
-        global_data_dir <- file.path(.extra_config[["global_run_output_folder_path"]], "data")
-        if (!dir.exists(global_data_dir))
-            stop("'global_run_output_folder_path' is 'TRUE' but the global data directory '",
-                 global_data_dir,
-                 "' does not exist.")
-        if (!any(grepl("\\.csv", list.files(global_data_dir))))
-            warning("'global_run_output_folder_path' is 'TRUE' but the global data directory '",
-                    global_data_dir,
-                    "' does not contain any '.csv' files.")
-        .extra_config[["global_run_data_files_folder_path"]] <- global_data_dir
+        ## Check that the global input data directory exists and is not empty
+        if (.extra_config[["use_global_run_aux_data_files"]]) {
+            global_data_dir <- file.path(.extra_config[["global_run_output_folder_path"]], "data")
+            if (!dir.exists(global_data_dir))
+                stop(msg, " but 'global_run_output_folder_path' is 'TRUE' but the global data directory '",
+                     global_data_dir,
+                     "' does not exist.")
+            if (!any(grepl("\\.csv", list.files(global_data_dir))))
+                warning(msg, " but 'global_run_output_folder_path' is 'TRUE' but the global data directory '",
+                        global_data_dir,
+                        "' does not contain any '.csv' files.")
+            .extra_config[["global_run_data_files_folder_path"]] <- global_data_dir
         }
+
+        ## -------** SET global run name
+
+        global_args_file_path <-
+            file.path(.extra_config[["global_run_output_folder_path"]], "global_mcmc_args.RData")
+        if (!file.exists(global_args_file_path))
+            stop(msg, " but the global args file '", global_args_file_path, "' cannot be found. This is required to ascertain the run name of the global run.")
+        .extra_config[["global_run_name"]] <- get_run_name_from_args(get(load(global_args_file_path)))
+    }
 
     return(.extra_config)
 }
+
 
 ###-----------------------------------------------------------------------------
 ### * Make Run Name
@@ -393,6 +400,7 @@ copy_csv_data_files <- function(run_name, from_dir = "input",
 copy_uwra_mwra_files <-
     function(filename, awra_output_folder_path, mwra_uwra_output_folder_path,
              new_filename = filename,
+             overwrite = FALSE,
              verbose = getOption("FPEMglobal.verbose")) {
         if (!dir.exists(mwra_uwra_output_folder_path)) stop("'", mwra_uwra_output_folder_path, "' does not exist.")
         if (!dir.exists(awra_output_folder_path)) stop("'", awra_output_folder_path, "' does not exist.")
@@ -406,7 +414,7 @@ copy_uwra_mwra_files <-
         }
         succeeded <- file_copy2(from = file.path(mwra_uwra_output_folder_path, filename),
                                 to = file.path(to_path, to_filename),
-                                overwrite = FALSE)
+                                overwrite = overwrite)
         report_file_copy(succeeded, filename, mwra_uwra_output_folder_path, awra_output_folder_path,
                          new_filename, verbose = verbose)
 
@@ -414,9 +422,10 @@ copy_uwra_mwra_files <-
     }
 
 
-## Copy the 'data.global.rda' file for a one-country run.
+## Copy the 'data.global.rda' file from for a one-country run.
 ## Note: If this isn't a one-country run, nothing happens.
-copy_global_run_summary_file <- function(output_folder_path, ...) {
+copy_global_run_summary_file <-
+    function(to_dir, overwrite = FALSE, verbose = getOption("FPEMglobal.verbose"), ...) {
 
     .extra_config <- validate_extra_config(list(...))
 
@@ -424,23 +433,22 @@ copy_global_run_summary_file <- function(output_folder_path, ...) {
     if (!.extra_config$one_country_run) return(invisible(TRUE))
 
     else {
-        local_data_file_path <-
-            file.path(output_folder_path, get_global_summary_file_local_path())
         global_summary_file_external_path <-
             make_global_summary_file_external_path(...)
 
         succeeded <- file_copy2(from = global_summary_file_external_path,
-                                to = local_data_file_path,
-                                overwrite = FALSE)
+                                to = to_dir,
+                                overwrite = overwrite)
         report_file_copy(succeeded,
                          filename = basename(global_summary_file_external_path),
                          from_dir = dirname(global_summary_file_external_path),
-                         to_dir = dirname(local_data_file_path),
+                         to_dir = to_dir,
                          new_filename = basename(global_summary_file_external_path),
                          verbose = verbose)
         return(invisible(succeeded))
     }
 }
+
 
 ###-----------------------------------------------------------------------------
 ### * Determine Parameter Values
