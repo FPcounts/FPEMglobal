@@ -71,6 +71,12 @@ test_that("`copy_csv_data_files()` works with '...')", {
     nothing <- "0"
     expect_no_error(save(list = "nothing", file = global_run_summary_file_path))
 
+    ## Must have the global_mcmc_args.RData file
+    global_args_file_path <-
+        file.path(global_run_output_folder_path, "global_mcmc_args.RData")
+    global_mcmc_args <- list(run_name = "TEST")
+    expect_no_error(save(list = "global_mcmc_args", file = global_args_file_path))
+
     ## Create the global aux data .csv file
     global_run_csv_file_name <- "global_input.csv"
     global_run_csv_file_path <- file.path(global_run_output_data_folder_path, global_run_csv_file_name)
@@ -86,6 +92,7 @@ test_that("`copy_csv_data_files()` works with '...')", {
                                         from_dir = paths_list$input_path,
                                         to_dir = paths_list$output_path,
                                         one_country_run = TRUE,
+                                        one_country_iso = 4,
                                         use_global_run_aux_data_files = TRUE,
                                         global_run_output_folder_path = global_run_output_folder_path
                                         ))
@@ -103,6 +110,7 @@ test_that("`copy_csv_data_files()` works with '...')", {
                         from_dir = paths_list$input_path,
                         to_dir = paths_list$output_path,
                         one_country_run = TRUE,
+                        one_country_iso = "004",
                         use_global_run_aux_data_files = TRUE,
                         global_run_output_folder_path = global_run_output_folder_path
                         ),

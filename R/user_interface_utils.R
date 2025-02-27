@@ -51,7 +51,7 @@ validate_extra_config <- function(.extra_config) {
                           toString(check_res_list_names))
         }
         checkmate::assert_logical(.extra_config[["one_country_run"]])
-        checkmate::assert_numeric(.extra_config[["one_country_iso"]], null.ok = TRUE)
+        checkmate::assert_numeric(as.numeric(.extra_config[["one_country_iso"]]), null.ok = TRUE)
         checkmate::assert_character(.extra_config[["global_run_output_folder_path"]], null.ok = TRUE)
         checkmate::assert_logical(.extra_config[["use_global_run_aux_data_files"]])
     }
