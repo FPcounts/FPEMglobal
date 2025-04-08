@@ -4279,7 +4279,7 @@ add_special_aggregates <- function(output_folder_path,
 ##'     \code{NULL}, defaults to \code{file.path("output", run_name)}.
 ##' @param rename_output_folder Logical. Should an attempt be made to rename the
 ##'     output folder? See \dQuote{Details}.
-##' @param ignore Regular expression. Files and directories with names that
+##' @param ignore Regular expression. Files and directories with names That
 ##'     match will not be renamed.
 ##' @return Called for side effect only.
 ##' @author Mark Wheldon
@@ -4294,8 +4294,26 @@ rename_global_run <- function(run_name = NULL,
     ## Set-up
 
     checkmate::assert_directory_exists(output_folder_path)
-    if (is.null(run_name))
-        run_name <- get_run_name_from_args(get(load(file.path(output_folder_path, "global_mcmc_args.RData"))))
+
+    ## Filenames of argument lists
+    global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
+    post_process_args_fn <- file.path(output_folder_path, "post_process_args.RData")
+    combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
+
+    ## Get run name if not supplied
+    if (is.null(run_name)) {
+        if (file.exists(global_args_fn)) {
+            run_name <- get_run_name_from_args(get(load(global_args_fn)))
+        } else {
+            if (file.exists(post_process_args_fn)) {
+                run_name <- get_run_name_from_args(get(load(post_process_args_fn)))
+            } else {
+                if (file.exists(combine_args_fn)) {
+                    run_name <- get_run_name_from_args(get(load(combine_args_fn)))
+                }
+            }
+        }
+    }
 
     ## -----------------------------------------------------------------------------
     ## Functions
@@ -4306,7 +4324,7 @@ rename_global_run <- function(run_name = NULL,
         if (nrow(info)) {
             for(i in 1:nrow(info)) {
                 fn <- basename(rownames(info)[i])
-                if(info[i, "isdir"]) {
+                if (isTRUE(info[i, "isdir"])) {
                     crawl_and_rename(dir_path = file.path(dir_path, fn),
                                      run_name = run_name,
                                      new_run_name = new_run_name,
@@ -4331,7 +4349,6 @@ rename_global_run <- function(run_name = NULL,
     ## Rename Files
 
     ## 'global_mcmc_args' object
-    global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
     if(file.exists(global_args_fn)) {
         load(global_args_fn, verbose = verbose)
         global_mcmc_args$run_name <- new_run_name
@@ -4344,7 +4361,8 @@ rename_global_run <- function(run_name = NULL,
         }
         save(global_mcmc_args, file = global_args_fn)
     }
-    post_process_args_fn <- file.path(output_folder_path, "post_process_args.RData")
+
+    ## 'post_process_args' object
     if(file.exists(post_process_args_fn)) {
         load(post_process_args_fn, verbose = verbose)
         post_process_args$run_name <- new_run_name
@@ -4356,7 +4374,8 @@ rename_global_run <- function(run_name = NULL,
         }
         save(post_process_args, file = post_process_args_fn)
     }
-    combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
+
+    ## 'combine_runs_args' object
     if(file.exists(combine_args_fn)) {
         load(combine_args_fn, verbose = verbose)
         combine_runs_args$run_name <- new_run_name
