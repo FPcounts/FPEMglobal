@@ -9,7 +9,9 @@
 ###-----------------------------------------------------------------------------
 ### * Package
 
-library(FPEMglobal)
+## TEMP: UNDO THIS EVENTUALLY
+## library(FPEMglobal)
+devtools::load_all("C:/Users/MWHELDON/Documents/repos/FPCounts/FPEMglobal")
 
 ### TEMP DIRECTORY
 owd <- getwd()

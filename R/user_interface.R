@@ -412,7 +412,7 @@ do_global_mcmc <- function(run_desc = "",
     output_data_folder_path <- file.path(output_folder_path, "data")
     copy_csv_data_files(run_name = run_name,
                         from_dir = input_data_folder_path,
-                        to_local = output_data_folder_path,
+                        to_dir = output_data_folder_path,
                         verbose = verbose, ...)
 
     ## For one-country runs (does nothing if a global run)

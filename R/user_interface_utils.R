@@ -37,11 +37,11 @@ validate_extra_config <- function(.extra_config) {
     if (!length(.extra_config)) {
         .extra_config = extra_config_defaults
     } else {
-        if (!isTRUE(check_res_list <- checkmate::test_list(x = .extra_config, names = "named"))) {
+        if (!isTRUE(check_res_list <- checkmate::check_list(x = .extra_config, names = "named"))) {
             stop("Invalid use of '...' argument.",  "\n", check_res_list)
         }
         if (!isTRUE(check_res_list_names <-
-                        checkmate::test_subset(
+                        checkmate::check_subset(
                                        x = names(.extra_config),
                                        choices = names(extra_config_defaults)))) {
             msg <- paste0("The following are not valid argument names: ",
@@ -49,6 +49,7 @@ validate_extra_config <- function(.extra_config) {
                           "\n---\n",
                           "Invalid use of '...' argument.",  "\n",
                           toString(check_res_list_names))
+            stop(msg)
         }
         checkmate::assert_logical(.extra_config[["one_country_run"]])
         checkmate::assert_numeric(as.numeric(.extra_config[["one_country_iso"]]), null.ok = TRUE)
@@ -156,7 +157,7 @@ convert_run_name <- function(run_name, from = c("married", "unmarried", "all_wom
 ##' @export
 get_run_name_from_args <- function(args) {
     out <- args$run_name
-        source_element <- "run_name"
+    source_element <- "run_name"
     if (is.null(out))
         stop("run name cannot be determined from '",
              source_element, "' in '",
