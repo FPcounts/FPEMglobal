@@ -88,11 +88,11 @@ validate_extra_config <- function(.extra_config) {
         if (.extra_config[["use_global_run_aux_data_files"]]) {
             global_data_dir <- file.path(.extra_config[["global_run_output_folder_path"]], "data")
             if (!dir.exists(global_data_dir))
-                stop(msg, " but 'global_run_output_folder_path' is 'TRUE' but the global data directory '",
+                stop(msg, " and 'global_run_output_folder_path' is 'TRUE' but the global data directory '",
                      global_data_dir,
                      "' does not exist.")
             if (!any(grepl("\\.csv", list.files(global_data_dir))))
-                warning(msg, " but 'global_run_output_folder_path' is 'TRUE' but the global data directory '",
+                warning(msg, " and 'global_run_output_folder_path' is 'TRUE' but the global data directory '",
                         global_data_dir,
                         "' does not contain any '.csv' files.")
             .extra_config[["global_run_data_files_folder_path"]] <- global_data_dir

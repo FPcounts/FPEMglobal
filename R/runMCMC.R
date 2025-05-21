@@ -56,7 +56,7 @@ RunMCMC <- function(run.name = "test", ##<< Run name, used to create a directory
                     disagg.RN.PMA = TRUE##<<[MCW-2016-03-24-1] dis-aggregate repeated national surveys and PMA?
                    ,uwra.z.priors = NULL #[MCW-2016-06-02-5] Added to allow different priors for
                                 #z model. Set to an integer code and define in body of GetBusPriorSpecs().
-                   ,write.model.fun = "WriteModel" #[MCW-2016-06-02-6] pass in the
+                   ,write.model.fun= "WriteModel" #[MCW-2016-06-02-6] pass in the
                     ## WriteModel[suff]() function used. *MUST* be
                                 #the name of the function as a character
                                 #string.
@@ -656,6 +656,7 @@ InternalRunOneChain <- function(#Do MCMC sampling
   chainNum, ##<< Chain ID
   mcmc.meta ##<< List, described in \code{\link{RunMCMC}}
  ,write.model.fun = "WriteModel"       #[MCW-2016-06-02-16] Pass this argument through.
+ ,do.one.country.run = FALSE
   ){
   # set seed before sampling the initial values
   set.seed.chain <- chainNum*mcmc.meta$general$seed.MCMC*
@@ -704,19 +705,25 @@ InternalRunOneChain <- function(#Do MCMC sampling
   # need to sample something in R first
     temp <- rnorm(1)
 
-  mod<-R2jags::jags(data=mcmc.meta$winbugs.data,
+    ## TEMP: (2025-04-25) If one-country run, set initial values to 'NULL' so JAGS generates them automatically
+    jags_init_list <- NULL
+    if (!mcmc.meta$general$do.country.specific.run) {
+        jags_init_list <- InternalMCMCinits(
+            winbugs.data = mcmc.meta$winbugs.data,
+            do.country.specific.run = mcmc.meta$general$do.country.specific.run, # change JR, 20131104
+            do.country.specific.targets.run = mcmc.meta$general$do.country.specific.targets.run, # change JR, 20150301
+            change.priors.to.zerolower = mcmc.meta$general$change.priors.to.zerolower,
+            write.model.fun = write.model.fun #[MCW-2016-06-02-15] Pass this through.
+           ,include.c.no.data = mcmc.meta$general$include.c.no.data #[MCW-2016-08-25-6] Pass this through.
+           ,validation.list = mcmc.meta$validation.list
+        )
+    }
+
+      mod<-R2jags::jags(data=mcmc.meta$winbugs.data,
             # inits=fix.init,
             # note this functionality does not work as of July 21, 2012
             # isntead: need a function without input arguments, that samples 1!
-            inits= InternalMCMCinits(
-              winbugs.data = mcmc.meta$winbugs.data,
-              do.country.specific.run = mcmc.meta$general$do.country.specific.run, # change JR, 20131104
-              do.country.specific.targets.run = mcmc.meta$general$do.country.specific.targets.run, # change JR, 20150301
-              change.priors.to.zerolower = mcmc.meta$general$change.priors.to.zerolower,
-              write.model.fun = write.model.fun #[MCW-2016-06-02-15] Pass this through.
-             ,include.c.no.data = mcmc.meta$general$include.c.no.data #[MCW-2016-08-25-6] Pass this through.
-              ,validation.list = mcmc.meta$validation.list
-            ),
+                    inits= jags_init_list,
             parameters.to.save= unlist(mcmc.meta$parnames.list),
             model.file=paste0("model", filename.append, ".txt"), # change JR, 20140414
             n.chains=1,
