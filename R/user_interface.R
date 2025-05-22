@@ -4188,33 +4188,56 @@ add_special_aggregates <- function(output_folder_path,
 
 ##' Rename global run
 ##'
-##' Renames the files and directories , and meta data, of a global run of FPEM for a single
-##' marital group.
+##' Renames the files and directories , and meta data, of a global run of FPEM
+##' for a single marital group.
+##'
+##' If \code{rename_output_folder = TRUE}, an attempt is made to rename the
+##' output folder. All matches of \code{run_name} are replaced with
+##' \code{new_run_name}.
+##'
+##' If found, the files \filename{global_mcmc_args.RData},
+##' \filename{post_process_args.RData}, and \filename{combine_runs_args.RData},
+##' all in \code{output_folder_path} are modified as follows:
+##'
+##' \enumerate{
+##' \item The element \code{run_name} is replaced with the \code{new_run_name}.
+##' \item Element \code{renamed} is set to \code{TRUE} (it is created if it doesn't already exist).
+##' \item Element \code{rename_list}, a character vector, is augmented by adding
+##' the old run name (as per \code{run_name}) to the front as the first element.
+##' }
 ##'
 ##' @section Note: If you modify \code{ignore} make sure
 ##'     \file{\code{output_folder_path}/data} still matches; it is not
 ##'     a good idea to rename files in that directory.
 ##'
 ##' @inheritParams do_global_mcmc
-##' @param run_name Character. Name of run to be renamed.
+##' @param run_name Character. Name of run to be renamed. If this is \code{NULL}
+##'     (default), the run name will be taken from the
+##'     \filename{global_mcmc_args.RData} file in \code{output_folder_path}.
 ##' @param new_run_name Character. New run name.
-##' @param output_folder_path Filepath to directory where outputs are saved. If \code{NULL}, defaults to
-##'     \code{file.path("output", run_name)}.
-##' @param ignore Regular expression. Files and directories with names that match will not be renamed.
+##' @param output_folder_path Filepath to directory where outputs are saved. If
+##'     \code{NULL}, defaults to \code{file.path("output", run_name)}.
+##' @param rename_output_folder Logical. Should an attempt be made to rename the
+##'     output folder? See \dQuote{Details}.
+##' @param ignore Regular expression. Files and directories with names that
+##'     match will not be renamed.
 ##' @return Called for side effect only.
 ##' @author Mark Wheldon
 ##' @export
-rename_global_run <- function(run_name,
+rename_global_run <- function(run_name = NULL,
                               new_run_name,
-                              output_folder_path = NULL,
-                              ignore = "^data$", verbose = FALSE) {
+                              output_folder_path = file.path("output", run_name),
+                              rename_output_folder = missing(output_folder_path),
+                              ignore = "^data$", verbose = getOption("FPEMglobal.verbose")) {
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Set-up
 
-    if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
+    checkmate::assert_directory_exists(output_folder_path)
+    if (is.null(run_name))
+        run_name <- get_run_name_from_args(get(load(file.path(output_folder_path, "global_mcmc_args.RData"))))
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Functions
 
     crawl_and_rename <- function(dir_path, run_name = run_name,
@@ -4244,57 +4267,75 @@ rename_global_run <- function(run_name,
         }
     }
 
-    ##-----------------------------------------------------------------------------
-    ## Rename
+    ## -----------------------------------------------------------------------------
+    ## Rename Files
 
     ## 'global_mcmc_args' object
     global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
     if(file.exists(global_args_fn)) {
         load(global_args_fn, verbose = verbose)
+        global_mcmc_args$run_name <- new_run_name
         global_mcmc_args$renamed <- TRUE
-        global_mcmc_args$rename_list <- c(new_run_name, global_mcmc_args$rename_list)
+        global_mcmc_args$rename_list <- c(run_name, global_mcmc_args$rename_list)
         if (!"rename_list" %in% names(comment(global_mcmc_args))) {
             comment(global_mcmc_args) <-
                 c(comment(global_mcmc_args),
-                  rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+                  rename_list = c("'rename_list' is in reverse chronologial order; most recently replaced run name is first."))
         }
         save(global_mcmc_args, file = global_args_fn)
     }
     post_process_args_fn <- file.path(output_folder_path, "post_process_args.RData")
     if(file.exists(post_process_args_fn)) {
         load(post_process_args_fn, verbose = verbose)
+        post_process_args$run_name <- new_run_name
         post_process_args$renamed <- TRUE
-        post_process_args$rename_list <- c(new_run_name, post_process_args$rename_list)
+        post_process_args$rename_list <- c(run_name, post_process_args$rename_list)
         if (!"rename_list" %in% names(comment(post_process_args))) {
             comment(post_process_args) <- c(comment(post_process_args),
-                                            rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+                                            rename_list = c("'rename_list' is in reverse chronologial order; most recently replaced run name is first."))
         }
         save(post_process_args, file = post_process_args_fn)
     }
     combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
     if(file.exists(combine_args_fn)) {
         load(combine_args_fn, verbose = verbose)
+        combine_runs_args$run_name <- new_run_name
         combine_runs_args$renamed <- TRUE
-        combine_runs_args$rename_list <- c(new_run_name, combine_runs_args$rename_list)
+        combine_runs_args$rename_list <- c(run_name, combine_runs_args$rename_list)
         if (!"rename_list" %in% names(comment(combine_runs_args))) {
             comment(combine_runs_args) <- c(comment(combine_runs_args),
-                                            rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+                                            rename_list = c("'rename_list' is in reverse chronologial order; most recently replaced run name is first."))
         }
         save(combine_runs_args, file = combine_args_fn)
     }
 
     crawl_and_rename(output_folder_path, run_name, new_run_name, ignore = ignore)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
+    ## Rename output folder
+
+    if (rename_output_folder) {
+        new_output_folder_path <-
+            gsub(run_name, new_run_name, output_folder_path, fixed = TRUE)
+        success_rename_output_folder <-
+            file.rename(from = output_folder_path,
+                        to = new_output_folder_path)
+    } else {
+        new_output_folder_path <- output_folder_path
+    }
+
+    ## ----------------------------------------------------------------------------
     ## LOG
 
-    msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name)
-    message(msg)
+    msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name, ".")
+    if (rename_output_folder)
+        msg <- paste0(msg, " Output folder renamed to '", new_output_folder_path, "'.")
+    if (verbose) message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
-        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+        file = file.path(new_output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Return
 
     return(new_run_name)
