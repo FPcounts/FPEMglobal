@@ -156,8 +156,13 @@ convert_run_name <- function(run_name, from = c("married", "unmarried", "all_wom
 ##' @author Mark Wheldon
 ##' @export
 get_run_name_from_args <- function(args) {
-    out <- args$run_name
-    source_element <- "run_name"
+    if (!is.null(args[["renamed"]]) && args[["renamed"]] && length(args[["rename_list"]])) {
+        source_element <- "rename_list"
+        out <- args[["rename_list"]][1]
+    } else {
+        out <- args[["run_name"]]
+        source_element <- "run_name"
+    }
     if (is.null(out))
         stop("run name cannot be determined from '",
              source_element, "' in '",
