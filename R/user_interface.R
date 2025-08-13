@@ -561,9 +561,10 @@ add_global_mcmc <- function(run_name,
 ##' The counts of women by marital status, age, and year in
 ##' \code{denominator_counts_csv_filename} are used to convert prevalence
 ##' proportions to counts of women by contraceptive use status. See
-##' \code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package = "FPEMglobal")}
-##' for an example of how the file should be formatted. Assume all columns are
-##' required.
+##' \code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package =
+##' "FPEMglobal")} for an example of how the file should be formatted. Assume
+##' all columns are required. No scaling is done; if the input counts are on the
+##' unit scale, so will be the outputs.
 ##'
 ##' By default, results are produced at the country level and for geographic
 ##' country aggregates. These are the sub-regions and regions of the \dfn{UN
