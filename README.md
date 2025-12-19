@@ -20,27 +20,32 @@ Follow one of the following three options:
 1. Make sure you have installed the _R_ package [remotes](https://cran.r-project.org/package=remotes). 
 2. In _R_, type:
 
-    ```
+    ```r
     remotes::install_github(repo = "https://github.com/FPcounts/FPEMglobal", 
 	                        ref = remotes::github_release(), 
                             build_manual = TRUE, build_vignettes = TRUE, dependencies = TRUE)
     ```
 
     `repo` is the only mandatory argument. If you encounter any problems you can try omitting any, or all, of the others. If you do not supply the `ref` argument, or if you change it, you may end up installing an old release or one that is in development and not fully tested. 
+3. It is highly recommended that you install the "doParallel" or "doMC" packages (the latter is not available on Windows). These are available on [CRAN](https://cran.r-project.org/ "Comprehensive R Archive Network (CRAN); for downloading R Packages") and can be installed from within _R_ by typing: 
+
+    ```
+    install.packages("doParallel")
+    ```
 
 
 
-### 2. From the .zip File (Windows Only)
+### 2. From the .tar.gz or .zip File 
 
 1. Go to the [release page](https://github.com/FPcounts/FPEMglobal/releases)
-2. Download the zip file for the latest release (at the top of the list). It will have a filename of the form "FPEMglobal_x.y.z.zip" where "x.y.z" are numbers indicating the version. If the zip file is not visible, click "Assets". 
+2. Download the .tar.gz file or, (Windows only) the .zip file, corresponding to the latest release (the one at the top of the list). It will have a filename of the form "FPEMglobal_x.y.z.tar.gz" or "FPEMglobal_x.y.z.zip" where "x.y.z" are numbers indicating the version. If the file is not visible, click "Assets". 
 3. Install the package: launch _R_ and type:
 
-    ```
-    install.packages("[path/to/FPEMglobal_<x.y.z>.zip]", repos = NULL)
+    ```r
+    install.packages("[path/to/FPEMglobal_<x.y.z>.<tar.gz/zip>]", repos = NULL)
     ```
 
-    You will need to edit the first argument to ensure you enter the correct file path to the zip file. `<x.y.z>` should be replaced by the actual version number. You will also need to install any package depencencies according to the notices that come up.
+    You will need to edit the first argument to ensure you enter the correct file path to the tar.gz or zip file. `<x.y.z>` should be replaced by the actual version number; `<tar.gz/zip>` should be replaced by the actual file extension. You will also need to install any package depencencies according to the notices that come up.
 
 
 
@@ -65,7 +70,7 @@ You will need to have basic knowledge of _Git_, _GitHub_, and the command line i
 
 The vignette "Introduction to FPEMglobal" explains the package and how to use it. From within _R_ type:
 
-```
+```r
 vignette("FPEMglobal_Intro")
 ```
 
