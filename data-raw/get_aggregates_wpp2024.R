@@ -78,7 +78,7 @@ eagle_URL      <- "https://popdiv.dfs.un.org/peps/eagle/api/file/ProcessedListCo
 
 ## userid & password for Eagle/PEPxplorer API
 if (!isTRUE(grepl("https://popdiv\\.dfs\\.un\\.org/peps/eagle/api", keyring::key_list()$service))) {
-    stop("Key for service 'https://popdiv.dfs.un.org/peps/eagle/api' not found. Use 'key_set(service = \"https://popdiv.dfs.un.org/peps/eagle/api\", username = \"Patrick.Gerland\")' to set the password and re-run.")
+    stop("Key for service 'https://popdiv.dfs.un.org/peps/eagle/api' not found. Use 'keyring::key_set(service = \"https://popdiv.dfs.un.org/peps/eagle/api\", username = \"Patrick.Gerland\")' to set the password and re-run.")
 }
 user <- "Patrick.Gerland"
 pw <- keyring::key_get(service = "https://popdiv.dfs.un.org/peps/eagle/api", username = "Patrick.Gerland")

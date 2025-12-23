@@ -2,7 +2,7 @@
 
 FPEMglobal is an _R_ package for producing estimates and projections of contraceptive use and unmet need for family planning among married, unmarried, and all women. 
 
-This package was developed by the _Family Planning Research_ (FPR) Group which is comprised of teams from the [Alkema Lab](https://leontinealkema.github.io/alkema_lab/) at the University of Massachusetts, Amherst, the [Population Division](https://www.un.org/en/development/desa/population/theme/making-family-planning-count/index.asp) of the United Nations Dept. of Economic and Social Affairs, and [Track20](http://www.track20.org/) at Avenir Health. It was supported, in part, by grants nos. OPP1110679 and OPP1183453, Making Family Planning Count 1.0--2.0, from the Bill & Melinda Gates Foundation. The package vignette has more information (`vignette("FPEMglobal_Intro")`**.
+This package was developed by the _Family Planning Research_ (FPR) Group which is comprised of teams from the [Alkema Lab](https://leontinealkema.github.io/alkema_lab/) at the University of Massachusetts, Amherst, the [Population Division](https://www.un.org/en/development/desa/population/theme/making-family-planning-count/index.asp) of the United Nations Dept. of Economic and Social Affairs, and [Track20](http://www.track20.org/) at Avenir Health. It was supported, in part, by grants nos. OPP1110679 and OPP1183453, Making Family Planning Count 1.0--2.0, from the Bill & Melinda Gates Foundation. The package vignette has more information (`vignette("FPEMglobal_Intro")`.
 
 **Disclaimer:** The views expressed herein are those of the authors and do not necessarily reflect the views of the United Nations.
 

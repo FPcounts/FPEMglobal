@@ -896,7 +896,7 @@ post_process_mcmc <- function(run_name = NULL,
                 dir.create(output_data_folder_path, recursive = TRUE, showWarnings = FALSE)
             copy_uwra_mwra_files(basename(file.agg),
                                  awra_output_folder_path = output_data_folder_path, #<- TO DIRECTORY
-                                 mwra_uwra_output_folder_path = input_data_folder_path, #<- FROM DIRECTORY
+                                 mwra_uwra_output_folder_path = input_data_folder_path #<- FROM DIRECTORY
                                  )
         }
     }
