@@ -1,0 +1,1 @@
+linters: linters_with_tags(tags = "common_mistakes")

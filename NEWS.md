@@ -1,3 +1,7 @@
+# FPEMglobal 1.5.4
+
+* Patch to correct erroneous file paths for results tables when `adjust_medians = TRUE`.
+
 # FPEMglobal 1.2.0
 
 * New function `compare_runs_CI_plots()`, a wrapper for `PlotComparison()`.

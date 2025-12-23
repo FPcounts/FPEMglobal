@@ -1,0 +1,233 @@
+"iso.country","groupname","iso.group","wpp_ParentID"
+4,"Southern Asia","",5501
+8,"Southern Europe","",925
+12,"Northern Africa","",912
+16,"Polynesia","",957
+20,"Southern Europe","",925
+24,"Middle Africa","",911
+28,"Caribbean","",915
+32,"South America","",931
+36,"Australia/New Zealand","",927
+40,"Western Europe","",926
+44,"Caribbean","",915
+48,"Western Asia","",922
+50,"Southern Asia","",5501
+51,"Western Asia","",922
+31,"Western Asia","",922
+56,"Western Europe","",926
+64,"Southern Asia","",5501
+68,"South America","",931
+52,"Caribbean","",915
+70,"Southern Europe","",925
+72,"Southern Africa","",913
+76,"South America","",931
+84,"Central America","",916
+90,"Melanesia","",928
+92,"Caribbean","",915
+96,"South-Eastern Asia","",920
+100,"Eastern Europe","",923
+104,"South-Eastern Asia","",920
+108,"Eastern Africa","",910
+112,"Eastern Europe","",923
+116,"South-Eastern Asia","",920
+120,"Middle Africa","",911
+132,"Western Africa","",914
+136,"Caribbean","",915
+140,"Middle Africa","",911
+144,"Southern Asia","",5501
+148,"Middle Africa","",911
+152,"South America","",931
+156,"Eastern Asia","",906
+158,"Eastern Asia","",906
+170,"South America","",931
+174,"Eastern Africa","",910
+175,"Eastern Africa","",910
+178,"Middle Africa","",911
+180,"Middle Africa","",911
+184,"Polynesia","",957
+188,"Central America","",916
+191,"Southern Europe","",925
+192,"Caribbean","",915
+232,"Eastern Africa","",910
+233,"Northern Europe","",924
+234,"Northern Europe","",924
+238,"South America","",931
+242,"Melanesia","",928
+246,"Northern Europe","",924
+250,"Western Europe","",926
+254,"South America","",931
+258,"Polynesia","",957
+262,"Eastern Africa","",910
+266,"Middle Africa","",911
+268,"Western Asia","",922
+270,"Western Africa","",914
+275,"Western Asia","",922
+276,"Western Europe","",926
+288,"Western Africa","",914
+292,"Southern Europe","",925
+296,"Micronesia","",954
+300,"Southern Europe","",925
+308,"Caribbean","",915
+336,"Southern Europe","",925
+340,"Central America","",916
+344,"Eastern Asia","",906
+348,"Eastern Europe","",923
+352,"Northern Europe","",924
+356,"Southern Asia","",5501
+360,"South-Eastern Asia","",920
+364,"Southern Asia","",5501
+368,"Western Asia","",922
+372,"Northern Europe","",924
+376,"Western Asia","",922
+380,"Southern Europe","",925
+384,"Western Africa","",914
+388,"Caribbean","",915
+196,"Western Asia","",922
+203,"Eastern Europe","",923
+204,"Western Africa","",914
+208,"Northern Europe","",924
+218,"South America","",931
+222,"Central America","",916
+226,"Middle Africa","",911
+231,"Eastern Africa","",910
+316,"Micronesia","",954
+320,"Central America","",916
+324,"Western Africa","",914
+328,"South America","",931
+332,"Caribbean","",915
+212,"Caribbean","",915
+214,"Caribbean","",915
+392,"Eastern Asia","",906
+398,"Central Asia","",5500
+400,"Western Asia","",922
+404,"Eastern Africa","",910
+408,"Eastern Asia","",906
+410,"Eastern Asia","",906
+412,"Southern Europe","",925
+414,"Western Asia","",922
+428,"Northern Europe","",924
+430,"Western Africa","",914
+434,"Northern Africa","",912
+438,"Western Europe","",926
+440,"Northern Europe","",924
+442,"Western Europe","",926
+446,"Eastern Asia","",906
+450,"Eastern Africa","",910
+454,"Eastern Africa","",910
+312,"Caribbean","",915
+417,"Central Asia","",5500
+418,"South-Eastern Asia","",920
+422,"Western Asia","",922
+426,"Southern Africa","",913
+458,"South-Eastern Asia","",920
+470,"Southern Europe","",925
+474,"Caribbean","",915
+480,"Eastern Africa","",910
+484,"Central America","",916
+492,"Western Europe","",926
+496,"Eastern Asia","",906
+478,"Western Africa","",914
+462,"Southern Asia","",5501
+466,"Western Africa","",914
+498,"Eastern Europe","",923
+500,"Caribbean","",915
+504,"Northern Africa","",912
+508,"Eastern Africa","",910
+512,"Western Asia","",922
+516,"Southern Africa","",913
+520,"Micronesia","",954
+499,"Southern Europe","",925
+524,"Southern Asia","",5501
+528,"Western Europe","",926
+531,"Caribbean","",915
+534,"Caribbean","",915
+535,"Caribbean","",915
+540,"Melanesia","",928
+548,"Melanesia","",928
+554,"Australia/New Zealand","",927
+558,"Central America","",916
+562,"Western Africa","",914
+566,"Western Africa","",914
+570,"Polynesia","",957
+578,"Northern Europe","",924
+580,"Micronesia","",954
+583,"Micronesia","",954
+584,"Micronesia","",954
+585,"Micronesia","",954
+586,"Southern Asia","",5501
+591,"Central America","",916
+598,"Melanesia","",928
+600,"South America","",931
+604,"South America","",931
+608,"South-Eastern Asia","",920
+616,"Eastern Europe","",923
+620,"Southern Europe","",925
+624,"Western Africa","",914
+634,"Western Asia","",922
+638,"Eastern Africa","",910
+642,"Eastern Europe","",923
+643,"Eastern Europe","",923
+646,"Eastern Africa","",910
+652,"Caribbean","",915
+654,"Western Africa","",914
+626,"South-Eastern Asia","",920
+630,"Caribbean","",915
+533,"Caribbean","",915
+659,"Caribbean","",915
+663,"Caribbean","",915
+670,"Caribbean","",915
+660,"Caribbean","",915
+662,"Caribbean","",915
+674,"Southern Europe","",925
+678,"Middle Africa","",911
+682,"Western Asia","",922
+686,"Western Africa","",914
+688,"Southern Europe","",925
+690,"Eastern Africa","",910
+703,"Eastern Europe","",923
+704,"South-Eastern Asia","",920
+705,"Southern Europe","",925
+706,"Eastern Africa","",910
+710,"Southern Africa","",913
+694,"Western Africa","",914
+702,"South-Eastern Asia","",920
+716,"Eastern Africa","",910
+724,"Southern Europe","",925
+728,"Eastern Africa","",910
+729,"Northern Africa","",912
+732,"Northern Africa","",912
+740,"South America","",931
+748,"Southern Africa","",913
+752,"Northern Europe","",924
+756,"Western Europe","",926
+760,"Western Asia","",922
+762,"Central Asia","",5500
+764,"South-Eastern Asia","",920
+768,"Western Africa","",914
+772,"Polynesia","",957
+776,"Polynesia","",957
+780,"Caribbean","",915
+784,"Western Asia","",922
+788,"Northern Africa","",912
+792,"Western Asia","",922
+798,"Polynesia","",957
+800,"Eastern Africa","",910
+804,"Eastern Europe","",923
+807,"Southern Europe","",925
+818,"Northern Africa","",912
+826,"Northern Europe","",924
+831,"Northern Europe","",924
+832,"Northern Europe","",924
+833,"Northern Europe","",924
+834,"Eastern Africa","",910
+850,"Caribbean","",915
+795,"Central Asia","",5500
+796,"Caribbean","",915
+854,"Western Africa","",914
+858,"South America","",931
+860,"Central Asia","",5500
+862,"South America","",931
+876,"Polynesia","",957
+882,"Polynesia","",957
+887,"Western Asia","",922
+894,"Eastern Africa","",910

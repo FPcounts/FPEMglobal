@@ -1681,8 +1681,8 @@ GetTablesAgeRatios <-
                              ,collapse = "Over"))
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             write.csv(results.all
                      ,file = file.path(table.dir
@@ -1809,8 +1809,8 @@ GetTablesChangeAgeRatios <-
                              ,collapse = "Over"))
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             write.csv(results.all
                      ,file = file.path(table.dir

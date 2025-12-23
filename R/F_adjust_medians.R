@@ -1563,8 +1563,8 @@ CompareAdjMedians <- function(run.name = "test",
             }
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm, fixed = TRUE)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             ## common scale
             comm.ylim <-
@@ -1682,8 +1682,8 @@ CompareAdjMedians <- function(run.name = "test",
             }
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm, fixed = TRUE)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             ## common scale
             if(identical(c("perc", "ratio", "count")[j], "perc")) {
@@ -1816,8 +1816,8 @@ CompareAdjMedians <- function(run.name = "test",
             }
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+            fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+            fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
         write.csv(tbl.df
                   ,file = fnm
@@ -1847,8 +1847,8 @@ CompareAdjMedians <- function(run.name = "test",
                 }
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             write.csv(tbl.df
                       ,file = fnm
@@ -1876,8 +1876,8 @@ CompareAdjMedians <- function(run.name = "test",
                 }
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             write.csv(tbl.df
                       ,file = fnm
@@ -1931,8 +1931,8 @@ CompareAdjMedians <- function(run.name = "test",
             }
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             write.csv(tbl.df
                      ,file = fnm
@@ -1986,8 +1986,8 @@ CompareAdjMedians <- function(run.name = "test",
             }
 
             ## Reduce length of filenames
-        fnm <- gsub("region[s]*", "", fnm)
-        fnm <- gsub("__", "_", fnm, fixed = TRUE)
+        fnm <- file.path(dirname(fnm), gsub("region[s]*", "", basename(fnm)))
+        fnm <- file.path(dirname(fnm), gsub("__", "_", basename(fnm), fixed = TRUE))
 
             write.csv(tbl.df
                      ,file = fnm

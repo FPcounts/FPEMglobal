@@ -123,7 +123,8 @@ file containing estimates and projections of the number of
 women by marital status, age, and year. See \dQuote{Details}.}
 
 \item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in constructing country aggregates.}
+\file{.csv} file listing countries that will be used in
+constructing country aggregates.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
@@ -202,28 +203,37 @@ any kind (including default aggregates) be produced?}
 \item{adjust_medians}{Logical. Should adjusted medians outputs be
 produced in addition to unadjusted outputs?}
 
-\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.}
+\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to
+use as the denominator for age ratios. Calculate ratios of
+users in a subset age range (e.g., 15--19) to users in the
+total age range (15--49) from this run. Requires a completed
+15--49 run.}
 
-\item{age_ratios_age_total_output_folder_path}{Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
+\item{age_ratios_age_total_output_folder_path}{Alternative way of
+specifying the run to use to make age ratios (see
+\code{age_ratios_age_total_run_name}. File path to output
 directory of the 15--49 run to use to make age ratios.}
 
-\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of
-the \file{.csv} file containing estimates and projections of
-the number of women by marital status, age, and year, for the
-age group 15--49. Only used if \code{make_age_ratios} is
-\code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.}
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name
+of the \file{.csv} file containing estimates and projections
+of the number of women by marital status, age, and year, for
+the age group 15--49. Only used if \code{make_age_ratios} is
+\code{TRUE}. Searched for in
+\code{age_ratios_age_total_denominator_counts_folder_path}.}
 
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path, "data")}.}
+\code{file.path(age_ratios_age_total_output_folder_path,
+    "data")}.}
 
 \item{run_name_override}{Character. User defined run name to
 override default generation. \code{run_desc} is ignored if
 this is non-\code{NULL}.}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
-and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.}
+and WAIC be computed? These are not re-done if the folder
+\sQuote{\code{output_folder_path}/convergence} exists.}
 
 \item{include_AR}{Logical; should the auto-regressive component of
 the model be estimated. Used mainly for testing.}

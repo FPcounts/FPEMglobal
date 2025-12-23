@@ -561,9 +561,10 @@ add_global_mcmc <- function(run_name,
 ##' The counts of women by marital status, age, and year in
 ##' \code{denominator_counts_csv_filename} are used to convert prevalence
 ##' proportions to counts of women by contraceptive use status. See
-##' \code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package = "FPEMglobal")}
-##' for an example of how the file should be formatted. Assume all columns are
-##' required.
+##' \code{system.file("extdata", "data_cp_model_all_women_15-49.csv", package =
+##' "FPEMglobal")} for an example of how the file should be formatted. Assume
+##' all columns are required. No scaling is done; if the input counts are on the
+##' unit scale, so will be the outputs.
 ##'
 ##' By default, results are produced at the country level and for geographic
 ##' country aggregates. These are the sub-regions and regions of the \dfn{UN
@@ -575,22 +576,24 @@ add_global_mcmc <- function(run_name,
 ##' included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")}
 ##' for the required format. Assum all columns are required.
 ##'
-##' @references UN DESA Statistics Division,
-##'     (2017) \emph{Standard Country or Area Codes for Statistical
-##'     Use (M49)}. United Nations, Department of Economic and Social
-##'     Affairs.  \url{https://unstats.un.org/unsd/methodology/m49/}
+##' @references UN DESA Statistics Division, (2017) \emph{Standard
+##'     Country or Area Codes for Statistical Use (M49)}. United
+##'     Nations, Department of Economic and Social Affairs.
+##'     \url{https://unstats.un.org/unsd/methodology/m49/}
 ##' @param run_name The name of the run to post-process.
 ##' @param output_folder_path
 ##' @param input_data_folder_path File path to folder containing
 ##'     \emph{all} input data (except any map shapefiles). If
 ##'     \code{NULL} the value is taken from
 ##'     \code{file.path(output_folder_path, "global_mcmc_args.RData")}
-##'     if that file exists, otherwise \code{file.path(output_folder_path, "data")}.
+##'     if that file exists, otherwise
+##'     \code{file.path(output_folder_path, "data")}.
 ##' @param denominator_counts_csv_filename Name of the \file{.csv}
 ##'     file containing estimates and projections of the number of
 ##'     women by marital status, age, and year. See \dQuote{Details}.
 ##' @param countries_for_aggregates_csv_filename Name of the
-##'     \file{.csv} file listing countries that will be used in constructing country aggregates.
+##'     \file{.csv} file listing countries that will be used in
+##'     constructing country aggregates.
 ##' @param start_year Estimates and projections are produced for a
 ##'     specified time interval. This is the start year of that
 ##'     interval.
@@ -604,7 +607,8 @@ add_global_mcmc <- function(run_name,
 ##'     (as rows) among which to compute probabilistic estimates of
 ##'     change-in-changes.
 ##' @param model_diagnostics Logical; should convergence diagnostics
-##'     and WAIC be computed? These are not re-done if the folder \sQuote{\code{output_folder_path}/convergence} exists.
+##'     and WAIC be computed? These are not re-done if the folder
+##'     \sQuote{\code{output_folder_path}/convergence} exists.
 ##' @param make_any_aggregates Logical. Should country aggregates of
 ##'     any kind (including default aggregates) be produced?
 ##' @param special_aggregates_name Character vector of names
@@ -613,19 +617,38 @@ add_global_mcmc <- function(run_name,
 ##'     \file{\code{special_aggregates_name}.csv} in
 ##'     \code{input_data_folder_path} that defines the special
 ##'     aggregates. See \dQuote{Details}.
-##' @param summarize_global_run Logical; should the model summary for one-country runs be produced?
-##' @param age_ratios_age_total_run_name Run name of the 15--49 run to use as the denominator for age ratios. Calculate ratios of users in a subset age range (e.g., 15--19) to users in the total age range (15--49) from this run. Requires a completed 15--49 run.
-##' @param age_ratios_age_total_output_folder_path Alternative way of specifying the run to use to make age ratios (see \code{age_ratios_age_total_run_name}. File path to output
+##' @param summarize_global_run Logical; should the model summary for
+##'     one-country runs be produced?
+##' @param age_ratios_age_total_run_name Run name of the 15--49 run to
+##'     use as the denominator for age ratios. Calculate ratios of
+##'     users in a subset age range (e.g., 15--19) to users in the
+##'     total age range (15--49) from this run. Requires a completed
+##'     15--49 run.
+##' @param age_ratios_age_total_output_folder_path Alternative way of
+##'     specifying the run to use to make age ratios (see
+##'     \code{age_ratios_age_total_run_name}. File path to output
 ##'     directory of the 15--49 run to use to make age ratios.
-##' @param age_ratios_age_total_denominator_counts_csv_filename Name of
-##'     the \file{.csv} file containing estimates and projections of
-##'     the number of women by marital status, age, and year, for the
-##'     age group 15--49. Only used if \code{make_age_ratios} is
-##'     \code{TRUE}. Searched for in \code{age_ratios_age_total_denominator_counts_folder_path}.
+##' @param age_ratios_age_total_denominator_counts_csv_filename Name
+##'     of the \file{.csv} file containing estimates and projections
+##'     of the number of women by marital status, age, and year, for
+##'     the age group 15--49. Only used if \code{make_age_ratios} is
+##'     \code{TRUE}. Searched for in
+##'     \code{age_ratios_age_total_denominator_counts_folder_path}.
 ##' @param age_ratios_age_total_denominator_counts_folder_path Path to
 ##'     \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 ##'     \code{NULL}, defaults to
-##'     \code{file.path(age_ratios_age_total_output_folder_path, "data")}.
+##'     \code{file.path(age_ratios_age_total_output_folder_path,
+##'     "data")}.
+##' @param overwrite_existing_results Logical; should post-processed
+##'     results already in the output folder be overwritten? If all of
+##'     the following files are already present,
+##'     \code{post_process_mcmc} will exit unless this argument is
+##'     \code{TRUE} (default is \code{FALSE}): "res.country.rda",
+##'     "res.aggregate.rda", "par.ciq.rda". This might be useful if,
+##'     for example, you wish to re-process a completed run with a
+##'     different \code{satrt_year} or \code{end_year}. It is
+##'     \emph{not} necessary to set this to \code{TRUE} to add extra
+##'     aggregates.
 ##' @inheritParams do_global_mcmc
 ##' @return The run name (invisibly). The function is mainly called
 ##'     for its side effects.
@@ -633,8 +656,8 @@ add_global_mcmc <- function(run_name,
 ##' @seealso \code{\link{do_global_run}} (which calls this function)
 ##'     to generate MCMC results for married or unmarried women,
 ##'     post-process, and produce results all in one call;
-##'     \code{\link{combine_runs}} to create all women results
-##'     from married and unmarried women runs;
+##'     \code{\link{combine_runs}} to create all women results from
+##'     married and unmarried women runs;
 ##'     \code{\link{do_global_all_women_run}} to do married,
 ##'     unmarried, \emph{and all women runs}, and produce results, all
 ##'     in one call.
@@ -651,7 +674,6 @@ post_process_mcmc <- function(run_name = NULL,
                                   1990.5, 2000.5,
                                   2000.5, 2019.5,
                                   2019.5, 2030.5,
-                                  2012.5, 2019.5,
                                   2012.5, 2019.5,
                                   2012.5, 2020.5),
                                   ncol = 2, byrow = TRUE),
@@ -670,6 +692,7 @@ post_process_mcmc <- function(run_name = NULL,
                               age_ratios_age_total_output_folder_path = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
+                              overwrite_existing_results = FALSE,
                               verbose = FALSE) {
 
     ##----------------------------------------------------------------------------
@@ -810,9 +833,10 @@ post_process_mcmc <- function(run_name = NULL,
 
     if (!file.exists(file.path(output_folder_path, "res.country.rda"))
         || !file.exists(file.path(output_folder_path, "res.aggregate.rda"))
-        || !file.exists(file.path(output_folder_path, "par.ciq.rda"))) {
+        || !file.exists(file.path(output_folder_path, "par.ciq.rda"))
+        || isTRUE(overwrite_existing_results)) {
 
-        message("\nConstructing output objects, including standard aggregates.")
+        message("\nConstructing output objects, including standard aggregates if requested.")
 
         if(!file.exists(file.path(output_folder_path, "mcmc.array.rda"))) {
             if (!dir.exists(file.path(output_folder_path, "countrytrajectories")) &&
@@ -872,7 +896,7 @@ post_process_mcmc <- function(run_name = NULL,
                 dir.create(output_data_folder_path, recursive = TRUE, showWarnings = FALSE)
             copy_uwra_mwra_files(basename(file.agg),
                                  awra_output_folder_path = output_data_folder_path, #<- TO DIRECTORY
-                                 mwra_uwra_output_folder_path = input_data_folder_path, #<- FROM DIRECTORY
+                                 mwra_uwra_output_folder_path = input_data_folder_path #<- FROM DIRECTORY
                                  )
         }
     }
@@ -1075,7 +1099,8 @@ post_process_mcmc <- function(run_name = NULL,
 ##' @param unmarried_women_output_folder_path Path to directory
 ##'     containing outputs for a unmarried women run. See
 ##'     \code{married_women_output_folder_path}.
-##' @param verbose
+##' @param verbose Logical; print lots and lots of messages about
+##'     progress?
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
 ##' @return Either \code{run_name} invisibly as a character string or,
@@ -2718,12 +2743,6 @@ combine_runs <- function(## Describe the run
     data_folder_path <- file.path(output_folder_path, "data")
     dir.create(data_folder_path, showWarnings = FALSE)
 
-    ## Make filepaths that need 'age_group'
-    if(is.null(denominator_counts_csv_filename)) {
-        denominator_counts_csv_filename <-
-            paste0("number_of_women_", mcmc.meta$general$age.group, ".csv")
-    }
-
     ##----------------------------------------------------------------------------
     ## Age ratios
     ##----------------------------------------------------------------------------
@@ -2852,6 +2871,7 @@ combine_runs <- function(## Describe the run
             gsub(paste0("^", global_mcmc_args_uwra$input_data_folder_path, "/"),
                  "",
                  global_mcmc_args_uwra$region_information_csv_filename)
+        message("Using 'region_information_csv_filename' from the unmarried women run.")
     }
 
     ## Post-process Args
@@ -2864,6 +2884,15 @@ combine_runs <- function(## Describe the run
             gsub(paste0("^", post_process_args_uwra$input_data_folder_path, "/"),
                  "",
                  post_process_args_uwra$countries_for_aggregates_csv_filename)
+        message("Using 'countries_for_aggregates_csv_filename' from the unmarried women run.")
+    }
+
+    if (is.null(denominator_counts_csv_filename)) {
+        denominator_counts_csv_filename <-
+            gsub(paste0("^", post_process_args_uwra$input_data_folder_path, "/"),
+                 "",
+                 post_process_args_uwra$denominator_counts_csv_filename)
+        message("Using 'denominator_counts_csv_filename' from the unmarried women run.")
     }
 
     ## Make Results
@@ -2875,11 +2904,16 @@ combine_runs <- function(## Describe the run
         load(make_res_args_file_path)
         make_results_args_uwra <- make_results_args
         if (is.null(countries_in_CI_plots_csv_filename)) {
-            countries_in_CI_plots_csv_filename <- make_results_args_uwra$countries_in_CI_plots_csv_filename
+            countries_in_CI_plots_csv_filename <-
+                gsub(paste0("^", make_results_args_uwra$input_data_folder_path, "/"),
+                     "",
+                make_results_args_uwra$countries_in_CI_plots_csv_filename)
+        message("Using 'countries_in_CI_plots_csv_filename' from the unmarried women run.")
         }
     } else {
         if (is.null(countries_in_CI_plots_csv_filename)) {
             countries_in_CI_plots_csv_filename <- countries_for_aggregates_csv_filename
+        message("Using 'countries_in_CI_plots_csv_filename' set to value of 'countries_for_aggregates_csv_filename'.")
         }
     }
 
@@ -2892,26 +2926,21 @@ combine_runs <- function(## Describe the run
     copy_uwra_mwra_files("mcmc.meta.rda", output_folder_path, unmarried_women_run_output_folder_path)
     copy_uwra_mwra_files("par.ciq.rda", output_folder_path, unmarried_women_run_output_folder_path)
 
-    if(!is.null(denominator_counts_csv_filename)) {
-        copy_uwra_mwra_files(denominator_counts_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
-    if(!is.null(region_information_csv_filename)) {
-        copy_uwra_mwra_files(region_information_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
-    if(!is.null(countries_for_aggregates_csv_filename)) {
-        copy_uwra_mwra_files(countries_for_aggregates_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
-    if(!is.null(countries_in_CI_plots_csv_filename)) {
-        copy_uwra_mwra_files(countries_in_CI_plots_csv_filename,
-                             data_folder_path,
-                             file.path(unmarried_women_run_output_folder_path, "data"))
-    }
+    copy_uwra_mwra_files(denominator_counts_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
+
+    copy_uwra_mwra_files(region_information_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
+
+    copy_uwra_mwra_files(countries_for_aggregates_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
+
+    copy_uwra_mwra_files(countries_in_CI_plots_csv_filename,
+                         data_folder_path,
+                         file.path(unmarried_women_run_output_folder_path, "data"))
 
     ## Add a label in 'mcmc.meta.rda' to mark this as an all women copy
     load(file.path(output_folder_path, "mcmc.meta.rda"), verbose = verbose)
@@ -4118,6 +4147,39 @@ do_global_validation_run <- function(run_desc = "",
 }
 
 
+##' Add special aggregates to a global run of FPEM
+##'
+##' This is a convenience function to add (possibly more) special
+##' aggregates to a completed global run. It wraps calls to
+##' \code{\link{post_process_mcmc}} and \code{make_results}.
+##'
+##' @param output_folder_path
+##' @param countries_for_aggregates_csv_filename
+##' @param denominator_counts_csv_filename
+##' @param start_year
+##' @param end_year
+##' @param years_change
+##' @param years_change2
+##' @param model_diagnostics
+##' @param special_aggregates_name
+##' @param verbose Logical; print lots and lots of messages about
+##'     progress?
+##' @return
+##' @author Mark Wheldon
+add_special_aggregates <- function(output_folder_path,
+                                   countries_for_aggregates_csv_filename = NULL,
+                                   denominator_counts_csv_filename = NULL,
+                                   start_year = NULL,
+                                   end_year = NULL,
+                                   years_change = NULL,
+                                   years_change2 = NULL,
+                                   model_diagnostics = FALSE,
+                                   special_aggregates_name,
+                                   verbose = FALSE) {
+    stop("TO BE COMPLETED")
+}
+
+
 
 ################################################################################
 ###
@@ -4127,33 +4189,74 @@ do_global_validation_run <- function(run_desc = "",
 
 ##' Rename global run
 ##'
-##' Renames the files and directories , and meta data, of a global run of FPEM for a single
-##' marital group.
+##' Renames the files and directories , and meta data, of a global run of FPEM
+##' for a single marital group.
+##'
+##' If \code{rename_output_folder = TRUE}, an attempt is made to rename the
+##' output folder. All matches of \code{run_name} are replaced with
+##' \code{new_run_name}.
+##'
+##' If found, the files \filename{global_mcmc_args.RData},
+##' \filename{post_process_args.RData}, and \filename{combine_runs_args.RData},
+##' all in \code{output_folder_path} are modified as follows:
+##'
+##' \enumerate{
+##' \item The element \code{run_name} is replaced with the \code{new_run_name}.
+##' \item Element \code{renamed} is set to \code{TRUE} (it is created if it doesn't already exist).
+##' \item Element \code{rename_list}, a character vector, is augmented by adding
+##' the old run name (as per \code{run_name}) to the front as the first element.
+##' }
 ##'
 ##' @section Note: If you modify \code{ignore} make sure
 ##'     \file{\code{output_folder_path}/data} still matches; it is not
 ##'     a good idea to rename files in that directory.
 ##'
 ##' @inheritParams do_global_mcmc
-##' @param run_name Character. Name of run to be renamed.
+##' @param run_name Character. Name of run to be renamed. If this is \code{NULL}
+##'     (default), the run name will be taken from the
+##'     \filename{global_mcmc_args.RData} file in \code{output_folder_path}.
 ##' @param new_run_name Character. New run name.
-##' @param output_folder_path Filepath to directory where outputs are saved. If \code{NULL}, defaults to
-##'     \code{file.path("output", run_name)}.
-##' @param ignore Regular expression. Files and directories with names that match will not be renamed.
+##' @param output_folder_path Filepath to directory where outputs are saved. If
+##'     \code{NULL}, defaults to \code{file.path("output", run_name)}.
+##' @param rename_output_folder Logical. Should an attempt be made to rename the
+##'     output folder? See \dQuote{Details}.
+##' @param ignore Regular expression. Files and directories with names That
+##'     match will not be renamed.
 ##' @return Called for side effect only.
 ##' @author Mark Wheldon
 ##' @export
-rename_global_run <- function(run_name,
+rename_global_run <- function(run_name = NULL,
                               new_run_name,
-                              output_folder_path = NULL,
-                              ignore = "^data$", verbose = FALSE) {
+                              output_folder_path = file.path("output", run_name),
+                              rename_output_folder = missing(output_folder_path),
+                              ignore = "^data$", verbose = getOption("FPEMglobal.verbose")) {
 
-    ##-----------------------------------------------------------------------------
+    ## -----------------------------------------------------------------------------
     ## Set-up
 
-    if(is.null(output_folder_path)) output_folder_path <- file.path("output", run_name)
+    checkmate::assert_directory_exists(output_folder_path)
 
-    ##-----------------------------------------------------------------------------
+    ## Filenames of argument lists
+    global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
+    post_process_args_fn <- file.path(output_folder_path, "post_process_args.RData")
+    combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
+
+    ## Get run name if not supplied
+    if (is.null(run_name)) {
+        if (file.exists(global_args_fn)) {
+            run_name <- get_run_name_from_args(get(load(global_args_fn)))
+        } else {
+            if (file.exists(post_process_args_fn)) {
+                run_name <- get_run_name_from_args(get(load(post_process_args_fn)))
+            } else {
+                if (file.exists(combine_args_fn)) {
+                    run_name <- get_run_name_from_args(get(load(combine_args_fn)))
+                }
+            }
+        }
+    }
+
+    ## -----------------------------------------------------------------------------
     ## Functions
 
     crawl_and_rename <- function(dir_path, run_name = run_name,
@@ -4162,7 +4265,7 @@ rename_global_run <- function(run_name,
         if (nrow(info)) {
             for(i in 1:nrow(info)) {
                 fn <- basename(rownames(info)[i])
-                if(info[i, "isdir"]) {
+                if (isTRUE(info[i, "isdir"])) {
                     crawl_and_rename(dir_path = file.path(dir_path, fn),
                                      run_name = run_name,
                                      new_run_name = new_run_name,
@@ -4183,57 +4286,76 @@ rename_global_run <- function(run_name,
         }
     }
 
-    ##-----------------------------------------------------------------------------
-    ## Rename
+    ## -----------------------------------------------------------------------------
+    ## Rename Files
 
     ## 'global_mcmc_args' object
-    global_args_fn <- file.path(output_folder_path, "global_mcmc_args.RData")
     if(file.exists(global_args_fn)) {
         load(global_args_fn, verbose = verbose)
+        global_mcmc_args$run_name <- new_run_name
         global_mcmc_args$renamed <- TRUE
-        global_mcmc_args$rename_list <- c(new_run_name, global_mcmc_args$rename_list)
+        global_mcmc_args$rename_list <- c(run_name, global_mcmc_args$rename_list)
         if (!"rename_list" %in% names(comment(global_mcmc_args))) {
             comment(global_mcmc_args) <-
                 c(comment(global_mcmc_args),
-                  rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+                  rename_list = c("'rename_list' is in reverse chronologial order; most recently replaced run name is first."))
         }
         save(global_mcmc_args, file = global_args_fn)
     }
-    post_process_args_fn <- file.path(output_folder_path, "post_process_args.RData")
+
+    ## 'post_process_args' object
     if(file.exists(post_process_args_fn)) {
         load(post_process_args_fn, verbose = verbose)
+        post_process_args$run_name <- new_run_name
         post_process_args$renamed <- TRUE
-        post_process_args$rename_list <- c(new_run_name, post_process_args$rename_list)
+        post_process_args$rename_list <- c(run_name, post_process_args$rename_list)
         if (!"rename_list" %in% names(comment(post_process_args))) {
             comment(post_process_args) <- c(comment(post_process_args),
-                                            rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+                                            rename_list = c("'rename_list' is in reverse chronologial order; most recently replaced run name is first."))
         }
         save(post_process_args, file = post_process_args_fn)
     }
-    combine_args_fn <- file.path(output_folder_path, "combine_runs_args.RData")
+
+    ## 'combine_runs_args' object
     if(file.exists(combine_args_fn)) {
         load(combine_args_fn, verbose = verbose)
+        combine_runs_args$run_name <- new_run_name
         combine_runs_args$renamed <- TRUE
-        combine_runs_args$rename_list <- c(new_run_name, combine_runs_args$rename_list)
+        combine_runs_args$rename_list <- c(run_name, combine_runs_args$rename_list)
         if (!"rename_list" %in% names(comment(combine_runs_args))) {
             comment(combine_runs_args) <- c(comment(combine_runs_args),
-                                            rename_list = c("'rename_list' is in reverse chronologial order; most recent run name is first."))
+                                            rename_list = c("'rename_list' is in reverse chronologial order; most recently replaced run name is first."))
         }
         save(combine_runs_args, file = combine_args_fn)
     }
 
     crawl_and_rename(output_folder_path, run_name, new_run_name, ignore = ignore)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
+    ## Rename output folder
+
+    if (rename_output_folder) {
+        new_output_folder_path <-
+            gsub(run_name, new_run_name, output_folder_path, fixed = TRUE)
+        success_rename_output_folder <-
+            file.rename(from = output_folder_path,
+                        to = new_output_folder_path)
+    } else {
+        new_output_folder_path <- output_folder_path
+    }
+
+    ## ----------------------------------------------------------------------------
     ## LOG
 
-    msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name)
-    message(msg)
+    msg <- paste0("Renamed run. Was called ", run_name, " now called ", new_run_name, ".")
+    if (rename_output_folder)
+        msg <- paste0(msg, " Output folder renamed to '", new_output_folder_path, "'.")
+    if (verbose) message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
-        file = file.path(output_folder_path, "log.txt"), sep = "", append = TRUE)
+        file = file.path(new_output_folder_path, "log.txt"), sep = "", append = TRUE)
 
-    ##----------------------------------------------------------------------------
+    ## ----------------------------------------------------------------------------
     ## Return
 
     return(new_run_name)
@@ -4343,16 +4465,6 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
                    UWRA = UWRA,
                    plot_data = plot_data)
 }
-
-
-
-## Make sure output directory is valid.
-##
-## 'post_processed' is 'TRUE' by default because an un-processed
-## directory doesn't even have 'mcmc.array.rda', which means it's
-## unlikely to be used.
-
-
 
 
 ##' Check that a directory is a valid FPEMglobal output directory
@@ -4479,3 +4591,49 @@ assert_valid_output_dir <- function(output_folder_path,
     if (verbose) message("'", output_folder_path, "' is a valid output directory.")
     return(invisible(output_folder_path))
 }
+
+
+##' List of files included with package
+##'
+##' FPEMglobal comes bundled with all the input data files needed to
+##' re-produce published model runs. This function will return a list
+##' giving the filenames and paths to these files. They are grouped by
+##' the package functions that take them as inputs. See
+##' \dQuote{Description} for further details.
+##'
+##' The files in the list are:
+##' \describe{
+##'   \item{model_run_inputs}{
+##'     \describe{
+##'       \item{input_data_1549}{Raw input data for ages 15--49}
+##'       \item{region_information}{Regional and other aggregations of countries; used in model hierarchy.}
+##'     }
+##'   }
+##'   \item{post_process_inputs}{
+##'     \describe{
+##'       \item{denominator_counts_1549}{Number of women by marital status, aged 15--49. These are used to convert proportions into counts, which are then used to construct the aggregates.}
+##'       \item{countries_for_aggregates}{Countries that are included in the set used to construct all aggregates. This set originally contained 195 countries but has grown slightly.}
+##'       \item{countries_for_output_unpd_185}{Subset of countries for which UNPD published some results.}
+##'     }
+##'   }
+##'  \describe{special_aggregates}{List of all files defining special aggregates, including SDG geographic regions and World Bank investment groups.}
+##' }
+##'
+##' @return A nested list containing filenames and paths.
+##' @author Mark Wheldon
+##' @export
+pkg_files_included <- function(result = c("filename", "filepath")) {
+    result <- match.arg(result, several.ok = TRUE)
+    list(model_run_inputs =
+             list(input_data_1549 = make_pkg_dir_entry("data_cp_model_all_women_15-49.csv", result = result),
+                  region_information = make_pkg_dir_entry("country_and_area_classification.csv", result = result)),
+         post_process_inputs =
+             list(denominator_counts_1549 = make_pkg_dir_entry("number_of_women_15-49.csv", result = result),
+                  countries_for_aggregates = make_pkg_dir_entry("countries_mwra_195.csv", result = result),
+                  countries_for_output_unpd_185 = make_pkg_dir_entry("countries_unpd_185.csv", result = result)),
+         special_aggregates =
+             setNames(lapply(get_all_spec_agg_csv(), make_pkg_dir_entry, result = result),
+                      nm = get_all_spec_agg_names())
+         )
+}
+

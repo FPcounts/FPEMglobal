@@ -135,14 +135,14 @@ RunMCMC <- function(# Start MCMC sampling
       #######Argument for country specific RUNS!!!!
   ##Matching characters in the datsets to make sure ISO codes are correct
   if (!is.null(iso.select)) { # change JR, 20131104
-    if (!(all(grepl("[[:alpha:]]", iso.select)) | all(grepl("[[:digit:]]", iso.select)))) {
+    if (!(all(grepl("[[:alpha:]]", iso.select)) || all(grepl("[[:digit:]]", iso.select)))) {
       stop("iso.select: Must be NULL, else numeric or character ISO country code.")
       return(invisible())
     }
   }
 
   if (!is.null(iso.country.select)) { # change JR, 20140404
-    if (!(all(grepl("[[:alpha:]]", iso.country.select)) | all(grepl("[[:digit:]]", iso.country.select)))) {
+    if (!(all(grepl("[[:alpha:]]", iso.country.select)) || all(grepl("[[:digit:]]", iso.country.select)))) {
       stop("iso.country.select: Must be NULL, else numeric or character ISO country code.")
       return(invisible())
     }
@@ -475,7 +475,7 @@ RunMCMC <- function(# Start MCMC sampling
                               ,verbose = verbose
                               )
         } else {
-    winbugs.data <- GetBugsData(data = data.raw$data,
+    winbugs.data <- GetBugsData_Rate(data = data.raw$data,
                                 country.info = data.raw$country.info,
                                 ## [MCW-2016-08-23-3] Pass this through
                                 country.info.no.data = data.raw$country.info.no.data,

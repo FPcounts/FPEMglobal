@@ -1,6 +1,6 @@
 ################################################################################
 ###
-### PACKAGE 'cuaw'
+### PACKAGE 'FPEMglobal'
 ###
 ### TEST 15-49 and 15-19
 ###
@@ -58,7 +58,10 @@ include_AR <- FALSE
 ### ** Inputs
 
 data_csv_filename_1549 <- "data_cp_model_all_women_SHORTFORTESTING_15-49.csv"
-data_csv_filename_1519 <- "data_cp_model_all_women_SHORTFORTESTING_15-19.csv"
+data_csv_filename_1519 <- "OLD_data_cp_model_all_women_SHORTFORTESTING_15-19.csv"
+
+denominator_counts_csv_filename_1549 <- "number_of_women_15-49.csv"
+denominator_counts_csv_filename_1519 <- "OLD_number_of_women_15-19--testing-only.csv"
 
 ###-----------------------------------------------------------------------------
 ### ** Outputs
@@ -80,7 +83,7 @@ years_change2 <- matrix(c(2005.5, 2010.5, 2015.5,
 adjust_medians <- TRUE
 plot_maps_shapefile_folder <- NULL
 plot_maps_years <- NULL
-special_aggregates_name <- "WHO_regions"
+special_aggregates_name <- "OLD_WHO_regions"
 model_diagnostics <- TRUE
 make_age_ratios <- TRUE
 verbose <- FALSE
@@ -110,6 +113,7 @@ all_women_1549_runs <-
         set_seed_chains = 1,
         ## Inputs
         data_csv_filename = data_csv_filename_1549,
+        denominator_counts_csv_filename = denominator_counts_csv_filename_1549,
         special_aggregates_name = special_aggregates_name,
         ## Outputs
         years_change = years_change,
@@ -163,13 +167,15 @@ do_global_mcmc(run_name_override = run_name_override_married_1519,
 ### Post process
 
 post_process_mcmc(run_name = run_name_override_married_1519,
-    ## Results
-    years_change = years_change,
-    years_change2 = years_change2,
-    model_diagnostics = model_diagnostics,
-    special_aggregates_name = special_aggregates_name,
-    age_ratios_age_total_output_folder_path = age_ratios_age_total_married_output_folder_path,
-    verbose = verbose)
+                  ## Inputs
+                  denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
+                  ## Results
+                  years_change = years_change,
+                  years_change2 = years_change2,
+                  model_diagnostics = model_diagnostics,
+                  special_aggregates_name = special_aggregates_name,
+                  age_ratios_age_total_output_folder_path = age_ratios_age_total_married_output_folder_path,
+                  verbose = verbose)
 
 ###
 ### Make results
@@ -207,13 +213,15 @@ do_global_mcmc(run_name_override = run_name_override_unmarried_1519,
 ### Post process
 
 post_process_mcmc(run_name = run_name_override_unmarried_1519,
-    ## Results
-    years_change = years_change,
-    years_change2 = years_change2,
-    model_diagnostics = model_diagnostics,
-    special_aggregates_name = special_aggregates_name,
-    age_ratios_age_total_output_folder_path = age_ratios_age_total_unmarried_output_folder_path,
-    verbose = verbose)
+                  ## Inputs
+                  denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
+                  ## Results
+                  years_change = years_change,
+                  years_change2 = years_change2,
+                  model_diagnostics = model_diagnostics,
+                  special_aggregates_name = special_aggregates_name,
+                  age_ratios_age_total_output_folder_path = age_ratios_age_total_unmarried_output_folder_path,
+                  verbose = verbose)
 
 ###
 ### Make results
@@ -227,11 +235,16 @@ make_results(run_name = run_name_override_unmarried_1519,
              verbose = verbose)
 
 ###-----------------------------------------------------------------------------
-### **** Combine
+### **** All Women
+
+###
+### Combine Runs
 
 combine_runs(married_women_run_name = run_name_override_married_1519,
              unmarried_women_run_name = run_name_override_unmarried_1519,
              run_name_override = run_name_override_all_women_1519,
+             ## Inputs
+             denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
              ## Results
              years_change = years_change,
              years_change2 = years_change2,
@@ -242,8 +255,8 @@ combine_runs(married_women_run_name = run_name_override_married_1519,
              age_ratios_age_total_all_women_output_folder_path = age_ratios_age_total_all_women_output_folder_path,
              verbose = FALSE)
 
-###-----------------------------------------------------------------------------
-### **** Make Results
+###
+### Make Results
 
 make_results(run_name = run_name_override_all_women_1519,
              plot_maps_shapefile_folder = plot_maps_shapefile_folder,

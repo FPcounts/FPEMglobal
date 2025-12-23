@@ -38,11 +38,11 @@ convert_run_name <- function(run_name, from = c("married", "unmarried", "all_wom
 ##' @author Mark Wheldon
 ##' @export
 get_run_name_from_args <- function(args) {
-    if (!is.null(args$renamed) && args$renamed && length(args$rename_list)) {
+    if (!is.null(args[["renamed"]]) && args[["renamed"]] && length(args[["rename_list"]])) {
         source_element <- "rename_list"
-        out <- args$rename_list[1]
+        out <- args[["rename_list"]][1]
     } else {
-        out <- args$run_name
+        out <- args[["run_name"]]
         source_element <- "run_name"
     }
     if (is.null(out))
@@ -210,4 +210,25 @@ marital_age_group_param_defaults <- function(marital_group, age_group, model_fam
                 uwra_kappa_c_priors = uwra_kappa_c_priors,
                 EA_bias_negative = EA_bias_negative,
                 HW_bias_negative = HW_bias_negative))
+}
+
+###-----------------------------------------------------------------------------
+### * 'extdata' Files
+
+make_pkg_dir_entry <- function(filename, result = c("filename", "filepath")) {
+    if (identical(length(result), 1L)) {
+    return(list(filename = filename,
+                filepath = system.file("extdata", filename, package = "FPEMglobal"))[[result]])
+        } else {
+    return(list(filename = filename,
+                filepath = system.file("extdata", filename, package = "FPEMglobal"))[result])
+        }
+}
+
+get_all_spec_agg_csv <- function(pattern = "^aggregates_special_.+\\.csv$") {
+    grep(pattern, dir(system.file("extdata", package = "FPEMglobal")), value = TRUE)
+}
+
+get_all_spec_agg_names <- function(pattern = "^aggregates_special_.+\\.csv$") {
+    gsub(pattern = "\\.csv", replacement = "", x = get_all_spec_agg_csv(pattern = pattern))
 }

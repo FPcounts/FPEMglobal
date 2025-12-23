@@ -1,4 +1,4 @@
-@echo off
+@ECHO off
 
 ECHO.
 ECHO.
@@ -7,8 +7,8 @@ ECHO. ==========================================================================
 ECHO. DATA
 ECHO. ================================================================================
 
-rem Rscript -e "setwd('data-raw'); example(source); sourceDir('.')"
-rem if %ERRORLEVEL% GEQ 1 PAUSE
+Rscript -e "setwd('data-raw'); example(source); sourceDir('.')"
+if %ERRORLEVEL% GEQ 1 PAUSE
 
 ECHO.
 ECHO.
@@ -55,11 +55,15 @@ ECHO. ==========================================================================
 ECHO. TESTS
 ECHO. ================================================================================
 
-rem Rscript -e "testthat::test_package('FPEMglobal')"
-rem if %ERRORLEVEL% GEQ 1 PAUSE
-
-Rscript "inst/slowTests/rate_model_global_1549_1519_test.R"
+Rscript -e "testthat::test_package('FPEMglobal')"
 if %ERRORLEVEL% GEQ 1 PAUSE
+
+CHDIR "inst\slowTests"
+FOR %%a IN (*.R) DO (
+    Rscript %%a
+    if %ERRORLEVEL% GEQ 1 PAUSE
+)
+CHDIR "..\.."
 
 ECHO.
 ECHO.

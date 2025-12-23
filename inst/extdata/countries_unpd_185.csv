@@ -80,7 +80,7 @@ ISO.Code,Country.or.area
 372,Ireland
 376,Israel
 380,Italy
-384,CÙte d'Ivoire
+384,Cote d'Ivoire
 388,Jamaica
 392,Japan
 398,Kazakhstan
@@ -134,7 +134,7 @@ ISO.Code,Country.or.area
 626,Timor-Leste
 630,Puerto Rico
 634,Qatar
-638,RÈunion
+638,Reunion
 642,Romania
 643,Russian Federation
 646,Rwanda
@@ -171,7 +171,7 @@ ISO.Code,Country.or.area
 795,Turkmenistan
 800,Uganda
 804,Ukraine
-807,The former Yugoslav Republic of Macedonia
+807,North Macedonia
 818,Egypt
 826,United Kingdom of Great Britain and Northern Ireland
 834,United Republic of Tanzania
@@ -184,3 +184,4 @@ ISO.Code,Country.or.area
 882,Samoa
 887,Yemen
 894,Zambia
+412,Kosovo (UN administered region under security council res. 1244)
