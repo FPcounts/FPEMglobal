@@ -7,11 +7,12 @@
 compare_runs_CI_plots(
   run_name_1,
   run_name_2,
-  run_1_output_folder_path = file.path("output", run_name_1),
+  output_dir_path = file.path(getwd(), "output"),
+  run_1_run_dir_path = file.path(output_dir_path, run_name_1),
   run_1_plot_label = run_name_1,
-  run_2_output_folder_path = file.path("output", run_name_2),
+  run_2_run_dir_path = file.path(output_dir_path, run_name_2),
   run_2_plot_label = run_name_2,
-  output_folder_path = file.path(run_1_output_folder_path, "fig", "compare_runs_plots"),
+  run_dir_path = file.path(run_1_run_dir_path, "fig", "compare_runs_plots"),
   plot_data = NULL,
   all_women = NULL,
   compare_aggregates = TRUE,
@@ -19,19 +20,19 @@ compare_runs_CI_plots(
 )
 }
 \arguments{
-\item{run_1_output_folder_path}{Filepath to directory where
+\item{run_1_run_dir_path}{Filepath to directory where
 outputs for \code{run_1_name} are saved.}
 
 \item{run_1_plot_label}{The label to use for \dQuote{run_1} in the
 plots. Defaults to \code{run_1_name}.}
 
-\item{run_2_output_folder_path}{See
-\code{run_1_output_folder_path}, but for \dQuote{run_2}.}
+\item{run_2_run_dir_path}{See
+\code{run_1_run_dir_path}, but for \dQuote{run_2}.}
 
 \item{run_2_plot_label}{See \code{run_2_plot_label}, but for
 \dQuote{run_2}.}
 
-\item{output_folder_path}{Filepath to the directory in which the
+\item{run_dir_path}{Filepath to the directory in which the
 comparison plots will be saved.}
 
 \item{plot_data}{Logical; should available input data be plotted?

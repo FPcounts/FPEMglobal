@@ -8,7 +8,8 @@ do_global_validation_run(
   run_desc = "",
   run_name_override = NULL,
   run_name_to_validate = NULL,
-  run_name_to_validate_output_folder_path = file.path("output", run_name_to_validate),
+  output_dir_path = file.path(getwd(), "output"),
+  run_name_to_validate_run_dir_path = file.path(output_dir_path, run_name_to_validate),
   input_data_folder_path = NULL,
   exclude_unmet_only = FALSE,
   exclude_unmet_only_test_prop = 0.2,
@@ -31,7 +32,6 @@ do_global_validation_run(
   thinning = 2,
   chain_nums = 1:3,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
-  output_folder_path = NULL,
   verbose = FALSE
 )
 }
@@ -47,13 +47,18 @@ this is non-\code{NULL}.}
 \item{run_name_to_validate}{Name of completed global run to
 validate.}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
+
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
 \item{exclude_unmet_only}{Logical; do validtion exercise leaving
 out unmet need observations? See details.}
@@ -138,16 +143,10 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
-
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
-A name for the run returned invisibly as a character string. Results
-are saved to \file{\code{output_folder_path}}.
+A name for the run returned invisibly as a character string.
 }
 \description{
 This generates the MCMC chains using \code{\link{do_global_validation_mcmc}},

@@ -6,13 +6,13 @@
 \usage{
 combine_runs(
   run_desc = "",
-  output_folder_path = NULL,
+  output_dir_path = file.path(getwd(), "output"),
   married_women_run_name = NULL,
-  married_women_run_output_folder_path = NULL,
+  married_women_run_run_dir_path = NULL,
   unmarried_women_run_name = NULL,
-  unmarried_women_run_output_folder_path = NULL,
-  unmarried_women_run_data_folder_path =
-    file.path(unmarried_women_run_output_folder_path, "data"),
+  unmarried_women_run_run_dir_path = NULL,
+  unmarried_women_run_data_folder_path = file.path(unmarried_women_run_run_dir_path,
+    "data"),
   region_information_csv_filename = NULL,
   special_aggregates_name = NULL,
   denominator_counts_csv_filename = NULL,
@@ -30,9 +30,9 @@ combine_runs(
   age_ratios_age_total_unmarried_run_name = NULL,
   age_ratios_age_total_married_run_name = NULL,
   age_ratios_age_total_all_women_run_name = NULL,
-  age_ratios_age_total_unmarried_output_folder_path = NULL,
-  age_ratios_age_total_married_output_folder_path = NULL,
-  age_ratios_age_total_all_women_output_folder_path = NULL,
+  age_ratios_age_total_unmarried_run_dir_path = NULL,
+  age_ratios_age_total_married_run_dir_path = NULL,
+  age_ratios_age_total_all_women_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   run_name_override = NULL,
@@ -44,23 +44,24 @@ combine_runs(
 auto-generated \code{run_name}. Ignored if
 \code{run_name_override} is non-\code{NULL}.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
 
 \item{married_women_run_name}{Run name of the married women run to
 be combined. Ignored if
-\code{married_women_run_output_folder_path} is
+\code{married_women_run_run_dir_path} is
 \code{NULL}. Otherwise, the output folder will be assumed to
-be \code{file.path("output", married_women_run_name)}.}
+be \code{file.path(output_dir_path, married_women_run_name)}.}
 
-\item{married_women_run_output_folder_path}{Path to the folder
+\item{married_women_run_run_dir_path}{Path to the folder
 containing results for the married women run to be combined.}
 
 \item{unmarried_women_run_name}{Same as
 \code{married_women_run_name} but for the unmarried women run.}
 
-\item{unmarried_women_run_output_folder_path}{Path to the folder
+\item{unmarried_women_run_run_dir_path}{Path to the folder
 containing results for the unmarried women run to be combined.}
 
 \item{unmarried_women_run_data_folder_path}{Path to the folder
@@ -68,9 +69,9 @@ containing results for the unmarried women run to be
 combined. (Only used if \code{special_aggregates_name} is
 non-\code{NULL}).}
 
-\item{region_information_csv_filename}{Filename of the \file{.csv}
-file containing classifications of countries in sub-regions,
-regions, etc. See \dQuote{Details}.}
+\item{region_information_csv_filename}{Filename of the \file{.csv} file
+containing classifications of countries in sub-regions, regions, etc.
+See \dQuote{Details}.}
 
 \item{special_aggregates_name}{Character vector of names
 (\emph{not} filenames) of any speical aggregates
@@ -91,7 +92,7 @@ constructing country aggregates.}
 that lists the countries to be included in the main
 country-level indicator plots. See \code{\link{make_results}}
 for further details. \code{combine_runs} will copy this file
-to \file{\code{output_folder_path}/data} so it is available
+to \file{\code{run_dir_path}/data} so it is available
 for \code{make_results}.}
 
 \item{start_year}{Estimates and projections are produced for a
@@ -125,15 +126,15 @@ married 15--49 run to use as the denominator for age ratios.}
 \item{age_ratios_age_total_all_women_run_name}{Run name of the all
 women 15--49 run to use as the denominator for age ratios.}
 
-\item{age_ratios_age_total_unmarried_output_folder_path}{File path
+\item{age_ratios_age_total_unmarried_run_dir_path}{File path
 to output directory of the unmarried 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_married_output_folder_path}{File path
+\item{age_ratios_age_total_married_run_dir_path}{File path
 to output directory of the married 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_all_women_output_folder_path}{File path
+\item{age_ratios_age_total_all_women_run_dir_path}{File path
 to output directory of the all women 15--49 run to use to make
 age ratios.}
 
@@ -147,19 +148,18 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path,
+\code{file.path(age_ratios_age_total_run_dir_path,
     "data")}.}
 
 \item{run_name_override}{Character. User defined run name to
 override default generation. \code{run_desc} is ignored if
 this is non-\code{NULL}.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run returned invisibly as a character
-string. Results are saved to \file{\code{output_folder_path}}.
+string. Results are saved to \file{\code{run_dir_path}}.
 }
 \description{
 Combines MCMC outputs from married and unmarried women FPEM runs
@@ -170,14 +170,14 @@ been produced by \code{\link{do_global_mcmc}} or
 \details{
 Married \emph{and} unmarried women runs must have been produced
 previously by, e.g,. \code{\link{do_global_run}}. They are
-identified by their output directory filepaths
-(\code{married_women_run_output_folder_path} and
-\code{unmarried_women_run_output_folder_path}). Files from the
+identified by their run directory filepaths
+(\code{married_women_run_run_dir_path} and
+\code{unmarried_women_run_run_dir_path}). Files from the
 married and unmarried runs that are needed to make all women
-results are copied to \code{output_folder_path} (and
+results are copied to \code{run_dir_path} (and
 sub-directories) and noted in files called \file{log.txt} in the
 respective directories. The file
-\file{\code{output_folder_path}/log.txt} provides a record of
+\file{\code{run_dir_path}/log.txt} provides a record of
 which married and unmarried women runs were combined.
 }
 \examples{

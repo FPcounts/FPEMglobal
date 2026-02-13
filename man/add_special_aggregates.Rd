@@ -5,7 +5,7 @@
 \title{Add special aggregates to a global run of FPEM}
 \usage{
 add_special_aggregates(
-  output_folder_path,
+  run_dir_path,
   countries_for_aggregates_csv_filename = NULL,
   denominator_counts_csv_filename = NULL,
   start_year = NULL,

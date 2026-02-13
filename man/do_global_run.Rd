@@ -22,7 +22,7 @@ do_global_run(
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
   countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
   special_aggregates_name = NULL,
-  output_folder_path = NULL,
+  output_dir_path = file.path(getwd(), "output"),
   start_year = 1970.5,
   end_year = 2030.5,
   years_change = matrix(c(1990.5, 2000.5, 2000.5, 2018.5, 2018.5, 2030.5, 2012.5, 2018.5,
@@ -41,7 +41,7 @@ do_global_run(
   make_any_aggregates = TRUE,
   adjust_medians = TRUE,
   age_ratios_age_total_run_name = NULL,
-  age_ratios_age_total_output_folder_path = NULL,
+  age_ratios_age_total_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   run_name_override = NULL,
@@ -102,21 +102,20 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
-\item{data_csv_filename}{Filename of the \file{.csv} file
-containing country-level prevalence data. See
-\dQuote{Details}.}
+\item{data_csv_filename}{Filename of the \file{.csv} file containing
+country-level prevalence data. See \dQuote{Details}.}
 
-\item{region_information_csv_filename}{Filename of the \file{.csv}
-file containing classifications of countries in sub-regions,
-regions, etc. See \dQuote{Details}.}
+\item{region_information_csv_filename}{Filename of the \file{.csv} file
+containing classifications of countries in sub-regions, regions, etc.
+See \dQuote{Details}.}
 
 \item{denominator_counts_csv_filename}{Name of the \file{.csv}
 file containing estimates and projections of the number of
@@ -129,7 +128,7 @@ constructing country aggregates.}
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
 country-level indicator plots. These are the plots saved in
-\file{\code{output_folder_path}/fig/\var{[run
+\file{\code{run_dir_path}/fig/\var{[run
     name]}CIs.pdf}. The format is the same as
 \code{countries_for_aggregates_csv_filename}. The file is
 looked for in \code{input_data_folder_path}. Countries appear
@@ -143,9 +142,10 @@ desired. There must be a corresponding file with name
 \code{input_data_folder_path} that defines the special
 aggregates. See \dQuote{Details}.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
 
 \item{start_year}{Estimates and projections are produced for a
 specified time interval. This is the start year of that
@@ -169,7 +169,7 @@ ineffective.}
 
 \item{plot_barchart_years}{Vector of years for which bar charts
 should be produced. These are saved to
-\file{\code{output_folder_path}/fig/barchart}. These must be
+\file{\code{run_dir_path}/fig/barchart}. These must be
 in the range of \code{start_year} and \code{end_year} passed
 to \code{\link{post_process_mcmc}}.}
 
@@ -177,7 +177,7 @@ to \code{\link{post_process_mcmc}}.}
 the first and last elements are used). Declares the years to
 be used to make the \dQuote{fish bone} plots, i.e., the plots
 appearing in files
-\file{\code{output_folder_path}/fig/\var{[run
+\file{\code{run_dir_path}/fig/\var{[run
     name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
 the range of \code{start_year} and \code{end_year} passed to
 \code{\link{post_process_mcmc}}.}
@@ -209,7 +209,7 @@ users in a subset age range (e.g., 15--19) to users in the
 total age range (15--49) from this run. Requires a completed
 15--49 run.}
 
-\item{age_ratios_age_total_output_folder_path}{Alternative way of
+\item{age_ratios_age_total_run_dir_path}{Alternative way of
 specifying the run to use to make age ratios (see
 \code{age_ratios_age_total_run_name}. File path to output
 directory of the 15--49 run to use to make age ratios.}
@@ -224,7 +224,7 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path,
+\code{file.path(age_ratios_age_total_run_dir_path,
     "data")}.}
 
 \item{run_name_override}{Character. User defined run name to
@@ -233,13 +233,12 @@ this is non-\code{NULL}.}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
 and WAIC be computed? These are not re-done if the folder
-\sQuote{\code{output_folder_path}/convergence} exists.}
+\sQuote{\code{run_dir_path}/convergence} exists.}
 
-\item{include_AR}{Logical; should the auto-regressive component of
-the model be estimated. Used mainly for testing.}
+\item{include_AR}{Logical; should the auto-regressive component of the model
+be estimated. Used mainly for testing.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run, \code{run_name}, returned invisibly as a

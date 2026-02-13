@@ -8,7 +8,8 @@ do_global_validation_mcmc(
   run_desc = "",
   run_name_override = NULL,
   run_name_to_validate = NULL,
-  run_name_to_validate_output_folder_path = file.path("output", run_name_to_validate),
+  output_dir_path = file.path(getwd(), "output"),
+  run_name_to_validate_run_dir_path = file.path(output_dir_path, run_name_to_validate),
   exclude_unmet_only = FALSE,
   exclude_unmet_only_test_prop = 0.2,
   at_random = FALSE,
@@ -30,7 +31,6 @@ do_global_validation_mcmc(
   thinning = 2,
   chain_nums = 1:3,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
-  output_folder_path = NULL,
   verbose = FALSE
 )
 }
@@ -45,6 +45,11 @@ this is non-\code{NULL}.}
 
 \item{run_name_to_validate}{Name of completed global run to
 validate.}
+
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
 
 \item{exclude_unmet_only}{Logical; do validtion exercise leaving
 out unmet need observations? See details.}
@@ -129,25 +134,14 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
-
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 
 \item{run_name_to_validate_output_folder}{File path to results of
 run \code{run_name_to_validate}.}
 }
 \value{
-A name for the run returned invisibly as a character
-string. MCMC chains are saved to
-\file{\code{output_folder_path}/temp.JAGSobjects}. They need
-to be post-processed with \code{\link{post_process_mcmc}}. The
-run name must be passed to \code{\link{post_process_mcmc}} to
-locate find the saved chains for processing. Run names for
-married and unmarried runs must also be passed to
-\code{\link{combine_runs}} to generate all women MCMC results.
+The run name of the validated run, returned invisibly as a character
+string.
 }
 \description{
 Generates the MCMC output of an out-of-sample validation of a completed

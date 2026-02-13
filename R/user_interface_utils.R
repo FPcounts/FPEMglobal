@@ -53,17 +53,17 @@ get_run_name_from_args <- function(args) {
 }
 
 ## Make sure a run_name conflict does not occur when writing to existing outputs
-check_run_name_conflicts <- function(run_name, output_folder_path) {
+check_run_name_conflicts <- function(run_name, run_dir_path) {
     combine_runs_filepath <-
-        file.path(output_folder_path, "combine_runs_args.RData")
-    if (dir.exists(output_folder_path)) {
+        file.path(run_dir_path, "combine_runs_args.RData")
+    if (dir.exists(run_dir_path)) {
         if (file.exists(combine_runs_filepath)) {
             existing_run_name <- get_run_name_from_args(get(load(combine_runs_filepath)))
             if (!identical(run_name, existing_run_name))
                 stop("'run_name' not the same as existing run name ('",
                      existing_run_name, "').")
         } else {
-            stop("'", output_folder_path, "' already exists but '",
+            stop("'", run_dir_path, "' already exists but '",
                  combine_runs_filepath, "' does not; cannot determine 'run_name' of existing output.")
         }
     }
@@ -119,29 +119,29 @@ copy_data_files <- function(run_name, data_dir,
         for (sd in subdirs) {
             copy_data_files(run_name,
                             file.path(data_dir, sd),
-                            data_local = file.path("output", run_name, "data", sd))
+                            data_local = file.path(data_local, sd))
         }
     }
 }
 
 copy_uwra_mwra_files <-
-    function(filename, awra_output_folder_path, mwra_uwra_output_folder_path,
+    function(filename, awra_run_dir_path, mwra_uwra_run_dir_path,
              new_filename = filename,
              return = FALSE) {
-        if (!dir.exists(mwra_uwra_output_folder_path)) stop("'", mwra_uwra_output_folder_path, "' does not exist.")
-        if (!dir.exists(awra_output_folder_path)) stop("'", awra_output_folder_path, "' does not exist.")
+        if (!dir.exists(mwra_uwra_run_dir_path)) stop("'", mwra_uwra_run_dir_path, "' does not exist.")
+        if (!dir.exists(awra_run_dir_path)) stop("'", awra_run_dir_path, "' does not exist.")
         if (!identical(dirname(new_filename), ".")) {
-            to_path <- file.path(awra_output_folder_path, dirname(new_filename))
+            to_path <- file.path(awra_run_dir_path, dirname(new_filename))
             if (!dir.exists(to_path)) dir.create(to_path, recursive = TRUE)
             to_filename <- basename(new_filename)
         } else {
-            to_path <- awra_output_folder_path
+            to_path <- awra_run_dir_path
             to_filename <- new_filename
         }
-        succeeded <- file_copy2(from = file.path(mwra_uwra_output_folder_path, filename),
+        succeeded <- file_copy2(from = file.path(mwra_uwra_run_dir_path, filename),
                                 to = file.path(to_path, to_filename),
                                 overwrite = FALSE)
-        report_file_copy(succeeded, filename, awra_output_folder_path, mwra_uwra_output_folder_path,
+        report_file_copy(succeeded, filename, awra_run_dir_path, mwra_uwra_run_dir_path,
                          new_filename)
         if(return) return(succeeded)
     }

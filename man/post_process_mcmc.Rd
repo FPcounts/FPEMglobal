@@ -6,7 +6,8 @@
 \usage{
 post_process_mcmc(
   run_name = NULL,
-  output_folder_path = file.path("output", run_name),
+  output_dir_path = file.path(getwd(), "output"),
+  run_dir_path = file.path(output_dir_path, run_name),
   input_data_folder_path = NULL,
   denominator_counts_csv_filename = NULL,
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
@@ -22,7 +23,7 @@ post_process_mcmc(
   special_aggregates_name = NULL,
   summarize_global_run = TRUE,
   age_ratios_age_total_run_name = NULL,
-  age_ratios_age_total_output_folder_path = NULL,
+  age_ratios_age_total_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   overwrite_existing_results = FALSE,
@@ -32,16 +33,17 @@ post_process_mcmc(
 \arguments{
 \item{run_name}{The name of the run to post-process.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
 
 \item{input_data_folder_path}{File path to folder containing
 \emph{all} input data (except any map shapefiles). If
 \code{NULL} the value is taken from
-\code{file.path(output_folder_path, "global_mcmc_args.RData")}
+\code{file.path(run_dir_path, "global_mcmc_args.RData")}
 if that file exists, otherwise
-\code{file.path(output_folder_path, "data")}.}
+\code{file.path(run_dir_path, "data")}.}
 
 \item{denominator_counts_csv_filename}{Name of the \file{.csv}
 file containing estimates and projections of the number of
@@ -69,7 +71,7 @@ change-in-changes.}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
 and WAIC be computed? These are not re-done if the folder
-\sQuote{\code{output_folder_path}/convergence} exists.}
+\sQuote{\code{run_dir_path}/convergence} exists.}
 
 \item{make_any_aggregates}{Logical. Should country aggregates of
 any kind (including default aggregates) be produced?}
@@ -90,7 +92,7 @@ users in a subset age range (e.g., 15--19) to users in the
 total age range (15--49) from this run. Requires a completed
 15--49 run.}
 
-\item{age_ratios_age_total_output_folder_path}{Alternative way of
+\item{age_ratios_age_total_run_dir_path}{Alternative way of
 specifying the run to use to make age ratios (see
 \code{age_ratios_age_total_run_name}. File path to output
 directory of the 15--49 run to use to make age ratios.}
@@ -105,7 +107,7 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path,
+\code{file.path(age_ratios_age_total_run_dir_path,
     "data")}.}
 
 \item{overwrite_existing_results}{Logical; should post-processed
@@ -119,8 +121,7 @@ different \code{satrt_year} or \code{end_year}. It is
 \emph{not} necessary to set this to \code{TRUE} to add extra
 aggregates.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 The run name (invisibly). The function is mainly called
@@ -131,7 +132,7 @@ MCMC chains from a global run of FPEM for either married or
 unmarried women (via \code{\link{do_global_mcmc}}) must be
 post-processed before summary results (tables, plots) can be
 produced. This function does the post-processing and saves the
-results in \code{output_folder_path}. You need at least two chains
+results in \code{run_dir_path}. You need at least two chains
 for post-processing to work. This function does not apply to all
 women runs; see \code{\link{combine_runs}}.
 }

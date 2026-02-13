@@ -7,7 +7,8 @@
 add_global_mcmc(
   run_name,
   chain_nums = 2,
-  output_folder_path = file.path("output", run_name),
+  output_dir_path = file.path(getwd(), "output"),
+  run_dir_path = file.path(output_dir_path, run_name),
   run_in_parallel = isTRUE(length(chain_nums) > 1),
   verbose = FALSE
 )
@@ -17,11 +18,17 @@ add_global_mcmc(
 
 \item{chain_nums}{number identifying chains to add. Unlike
 \code{\link{do_global_mcmc}}, this can be a scalar. It must \emph{not}
-be the number identifying a chain already created. See \dQuote{Description}.}
+be the number identifying a chain already created. See
+\dQuote{Description}.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
+
+\item{run_dir_path}{Full filepath to the directory where outputs are saved
+for a specific model run. Usually, this will take a form like
+\code{file.path(output_dir_path, run_name)}.}
 
 \item{run_in_parallel}{Logical. Determines if MCMC chains are run
 in parallel. Parallel running requires package
@@ -35,17 +42,16 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
-A name for the run is returned invisibly as a character string. MCMC chains are
-saved to \file{output_folder_path/temp.JAGSobjects}. They need to
+A name for the run is returned invisibly as a character string. MCMC
+chains are saved to \file{run_dir_path/temp.JAGSobjects}. They need to
 be post-processed with \code{\link{post_process_mcmc}}. The run name
 must be passed to \code{\link{post_process_mcmc}} to locate find the
 saved chains for processing. Run names for married and unmarried runs
-must also be passed to \code{\link{combine_runs}} to generate all
-women MCMC results.
+must also be passed to \code{\link{combine_runs}} to generate all women
+MCMC results.
 }
 \description{
 At least two chains are required to post-process the results of a run of the

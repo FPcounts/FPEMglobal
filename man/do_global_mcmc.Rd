@@ -19,7 +19,7 @@ do_global_mcmc(
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   region_information_csv_filename = "country_and_area_classification.csv",
-  output_folder_path = NULL,
+  output_dir_path = file.path(getwd(), "output"),
   include_AR = TRUE,
   verbose = FALSE
 )
@@ -80,42 +80,40 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
-\item{data_csv_filename}{Filename of the \file{.csv} file
-containing country-level prevalence data. See
-\dQuote{Details}.}
+\item{data_csv_filename}{Filename of the \file{.csv} file containing
+country-level prevalence data. See \dQuote{Details}.}
 
-\item{region_information_csv_filename}{Filename of the \file{.csv}
-file containing classifications of countries in sub-regions,
-regions, etc. See \dQuote{Details}.}
+\item{region_information_csv_filename}{Filename of the \file{.csv} file
+containing classifications of countries in sub-regions, regions, etc.
+See \dQuote{Details}.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
 
-\item{include_AR}{Logical; should the auto-regressive component of
-the model be estimated. Used mainly for testing.}
+\item{include_AR}{Logical; should the auto-regressive component of the model
+be estimated. Used mainly for testing.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
-A name for the run returned invisibly as a character
-string. MCMC chains are saved to the directory
-\file{\code{output_folder_path}/temp.JAGSobjects}. They need
-to be post-processed with \code{\link{post_process_mcmc}}. The
-run name (and path to outputs, if not the default) must be
-passed to \code{\link{post_process_mcmc}} to locate find the
-saved chains for processing. Run names for married and
-unmarried runs must also be passed to
-\code{\link{combine_runs}} to generate all women MCMC results.
+A name for the run returned invisibly as a character string. MCMC
+chains are saved to the directory
+\file{\code{output_dir_path}/<run_name>/temp.JAGSobjects}. They need to be
+post-processed with \code{\link{post_process_mcmc}}. The run name (and
+path to outputs, if not the default) must be passed to
+\code{\link{post_process_mcmc}} to locate the saved chains for
+processing. Run names for married and unmarried runs must also be passed
+to \code{\link{combine_runs}} to generate all women MCMC results.
 }
 \description{
 This function generates an MCMC sample for a global run of FPEM for a single
@@ -130,14 +128,12 @@ See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 vignette("FPEMglobal_Intro")
 }
 \seealso{
-\code{\link{do_global_run}} (which calls this function)
-to generate MCMC results for married or unmarried women,
-post-process, and produce results all in one call;
-\code{\link{combine_runs}} to create all women results from
-married and unmarried women runs;
-\code{\link{do_global_all_women_run}} to do married,
-unmarried, \emph{and all women runs}, and produce results, all
-in one call.
+\code{\link{do_global_run}} (which calls this function) to generate
+MCMC results for married or unmarried women, post-process, and produce
+results all in one call; \code{\link{combine_runs}} to create all women
+results from married and unmarried women runs;
+\code{\link{do_global_all_women_run}} to do married, unmarried,
+\emph{and all women runs}, and produce results, all in one call.
 }
 \author{
 Mark Wheldon, Andrew Tait

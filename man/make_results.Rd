@@ -6,7 +6,8 @@
 \usage{
 make_results(
   run_name = NULL,
-  output_folder_path = file.path("output", run_name),
+  output_dir_path = file.path(getwd(), "output"),
+  run_dir_path = file.path(output_dir_path, run_name),
   input_data_folder_path = NULL,
   countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
   CI_plots_years = NULL,
@@ -33,22 +34,23 @@ make_results(
 \arguments{
 \item{run_name}{The name of the run to post-process.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
 country-level indicator plots. These are the plots saved in
-\file{\code{output_folder_path}/fig/\var{[run
+\file{\code{run_dir_path}/fig/\var{[run
     name]}CIs.pdf}. The format is the same as
 \code{countries_for_aggregates_csv_filename}. The file is
 looked for in \code{input_data_folder_path}. Countries appear
@@ -65,7 +67,7 @@ is reset to \code{TRUE}.}
 
 \item{plot_barchart_years}{Vector of years for which bar charts
 should be produced. These are saved to
-\file{\code{output_folder_path}/fig/barchart}. These must be
+\file{\code{run_dir_path}/fig/barchart}. These must be
 in the range of \code{start_year} and \code{end_year} passed
 to \code{\link{post_process_mcmc}}.}
 
@@ -73,7 +75,7 @@ to \code{\link{post_process_mcmc}}.}
 the first and last elements are used). Declares the years to
 be used to make the \dQuote{fish bone} plots, i.e., the plots
 appearing in files
-\file{\code{output_folder_path}/fig/\var{[run
+\file{\code{run_dir_path}/fig/\var{[run
     name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
 the range of \code{start_year} and \code{end_year} passed to
 \code{\link{post_process_mcmc}}.}
@@ -109,12 +111,12 @@ corresponding file named
 made? If \code{NULL} this is set based on the presence of
 files \dQuote{res.country.age.ratio.rda} or
 \dQuote{res.country.all.women.age.ratio.rda} in
-\code{output_folder_path}.}
+\code{run_dir_path}.}
 
 \item{validation_keep_all}{Logical. Should validation results be
 saved? If \code{TRUE}, a list with elements \code{CI.df} and
 \code{Error.df} is saved to
-\file{\code{output_folder_path}/validn_repts/validation.results.rda}.}
+\file{\code{run_dir_path}/validn_repts/validation.results.rda}.}
 
 \item{validation_return_res_as_df}{Logical; should the validation
 results be returned as a data frame? If \code{FALSE} the
@@ -136,13 +138,13 @@ attempt is made to find this folder by substituting
 \item{unmarried_women_run_name}{Run name of a unmarried women
 run. See \code{married_women_run_name}.}
 
-\item{married_women_output_folder_path}{Path to directory
+\item{married_women_run_dir_path}{Path to directory
 containing outputs for a married women run. See
 \code{married_women_run_name}.}
 
-\item{unmarried_women_output_folder_path}{Path to directory
+\item{unmarried_women_run_dir_path}{Path to directory
 containing outputs for a unmarried women run. See
-\code{married_women_output_folder_path}.}
+\code{married_women_run_dir_path}.}
 }
 \value{
 Either \code{run_name} invisibly as a character string or,

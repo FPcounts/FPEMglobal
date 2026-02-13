@@ -5,7 +5,7 @@
 \title{Check that a directory is a valid FPEMglobal output directory}
 \usage{
 assert_valid_output_dir(
-  output_folder_path,
+  run_dir_path,
   post_processed = TRUE,
   countrytrajectories = post_processed,
   made_results = post_processed,
@@ -15,7 +15,7 @@ assert_valid_output_dir(
 )
 }
 \arguments{
-\item{output_folder_path}{Path (or paths, if a vector) to directory to validate.}
+\item{run_dir_path}{Path (or paths, if a vector) to directory to validate.}
 
 \item{post_processed}{Logical; has \code{\link{post_process_mcmc}}
 been run on the directory?}
@@ -31,18 +31,18 @@ run on the directory?}
 results?}
 
 \item{age_ratios}{Logical; check for age ratio results? Defaults
-to \code{FALSE} if \code{output_folder_path} points to a
+to \code{FALSE} if \code{run_dir_path} points to a
 \dQuote{15-49} run, otherwise the value of
 \code{post_processed}.}
 }
 \value{
-If all checks pass, \code{output_folder_path} is returned
+If all checks pass, \code{run_dir_path} is returned
 invisibly, otherwise an error is thrown.
 }
 \description{
 Checks the content of \code{output_dir} to make sure certain
 directories and files are present. If some are missing, an error
-is returned, otherwise \code{output_folder_path} is returned
+is returned, otherwise \code{run_dir_path} is returned
 invisibly.
 }
 \details{

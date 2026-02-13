@@ -6,6 +6,7 @@
 \usage{
 do_global_all_women_run(
   run_desc = "",
+  output_dir_path = file.path(getwd(), "output"),
   age_group = "15-49",
   estimation_iterations = 3,
   burn_in_iterations = 1,
@@ -46,9 +47,9 @@ do_global_all_women_run(
   age_ratios_age_total_married_run_name = NULL,
   age_ratios_age_total_unmarried_run_name = NULL,
   age_ratios_age_total_all_women_run_name = NULL,
-  age_ratios_age_total_married_output_folder_path = NULL,
-  age_ratios_age_total_unmarried_output_folder_path = NULL,
-  age_ratios_age_total_all_women_output_folder_path = NULL,
+  age_ratios_age_total_married_run_dir_path = NULL,
+  age_ratios_age_total_unmarried_run_dir_path = NULL,
+  age_ratios_age_total_all_women_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
   verbose = FALSE
@@ -58,6 +59,11 @@ do_global_all_women_run(
 \item{run_desc}{Character. Brief note to be appended to the
 auto-generated \code{run_name}. Ignored if
 \code{run_name_override} is non-\code{NULL}.}
+
+\item{output_dir_path}{Path of the top-level directory in which to save results.
+Sub-directories will be created inside this directory for each run
+either automatically or based on \code{run_name_override} (see
+\dQuote{Details}).}
 
 \item{age_group}{Character. The age group for which a run of the
 model is desired, specified in the format \dQuote{xx-yy},
@@ -103,21 +109,20 @@ in parallel. Parallel running requires package
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
 
-\item{data_csv_filename}{Filename of the \file{.csv} file
-containing country-level prevalence data. See
-\dQuote{Details}.}
+\item{data_csv_filename}{Filename of the \file{.csv} file containing
+country-level prevalence data. See \dQuote{Details}.}
 
-\item{region_information_csv_filename}{Filename of the \file{.csv}
-file containing classifications of countries in sub-regions,
-regions, etc. See \dQuote{Details}.}
+\item{region_information_csv_filename}{Filename of the \file{.csv} file
+containing classifications of countries in sub-regions, regions, etc.
+See \dQuote{Details}.}
 
 \item{denominator_counts_csv_filename}{File path. Filepath to \file{.csv}
 file with denominator counts (married and unmarried) for this
@@ -131,7 +136,7 @@ constructing country aggregates.}
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
 country-level indicator plots. These are the plots saved in
-\file{\code{output_folder_path}/fig/\var{[run
+\file{\code{run_dir_path}/fig/\var{[run
     name]}CIs.pdf}. The format is the same as
 \code{countries_for_aggregates_csv_filename}. The file is
 looked for in \code{input_data_folder_path}. Countries appear
@@ -163,7 +168,7 @@ change-in-changes.}
 
 \item{plot_barchart_years}{Vector of years for which bar charts
 should be produced. These are saved to
-\file{\code{output_folder_path}/fig/barchart}. These must be
+\file{\code{run_dir_path}/fig/barchart}. These must be
 in the range of \code{start_year} and \code{end_year} passed
 to \code{\link{post_process_mcmc}}.}
 
@@ -171,7 +176,7 @@ to \code{\link{post_process_mcmc}}.}
 the first and last elements are used). Declares the years to
 be used to make the \dQuote{fish bone} plots, i.e., the plots
 appearing in files
-\file{\code{output_folder_path}/fig/\var{[run
+\file{\code{run_dir_path}/fig/\var{[run
     name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
 the range of \code{start_year} and \code{end_year} passed to
 \code{\link{post_process_mcmc}}.}
@@ -199,10 +204,10 @@ produced in addition to unadjusted outputs?}
 
 \item{model_diagnostics}{Logical; should convergence diagnostics
 and WAIC be computed? These are not re-done if the folder
-\sQuote{\code{output_folder_path}/convergence} exists.}
+\sQuote{\code{run_dir_path}/convergence} exists.}
 
-\item{include_AR}{Logical; should the auto-regressive component of
-the model be estimated. Used mainly for testing.}
+\item{include_AR}{Logical; should the auto-regressive component of the model
+be estimated. Used mainly for testing.}
 
 \item{age_ratios_age_total_run_name_prefix}{Run name prefix for married, unmarried, and all women runs. Results will be searched for in \file{output/\code{age_ratios_age_total_run_name_prefix}_\var{[marital_group]}_15-49}.}
 
@@ -215,15 +220,15 @@ unmarried 15--49 run to use as the denominator for age ratios.}
 \item{age_ratios_age_total_all_women_run_name}{Run name of the all
 women 15--49 run to use as the denominator for age ratios.}
 
-\item{age_ratios_age_total_married_output_folder_path}{File path
+\item{age_ratios_age_total_married_run_dir_path}{File path
 to output directory of the married 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_unmarried_output_folder_path}{File path
+\item{age_ratios_age_total_unmarried_run_dir_path}{File path
 to output directory of the unmarried 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_all_women_output_folder_path}{File path
+\item{age_ratios_age_total_all_women_run_dir_path}{File path
 to output directory of the all women 15--49 run to use to make
 age ratios.}
 
@@ -237,16 +242,15 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_output_folder_path,
+\code{file.path(age_ratios_age_total_run_dir_path,
     "data")}.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A \emph{list} of run names for married, unmarried, and all women
 runs, returned invisibly. Results are saved to
-\file{\code{output_folder_path}}.
+\file{\code{output_dir_path}/<run_name>}.
 }
 \description{
 Do married and unmarried runs of the global model, and produce

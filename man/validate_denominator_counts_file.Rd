@@ -10,7 +10,7 @@ validate_denominator_counts_file(
   denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
   marital_group = c("married", "unmarried"),
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-  output_folder_path = NULL,
+  run_dir_path = NULL,
   verbose = FALSE
 )
 }
@@ -25,26 +25,31 @@ to name of the file containing prevalence data if
 from the denominator counts file if post-processing is done
 (see \code{\link{post_process_mcmc}}).}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value of \code{data_csv_filename}, etc., will
-be passed to \code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)}
-will be passed. The default value points to the data directory
-supplied with the package.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value of
+\code{data_csv_filename}, etc., will be passed to
+\code{\link{file.path}} as-is. Otherwise,
+\code{file.path(input_data_folder_path, data_csv_filename)} will be
+passed. The default value points to the data directory supplied with the
+package.}
+
+\item{denominator_counts_csv_filename}{Name of the \file{.csv} file
+containing the denominator counts. This can also be the string
+\code{"res.country.rda"} to validate the counts in a completed model
+run. In that case, you must specify \code{run_dir_path}.}
 
 \item{marital_group}{Character. The marital group for which a run
 of the model is desired.}
 
-\item{output_folder_path}{Filepath to directory where outputs
-should be saved. If \code{NULL}, defaults to
-\code{file.path("output", run_name)}.}
+\item{run_dir_path}{Full filepath to the directory where outputs are saved
+for a specific model run. Usually, this will take a form like
+\code{file.path(output_dir_path, run_name)}.}
 
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
+\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
-The processed denominator counts file is returned \emph{invisibly} as a data frame.
+The processed denominator counts file is returned \emph{invisibly}
+as a data frame.
 }
 \description{
 The denominator counts file for \code{\link{do_global_run}} and friends
