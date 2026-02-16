@@ -3510,6 +3510,7 @@ do_global_all_women_run <- function(## Describe the run
             countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
             make_any_aggregates = make_any_aggregates,
             special_aggregates_name = special_aggregates_name,
+            output_dir_path = output_dir_path,
             ## Outputs
             start_year = start_year,
             end_year = end_year,
@@ -3559,6 +3560,7 @@ do_global_all_women_run <- function(## Describe the run
             countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
             make_any_aggregates = make_any_aggregates,
             special_aggregates_name = special_aggregates_name,
+            output_dir_path = output_dir_path,
             ## Outputs
             start_year = start_year,
             end_year = end_year,

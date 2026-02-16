@@ -141,11 +141,11 @@ The table below list the three methods by which the 15--49 results to be used fo
 |                              |                                        | `age_ratios_age_total_unmarried_run_name`                |
 |                              |                                        | `age_ratios_age_total_all_women_run_name`                |
 +------------------------------+----------------------------------------+----------------------------------------------------------+
-| Output folder path           | `do_global_run`                        | `age_ratios_age_total_output_folder_path`                |
+| Output folder path           | `do_global_run`                        | `age_ratios_age_total_run_dir_path`                |
 +------------------------------+----------------------------------------+----------------------------------------------------------+
-|                              | `do_global_all_women_run`              | `age_ratios_age_total_married_output_folder_path`        |
-|                              |                                        | `age_ratios_age_total_unmarried_output_folder_path`      |
-|                              |                                        | `age_ratios_age_total_all_women_output_folder_path`      |
+|                              | `do_global_all_women_run`              | `age_ratios_age_total_married_run_dir_path`        |
+|                              |                                        | `age_ratios_age_total_unmarried_run_dir_path`      |
+|                              |                                        | `age_ratios_age_total_all_women_run_dir_path`      |
 +------------------------------+----------------------------------------+----------------------------------------------------------+
 
 
@@ -158,7 +158,7 @@ In the following section, and an additional type of outputs is discussed: age ra
 +-----------------------+-------------------------------------------------+---------------------------------------------------------------------------------+
 | Marital Group         | Output                                          | Function call sequence                                                          |
 +=======================+=================================================+=================================================================================+
-| Married and unmarried | Age ratios, country level                       | `post_process_mcmc(..., age_ratios_age_total_output_folder_path = "NAME")` \    | 
+| Married and unmarried | Age ratios, country level                       | `post_process_mcmc(..., age_ratios_age_total_run_dir_path = "NAME")` \    | 
 |                       |                                                 | `make_results`                                                                  |
 +-----------------------+-------------------------------------------------+---------------------------------------------------------------------------------+
 |                       | Age ratios, std. aggregates                     | Age ratios, country level for *both* marital groups *and* all women completed \ |
@@ -173,13 +173,13 @@ In the following section, and an additional type of outputs is discussed: age ra
 +-----------------------+-------------------------------------------------+---------------------------------------------------------------------------------+
 |                       | Adjusted median age ratios, spec. aggregates    | Not available                                                                   |
 +-----------------------+-------------------------------------------------+---------------------------------------------------------------------------------+
-| All women             | Age ratios, country level                       | `combine_runs(..., age_ratios_age_total_output_folder_path = "NAME")` \         |
+| All women             | Age ratios, country level                       | `combine_runs(..., age_ratios_age_total_run_dir_path = "NAME")` \         |
 |                       |                                                 | `make_results`                                                                  |
 +-----------------------+-------------------------------------------------+---------------------------------------------------------------------------------+
-|                       | Age ratios, std. aggregates                     | `combine_runs(..., age_ratios_age_total_output_folder_path = "NAME")` \         |
+|                       | Age ratios, std. aggregates                     | `combine_runs(..., age_ratios_age_total_run_dir_path = "NAME")` \         |
 |                       |                                                 | `make_results`                                                                  |
 +-----------------------+-------------------------------------------------+---------------------------------------------------------------------------------+
-|                       | Age ratios, spec. aggregates                    | `combine_runs(..., age_ratios_age_total_output_folder_path = "NAME")` \         |
+|                       | Age ratios, spec. aggregates                    | `combine_runs(..., age_ratios_age_total_run_dir_path = "NAME")` \         |
 |                       |                                                 | `make_results(..., special_aggregates_name = "[name]")`                         |
 +-----------------------+-------------------------------------------------+---------------------------------------------------------------------------------+
 |                       | Adjusted median age ratios, country level       | Not available                                                                   |

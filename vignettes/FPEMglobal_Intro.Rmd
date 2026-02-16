@@ -352,7 +352,7 @@ To run the global model for each marrital group separately, use the function `do
 
 ```
 
-To combine unmarried and married women runs to create all women results, use the funtion `combine_runs`. This produces MCMC trajectories for all women from the married and unmarried women outputs specified in the arguments `married_women_run_output_folder_path` and `unmarried_women_run_output_folder_path`.
+To combine unmarried and married women runs to create all women results, use the funtion `combine_runs`. This produces MCMC trajectories for all women from the married and unmarried women outputs specified in the arguments `married_women_run_run_dir_path` and `unmarried_women_run_run_dir_path`.
 
 ```{r combine-uw-mw-to-aw, echo = TRUE, results = "markup", cache=FALSE, eval = FALSE}
  
@@ -361,8 +361,8 @@ To combine unmarried and married women runs to create all women results, use the
  
 all_women_run_name <- combine_runs(
     ## Inputs
-    married_women_run_output_folder_path = file.path("output", married_run_name),
-    unmarried_women_run_output_folder_path = file.path("output", unmarried_run_name),
+    married_women_run_run_dir_path = file.path("output", married_run_name),
+    unmarried_women_run_run_dir_path = file.path("output", unmarried_run_name),
     )
 
  ## See the run name
@@ -581,9 +581,9 @@ make_results(all_women_runs$unmarried_run_name,     #<<< Give the run name
  ## You must re-run `combine_runs(..., adjust_medians = TRUE)`. 
  ## Use 'run_name_override' to get them in the existing output folder.
 all_women_adj_med <-
-    combine_runs(married_women_run_output_folder_path = file.path("output",
+    combine_runs(married_women_run_run_dir_path = file.path("output",
                      all_women_runs$married_run_name),  
-                 unmarried_women_run_output_folder_path = file.path("output",
+                 unmarried_women_run_run_dir_path = file.path("output",
                      all_women_runs$unmarried_run_name),
              run_name_override = all_women_runs$all_women_run_name,
              adjust_medians = TRUE)
@@ -631,9 +631,9 @@ make_results(all_women_runs$unmarried_run_name,
  ## otherwise a new folder for all women will be created.
 
 all_women_spec_agg <-
-    combine_runs(married_women_run_output_folder_path = file.path("output",
+    combine_runs(married_women_run_run_dir_path = file.path("output",
                                      all_women_runs$married_run_name), 
-                 unmarried_women_run_output_folder_path = file.path("output",
+                 unmarried_women_run_run_dir_path = file.path("output",
                                      all_women_runs$unmarried_run_name),
                  run_name_override = all_women_runs$all_women_run_name,
                  special_aggregates_name = "WHO_regions",
