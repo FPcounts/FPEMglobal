@@ -13,14 +13,13 @@ validate_input_file(
 )
 }
 \arguments{
-\item{age_group}{Character. The age group for which a run of the
-model is desired, specified in the format \dQuote{xx-yy},
-where \dQuote{xx} is the start age, \dQuote{yy} is the end
-age, e.g., \code{"15-49"} or \code{"15-19"}. This is used to
-form the run name if \code{run_name_override} is \code{NULL},
-to name of the file containing prevalence data if
-\code{data_csv_filename} is \code{NULL}, and to select rows
-from the denominator counts file if post-processing is done
+\item{age_group}{Character. The age group for which a run of the model is
+desired, specified in the format \dQuote{xx-yy}, where \dQuote{xx} is
+the start age, \dQuote{yy} is the end age, e.g., \code{"15-49"} or
+\code{"15-19"}. This is used to form the run name if
+\code{run_name_override} is \code{NULL}, to name of the file containing
+prevalence data if \code{data_csv_filename} is \code{NULL}, and to
+select rows from the denominator counts file if post-processing is done
 (see \code{\link{post_process_mcmc}}).}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
@@ -34,8 +33,8 @@ package.}
 \item{data_csv_filename}{Filename of the \file{.csv} file containing
 country-level prevalence data. See \dQuote{Details}.}
 
-\item{marital_group}{Character. The marital group for which a run
-of the model is desired.}
+\item{marital_group}{Character. The marital group for which a run of the
+model is desired.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 }

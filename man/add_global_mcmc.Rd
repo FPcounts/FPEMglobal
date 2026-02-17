@@ -6,32 +6,27 @@
 \usage{
 add_global_mcmc(
   run_name,
-  chain_nums = 2,
   output_dir_path = file.path(getwd(), "output"),
-  run_dir_path = file.path(output_dir_path, run_name),
+  chain_nums = 2,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
   verbose = FALSE
 )
 }
 \arguments{
-\item{run_name}{The name of the run to add a chain to.}
+\item{run_name}{The name of the run to add a chain to. Unlike
+\code{\link{do_global_mcmc}}, this is must be specified.}
+
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
 \item{chain_nums}{number identifying chains to add. Unlike
 \code{\link{do_global_mcmc}}, this can be a scalar. It must \emph{not}
 be the number identifying a chain already created. See
 \dQuote{Description}.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save results.
-Sub-directories will be created inside this directory for each run
-either automatically or based on \code{run_name_override} (see
-\dQuote{Details}).}
-
-\item{run_dir_path}{Full filepath to the directory where outputs are saved
-for a specific model run. Usually, this will take a form like
-\code{file.path(output_dir_path, run_name)}.}
-
-\item{run_in_parallel}{Logical. Determines if MCMC chains are run
-in parallel. Parallel running requires package
+\item{run_in_parallel}{Logical. Determines if MCMC chains are run in
+parallel. Parallel running requires package
 #ifdef windows
 \pkg{doParallel}.
 #endif

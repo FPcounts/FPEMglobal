@@ -49,42 +49,44 @@ get_wpp_agg <- function(agg_list, agg_set_code = "1002", parent_type_id, parent_
                iso.group = "", wpp_ParentID = x$ParentID)
     }
 
-###-----------------------------------------------------------------------------
-### * Download Aggregate Definitions
+#### COMMENT OUT THE DOWNLOAD; ACCESS TO EAGLE IS SUSPENDED
 
-###-----------------------------------------------------------------------------
-### ** File Locations
+## ###-----------------------------------------------------------------------------
+## ### * Download Aggregate Definitions
 
-extdata_dir <- here::here("inst", "extdata")
-data_dir <- here::here("data")
+## ###-----------------------------------------------------------------------------
+## ### ** File Locations
 
-if (!dir.exists(extdata_dir)) dir.create(extdata_dir, recursive = TRUE)
-if (!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
+## extdata_dir <- here::here("inst", "extdata")
+## data_dir <- here::here("data")
 
-###-----------------------------------------------------------------------------
-### ** Parameters
+## if (!dir.exists(extdata_dir)) dir.create(extdata_dir, recursive = TRUE)
+## if (!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
 
-## query EAGLE list of locations
-WPP_revision <- 2024
-WPP_RevID <- 20
+## ###-----------------------------------------------------------------------------
+## ### ** Parameters
 
-## myRevisionYear <- WPP_revision
-myRevisionID <- WPP_RevID
-myProjectionYear <- 2024
-myVariant <- "Medium"
+## ## query EAGLE list of locations
+## WPP_revision <- 2024
+## WPP_RevID <- 20
 
-eagle_URL      <- "https://popdiv.dfs.un.org/peps/eagle/api/file/ProcessedListCompact/"
-## eagle_locations <- data.table(fromJSON(paste0(eagle_URL, WPP_revision), flatten=TRUE))
+## ## myRevisionYear <- WPP_revision
+## myRevisionID <- WPP_RevID
+## myProjectionYear <- 2024
+## myVariant <- "Medium"
 
-## userid & password for Eagle/PEPxplorer API
-if (!isTRUE(grepl("https://popdiv\\.dfs\\.un\\.org/peps/eagle/api", keyring::key_list()$service))) {
-    stop("Key for service 'https://popdiv.dfs.un.org/peps/eagle/api' not found. Use 'keyring::key_set(service = \"https://popdiv.dfs.un.org/peps/eagle/api\", username = \"Patrick.Gerland\")' to set the password and re-run.")
-}
-user <- "Patrick.Gerland"
-pw <- keyring::key_get(service = "https://popdiv.dfs.un.org/peps/eagle/api", username = "Patrick.Gerland")
+## eagle_URL      <- "https://popdiv.dfs.un.org/peps/eagle/api/file/ProcessedListCompact/"
+## ## eagle_locations <- data.table(fromJSON(paste0(eagle_URL, WPP_revision), flatten=TRUE))
 
-options(scipen = 999)
-options(timeout = max(1000, getOption("timeout")))
+## ## userid & password for Eagle/PEPxplorer API
+## if (!isTRUE(grepl("https://popdiv\\.dfs\\.un\\.org/peps/eagle/api", keyring::key_list()$service))) {
+##     stop("Key for service 'https://popdiv.dfs.un.org/peps/eagle/api' not found. Use 'keyring::key_set(service = \"https://popdiv.dfs.un.org/peps/eagle/api\", username = \"Patrick.Gerland\")' to set the password and re-run.")
+## }
+## user <- "Patrick.Gerland"
+## pw <- keyring::key_get(service = "https://popdiv.dfs.un.org/peps/eagle/api", username = "Patrick.Gerland")
+
+## options(scipen = 999)
+## options(timeout = max(1000, getOption("timeout")))
 
 ## List of standard and special aggregates for aggregations
 List_Aggregates_Codes <-
@@ -98,25 +100,27 @@ List_Aggregates_Codes <-
 
 List_Aggregates <- setNames(nm = List_Aggregates_Codes)
 
-###-----------------------------------------------------------------------------
-### ** Query
+## ###-----------------------------------------------------------------------------
+## ### ** Query
 
-aggregates_wpp2024_list <-
-    lapply(List_Aggregates, function(myList) {
-        eagle_URL <-
-            paste0("https://popdiv.dfs.un.org/peps/pepxplorer/api/location/locationlist/",
-                   WPP_RevID, "/", myList)
-        json_file <- httr::GET(eagle_URL, httr::authenticate(user, pw, type="any"))
-        ## transform json object back into text and flatten it
-        return(jsonlite::fromJSON(httr::content(json_file, 'text'),
-                                  simplifyVector = TRUE, flatten = TRUE))
-    })
+## aggregates_wpp2024_list <-
+##     lapply(List_Aggregates, function(myList) {
+##         eagle_URL <-
+##             paste0("https://popdiv.dfs.un.org/peps/pepxplorer/api/location/locationlist/",
+##                    WPP_RevID, "/", myList)
+##         json_file <- httr::GET(eagle_URL, httr::authenticate(user, pw, type="any"))
+##         ## transform json object back into text and flatten it
+##         return(jsonlite::fromJSON(httr::content(json_file, 'text'),
+##                                   simplifyVector = TRUE, flatten = TRUE))
+##     })
 
-save(aggregates_wpp2024_list, file = file.path(data_dir, "aggregates_wpp2024_list.rda"))
+## save(aggregates_wpp2024_list, file = file.path(data_dir, "aggregates_wpp2024_list.rda"))
 
-## The .xlsx file will show up as a new change every time it's regenerated, so comment out.
-## locations <- lapply(aggregates_wpp2024_list, function(z) data.table(z$Locations))
-## openxlsx::write.xlsx(locations, file = file.path(extdata_dir, "aggregates_wpp2024_list.xlsx"), asTable = TRUE)
+## ## The .xlsx file will show up as a new change every time it's regenerated, so comment out.
+## ## locations <- lapply(aggregates_wpp2024_list, function(z) data.table(z$Locations))
+## ## openxlsx::write.xlsx(locations, file = file.path(extdata_dir, "aggregates_wpp2024_list.xlsx"), asTable = TRUE)
+
+load(file = file.path(data_dir, "aggregates_wpp2024_list.rda"))
 
 ###-----------------------------------------------------------------------------
 ### * Save Aggregates to FPEMglobal Special Aggregates Format

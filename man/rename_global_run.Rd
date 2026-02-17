@@ -21,10 +21,9 @@ rename_global_run(
 
 \item{new_run_name}{Character. New run name.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save results.
-Sub-directories will be created inside this directory for each run
-either automatically or based on \code{run_name_override} (see
-\dQuote{Details}).}
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
 \item{run_dir_path}{Filepath to directory where outputs are saved. If
 \code{NULL}, defaults to \code{file.path(output_dir_path, run_name)}.}

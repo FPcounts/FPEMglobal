@@ -11,12 +11,12 @@
 
 make_run_name <- function(marital_group, age_group, run_note = NULL,
                           run_name_override = NULL) {
-    if(is.null(run_name_override)) {
-        run_name <- format(Sys.time(), "%y%m%d_%H%M%S")
+    if (is.null(run_name_override)) {
+        run_name <- format(Sys.time(), "%Y%m%d")
     } else {
         run_name <- run_name_override
     }
-    if(isTRUE(nchar(run_note) > 0)) run_name <- paste(run_name, run_note, sep = "_")
+    if (isTRUE(nchar(run_note) > 0)) run_name <- paste(run_name, run_note, sep = "_")
     run_name <- paste(run_name, age_group, marital_group, sep = "_")
     return(run_name)
 }
@@ -26,7 +26,39 @@ convert_run_name <- function(run_name, from = c("married", "unmarried", "all_wom
         from <- match.arg(from)
         to  <-  match.arg(to)
         gsub(pattern = from, replacement = to, x = run_name)
+}
+
+make_run_dir_path <- function(run_name, output_dir_path) {
+    if (is.null(output_dir_path) && is.null(run_name))
+        stop("'output_dir_path' or 'run_name' must be specified.")
+    return(file.path(output_dir_path, run_name))
+}
+
+initialize_paths <- function(run_name, output_dir_path,
+                             marital_group, age_group) {
+
+    if (is.null(run_name)) run_name <- make_run_name(marital_group = marital_group, age_group = age_group)
+    run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
+
+    if (!dir.exists(run_dir_path)) {
+        dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
+    } else {
+        if (any(grepl("^mcmc\\.info(\\.[0-9]+\\.|\\.)rda$", dir(run_dir_path)),
+               na.rm = TRUE) ||
+           file.exists(file.path(run_dir_path, "mcmc.meta.rda")) ||
+           file.exists(file.path(run_dir_path, "mcmc.array.rda"))) {
+            stop("Directory '", run_dir_path, "' already exists with some MCMC output files. Change the run name, output folder path, or delete the existing run and start again.")
+        } else {
+            if (file.exists(file.path(run_dir_path, "combine_runs_args.RData"))) {
+                stop("Directory '", run_dir_path, "' already exists with 'combine_runs_args.RData'. Change the run name, output folder path, or delete the existing run and start again.")
+            }
+        }
     }
+    return(list(run_name = run_name,
+                run_dir_path = run_dir_path,
+                output_dir_path = output_dir_path))
+}
+
 
 ##' Get run_name from an argument list
 ##'

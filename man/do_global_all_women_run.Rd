@@ -7,6 +7,9 @@
 do_global_all_women_run(
   run_desc = "",
   output_dir_path = file.path(getwd(), "output"),
+  run_name_override_married = NULL,
+  run_name_override_unmarried = NULL,
+  run_name_override_all_women = NULL,
   age_group = "15-49",
   estimation_iterations = 3,
   burn_in_iterations = 1,
@@ -38,9 +41,6 @@ do_global_all_women_run(
   plot_maps_years = floor(median(c(start_year, end_year))),
   data_info_plot_years = c(1990, 2000, 2010),
   adjust_medians = TRUE,
-  run_name_override_married = NULL,
-  run_name_override_unmarried = NULL,
-  run_name_override_all_women = NULL,
   model_diagnostics = TRUE,
   include_AR = TRUE,
   age_ratios_age_total_run_name_prefix = NULL,
@@ -56,49 +56,41 @@ do_global_all_women_run(
 )
 }
 \arguments{
-\item{run_desc}{Character. Brief note to be appended to the
-auto-generated \code{run_name}. Ignored if
-\code{run_name_override} is non-\code{NULL}.}
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save results.
-Sub-directories will be created inside this directory for each run
-either automatically or based on \code{run_name_override} (see
-\dQuote{Details}).}
-
-\item{age_group}{Character. The age group for which a run of the
-model is desired, specified in the format \dQuote{xx-yy},
-where \dQuote{xx} is the start age, \dQuote{yy} is the end
-age, e.g., \code{"15-49"} or \code{"15-19"}. This is used to
-form the run name if \code{run_name_override} is \code{NULL},
-to name of the file containing prevalence data if
-\code{data_csv_filename} is \code{NULL}, and to select rows
-from the denominator counts file if post-processing is done
+\item{age_group}{Character. The age group for which a run of the model is
+desired, specified in the format \dQuote{xx-yy}, where \dQuote{xx} is
+the start age, \dQuote{yy} is the end age, e.g., \code{"15-49"} or
+\code{"15-19"}. This is used to form the run name if
+\code{run_name_override} is \code{NULL}, to name of the file containing
+prevalence data if \code{data_csv_filename} is \code{NULL}, and to
+select rows from the denominator counts file if post-processing is done
 (see \code{\link{post_process_mcmc}}).}
 
-\item{estimation_iterations}{Numeric. Number of MCMC iterations
-that should be \emph{saved}. This is \emph{before}
-\code{thinning}.}
+\item{estimation_iterations}{Numeric. Number of MCMC iterations that should
+be \emph{saved}. This is \emph{before} \code{thinning}.}
 
-\item{burn_in_iterations}{Numeric. Number of MCMC iterations that
-should be run as burn-in before starting to save them.}
+\item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
+run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times
-progress should reported during MCMC sampling.}
+\item{steps_before_progress_report}{Numeric. The number of times progress
+should reported during MCMC sampling.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
 
-\item{chain_nums}{Numeric. The number of MCMC chains to run,
-\emph{as a sequence}. E.g., for three chains use
-\code{1:3}. You need to run at least two chains for
-post-processing to be successful.}
+\item{chain_nums}{Numeric. The number of MCMC chains to run, \emph{as a
+sequence}. E.g., for three chains use \code{1:3}. You need to run at
+least two chains for post-processing to be successful.}
 
-\item{set_seed_chains}{Set the random seed passed to
-\code{JAGS}. For multiple chains, the seed for each is
-\code{set_seed_chains} multiplied by the chain number.}
+\item{set_seed_chains}{Set the random seed passed to \code{JAGS}. For
+multiple chains, the seed for each is \code{set_seed_chains} multiplied
+by the chain number.}
 
-\item{run_in_parallel}{Logical. Determines if MCMC chains are run
-in parallel. Parallel running requires package
+\item{run_in_parallel}{Logical. Determines if MCMC chains are run in
+parallel. Parallel running requires package
 #ifdef windows
 \pkg{doParallel}.
 #endif
@@ -209,7 +201,9 @@ and WAIC be computed? These are not re-done if the folder
 \item{include_AR}{Logical; should the auto-regressive component of the model
 be estimated. Used mainly for testing.}
 
-\item{age_ratios_age_total_run_name_prefix}{Run name prefix for married, unmarried, and all women runs. Results will be searched for in \file{output/\code{age_ratios_age_total_run_name_prefix}_\var{[marital_group]}_15-49}.}
+\item{age_ratios_age_total_run_name_prefix}{Run name prefix for married,
+unmarried, and all women runs. Results will be searched for in
+\file{output/\code{age_ratios_age_total_run_name_prefix}_\var{[marital_group]}_15-49}.}
 
 \item{age_ratios_age_total_married_run_name}{Run name of the
 married 15--49 run to use as the denominator for age ratios.}
@@ -275,12 +269,12 @@ See \code{system.file("extdata", "country_and_area_classification.csv")} for
 how the country classification file should be formatted. Assume all columns
 are required.
 
-Typical values of the \acronym{MCMC} control parameters for a
-\dQuote{full} model run are: \describe{
-\item{\code{estimation_iterations}}{\code{ceiling(5e5 / \var{nchains})}, where \var{nchains} is the number of chains (i.e., \code{length(chain_nums)}).}
-\item{\code{burn_in_iterations}}{2e4}
-\item{\code{thinning}}{30}
-}
+Typical values of the \acronym{MCMC} control parameters for a \dQuote{full}
+model run are: \describe{
+\item{\code{estimation_iterations}}{\code{ceiling(5e5 / \var{nchains})},
+where \var{nchains} is the number of chains (i.e.,
+\code{length(chain_nums)}).} \item{\code{burn_in_iterations}}{2e4}
+\item{\code{thinning}}{30} }
 }
 \examples{
 vignette("FPEMglobal_Intro")

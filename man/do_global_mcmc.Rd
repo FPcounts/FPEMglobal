@@ -5,8 +5,6 @@
 \title{Generate MCMC chains for global run of FPEM}
 \usage{
 do_global_mcmc(
-  run_desc = "",
-  run_name_override = NULL,
   marital_group = c("married", "unmarried"),
   age_group = "15-49",
   estimation_iterations = 3,
@@ -16,60 +14,50 @@ do_global_mcmc(
   chain_nums = 1:3,
   set_seed_chains = 1,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
+  include_AR = TRUE,
+  run_name = NULL,
+  output_dir_path = file.path(getwd(), "output"),
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   region_information_csv_filename = "country_and_area_classification.csv",
-  output_dir_path = file.path(getwd(), "output"),
-  include_AR = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{run_desc}{Character. Brief note to be appended to the
-auto-generated \code{run_name}. Ignored if
-\code{run_name_override} is non-\code{NULL}.}
+\item{marital_group}{Character. The marital group for which a run of the
+model is desired.}
 
-\item{run_name_override}{Character. User defined run name to
-override default generation. \code{run_desc} is ignored if
-this is non-\code{NULL}.}
-
-\item{marital_group}{Character. The marital group for which a run
-of the model is desired.}
-
-\item{age_group}{Character. The age group for which a run of the
-model is desired, specified in the format \dQuote{xx-yy},
-where \dQuote{xx} is the start age, \dQuote{yy} is the end
-age, e.g., \code{"15-49"} or \code{"15-19"}. This is used to
-form the run name if \code{run_name_override} is \code{NULL},
-to name of the file containing prevalence data if
-\code{data_csv_filename} is \code{NULL}, and to select rows
-from the denominator counts file if post-processing is done
+\item{age_group}{Character. The age group for which a run of the model is
+desired, specified in the format \dQuote{xx-yy}, where \dQuote{xx} is
+the start age, \dQuote{yy} is the end age, e.g., \code{"15-49"} or
+\code{"15-19"}. This is used to form the run name if
+\code{run_name_override} is \code{NULL}, to name of the file containing
+prevalence data if \code{data_csv_filename} is \code{NULL}, and to
+select rows from the denominator counts file if post-processing is done
 (see \code{\link{post_process_mcmc}}).}
 
-\item{estimation_iterations}{Numeric. Number of MCMC iterations
-that should be \emph{saved}. This is \emph{before}
-\code{thinning}.}
+\item{estimation_iterations}{Numeric. Number of MCMC iterations that should
+be \emph{saved}. This is \emph{before} \code{thinning}.}
 
-\item{burn_in_iterations}{Numeric. Number of MCMC iterations that
-should be run as burn-in before starting to save them.}
+\item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
+run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times
-progress should reported during MCMC sampling.}
+\item{steps_before_progress_report}{Numeric. The number of times progress
+should reported during MCMC sampling.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
 
-\item{chain_nums}{Numeric. The number of MCMC chains to run,
-\emph{as a sequence}. E.g., for three chains use
-\code{1:3}. You need to run at least two chains for
-post-processing to be successful.}
+\item{chain_nums}{Numeric. The number of MCMC chains to run, \emph{as a
+sequence}. E.g., for three chains use \code{1:3}. You need to run at
+least two chains for post-processing to be successful.}
 
-\item{set_seed_chains}{Set the random seed passed to
-\code{JAGS}. For multiple chains, the seed for each is
-\code{set_seed_chains} multiplied by the chain number.}
+\item{set_seed_chains}{Set the random seed passed to \code{JAGS}. For
+multiple chains, the seed for each is \code{set_seed_chains} multiplied
+by the chain number.}
 
-\item{run_in_parallel}{Logical. Determines if MCMC chains are run
-in parallel. Parallel running requires package
+\item{run_in_parallel}{Logical. Determines if MCMC chains are run in
+parallel. Parallel running requires package
 #ifdef windows
 \pkg{doParallel}.
 #endif
@@ -79,6 +67,18 @@ in parallel. Parallel running requires package
 #endif
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
+
+\item{include_AR}{Logical; should the auto-regressive component of the model
+be estimated. Used mainly for testing.}
+
+\item{run_name}{Character. When \code{NULL} (default), this is set
+automatically by concatenating the current date (yyyy-mm-dd),
+\code{age_group} and \code{marital_group}. Alternatively, a user defined
+run name to override default generation.}
+
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
@@ -95,22 +95,14 @@ country-level prevalence data. See \dQuote{Details}.}
 containing classifications of countries in sub-regions, regions, etc.
 See \dQuote{Details}.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save results.
-Sub-directories will be created inside this directory for each run
-either automatically or based on \code{run_name_override} (see
-\dQuote{Details}).}
-
-\item{include_AR}{Logical; should the auto-regressive component of the model
-be estimated. Used mainly for testing.}
-
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run returned invisibly as a character string. MCMC
 chains are saved to the directory
-\file{\code{output_dir_path}/<run_name>/temp.JAGSobjects}. They need to be
-post-processed with \code{\link{post_process_mcmc}}. The run name (and
-path to outputs, if not the default) must be passed to
+\file{\code{output_dir_path}/<run_name>/temp.JAGSobjects}. They need to
+be post-processed with \code{\link{post_process_mcmc}}. The run name
+(and path to outputs, if not the default) must be passed to
 \code{\link{post_process_mcmc}} to locate the saved chains for
 processing. Run names for married and unmarried runs must also be passed
 to \code{\link{combine_runs}} to generate all women MCMC results.

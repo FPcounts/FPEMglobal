@@ -7,7 +7,6 @@
 post_process_mcmc(
   run_name = NULL,
   output_dir_path = file.path(getwd(), "output"),
-  run_dir_path = file.path(output_dir_path, run_name),
   input_data_folder_path = NULL,
   denominator_counts_csv_filename = NULL,
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
@@ -33,10 +32,9 @@ post_process_mcmc(
 \arguments{
 \item{run_name}{The name of the run to post-process.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save results.
-Sub-directories will be created inside this directory for each run
-either automatically or based on \code{run_name_override} (see
-\dQuote{Details}).}
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
 \item{input_data_folder_path}{File path to folder containing
 \emph{all} input data (except any map shapefiles). If

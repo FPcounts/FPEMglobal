@@ -7,6 +7,7 @@
 combine_runs(
   run_desc = "",
   output_dir_path = file.path(getwd(), "output"),
+  run_name_override = NULL,
   married_women_run_name = NULL,
   married_women_run_run_dir_path = NULL,
   unmarried_women_run_name = NULL,
@@ -35,19 +36,13 @@ combine_runs(
   age_ratios_age_total_all_women_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
   age_ratios_age_total_denominator_counts_folder_path = NULL,
-  run_name_override = NULL,
   verbose = FALSE
 )
 }
 \arguments{
-\item{run_desc}{Character. Brief note to be appended to the
-auto-generated \code{run_name}. Ignored if
-\code{run_name_override} is non-\code{NULL}.}
-
-\item{output_dir_path}{Path of the top-level directory in which to save results.
-Sub-directories will be created inside this directory for each run
-either automatically or based on \code{run_name_override} (see
-\dQuote{Details}).}
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
 \item{married_women_run_name}{Run name of the married women run to
 be combined. Ignored if
@@ -150,10 +145,6 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \code{NULL}, defaults to
 \code{file.path(age_ratios_age_total_run_dir_path,
     "data")}.}
-
-\item{run_name_override}{Character. User defined run name to
-override default generation. \code{run_desc} is ignored if
-this is non-\code{NULL}.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 }

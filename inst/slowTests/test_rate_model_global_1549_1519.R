@@ -10,6 +10,7 @@
 ### * Package
 
 library(FPEMglobal)
+options(FPEMglobal.verbose = TRUE)
 
 ### TEMP DIRECTORY
 (tmpdir <- tempdir())
@@ -30,7 +31,8 @@ run_name_override_married_1519 <- "test_1519_married"
 run_name_override_unmarried_1519 <- "test_1519_unmarried"
 run_name_override_all_women_1519 <- "test_1519_all_women"
 
-output_dir_path <- file.path(tmpdir, "test_run_output")
+output_dir_path <- file.path(getwd(), "test_run_output")
+output_dir_path_omnibus <- file.path(getwd(), "test_run_output_omnibus")
 
 age_ratios_age_total_run_name_prefix <- "test"
 age_ratios_age_total_married_run_dir_path <-
@@ -45,12 +47,12 @@ age_ratios_age_total_all_women_run_dir_path <-
 
 set.seed(1)
 
-chain_nums <- 1:2#1:6
+chain_nums <- 1:2 #1:6
 
-burn_in_iterations <- 1#2e4
-estimation_iterations <- 2#ceiling(5e5 / nchains)
-steps_before_progress_report <- 1#4
-thinning <- 1#30
+burn_in_iterations <- 1 #2e4
+estimation_iterations <- 2 #ceiling(5e5 / nchains)
+steps_before_progress_report <- 1 #4
+thinning <- 1 #30
 run_in_parallel <- TRUE
 
 include_AR <- FALSE
@@ -87,13 +89,12 @@ plot_maps_years <- NULL
 special_aggregates_name <- "OLD_WHO_regions"
 model_diagnostics <- TRUE
 make_age_ratios <- TRUE
-verbose <- FALSE
 
 ###-----------------------------------------------------------------------------
 ### * TEST RUNS
 
 ###-----------------------------------------------------------------------------
-### ** 15-19 (Adolescent Women)
+### ** 15-49 (ALL WRA)
 
 ###-----------------------------------------------------------------------------
 ### *** Base Functions
@@ -104,48 +105,60 @@ verbose <- FALSE
 ###
 ### MCMC
 
-do_global_mcmc(run_name_override = run_name_override_married_1519,
-               marital_group = "married",
-               age_group = "15-19",
-               output_dir_path = output_dir_path,
-               ## MCMC parameters
-               estimation_iterations = estimation_iterations,
-               burn_in_iterations = burn_in_iterations,
-               steps_before_progress_report = steps_before_progress_report,
-               thinning = thinning,
-               chain_nums = chain_nums,
-               run_in_parallel = run_in_parallel,
-               set_seed_chains = 1,
-               ## Inputs
-               data_csv_filename = data_csv_filename_1519,
-               include_AR = include_AR)
+(mcmc_1549_married <-
+     do_global_mcmc(marital_group = "married",
+                    age_group = "15-49",
+                    ## MCMC Params
+                    estimation_iterations = estimation_iterations,
+                    burn_in_iterations = burn_in_iterations,
+                    steps_before_progress_report = steps_before_progress_report,
+                    thinning = thinning,
+                    chain_nums = chain_nums,
+                    run_in_parallel = run_in_parallel,
+                    set_seed_chains = 1,
+                    include_AR = include_AR,
+                    ## Files and Directories
+                    run_name = NULL,
+                    output_dir_path = output_dir_path,
+                    data_csv_filename = data_csv_filename_1549))
+
+dir(output_dir_path)
+
+###
+### Add a Chain
+
+add_global_mcmc(run_name = mcmc_1549_married[["run_name"]],
+                output_dir_path = mcmc_1549_married[["output_dir_path"]],
+                chain_nums = max(chain_nums) + 1)
 
 ###
 ### Post process
 
-post_process_mcmc(run_name = run_name_override_married_1519,
-                  output_dir_path = output_dir_path,
-                  ## Inputs
-                  denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
-                  ## Results
-                  years_change = years_change,
-                  years_change2 = years_change2,
-                  model_diagnostics = model_diagnostics,
-                  special_aggregates_name = special_aggregates_name,
-                  age_ratios_age_total_run_dir_path = age_ratios_age_total_married_run_dir_path,
-                  verbose = verbose)
+(pp_mcmc_1549_married <-
+     post_process_mcmc(run_name = mcmc_1549_married[["run_name"]],
+                       output_dir_path = mcmc_1549_married[["output_dir_path"]],
+                       ## Inputs
+                       denominator_counts_csv_filename = denominator_counts_csv_filename_1549,
+                       ## Results
+                       years_change = years_change,
+                       years_change2 = years_change2,
+                       model_diagnostics = model_diagnostics,
+                       special_aggregates_name = special_aggregates_name))
+
+dir(output_dir_path)
 
 ###
 ### Make results
 
-make_results(run_name = run_name_override_married_1519,
-             output_dir_path = output_dir_path,
+(res_1549_married <-
+    make_results(run_name = pp_mcmc_1549_married[["run_name"]],
+             output_dir_path = pp_mcmc_1549_married[["output_dir_path"]],
              plot_maps_shapefile_folder = plot_maps_shapefile_folder,
              plot_maps_years = plot_maps_years,
              adjust_medians = adjust_medians,
-             special_aggregates_name = special_aggregates_name,
-             make_age_ratios = make_age_ratios,
-             verbose = verbose)
+             special_aggregates_name = special_aggregates_name))
+
+dir(output_dir_path)
 
 ###-----------------------------------------------------------------------------
 ### **** Unmarried Women
@@ -153,48 +166,25 @@ make_results(run_name = run_name_override_married_1519,
 ###
 ### MCMC
 
-do_global_mcmc(run_name_override = run_name_override_unmarried_1519,
+(res_1549_unmarried <-
+    do_global_run(run_name = NULL,
                marital_group = "unmarried",
-               age_group = "15-19",
+               age_group = "15-49",
                output_dir_path = output_dir_path,
                ## MCMC parameters
                estimation_iterations = estimation_iterations,
                burn_in_iterations = burn_in_iterations,
                steps_before_progress_report = steps_before_progress_report,
                thinning = thinning,
-               chain_nums = chain_nums,
+               chain_nums = chain_nums + 1,
                run_in_parallel = run_in_parallel,
                set_seed_chains = 1,
+               include_AR = include_AR,
                ## Inputs
-               data_csv_filename = data_csv_filename_1519,
-               include_AR = include_AR)
+               data_csv_filename = data_csv_filename_1549,
+               special_aggregates_name = special_aggregates_name))
 
-###
-### Post process
-
-post_process_mcmc(run_name = run_name_override_unmarried_1519,
-                  output_dir_path = output_dir_path,
-                  ## Inputs
-                  denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
-                  ## Results
-                  years_change = years_change,
-                  years_change2 = years_change2,
-                  model_diagnostics = model_diagnostics,
-                  special_aggregates_name = special_aggregates_name,
-                  age_ratios_age_total_run_dir_path = age_ratios_age_total_unmarried_run_dir_path,
-                  verbose = verbose)
-
-###
-### Make results
-
-make_results(run_name = run_name_override_unmarried_1519,
-             output_dir_path = output_dir_path,
-             plot_maps_shapefile_folder = plot_maps_shapefile_folder,
-             plot_maps_years = plot_maps_years,
-             adjust_medians = adjust_medians,
-             special_aggregates_name = special_aggregates_name,
-             make_age_ratios = make_age_ratios,
-             verbose = verbose)
+dir(output_dir_path)
 
 ###-----------------------------------------------------------------------------
 ### **** All Women
@@ -202,64 +192,44 @@ make_results(run_name = run_name_override_unmarried_1519,
 ###
 ### Combine Runs
 
-combine_runs(married_women_run_name = run_name_override_married_1519,
-             unmarried_women_run_name = run_name_override_unmarried_1519,
-             run_name_override = run_name_override_all_women_1519,
+(combine_1549 <-
+    combine_runs(married_women_run_name = res_1549_married[["run_name"]],
+             unmarried_women_run_name = res_1549_unmarried[["run_name"]],
+             run_name = NULL,
              output_dir_path = output_dir_path,
              ## Inputs
-             denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
+             denominator_counts_csv_filename = denominator_counts_csv_filename_1549,
              ## Results
              years_change = years_change,
              years_change2 = years_change2,
              special_aggregates_name = special_aggregates_name,
-             adjust_medians = adjust_medians,
-             age_ratios_age_total_unmarried_run_dir_path = age_ratios_age_total_unmarried_run_dir_path,
-             age_ratios_age_total_married_run_dir_path = age_ratios_age_total_married_run_dir_path,
-             age_ratios_age_total_all_women_run_dir_path = age_ratios_age_total_all_women_run_dir_path,
-             verbose = FALSE)
+             adjust_medians = adjust_medians))
+
+dir(output_dir_path)
 
 ###
 ### Make Results
 
-make_results(run_name = run_name_override_all_women_1519,
-             output_dir_path = output_dir_path,
+(res_all_women_1549 <-
+     make_results(run_name = combine_1549[["run_name"]],
+                  output_dir_path = combine_1549[["output_dir_path"]],
              plot_maps_shapefile_folder = plot_maps_shapefile_folder,
              plot_maps_years = plot_maps_years,
              adjust_medians = adjust_medians,
-             special_aggregates_name = special_aggregates_name,
-             make_age_ratios = make_age_ratios,
-             verbose = verbose)
+             special_aggregates_name = special_aggregates_name))
+
+dir(output_dir_path)
 
 ###-----------------------------------------------------------------------------
-### **** Make Results again for MW and UW
+### *** Omnibus Run
 
-make_results(run_name = run_name_override_married_1519,
-             output_dir_path = output_dir_path,
-             adjust_medians = adjust_medians,
-             special_aggregates_name = special_aggregates_name,
-             make_age_ratios = make_age_ratios,
-             verbose = verbose)
-
-make_results(run_name = run_name_override_unmarried_1519,
-             output_dir_path = output_dir_path,
-             adjust_medians = adjust_medians,
-             special_aggregates_name = special_aggregates_name,
-             make_age_ratios = make_age_ratios,
-             verbose = verbose)
-
-###-----------------------------------------------------------------------------
-### ** 15-49 (ALL WRA)
-
-###-----------------------------------------------------------------------------
-### *** Initial Run
-
-all_women_1549_runs <-
+(all_women_1549_runs <-
     do_global_all_women_run(
-        run_name_override_married = run_name_override_married_1549,
-        run_name_override_unmarried = run_name_override_unmarried_1549,
-        run_name_override_all_women = run_name_override_all_women_1549,
+        run_name = list(married = "run_name_override_married_1549",
+                        unmarried = "run_name_override_unmarried_1549",
+                        all_women = "run_name_override_all_women_1549"),
+        output_dir_path = output_dir_path_omnibus,
         age_group = "15-49",
-        output_dir_path = output_dir_path,
         ## MCMC parameters
         estimation_iterations = estimation_iterations,
         burn_in_iterations = burn_in_iterations,
@@ -268,6 +238,7 @@ all_women_1549_runs <-
         chain_nums = chain_nums,
         run_in_parallel = run_in_parallel,
         set_seed_chains = 1,
+        include_AR = include_AR,
         ## Inputs
         data_csv_filename = data_csv_filename_1549,
         denominator_counts_csv_filename = denominator_counts_csv_filename_1549,
@@ -278,22 +249,50 @@ all_women_1549_runs <-
         plot_maps_shapefile_folder = plot_maps_shapefile_folder,
         plot_maps_years = plot_maps_years,
         adjust_medians = adjust_medians,
-        age_ratios_age_total_run_name_prefix = age_ratios_age_total_run_name_prefix,
-        ## Advanced
-        verbose = verbose,
-        include_AR = include_AR
-    )
+        age_ratios_age_total_run_name_prefix = age_ratios_age_total_run_name_prefix
+    ))
 
-all_women_1549_runs
-dir(output_dir_path)
+dir(output_dir_path_omnibus)
 
 ###-----------------------------------------------------------------------------
-### *** Add a Chain
+### ** 15-19 (Adolescent Women)
 
-add_global_mcmc(all_women_1549_runs$married_run_name,
-                chain_nums = max(chain_nums) + 1,
-                output_dir_path = output_dir_path,
-                verbose = verbose)
+###-----------------------------------------------------------------------------
+### *** Omnibus Run
+
+(all_women_1549_runs <-
+    do_global_all_women_run(
+        run_name = list(married = run_name_override_married_1519,
+                        unmarried = run_name_override_unmarried_1519,
+                        all_women = run_name_override_all_women_1519),
+        output_dir_path = output_dir_path_omnibus,
+        age_group = "15-19",
+        ## MCMC parameters
+        estimation_iterations = estimation_iterations,
+        burn_in_iterations = burn_in_iterations,
+        steps_before_progress_report = steps_before_progress_report,
+        thinning = thinning,
+        chain_nums = chain_nums,
+        run_in_parallel = run_in_parallel,
+        set_seed_chains = 1,
+        include_AR = include_AR,
+        ## Inputs
+        data_csv_filename = data_csv_filename_1519,
+        denominator_counts_csv_filename = denominator_counts_csv_filename_1519,
+        special_aggregates_name = special_aggregates_name,
+        ## Outputs
+        years_change = years_change,
+        years_change2 = years_change2,
+        plot_maps_shapefile_folder = plot_maps_shapefile_folder,
+        plot_maps_years = plot_maps_years,
+        adjust_medians = adjust_medians,
+        age_ratios_age_total_run_name_prefix = age_ratios_age_total_run_name_prefix,
+        age_ratios_age_total_married_run_name = run_name_override_married_1549,
+        age_ratios_age_total_unmarried_run_name = run_name_override_unmarried_1549,
+        age_ratios_age_total_all_women_run_name = run_name_override_all_women_1549
+    ))
+
+dir(output_dir_path_omnibus)
 
 ###-----------------------------------------------------------------------------
 ### ** TEST RENAME

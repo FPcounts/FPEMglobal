@@ -23,8 +23,9 @@
 validate_input_file <- function(age_group = "15-49",
                                 input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                                 data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-                                marital_group = c("married", "unmarried"),
-                                verbose = FALSE) {
+                                marital_group = c("married", "unmarried")) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     if(!is.null(input_data_folder_path)) {
         data_csv_filename <- file.path(input_data_folder_path, data_csv_filename)
@@ -100,8 +101,8 @@ validate_denominator_counts_file <- function(age_group = "15-49",
                                              denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
                                              marital_group = c("married", "unmarried"),
                                              countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-                                             run_dir_path = NULL,
-                                             verbose = FALSE) {
+                                             run_dir_path = NULL) {
+    verbose <- getOption("FPEMglobal.verbose")
     model_family <- "rate"
     model_name <- NULL
 
@@ -206,41 +207,36 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 ##'
 ##' See \dQuote{Details} in the help file for \code{\link{do_global_all_women_run}}.
 ##'
-##' @param run_desc Character. Brief note to be appended to the
-##'     auto-generated \code{run_name}. Ignored if
-##'     \code{run_name_override} is non-\code{NULL}.
-##' @param run_name_override Character. User defined run name to
-##'     override default generation. \code{run_desc} is ignored if
-##'     this is non-\code{NULL}.
-##' @param marital_group Character. The marital group for which a run
-##'     of the model is desired.
-##' @param age_group Character. The age group for which a run of the
-##'     model is desired, specified in the format \dQuote{xx-yy},
-##'     where \dQuote{xx} is the start age, \dQuote{yy} is the end
-##'     age, e.g., \code{"15-49"} or \code{"15-19"}. This is used to
-##'     form the run name if \code{run_name_override} is \code{NULL},
-##'     to name of the file containing prevalence data if
-##'     \code{data_csv_filename} is \code{NULL}, and to select rows
-##'     from the denominator counts file if post-processing is done
+##' @param run_name Character. When \code{NULL} (default), this is set
+##'     automatically by concatenating the current date (yyyy-mm-dd),
+##'     \code{age_group} and \code{marital_group}. Alternatively, a user defined
+##'     run name to override default generation.
+##' @param marital_group Character. The marital group for which a run of the
+##'     model is desired.
+##' @param age_group Character. The age group for which a run of the model is
+##'     desired, specified in the format \dQuote{xx-yy}, where \dQuote{xx} is
+##'     the start age, \dQuote{yy} is the end age, e.g., \code{"15-49"} or
+##'     \code{"15-19"}. This is used to form the run name if
+##'     \code{run_name_override} is \code{NULL}, to name of the file containing
+##'     prevalence data if \code{data_csv_filename} is \code{NULL}, and to
+##'     select rows from the denominator counts file if post-processing is done
 ##'     (see \code{\link{post_process_mcmc}}).
-##' @param estimation_iterations Numeric. Number of MCMC iterations
-##'     that should be \emph{saved}. This is \emph{before}
-##'     \code{thinning}.
-##' @param burn_in_iterations Numeric. Number of MCMC iterations that
-##'     should be run as burn-in before starting to save them.
-##' @param steps_before_progress_report Numeric. The number of times
-##'     progress should reported during MCMC sampling.
+##' @param estimation_iterations Numeric. Number of MCMC iterations that should
+##'     be \emph{saved}. This is \emph{before} \code{thinning}.
+##' @param burn_in_iterations Numeric. Number of MCMC iterations that should be
+##'     run as burn-in before starting to save them.
+##' @param steps_before_progress_report Numeric. The number of times progress
+##'     should reported during MCMC sampling.
 ##' @param thinning Numeric. The actual number of iterations saved is
 ##'     \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.
-##' @param chain_nums Numeric. The number of MCMC chains to run,
-##'     \emph{as a sequence}. E.g., for three chains use
-##'     \code{1:3}. You need to run at least two chains for
-##'     post-processing to be successful.
-##' @param set_seed_chains Set the random seed passed to
-##'     \code{JAGS}. For multiple chains, the seed for each is
-##'     \code{set_seed_chains} multiplied by the chain number.
-##' @param run_in_parallel Logical. Determines if MCMC chains are run
-##'     in parallel. Parallel running requires package
+##' @param chain_nums Numeric. The number of MCMC chains to run, \emph{as a
+##'     sequence}. E.g., for three chains use \code{1:3}. You need to run at
+##'     least two chains for post-processing to be successful.
+##' @param set_seed_chains Set the random seed passed to \code{JAGS}. For
+##'     multiple chains, the seed for each is \code{set_seed_chains} multiplied
+##'     by the chain number.
+##' @param run_in_parallel Logical. Determines if MCMC chains are run in
+##'     parallel. Parallel running requires package
 ##' #ifdef windows
 ##' \pkg{doParallel}.
 ##' #endif
@@ -262,18 +258,16 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 ##' @param region_information_csv_filename Filename of the \file{.csv} file
 ##'     containing classifications of countries in sub-regions, regions, etc.
 ##'     See \dQuote{Details}.
-##' @param output_dir_path Path of the top-level directory in which to save results.
-##'     Sub-directories will be created inside this directory for each run
-##'     either automatically or based on \code{run_name_override} (see
-##'     \dQuote{Details}).
+##' @param output_dir_path Path of the top-level directory in which to save
+##'     results. Sub-directories named \code{run_name} will be created inside
+##'     this directory for each run.
 ##' @param include_AR Logical; should the auto-regressive component of the model
 ##'     be estimated. Used mainly for testing.
-##' @param verbose Logical; print lots and lots of messages about progress?
 ##' @return A name for the run returned invisibly as a character string. MCMC
 ##'     chains are saved to the directory
-##'     \file{\code{output_dir_path}/<run_name>/temp.JAGSobjects}. They need to be
-##'     post-processed with \code{\link{post_process_mcmc}}. The run name (and
-##'     path to outputs, if not the default) must be passed to
+##'     \file{\code{output_dir_path}/<run_name>/temp.JAGSobjects}. They need to
+##'     be post-processed with \code{\link{post_process_mcmc}}. The run name
+##'     (and path to outputs, if not the default) must be passed to
 ##'     \code{\link{post_process_mcmc}} to locate the saved chains for
 ##'     processing. Run names for married and unmarried runs must also be passed
 ##'     to \code{\link{combine_runs}} to generate all women MCMC results.
@@ -286,10 +280,10 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 ##'     \emph{and all women runs}, and produce results, all in one call.
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
-do_global_mcmc <- function(run_desc = "",
-                           run_name_override = NULL,
+do_global_mcmc <- function(## Description
                            marital_group = c("married", "unmarried"),
                            age_group = "15-49",
+                           ## MCMC Params
                            estimation_iterations = 3,
                            burn_in_iterations = 1,
                            steps_before_progress_report = 4,
@@ -297,35 +291,29 @@ do_global_mcmc <- function(run_desc = "",
                            chain_nums = 1:3,
                            set_seed_chains = 1,
                            run_in_parallel = isTRUE(length(chain_nums) > 1),
+                           include_AR = TRUE,
+                           ## Files and Directories
+                           run_name = NULL,
+                           output_dir_path = file.path(getwd(), "output"),
                            input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                            data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-                           region_information_csv_filename = "country_and_area_classification.csv",
-                           output_dir_path = file.path(getwd(), "output"),
-                           include_AR = TRUE,
-                           verbose = FALSE) {
+                           region_information_csv_filename = "country_and_area_classification.csv") {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     ##---------------------------------------------------------------------
     ## Run name and output paths
 
     marital_group <- match.arg(marital_group)
 
-    if(!is.null(run_name_override)) run_name <- run_name_override
-    else run_name <- make_run_name(marital_group, age_group, run_desc)
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         marital_group = marital_group, age_group = age_group)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
 
     message("\nThis run has 'run_name': ", run_name)
-
-    run_dir_path <- file.path(output_dir_path, run_name)
-
-    if(!dir.exists(run_dir_path)) {
-        dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-    } else {
-        if(any(grepl("^mcmc\\.info(\\.[0-9]+\\.|\\.)rda$", dir(run_dir_path)),
-               na.rm = TRUE) ||
-           file.exists(file.path(run_dir_path, "mcmc.meta.rda")) ||
-           file.exists(file.path(run_dir_path, "mcmc.array.rda"))) {
-            stop("Directory '", run_dir_path, "' already exists with some MCMC output files. Change the run name, output folder path, or delete the existing run and start again.")
-        }
-    }
 
     ##---------------------------------------------------------------------
     ## Make paths to input data
@@ -438,11 +426,10 @@ do_global_mcmc <- function(run_desc = "",
         EA.bias.negative = marital_group_param_set$EA_bias_negative,
         HW.bias.negative = marital_group_param_set$HW_bias_negative,
         sink.seed.logfile = FALSE,
-        verbose = verbose
-    )
+        verbose = verbose)
 
     ## LOG
-    msg <- paste0("MCMC sampling completed for run ", run_name)
+    msg <- paste0("MCMC sampling completed", "\nRun name: ", run_name, "\nOutput saved to:\n\t", run_dir_path)
     message(msg)
 
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
@@ -450,9 +437,8 @@ do_global_mcmc <- function(run_desc = "",
         file = file.path(run_dir_path, "log.txt"), sep = "", append = TRUE)
 
     ##---------------------------------------------------------------------
-    ## Return
 
-    return(invisible(run_name))
+    return(invisible(list(run_name = run_name, output_dir_path = output_dir_path)))
 
 }
 
@@ -464,14 +450,12 @@ do_global_mcmc <- function(run_desc = "",
 ##' this function can be used to add them. There must be at least one chain
 ##' already started (identified via \code{run_name}).
 ##'
-##' @param run_name The name of the run to add a chain to.
+##' @param run_name The name of the run to add a chain to. Unlike
+##'     \code{\link{do_global_mcmc}}, this is must be specified.
 ##' @param chain_nums number identifying chains to add. Unlike
 ##'     \code{\link{do_global_mcmc}}, this can be a scalar. It must \emph{not}
 ##'     be the number identifying a chain already created. See
 ##'     \dQuote{Description}.
-##' @param run_dir_path Full filepath to the directory where outputs are saved
-##'     for a specific model run. Usually, this will take a form like
-##'     \code{file.path(output_dir_path, run_name)}.
 ##' @inheritParams do_global_mcmc
 ##' @return A name for the run is returned invisibly as a character string. MCMC
 ##'     chains are saved to \file{run_dir_path/temp.JAGSobjects}. They need to
@@ -484,13 +468,14 @@ do_global_mcmc <- function(run_desc = "",
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 add_global_mcmc <- function(run_name,
-                            chain_nums = 2,
                             output_dir_path = file.path(getwd(), "output"),
-                            run_dir_path = file.path(output_dir_path, run_name),
-                            run_in_parallel = isTRUE(length(chain_nums) > 1),
-                            verbose = FALSE) {
+                            chain_nums = 2,
+                            run_in_parallel = isTRUE(length(chain_nums) > 1)) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
+    run_dir_path <- make_run_dir_path(output_dir_path, run_name)
 
     ##---------------------------------------------------------------------
     ## Meta Info
@@ -543,7 +528,7 @@ add_global_mcmc <- function(run_name,
                  run.on.server = run_in_parallel
                  )
     ## LOG
-    msg <- paste0("Finished adding MCMC chains to run ", run_name)
+    msg <- paste0("Finished adding MCMC chains.", "\nRun name: ", run_name, "\nOutput saved to:\n\t", run_dir_path)
     message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -552,7 +537,7 @@ add_global_mcmc <- function(run_name,
     if (file.exists(file.path(run_dir_path, "post_process_args.RData")))
         warning("Chains have been added but any existing results have *not* been updated; you will need to re-run 'post_process_mcmc' *and* 'make_results' to update those.")
 
-    return(invisible(run_name))
+    return(list(run_name = run_name, output_dir_path = output_dir_path))
 }
 
 ##' Post process MCMC chains from a global run of FPEM
@@ -671,7 +656,6 @@ add_global_mcmc <- function(run_name,
 ##' @export
 post_process_mcmc <- function(run_name = NULL,
                               output_dir_path = file.path(getwd(), "output"),
-                              run_dir_path = file.path(output_dir_path, run_name),
                               input_data_folder_path = NULL,
                               denominator_counts_csv_filename = NULL,
                               countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
@@ -699,14 +683,15 @@ post_process_mcmc <- function(run_name = NULL,
                               age_ratios_age_total_run_dir_path = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
-                              overwrite_existing_results = FALSE,
-                              verbose = FALSE) {
+                              overwrite_existing_results = FALSE) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     ##----------------------------------------------------------------------------
     ## Meta Info
 
-    if (is.null(run_dir_path) && is.null(run_name))
-        stop("'run_dir_path' or 'run_name' must be specified.")
+    if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
+    run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
     global_mcmc_args_filepath <- file.path(run_dir_path, "global_mcmc_args.RData")
     if (file.exists(global_mcmc_args_filepath)) {
@@ -983,7 +968,7 @@ post_process_mcmc <- function(run_name = NULL,
     ##----------------------------------------------------------------------------
     ## LOG
 
-    msg <- paste0("Finished post-processing run ", run_name)
+    msg <- paste0("Finished post-processing.", run_name, "\nOutput saved to:\n\t", run_dir_path)
     message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -992,7 +977,7 @@ post_process_mcmc <- function(run_name = NULL,
     ##----------------------------------------------------------------------------
     ## Return
 
-    return(invisible(run_name))
+    return(invisible(list(run_name = run_name, output_dir_path = output_dir_path)))
 
 }
 
@@ -1104,8 +1089,6 @@ post_process_mcmc <- function(run_name = NULL,
 ##' @param unmarried_women_run_dir_path Path to directory
 ##'     containing outputs for a unmarried women run. See
 ##'     \code{married_women_run_dir_path}.
-##' @param verbose Logical; print lots and lots of messages about
-##'     progress?
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
 ##' @return Either \code{run_name} invisibly as a character string or,
@@ -1127,7 +1110,6 @@ post_process_mcmc <- function(run_name = NULL,
 ##' @export
 make_results <- function(run_name = NULL,
                          output_dir_path = file.path(getwd(), "output"),
-                         run_dir_path = file.path(output_dir_path, run_name),
                          input_data_folder_path = NULL,
                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
                          CI_plots_years = NULL,
@@ -1147,16 +1129,17 @@ make_results <- function(run_name = NULL,
                          make_age_ratios = NULL,
                          validation_keep_all = TRUE,
                          validation_return_res_as_df = FALSE,
-                         all_women = NULL,
-                         verbose = FALSE) {
+                         all_women = NULL) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     ##----------------------------------------------------------------------------
     ## Meta information
     ##----------------------------------------------------------------------------
 
     ## Output folder path
-    if (is.null(run_dir_path) && is.null(run_name))
-        stop("'run_dir_path' or 'run_name' must be specified.")
+    if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
+    run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
     ## MCMC meta
     load(file.path(run_dir_path, "mcmc.meta.rda"), verbose = verbose)
@@ -2200,7 +2183,7 @@ make_results <- function(run_name = NULL,
         ## Log
         ##----------------------------------------------------------------------------
 
-        msg <- paste0("Finished making results for run ", run_name)
+        msg <- paste0("Finished making results for.", run_name, "\nOutput saved to:\n\t", run_dir_path)
         message(msg)
         cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
             msg,
@@ -2210,7 +2193,7 @@ make_results <- function(run_name = NULL,
         ## Return
         ##----------------------------------------------------------------------------
 
-        return(invisible(run_name))
+        return(invisible(list(run_name = run_name, output_dir_path = output_dir_path)))
     }
 }
 
@@ -2253,10 +2236,10 @@ make_results <- function(run_name = NULL,
 ##' @examples vignette("FPEMglobal_Intro")
 ##'
 ##' @export
-do_global_run <- function(## Describe the run
-                          run_desc = "",
+do_global_run <- function(## Description
                           marital_group = c("married", "unmarried"),
                           age_group = "15-49",
+                          ## MCMC Params
                           estimation_iterations = 3,
                           burn_in_iterations = 1,
                           steps_before_progress_report = 4,
@@ -2264,14 +2247,18 @@ do_global_run <- function(## Describe the run
                           chain_nums = 1:3,
                           set_seed_chains = 1,
                           run_in_parallel = isTRUE(length(chain_nums) > 1),
+                          include_AR = TRUE,
+                          ## File and Directories
+                          run_name = NULL,
+                          output_dir_path = file.path(getwd(), "output"),
                           input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                           data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
                           region_information_csv_filename = "country_and_area_classification.csv",
                           denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
                           countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
                           countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
+                          ## Results
                           special_aggregates_name = NULL,
-                          output_dir_path = file.path(getwd(), "output"),
                           start_year = 1970.5,
                           end_year = 2030.5,
                           years_change = matrix(c(
@@ -2301,10 +2288,10 @@ do_global_run <- function(## Describe the run
                           age_ratios_age_total_run_dir_path = NULL,
                           age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                           age_ratios_age_total_denominator_counts_folder_path = NULL,
-                          run_name_override = NULL,
-                          model_diagnostics = TRUE,
-                          include_AR = TRUE,
-                          verbose = FALSE) {
+                          ## Logging
+                          model_diagnostics = TRUE) {
+
+    getOption("FPEMglobal.verbose")
 
     ##-----------------------------------------------------------------------------
     ## Set-up
@@ -2314,10 +2301,12 @@ do_global_run <- function(## Describe the run
 
     marital_group <- match.arg(marital_group)
 
-    if(!is.null(run_name_override)) run_name <- run_name_override
-    else run_name <- make_run_name(marital_group, age_group, run_desc)
-
-    run_dir_path <- file.path(output_dir_path, run_name)
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         marital_group = marital_group, age_group = age_group)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
 
     ## Default for 'output_data_folder_path' needs to be defined here because
     ## 'post_process_mcmc' needs it.
@@ -2449,9 +2438,9 @@ do_global_run <- function(## Describe the run
     ##-----------------------------------------------------------------------------
     ## MCMC Chains
 
-    run_name <-
-        do_global_mcmc(run_desc = run_desc,
-                       run_name_override = run_name, #use run_name created above.
+    global_mcmc <-
+        do_global_mcmc(run_name = run_name,
+                       output_dir_path = output_dir_path,
                        marital_group = marital_group,
                        age_group = age_group,
                        estimation_iterations = estimation_iterations,
@@ -2464,9 +2453,7 @@ do_global_run <- function(## Describe the run
                        input_data_folder_path = input_data_folder_path,
                        data_csv_filename = data_csv_filename,
                        region_information_csv_filename = region_information_csv_filename,
-                       output_dir_path = output_dir_path,
-                       include_AR = include_AR,
-                       verbose = verbose)
+                       include_AR = include_AR)
 
     ##-----------------------------------------------------------------------------
     ## STOP if only one chain
@@ -2487,7 +2474,9 @@ do_global_run <- function(## Describe the run
     ## Meta Info
     load(file.path(run_dir_path, "mcmc.meta.rda"), verbose = verbose)
 
-    post_process_mcmc(run_name = run_name,
+    pp_mcmc <-
+        post_process_mcmc(run_name = global_mcmc[["run_name"]],
+                      output_dir_path = global_mcmc[["output_dir_path"]],
                       input_data_folder_path = output_data_folder_path,
                       denominator_counts_csv_filename = denominator_counts_csv_filename,
                       countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
@@ -2500,15 +2489,15 @@ do_global_run <- function(## Describe the run
                       age_ratios_age_total_run_name = age_ratios_age_total_run_name,
                       age_ratios_age_total_run_dir_path = age_ratios_age_total_run_dir_path,
                       age_ratios_age_total_denominator_counts_csv_filename = age_ratios_age_total_denominator_counts_csv_filename,
-                      age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
-                      verbose = verbose)
+                      age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path)
 
     ##-----------------------------------------------------------------------------
     ## Plots, Tables
 
     if(make_any_results) {
 
-        make_results(run_name = run_name,
+        make_results(run_name = pp_mcmc[["run_name"]],
+                     output_dir_path = pp_mcmc[["output_dir_path"]],
                      input_data_folder_path = output_data_folder_path,
                      countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
                      plot_CI_changes_years = plot_CI_changes_years,
@@ -2520,17 +2509,24 @@ do_global_run <- function(## Describe the run
                      adjust_medians = adjust_medians,
                      make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
-                     make_age_ratios = make_age_ratios,
-                     verbose = verbose)
+                     make_age_ratios = make_age_ratios)
 
     }
 
     ##-----------------------------------------------------------------------------
     ## Finish
 
-    ## if(!interactive()) copy_Rout_files(run_name = run_name)
+    ## LOG
+    msg <- paste0("Global run completed", "\nRun name: ", run_name, "\nOutput saved to:\n\t", run_dir_path)
+    message(msg)
 
-    return(invisible(run_name))
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(run_dir_path, "log.txt"), sep = "", append = TRUE)
+
+    ##---------------------------------------------------------------------
+
+    return(invisible(list(run_name = run_name, output_dir_path = output_dir_path)))
 }
 
 
@@ -2558,6 +2554,7 @@ do_global_run <- function(## Describe the run
 ##' respective directories. The file
 ##' \file{\code{run_dir_path}/log.txt} provides a record of
 ##' which married and unmarried women runs were combined.
+##'
 ##' @param married_women_run_name Run name of the married women run to
 ##'     be combined. Ignored if
 ##'     \code{married_women_run_run_dir_path} is
@@ -2609,12 +2606,10 @@ do_global_run <- function(## Describe the run
 ##'
 ##' @export
 combine_runs <- function(## Describe the run
-                         run_desc = "",
+                         run_name = NULL,
                          output_dir_path = file.path(getwd(), "output"),
                          married_women_run_name = NULL,
-                         married_women_run_run_dir_path = NULL,
                          unmarried_women_run_name = NULL,
-                         unmarried_women_run_run_dir_path = NULL,
                          unmarried_women_run_data_folder_path = file.path(unmarried_women_run_run_dir_path, "data"),
                          region_information_csv_filename = NULL,
                          special_aggregates_name = NULL,
@@ -2647,38 +2642,36 @@ combine_runs <- function(## Describe the run
                          age_ratios_age_total_married_run_dir_path = NULL,
                          age_ratios_age_total_all_women_run_dir_path = NULL,
                          age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
-                         age_ratios_age_total_denominator_counts_folder_path = NULL,
-                         run_name_override = NULL,
-                         verbose = FALSE) {
+                         age_ratios_age_total_denominator_counts_folder_path = NULL) {
+
+    getOption("FPEMglobal.verbose")
 
     ##----------------------------------------------------------------------------
     ## Meta information
     ##----------------------------------------------------------------------------
 
-    ## Married and Unmarried
-    if(is.null(married_women_run_run_dir_path)) {
-        if(!is.null(married_women_run_name)) {
-            married_women_run_run_dir_path <- file.path(output_dir_path, married_women_run_name)
-        } else {
-            stop("'married_women_run_run_dir_path' or 'married_women_run_name' must be specified.")
-        }
-    } else {
-        if (is.null(married_women_run_name))
-            married_women_run_name <- get_run_name_from_args(get(load(file.path(married_women_run_run_dir_path,
-                                                                                "post_process_args.RData"))))
-    }
+    ## Married and Unmarried Run Names
+    married_women_run_run_dir_path <-
+        make_run_dir_path(run_name = married_women_run_name, output_dir_path = output_dir_path)
 
-    if(is.null(unmarried_women_run_run_dir_path)) {
-        if(!is.null(unmarried_women_run_name)) {
-            unmarried_women_run_run_dir_path <- file.path(output_dir_path, unmarried_women_run_name)
-        } else {
-            stop("'unmarried_women_run_run_dir_path' or 'unmarried_women_run_name' must be specified.")
-        }
-    } else {
-        if (is.null(unmarried_women_run_name))
-            unmarried_women_run_name <- get_run_name_from_args(get(load(file.path(unmarried_women_run_run_dir_path,
-                                                                                  "post_process_args.RData"))))
-    }
+    run_name_from_args <-
+        get_run_name_from_args(get(load(file.path(married_women_run_run_dir_path,
+                                                  "post_process_args.RData"))))
+    if (!is.null(run_name_from_args) && !identical(married_women_run_name, run_name_from_args))
+        stop("'married_women_run_name' not the same as the run name in '",
+             file.path(married_women_run_run_dir_path, "post_process_args.RData"),
+             " ('", married_women_run_name, "' vs. '", run_name_from_args, "'.")
+
+    unmarried_women_run_run_dir_path <-
+        make_run_dir_path(run_name = unmarried_women_run_name, output_dir_path = output_dir_path)
+
+    run_name_from_args <-
+        get_run_name_from_args(get(load(file.path(unmarried_women_run_run_dir_path,
+                                                  "post_process_args.RData"))))
+    if (!is.null(run_name_from_args) && !identical(unmarried_women_run_name, run_name_from_args))
+        stop("'unmarried_women_run_name' not the same as the run name in '",
+             file.path(unmarried_women_run_run_dir_path, "post_process_args.RData"),
+             " ('", unmarried_women_run_name, "' vs. '", run_name_from_args, "'.")
 
     load(file.path(unmarried_women_run_run_dir_path, "mcmc.meta.rda"), verbose = verbose)
 
@@ -2689,57 +2682,13 @@ combine_runs <- function(## Describe the run
     ## run_name and output folder
     ##--------------------------------------------------------------------------
 
-    ## Four ways:
-    ##
-    ## 1. Leave 'run_name' and 'run_dir_path' 'NULL'. Both will
-    ## be set by default. 'run_name' will be created with the
-    ## datetime, 'run_dir_path' will be
-    ## '"output/'run_name'"'. If the output already exists, this will
-    ## throw an error if the 'run_name's do not match.
-    ##
-    ## 2. Specify only 'run_name_override'. 'run_dir_path' will be
-    ## '"output/'run_name_override'"'.
-    ##
-    ## 3. Specify only 'run_dir_path'. If you're adding to an
-    ## existing run, 'run_name' will be taken from the
-    ## 'combine_runs_args.RData' file. If not, it will be set
-    ## automatically (see option 1).
-    ##
-    ## 4. Specify both 'run_name_override' and 'run_dir_path'. If you are
-    ## adding to an existing run this will throw an error.
-
-    if (is.null(run_name_override) && is.null(run_dir_path)) {
-        run_name <- make_run_name("all_women", age_group, run_desc)
-        run_dir_path <- file.path(output_dir_path, run_name)
-        if (dir.exists(run_dir_path))
-            check_run_name_conflicts(run_name, run_dir_path)
-        else dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-
-    } else if (!is.null(run_name_override) && is.null(run_dir_path)) {
-        run_name <- run_name_override
-        run_dir_path <- file.path(output_dir_path, run_name)
-        if (dir.exists(run_dir_path))
-            check_run_name_conflicts(run_name, run_dir_path)
-        else dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-
-    } else if (is.null(run_name_override) && !is.null(run_dir_path)) {
-        combine_runs_filepath <-
-            file.path(run_dir_path, "combine_runs_args.RData")
-        if (file.exists(combine_runs_filepath))
-            run_name <- get_run_name_from_args(get(load(combine_runs_filepath)))
-        else run_name <- make_run_name("all_women", age_group, run_desc)
-        if (dir.exists(run_dir_path))
-            check_run_name_conflicts(run_name, run_dir_path)
-        else dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-
-    } else if (!is.null(run_name_override) && !is.null(run_dir_path)) {
-        run_name <- run_name_override
-        combine_runs_filepath <-
-            file.path(run_dir_path, "combine_runs_args.RData")
-        if (dir.exists(run_dir_path))
-            check_run_name_conflicts(run_name, run_dir_path)
-        else dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-    }
+    ## All women run name
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         marital_group = "all_women", age_group = age_group)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
 
     message("This run has 'run_name': ", run_name, ".")
 
@@ -3195,7 +3144,8 @@ combine_runs <- function(## Describe the run
     ## LOG
     ##----------------------------------------------------------------------------
 
-    msg <- paste0("Finished combining runs ", married_women_run_run_dir_path, " and ", unmarried_women_run_run_dir_path)
+    msg <- paste0("Finished combining runs ", married_women_run_name, " and ", unmarried_women_run_name,
+                  ".\nAll women run name: ", run_name, "\nOutput saved to:\n\t", run_dir_path)
     message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -3205,7 +3155,7 @@ combine_runs <- function(## Describe the run
     ## Return
     ##----------------------------------------------------------------------------
 
-    return(invisible(run_name))
+    return(invisible(list(run_name = run_name, output_dir_path = output_dir_path)))
 }
 
 
@@ -3239,18 +3189,20 @@ combine_runs <- function(## Describe the run
 ##' how the country classification file should be formatted. Assume all columns
 ##' are required.
 ##'
-##' Typical values of the \acronym{MCMC} control parameters for a
-##' \dQuote{full} model run are: \describe{
-##' \item{\code{estimation_iterations}}{\code{ceiling(5e5 / \var{nchains})}, where \var{nchains} is the number of chains (i.e., \code{length(chain_nums)}).}
-##' \item{\code{burn_in_iterations}}{2e4}
-##' \item{\code{thinning}}{30}
-##' }
+##' Typical values of the \acronym{MCMC} control parameters for a \dQuote{full}
+##' model run are: \describe{
+##' \item{\code{estimation_iterations}}{\code{ceiling(5e5 / \var{nchains})},
+##' where \var{nchains} is the number of chains (i.e.,
+##' \code{length(chain_nums)}).} \item{\code{burn_in_iterations}}{2e4}
+##' \item{\code{thinning}}{30} }
 ##'
 ##' @param denominator_counts_csv_filename File path. Filepath to \file{.csv}
 ##'     file with denominator counts (married and unmarried) for this
 ##'     \code{age_group}. If \code{NULL}, defaults to \code{paste0("women_",
 ##'     \code{age_group}, ".csv")}.
-##' @param age_ratios_age_total_run_name_prefix Run name prefix for married, unmarried, and all women runs. Results will be searched for in \file{output/\code{age_ratios_age_total_run_name_prefix}_\var{[marital_group]}_15-49}.
+##' @param age_ratios_age_total_run_name_prefix Run name prefix for married,
+##'     unmarried, and all women runs. Results will be searched for in
+##'     \file{output/\code{age_ratios_age_total_run_name_prefix}_\var{[marital_group]}_15-49}.
 ##' @inheritParams do_global_mcmc
 ##' @inheritParams post_process_mcmc
 ##' @inheritParams make_results
@@ -3265,7 +3217,7 @@ combine_runs <- function(## Describe the run
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_all_women_run <- function(## Describe the run
-                                    run_desc = "",
+                                    run_name = list(married = NULL, unmarried = NULL, all_women = NULL),
                                     output_dir_path = file.path(getwd(), "output"),
                                     age_group = "15-49",
                                     estimation_iterations = 3,
@@ -3305,9 +3257,6 @@ do_global_all_women_run <- function(## Describe the run
                                     plot_maps_years = floor(median(c(start_year, end_year))),
                                     data_info_plot_years = c(1990, 2000, 2010),
                                     adjust_medians = TRUE,
-                                    run_name_override_married = NULL,
-                                    run_name_override_unmarried = NULL,
-                                    run_name_override_all_women = NULL,
                                     model_diagnostics = TRUE,
                                     include_AR = TRUE,
                                     age_ratios_age_total_run_name_prefix = NULL,
@@ -3318,8 +3267,9 @@ do_global_all_women_run <- function(## Describe the run
                                     age_ratios_age_total_unmarried_run_dir_path = NULL,
                                     age_ratios_age_total_all_women_run_dir_path = NULL,
                                     age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
-                                    age_ratios_age_total_denominator_counts_folder_path = NULL,
-                                    verbose = FALSE) {
+                                    age_ratios_age_total_denominator_counts_folder_path = NULL) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     ##---------------------------------------------------------------------
     ## Run Names with Common Time Stamp
@@ -3328,34 +3278,13 @@ do_global_all_women_run <- function(## Describe the run
         message("Only a single chain has been requested; all women results will *not* be created.")
     }
 
-    systime <- format(Sys.time(), "%y%m%d_%H%M%S")
-
-    if(is.null(run_name_override_married)) {
-        run_name_override_married <- make_run_name("married", age_group, run_desc)
-    }
-    if(is.null(run_name_override_unmarried)) {
-        run_name_override_unmarried <- make_run_name("unmarried", age_group, run_desc)
-    }
-    if(is.null(run_name_override_all_women)) {
-        run_name_override_all_women <- make_run_name("all_women", age_group, run_desc)
-    }
-
-    ##---------------------------------------------------------------------
-    ## Check output doesn't already exist
-
-    for(rn in c(run_name_override_married, run_name_override_unmarried,
-                run_name_override_all_women)) {
-        ofp <- file.path(output_dir_path, rn)
-
-        if(dir.exists(ofp)) {
-            if(any(grepl("^mcmc\\.info(\\.[0-9]+\\.|\\.)rda$", dir(ofp)),
-                   na.rm = TRUE) ||
-               file.exists(file.path(ofp, "mcmc.meta.rda")) ||
-               file.exists(file.path(ofp, "mcmc.array.rda"))) {
-                stop("Directory '", ofp, "' already exists with some MCMC output files. Change the run name, output folder path, or delete the existing run and start again.")
-            }
-        }
-    }
+    init_paths_list <-
+        lapply(setNames(nm = names(run_name)), function(z) {
+            initialize_paths(run_name = run_name[[z]],
+                             output_dir_path = output_dir_path,
+                             marital_group = z,
+                             age_group = age_group)
+        })
 
     ##----------------------------------------------------------------------
     ## Age ratios
@@ -3490,7 +3419,8 @@ do_global_all_women_run <- function(## Describe the run
 
     married_run_name <-
         do_global_run(## Describe the run
-            run_desc = run_desc,
+            run_name = init_paths_list[["married"]][["run_name"]],
+            output_dir_path = init_paths_list[["married"]][["output_dir_path"]],
             marital_group = "married",
             age_group = age_group,
             ## MCMC parameters
@@ -3510,7 +3440,6 @@ do_global_all_women_run <- function(## Describe the run
             countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
             make_any_aggregates = make_any_aggregates,
             special_aggregates_name = special_aggregates_name,
-            output_dir_path = output_dir_path,
             ## Outputs
             start_year = start_year,
             end_year = end_year,
@@ -3528,10 +3457,8 @@ do_global_all_women_run <- function(## Describe the run
             age_ratios_age_total_denominator_counts_csv_filename = age_ratios_age_total_denominator_counts_csv_filename,
             age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
             ## Advanced
-            run_name_override = run_name_override_married,
             model_diagnostics = model_diagnostics,
-            include_AR = include_AR,
-            verbose = verbose)
+            include_AR = include_AR)
 
     ## --------------------------------------------------------------------
     ## Unmarried
@@ -3540,7 +3467,8 @@ do_global_all_women_run <- function(## Describe the run
 
     unmarried_run_name <-
         do_global_run(## Describe the run
-            run_desc = run_desc,
+            run_name = init_paths_list[["unmarried"]][["run_name"]],
+            output_dir_path = init_paths_list[["unmarried"]][["output_dir_path"]],
             marital_group = "unmarried",
             age_group = age_group,
             ## MCMC parameters
@@ -3560,7 +3488,6 @@ do_global_all_women_run <- function(## Describe the run
             countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
             make_any_aggregates = make_any_aggregates,
             special_aggregates_name = special_aggregates_name,
-            output_dir_path = output_dir_path,
             ## Outputs
             start_year = start_year,
             end_year = end_year,
@@ -3577,10 +3504,8 @@ do_global_all_women_run <- function(## Describe the run
             age_ratios_age_total_denominator_counts_csv_filename = age_ratios_age_total_denominator_counts_csv_filename,
             age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
             ## Advanced
-            run_name_override = run_name_override_unmarried,
             model_diagnostics = model_diagnostics,
-            include_AR = include_AR,
-            verbose = verbose)
+            include_AR = include_AR)
 
     ##-----------------------------------------------------------------------------
     ## STOP if only one chain
@@ -3602,11 +3527,11 @@ do_global_all_women_run <- function(## Describe the run
 
     all_women_run_name <-
         combine_runs (## Describe the run
-            run_desc = run_desc,
+            run_name = init_paths_list[["all_women"]][["run_name"]],
+            output_dir_path = init_paths_list[["all_women"]][["output_dir_path"]],
             ## Inputs
-            married_women_run_run_dir_path = file.path(output_dir_path, married_run_name),
-            unmarried_women_run_run_dir_path = file.path(output_dir_path, unmarried_run_name),
-            unmarried_women_run_data_folder_path = input_data_folder_path,
+            married_women_run_name = init_paths_list[["married"]][["run_name"]],
+            unmarried_women_run_name = init_paths_list[["unmarried"]][["run_name"]],
             denominator_counts_csv_filename = denominator_counts_csv_filename,
             region_information_csv_filename = region_information_csv_filename,
             countries_for_aggregates_csv_filename = countries_for_aggregates_csv_filename,
@@ -3626,12 +3551,10 @@ do_global_all_women_run <- function(## Describe the run
             age_ratios_age_total_married_run_dir_path = age_ratios_age_total_married_run_dir_path,
             age_ratios_age_total_all_women_run_dir_path = age_ratios_age_total_all_women_run_dir_path,
             age_ratios_age_total_denominator_counts_csv_filename = age_ratios_age_total_denominator_counts_csv_filename,
-            age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path,
-            ## Advanced
-            run_name_override = run_name_override_all_women,
-            verbose = verbose)
+            age_ratios_age_total_denominator_counts_folder_path = age_ratios_age_total_denominator_counts_folder_path)
 
-    make_results(run_name = all_women_run_name,
+    make_results(run_name = init_paths_list[["all_women"]][["run_name"]],
+                 output_dir_path = init_paths_list[["all_women"]][["output_dir_path"]],
                  input_data_folder_path = file.path(output_dir_path, unmarried_run_name, "data"),
                  countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
                  plot_CI_changes_years = plot_CI_changes_years,
@@ -3643,8 +3566,7 @@ do_global_all_women_run <- function(## Describe the run
                  adjust_medians = adjust_medians,
                  make_any_aggregates = make_any_aggregates,
                  special_aggregates_name = special_aggregates_name,
-                 make_age_ratios = make_age_ratios,
-                 verbose = verbose)
+                 make_age_ratios = make_age_ratios)
 
     ## --------------------------------------------------------------------
     ## Age Ratios
@@ -3656,7 +3578,8 @@ do_global_all_women_run <- function(## Describe the run
         ## Need to run 'make_results()' again for age ratios for
         ## married and unmarried. Not ideal but ...
 
-        make_results(run_name = married_run_name,
+        make_results(run_name = init_paths_list[["married"]][["run_name"]],
+                     output_dir_path = init_paths_list[["married"]][["output_dir_path"]],
                      input_data_folder_path = file.path(output_dir_path, married_run_name, "data"),
                      countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
                      plot_CI_changes_years = plot_CI_changes_years,
@@ -3668,10 +3591,10 @@ do_global_all_women_run <- function(## Describe the run
                      adjust_medians = adjust_medians,
                      make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
-                     make_age_ratios = make_age_ratios,
-                     verbose = verbose)
+                     make_age_ratios = make_age_ratios)
 
-        make_results(run_name = unmarried_run_name,
+        make_results(run_name = init_paths_list[["unmarried"]][["run_name"]],
+                     output_dir_path = init_paths_list[["unmarried"]][["output_dir_path"]],
                      input_data_folder_path = file.path(output_dir_path, unmarried_run_name, "data"),
                      countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
                      plot_CI_changes_years = plot_CI_changes_years,
@@ -3683,14 +3606,34 @@ do_global_all_women_run <- function(## Describe the run
                      adjust_medians = adjust_medians,
                      make_any_aggregates = make_any_aggregates,
                      special_aggregates_name = special_aggregates_name,
-                     make_age_ratios = make_age_ratios,
-                     verbose = verbose)
+                     make_age_ratios = make_age_ratios)
 
     }
 
-    return(invisible(list(married_run_name = married_run_name,
-                          unmarried_run_name = unmarried_run_name,
-                          all_women_run_name = all_women_run_name)))
+    ##-----------------------------------------------------------------------------
+    ## Finish
+
+    ## LOG
+    msg <- paste0("Global all women run completed.",
+                  "\nMarried women run name: ", init_paths_list[["married"]][["run_name"]],
+                  "\nOutput saved to:\n\t", init_paths_list[["married"]][["output_dir_path"]],
+                  "\nUnmarried women run name: ", init_paths_list[["unmarried"]][["run_name"]],
+                  "\nOutput saved to:\n\t", init_paths_list[["unmarried"]][["output_dir_path"]],
+                  "\nAll women women run name: ", init_paths_list[["all_women"]][["run_name"]],
+                  "\nOutput saved to:\n\t", init_paths_list[["all_women"]][["output_dir_path"]]
+                  )
+    message(msg)
+
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(run_dir_path, "log.txt"), sep = "", append = TRUE)
+
+    ##---------------------------------------------------------------------
+
+    return(invisible(list(run_name = list(married = init_paths_list[["married"]][["run_name"]],
+                                          unmarried = init_paths_list[["unmarried"]][["run_name"]],
+                                          all_women = init_paths_list[["all_women"]][["run_name"]]),
+                          output_dir_path = output_dir_path)))
 }
 
 
@@ -3764,11 +3707,10 @@ do_global_all_women_run <- function(## Describe the run
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_validation_mcmc <-
-    function(run_desc = "",
-             run_name_override = NULL,
-             run_name_to_validate = NULL,
+    function(run_name = "",
              output_dir_path = file.path(getwd(), "output"),
-             run_name_to_validate_run_dir_path = file.path(output_dir_path, run_name_to_validate),
+             run_name_to_validate = NULL,
+             run_name_to_validate_output_dir_path = output_dir_path,
              exclude_unmet_only = FALSE,
              exclude_unmet_only_test_prop = 0.2,
              at_random = FALSE,
@@ -3789,8 +3731,9 @@ do_global_validation_mcmc <-
              steps_before_progress_report = 4,
              thinning = 2,
              chain_nums = 1:3,
-             run_in_parallel = isTRUE(length(chain_nums) > 1),
-             verbose = FALSE) {
+             run_in_parallel = isTRUE(length(chain_nums) > 1)) {
+
+        verbose <- getOption("FPEMglobal.verbose")
 
         ## --------------------------------------------------------------------
         ## Parallelization mechanism
@@ -3812,6 +3755,15 @@ do_global_validation_mcmc <-
         ##----------------------------------------------------------------------------
         ## Meta information
 
+        init_paths_to_validate <-
+            initialize_paths(run_name = run_name_to_validate, output_dir_path = run_name_to_validate_output_dir_path,
+                             marital_group = NULL, age_group = NULL)
+        run_name <- init_paths_to_validate$run_name
+        output_dir_path <- init_paths_to_validate$output_dir_path
+        run_dir_path <- init_paths_to_validate$run_dir_path
+
+        message("\nValidating run: ", run_name_to_validate)
+
         ## Get information about the run being validated (should
         ## probably make it so that these are all in 'mcmc.meta').
         global_mcmc_args <-
@@ -3819,6 +3771,17 @@ do_global_validation_mcmc <-
                                "global_mcmc_args.RData"), verbose = verbose))
         global_mcmc_meta <-
             get(load(file.path(run_name_to_validate_run_dir_path, "mcmc.meta.rda"), verbose = verbose))
+
+        ## Set up run name for validation
+        init_paths <-
+            initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                             marital_group = global_mcmc_args$marital_group,
+                             age_group = global_mcmc_args$age_group)
+        run_name <- init_paths$run_name
+        output_dir_path <- init_paths$output_dir_path
+        run_dir_path <- init_paths$run_dir_path
+
+        message("\nThis run has 'run_name': ", run_name)
 
         ## --------------------------------------------------------------------
         ## Run name and output paths
@@ -3832,26 +3795,6 @@ do_global_validation_mcmc <-
                     validation_names, ".")
         }
         validation_doing <- validation_names[validation_indicator]
-
-        ## Run name of this (validation) run (used for output folder)
-        if(!is.null(run_name_override)) {
-            run_name <- run_name_override
-        } else {
-            if(!is.null(run_desc) && isTRUE(nchar(run_desc) > 0)){
-                run_note <- paste(validation_doing, run_desc, sep = "_")
-            } else {
-                run_note <- validation_doing
-            }
-            run_name <- paste(run_name_to_validate, "valid", run_note, sep = "_")
-        }
-
-        ## Check if output already exists. If not, create output
-        ## dir. If yes, stop with an error.
-        if (!dir.exists(run_dir_path)) {
-            dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-        } else {
-            stop("A validation of this type has already been attempted. To re-run, delete or rename '", run_dir_path, "' and try again.")
-        }
 
         ## Make sure the global run saved its input data These will be looked for
         ## in the 'data' subdirectory of the global run output
@@ -3935,6 +3878,16 @@ do_global_validation_mcmc <-
         ##-----------------------------------------------------------------------------
         ## Return
 
+        ## LOG
+        msg <- paste0("Validation of run ", run_name_to_validate, " completed.",
+                      "\nRun name: ", run_name,
+                      "\nOutput saved to:\n\t", output_dir_path)
+        message(msg)
+
+        cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+            msg,
+            file = file.path(run_dir_path, "log.txt"), sep = "", append = TRUE)
+
         return(invisible(run_name))
 
     }
@@ -3994,8 +3947,9 @@ do_global_validation_run <- function(run_desc = "",
                                      steps_before_progress_report = 4,
                                      thinning = 2,
                                      chain_nums = 1:3,
-                                     run_in_parallel = isTRUE(length(chain_nums) > 1),
-                                     verbose = FALSE) {
+                                     run_in_parallel = isTRUE(length(chain_nums) > 1)) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     ##----------------------------------------------------------------------------
     ## Must choose a validation exercise
@@ -4159,8 +4113,6 @@ do_global_validation_run <- function(run_desc = "",
 ##' @param years_change2
 ##' @param model_diagnostics
 ##' @param special_aggregates_name
-##' @param verbose Logical; print lots and lots of messages about
-##'     progress?
 ##' @return
 ##' @author Mark Wheldon
 add_special_aggregates <- function(run_dir_path,
@@ -4171,8 +4123,8 @@ add_special_aggregates <- function(run_dir_path,
                                    years_change = NULL,
                                    years_change2 = NULL,
                                    model_diagnostics = FALSE,
-                                   special_aggregates_name,
-                                   verbose = FALSE) {
+                                   special_aggregates_name) {
+    verbose <- getOption("FPEMglobal.verbose")
     stop("TO BE COMPLETED")
 }
 
@@ -4227,7 +4179,9 @@ rename_global_run <- function(run_name = NULL,
                               output_dir_path = file.path(getwd(), "output"),
                               run_dir_path = file.path(output_dir_path, run_name),
                               rename_output_folder = missing(run_dir_path),
-                              ignore = "^data$", verbose = getOption("FPEMglobal.verbose")) {
+                              ignore = "^data$") {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     ## -----------------------------------------------------------------------------
     ## Set-up
@@ -4407,8 +4361,9 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
                                   run_dir_path = file.path(run_1_run_dir_path, "fig", "compare_runs_plots"),
                                   plot_data = NULL,
                                   all_women = NULL,
-                                  compare_aggregates = TRUE,
-                                  verbose = FALSE) {
+                                  compare_aggregates = TRUE) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     message("Plotting comparison of ", run_name_1, " and ", run_name_2)
 
@@ -4500,8 +4455,9 @@ assert_valid_output_dir <- function(run_dir_path,
                                     countrytrajectories = post_processed,
                                     made_results = post_processed,
                                     adjusted_medians = post_processed,
-                                    age_ratios = NULL,
-                                    verbose = FALSE) {
+                                    age_ratios = NULL) {
+
+    verbose <- getOption("FPEMglobal.verbose")
 
     ## --------------------
     ## RECURSE

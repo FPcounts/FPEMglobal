@@ -15,14 +15,13 @@ validate_denominator_counts_file(
 )
 }
 \arguments{
-\item{age_group}{Character. The age group for which a run of the
-model is desired, specified in the format \dQuote{xx-yy},
-where \dQuote{xx} is the start age, \dQuote{yy} is the end
-age, e.g., \code{"15-49"} or \code{"15-19"}. This is used to
-form the run name if \code{run_name_override} is \code{NULL},
-to name of the file containing prevalence data if
-\code{data_csv_filename} is \code{NULL}, and to select rows
-from the denominator counts file if post-processing is done
+\item{age_group}{Character. The age group for which a run of the model is
+desired, specified in the format \dQuote{xx-yy}, where \dQuote{xx} is
+the start age, \dQuote{yy} is the end age, e.g., \code{"15-49"} or
+\code{"15-19"}. This is used to form the run name if
+\code{run_name_override} is \code{NULL}, to name of the file containing
+prevalence data if \code{data_csv_filename} is \code{NULL}, and to
+select rows from the denominator counts file if post-processing is done
 (see \code{\link{post_process_mcmc}}).}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
@@ -38,12 +37,8 @@ containing the denominator counts. This can also be the string
 \code{"res.country.rda"} to validate the counts in a completed model
 run. In that case, you must specify \code{run_dir_path}.}
 
-\item{marital_group}{Character. The marital group for which a run
-of the model is desired.}
-
-\item{run_dir_path}{Full filepath to the directory where outputs are saved
-for a specific model run. Usually, this will take a form like
-\code{file.path(output_dir_path, run_name)}.}
+\item{marital_group}{Character. The marital group for which a run of the
+model is desired.}
 
 \item{verbose}{Logical; print lots and lots of messages about progress?}
 }

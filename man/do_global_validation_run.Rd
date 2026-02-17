@@ -36,21 +36,12 @@ do_global_validation_run(
 )
 }
 \arguments{
-\item{run_desc}{Character. Brief note to be appended to the
-auto-generated \code{run_name}. Ignored if
-\code{run_name_override} is non-\code{NULL}.}
-
-\item{run_name_override}{Character. User defined run name to
-override default generation. \code{run_desc} is ignored if
-this is non-\code{NULL}.}
-
 \item{run_name_to_validate}{Name of completed global run to
 validate.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save results.
-Sub-directories will be created inside this directory for each run
-either automatically or based on \code{run_name_override} (see
-\dQuote{Details}).}
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
@@ -113,26 +104,24 @@ selection of countries to leave out.}
 \item{generate_new_set}{Logical; generate a new training set in
 validation exercise?}
 
-\item{estimation_iterations}{Numeric. Number of MCMC iterations
-that should be \emph{saved}. This is \emph{before}
-\code{thinning}.}
+\item{estimation_iterations}{Numeric. Number of MCMC iterations that should
+be \emph{saved}. This is \emph{before} \code{thinning}.}
 
-\item{burn_in_iterations}{Numeric. Number of MCMC iterations that
-should be run as burn-in before starting to save them.}
+\item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
+run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times
-progress should reported during MCMC sampling.}
+\item{steps_before_progress_report}{Numeric. The number of times progress
+should reported during MCMC sampling.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
 
-\item{chain_nums}{Numeric. The number of MCMC chains to run,
-\emph{as a sequence}. E.g., for three chains use
-\code{1:3}. You need to run at least two chains for
-post-processing to be successful.}
+\item{chain_nums}{Numeric. The number of MCMC chains to run, \emph{as a
+sequence}. E.g., for three chains use \code{1:3}. You need to run at
+least two chains for post-processing to be successful.}
 
-\item{run_in_parallel}{Logical. Determines if MCMC chains are run
-in parallel. Parallel running requires package
+\item{run_in_parallel}{Logical. Determines if MCMC chains are run in
+parallel. Parallel running requires package
 #ifdef windows
 \pkg{doParallel}.
 #endif
