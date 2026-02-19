@@ -103,7 +103,7 @@ The following utility functions are also available:
 
 ## Run Names
 
-Each run is given a default _run name_ which is used in the names of directories to hold outputs and the output files themselves. It is composed of the date-time the function was called (via `format(Sys.time(), "%y%m%d_%H%M%S")`), the marital subpopulation of the run ("married", "unmarried", or "all_women"), the age group ("15-49") and an optional annotation supplied via the `run_desc` argument accepted by all of the `do_...` functions. For example, a married women run name might be '180802_144802_married_15-49' with no annotation, or '180802_144802_test_married_15-49' with `run_desc = "test"`. The output of each function is a character string giving the run name for the run just performed. 
+Each run is given a default _run name_ which is used in the names of directories to hold outputs and the output files themselves. It is composed of the date the function was called (via `format(Sys.time(), "%Y%m%d")`), the marital subpopulation of the run ("married", "unmarried", or "all_women"), the age group ("15-49"). This can be overridden by supplying a value to the `run_name` argument. The output of each function is a list with elements `run_name` and `output_dir_path`, where the latter is the path to the directory containing the results. Results are stored in a subdirectory of `output_dir_path` with name `run_name`. 
 
 For full all women runs done by `do_global_all_women_run`, the date-time part of the run names is set to the time the whole run was initiated. Therefore, it is the same for married, unmarried, and all women outputs. This means they sort together in the file explorer.
 
@@ -279,7 +279,6 @@ A full run of the global model for using the default (built-in) input files can 
  ## Call the main function
  all_women_runs <-
      do_global_all_women_run(## Describe the run
-         run_desc = "",
          age_group = "15-49",
          data_csv_filename = "data_cp_model_all_women_15-49.csv",
          ## MCMC parameters. CHANGE FOR FULL RUN!
@@ -361,8 +360,8 @@ To combine unmarried and married women runs to create all women results, use the
  
 all_women_run_name <- combine_runs(
     ## Inputs
-    married_women_run_run_dir_path = file.path("output", married_run_name),
-    unmarried_women_run_run_dir_path = file.path("output", unmarried_run_name),
+    married_women_run_name = married_run_name,
+    unmarried_women_run_name = unmarried_run_name
     )
 
  ## See the run name
@@ -370,7 +369,7 @@ all_women_run_name <- combine_runs(
  ## !! unmarried_run_name.
  all_women_run_name
  
- make_results(all_women_run_name)
+ make_results(run_name = all_women_run_name[["run_name"]])
  
 ```
 
@@ -398,10 +397,10 @@ The lowest level of control over output generation is obtained by calling the Le
  unmarried_run_name
 
  ## Post-process MCMC output
- post_process_mcmc(run_name = unmarried_run_name)
+ post_process_mcmc(run_name = unmarried_run_name[["run_name"]])
 
  ## Produce plots, tables
- make_results(unmarried_run_name)
+ make_results(run_name = unmarried_run_name[["run_name"]])
  
 ``` 
 
@@ -475,7 +474,6 @@ The code below illustrates how special aggregates for the WHO regions can be req
  ## Special aggregates at model run time.
  all_women_runs <-
      do_global_all_women_run(## Describe the run
-         run_desc = "",
          age_group = "15-49",
          data_csv_filename = "data_cp_model_all_women_15-49.csv",
          ## MCMC parameters. CHANGE FOR FULL RUN!
@@ -542,7 +540,6 @@ Adjusted medians can be requested via the argument `adjust_medians` (default val
  ## Do a full global run, and produce adjusted medians
  all_women_runs_adj_medians <-
      do_global_all_women_run(## Describe the run
-         run_desc = "",
          age_group = "15-49",
          data_csv_filename = "data_cp_model_all_women_15-49.csv",
          ## MCMC parameters. CHANGE FOR FULL RUN!

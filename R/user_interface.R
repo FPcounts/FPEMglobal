@@ -313,7 +313,7 @@ do_global_mcmc <- function(## Description
     output_dir_path <- init_paths$output_dir_path
     run_dir_path <- init_paths$run_dir_path
 
-    message("\nThis run has 'run_name': ", run_name)
+    message("\nThis run has 'run_name': '", run_name, "'.")
 
     ##---------------------------------------------------------------------
     ## Make paths to input data
@@ -485,15 +485,15 @@ add_global_mcmc <- function(run_name,
     if (sum(is.element(chain_nums, mcmc.meta$general$ChainNums))>0){
         chain_nums <- setdiff(chain_nums, mcmc.meta$general$ChainNums)
         if (sum(chain_nums)==0){
-            stop("MCMC run(s) for 'chain_nums' = ", chain_nums, " and 'run_name' = ", run_name
-                ," already exist(s)!", "\n")
+            stop("MCMC run(s) for 'chain_nums' = '", chain_nums, "' and 'run_name' = '", run_name
+                ,"' already exist(s)!", "\n")
         }
     }
 
     ##---------------------------------------------------------------------
     ## LOG
 
-    msg <- paste0("Adding MCMC chains to run ", run_name)
+    msg <- paste0("Adding MCMC chains to run '", run_name, "'.")
     message(msg)
 
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
@@ -528,7 +528,7 @@ add_global_mcmc <- function(run_name,
                  run.on.server = run_in_parallel
                  )
     ## LOG
-    msg <- paste0("Finished adding MCMC chains.", "\nRun name: ", run_name, "\nOutput saved to:\n\t", run_dir_path)
+    msg <- paste0("Finished adding MCMC chains.", "\nRun name: '", run_name, "'\nOutput saved to:\n\t", run_dir_path)
     message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -703,7 +703,7 @@ post_process_mcmc <- function(run_name = NULL,
     load(file.path(run_dir_path, "mcmc.meta.rda"), verbose = verbose)
     write_model_function <- mcmc.meta$general$write.model.fun
 
-    msg <- paste0("Post-processing run ", run_name)
+    msg <- paste0("Post-processing run '", run_name, "'.")
     message(msg)
 
     ## LOG
@@ -968,7 +968,7 @@ post_process_mcmc <- function(run_name = NULL,
     ##----------------------------------------------------------------------------
     ## LOG
 
-    msg <- paste0("Finished post-processing.", run_name, "\nOutput saved to:\n\t", run_dir_path)
+    msg <- paste0("Finished post-processing run: '", run_name, "'\nOutput saved to:\n\t", run_dir_path)
     message(msg)
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
@@ -1108,7 +1108,7 @@ post_process_mcmc <- function(run_name = NULL,
 ##' @examples vignette("FPEMglobal_Intro")
 ##'
 ##' @export
-make_results <- function(run_name = NULL,
+make_results <- function(run_name,
                          output_dir_path = file.path(getwd(), "output"),
                          input_data_folder_path = NULL,
                          countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
@@ -1166,8 +1166,8 @@ make_results <- function(run_name = NULL,
         post_process_args_filepath <- file.path(run_dir_path, "combine_runs_args.RData")
     }
 
-    ## Run name
-    if (is.null(run_name)) run_name <- get_run_name_from_args(get(load(post_process_args_filepath)))
+    msg <- paste0("Making results for run '", run_name, "'.")
+    message(msg)
 
     ## Make paths to input data
     if(is.null(input_data_folder_path))
@@ -1178,6 +1178,7 @@ make_results <- function(run_name = NULL,
         countries_in_CI_plots_csv_filename <-
             file.path(input_data_folder_path, countries_in_CI_plots_csv_filename)
     }
+
     if(!file.exists(countries_in_CI_plots_csv_filename)) {
         msg <- paste0("can't find 'countries_in_CI_plots_csv_filename' (",
                       countries_in_CI_plots_csv_filename, ")")
@@ -2517,7 +2518,7 @@ do_global_run <- function(## Description
     ## Finish
 
     ## LOG
-    msg <- paste0("Global run completed", "\nRun name: ", run_name, "\nOutput saved to:\n\t", run_dir_path)
+    msg <- paste0("Global run completed", "\nRun name: '", run_name, "'\nOutput saved to:\n\t", run_dir_path)
     message(msg)
 
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
@@ -3555,7 +3556,7 @@ do_global_all_women_run <- function(## Describe the run
 
     make_results(run_name = init_paths_list[["all_women"]][["run_name"]],
                  output_dir_path = init_paths_list[["all_women"]][["output_dir_path"]],
-                 input_data_folder_path = file.path(output_dir_path, unmarried_run_name, "data"),
+                 input_data_folder_path = file.path(init_paths_list[["all_women"]][["output_dir_path"]], init_paths_list[["all_women"]][["run_name"]], "data"),
                  countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
                  plot_CI_changes_years = plot_CI_changes_years,
                  make_all_bar_charts = make_all_bar_charts,
@@ -3580,7 +3581,7 @@ do_global_all_women_run <- function(## Describe the run
 
         make_results(run_name = init_paths_list[["married"]][["run_name"]],
                      output_dir_path = init_paths_list[["married"]][["output_dir_path"]],
-                     input_data_folder_path = file.path(output_dir_path, married_run_name, "data"),
+                     input_data_folder_path = file.path(init_paths_list[["married"]][["output_dir_path"]], init_paths_list[["married"]][["run_name"]], "data"),
                      countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
                      plot_CI_changes_years = plot_CI_changes_years,
                      make_all_bar_charts = make_all_bar_charts,
@@ -3595,7 +3596,7 @@ do_global_all_women_run <- function(## Describe the run
 
         make_results(run_name = init_paths_list[["unmarried"]][["run_name"]],
                      output_dir_path = init_paths_list[["unmarried"]][["output_dir_path"]],
-                     input_data_folder_path = file.path(output_dir_path, unmarried_run_name, "data"),
+                     input_data_folder_path = file.path(init_paths_list[["unmarried"]][["output_dir_path"]], init_paths_list[["unmarried"]][["run_name"]], "data"),
                      countries_in_CI_plots_csv_filename = countries_in_CI_plots_csv_filename,
                      plot_CI_changes_years = plot_CI_changes_years,
                      make_all_bar_charts = make_all_bar_charts,
@@ -3626,14 +3627,17 @@ do_global_all_women_run <- function(## Describe the run
 
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
         msg,
-        file = file.path(run_dir_path, "log.txt"), sep = "", append = TRUE)
+        file = file.path(init_paths_list[["all_women"]][["output_dir_path"]],
+                         init_paths_list[["all_women"]][["run_name"]], "log.txt"), sep = "", append = TRUE)
 
     ##---------------------------------------------------------------------
 
     return(invisible(list(run_name = list(married = init_paths_list[["married"]][["run_name"]],
                                           unmarried = init_paths_list[["unmarried"]][["run_name"]],
                                           all_women = init_paths_list[["all_women"]][["run_name"]]),
-                          output_dir_path = output_dir_path)))
+                          output_dir_path = list(married = init_paths_list[["married"]][["output_dir_path"]],
+                                                 unmarried = init_paths_list[["unmarried"]][["output_dir_path"]],
+                                                 all_women = init_paths_list[["all_women"]][["output_dir_path"]]))))
 }
 
 
@@ -3707,7 +3711,7 @@ do_global_all_women_run <- function(## Describe the run
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 do_global_validation_mcmc <-
-    function(run_name = "",
+    function(run_name = NULL,
              output_dir_path = file.path(getwd(), "output"),
              run_name_to_validate = NULL,
              run_name_to_validate_output_dir_path = output_dir_path,
@@ -3758,11 +3762,11 @@ do_global_validation_mcmc <-
         init_paths_to_validate <-
             initialize_paths(run_name = run_name_to_validate, output_dir_path = run_name_to_validate_output_dir_path,
                              marital_group = NULL, age_group = NULL)
-        run_name <- init_paths_to_validate$run_name
-        output_dir_path <- init_paths_to_validate$output_dir_path
-        run_dir_path <- init_paths_to_validate$run_dir_path
+        run_name_to_validate <- init_paths_to_validate$run_name
+        run_name_to_validate_output_dir_path <- init_paths_to_validate$output_dir_path
+        run_name_to_validate_run_dir_path <- init_paths_to_validate$run_dir_path
 
-        message("\nValidating run: ", run_name_to_validate)
+        message("\nValidating run: '", run_name_to_validate, "'.")
 
         ## Get information about the run being validated (should
         ## probably make it so that these are all in 'mcmc.meta').
@@ -3776,12 +3780,13 @@ do_global_validation_mcmc <-
         init_paths <-
             initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
                              marital_group = global_mcmc_args$marital_group,
-                             age_group = global_mcmc_args$age_group)
+                             age_group = global_mcmc_args$age_group,
+                             run_note = "validation")
         run_name <- init_paths$run_name
         output_dir_path <- init_paths$output_dir_path
         run_dir_path <- init_paths$run_dir_path
 
-        message("\nThis run has 'run_name': ", run_name)
+        message("\nThis run has 'run_name': '", run_name, "'.")
 
         ## --------------------------------------------------------------------
         ## Run name and output paths
@@ -3829,7 +3834,7 @@ do_global_validation_mcmc <-
         ## --------------------------------------------------------------------
         ## Make MCMC chains
 
-        message("This run has 'run_name': ", run_name, ". It validates ", run_name_to_validate, "'.")
+        message("This run has 'run_name': '", run_name, "'. It validates '", run_name_to_validate, "'.")
         cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": This run validates '", run_name_to_validate, "'.",
             file = file.path(run_dir_path, "log.txt"), append = TRUE)
 
@@ -3879,8 +3884,8 @@ do_global_validation_mcmc <-
         ## Return
 
         ## LOG
-        msg <- paste0("Validation of run ", run_name_to_validate, " completed.",
-                      "\nRun name: ", run_name,
+        msg <- paste0("Validation MCMC of run '", run_name_to_validate, "' completed.",
+                      "\nRun name: '", run_name, "'.",
                       "\nOutput saved to:\n\t", output_dir_path)
         message(msg)
 
@@ -3888,7 +3893,7 @@ do_global_validation_mcmc <-
             msg,
             file = file.path(run_dir_path, "log.txt"), sep = "", append = TRUE)
 
-        return(invisible(run_name))
+        return(invisible(list(run_name = run_name, output_dir_path = output_dir_path)))
 
     }
 
@@ -3921,11 +3926,10 @@ do_global_validation_mcmc <-
 ##' @author Mark Wheldon
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
-do_global_validation_run <- function(run_desc = "",
-                                     run_name_override = NULL,
-                                     run_name_to_validate = NULL,
+do_global_validation_run <- function(run_name = NULL,
                                      output_dir_path = file.path(getwd(), "output"),
-                                     run_name_to_validate_run_dir_path = file.path(output_dir_path, run_name_to_validate),
+                                     run_name_to_validate = NULL,
+                                     run_name_to_validate_output_dir_path = output_dir_path,
                                      input_data_folder_path = NULL,
                                      exclude_unmet_only = FALSE,
                                      exclude_unmet_only_test_prop = 0.2,
@@ -3963,6 +3967,13 @@ do_global_validation_run <- function(run_desc = "",
 
     ## Get information about the run being validated (should
     ## probably make it so that these are all in 'mcmc.meta').
+
+    init_paths_to_validate <-
+        initialize_paths(run_name = run_name_to_validate, output_dir_path = run_name_to_validate_output_dir_path,
+                         marital_group = NULL, age_group = NULL)
+    run_name_to_validate <- init_paths_to_validate$run_name
+    run_name_to_validate_output_dir_path <- init_paths_to_validate$output_dir_path
+    run_name_to_validate_run_dir_path <- init_paths_to_validate$run_dir_path
 
     global_mcmc_args_filepath <-
         file.path(run_name_to_validate_run_dir_path, "global_mcmc_args.RData")
@@ -4010,20 +4021,13 @@ do_global_validation_run <- function(run_desc = "",
     }
 
     ## Run name of this (validation) run (used for output folder)
-    if(!is.null(run_name_override)) {
-        run_name <- run_name_override
-    } else {
-        if(!is.null(run_desc) && isTRUE(nchar(run_desc) > 0)){
-            run_note <- paste(validation_doing, run_desc, sep = "_")
-        } else {
-            run_note <- validation_doing
-        }
-        run_name <- paste(run_name_to_validate, "valid", run_note, sep = "_")
-    }
-
-    if(is.null(run_dir_path)) {
-        run_dir_path <- file.path(output_dir_path, run_name)
-    }
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         marital_group = global_mcmc_args$marital_group,
+                         age_group = global_mcmc_args$age_group)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
 
     ##---------------------------------------------------------------------
     ## MCMC
@@ -4031,11 +4035,10 @@ do_global_validation_run <- function(run_desc = "",
     message("\nDoing validation run.")
 
     run_name_valid <-
-        do_global_validation_mcmc(run_desc = run_desc,
-                                  run_name_override = run_name_override,
-                                  run_name_to_validate = run_name_to_validate,
+        do_global_validation_mcmc(run_name = run_name,
                                   output_dir_path = output_dir_path,
-                                  run_name_to_validate_run_dir_path = run_name_to_validate_run_dir_path,
+                                  run_name_to_validate = run_name_to_validate,
+                                  run_name_to_validate_output_dir_path = run_name_to_validate_output_dir_path,
                                   exclude_unmet_only = exclude_unmet_only,
                                   exclude_unmet_only_test_prop = exclude_unmet_only_test_prop,
                                   at_random = at_random,
@@ -4056,15 +4059,13 @@ do_global_validation_run <- function(run_desc = "",
                                   steps_before_progress_report = steps_before_progress_report,
                                   thinning = thinning,
                                   chain_nums = chain_nums,
-                                  run_in_parallel = run_in_parallel,
-                                  verbose = verbose)
+                                  run_in_parallel = run_in_parallel)
 
     ##---------------------------------------------------------------------------
     ##  Post-Process
 
-    post_process_mcmc(run_name = run_name_valid,
-                      output_dir_path = output_dir_path,
-                      run_dir_path = run_dir_path,
+    post_process_mcmc(run_name = run_name_valid[["run_name"]],
+                      output_dir_path = run_name_valid[["output_dir_path"]],
                       input_data_folder_path = input_data_folder_path,
                       denominator_counts_csv_filename = basename(post_process_mcmc_args$denominator_counts_csv_filename),
                       countries_for_aggregates_csv_filename = basename(post_process_mcmc_args$countries_for_aggregates_csv_filename),
@@ -4077,23 +4078,29 @@ do_global_validation_run <- function(run_desc = "",
                       age_ratios_age_total_run_name = NULL,
                       age_ratios_age_total_run_dir_path = NULL,
                       age_ratios_age_total_denominator_counts_csv_filename = NULL,
-                      age_ratios_age_total_denominator_counts_folder_path = NULL,
-                      verbose = verbose)
+                      age_ratios_age_total_denominator_counts_folder_path = NULL)
 
     ##-----------------------------------------------------------------------------
     ##  Plots, Tables
 
-    make_results(run_name = run_name_valid,
-                 input_data_folder_path = input_data_folder_path,
-                 run_dir_path = run_dir_path,
-                 verbose = verbose)
+    make_results(run_name = run_name_valid[["run_name"]],
+                 output_dir_path = run_name_valid[["output_dir_path"]],,
+                 input_data_folder_path = input_data_folder_path)
 
     ##-----------------------------------------------------------------------------
     ## Finish
 
-    ## if(!interactive()) copy_Rout_files(run_name = run_name_valid)
+    ## LOG
+    msg <- paste0("Global validation of run '", run_name_to_validate, "' completed.",
+                  "\nRun name: '", run_name, "'.",
+                  "\nOutput saved to:\n\t", output_dir_path)
+    message(msg)
 
-    return(invisible(run_name_valid))
+    cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+        msg,
+        file = file.path(run_dir_path, "log.txt"), sep = "", append = TRUE)
+
+    return(invisible(list(run_name = run_name, output_dir_path = output_dir_path)))
 
 }
 

@@ -29,15 +29,15 @@ convert_run_name <- function(run_name, from = c("married", "unmarried", "all_wom
 }
 
 make_run_dir_path <- function(run_name, output_dir_path) {
-    if (is.null(output_dir_path) && is.null(run_name))
-        stop("'output_dir_path' or 'run_name' must be specified.")
+    if (is.null(output_dir_path) || is.null(run_name))
+        stop("'output_dir_path' and 'run_name' must be specified.")
     return(file.path(output_dir_path, run_name))
 }
 
 initialize_paths <- function(run_name, output_dir_path,
-                             marital_group, age_group) {
+                             marital_group, age_group, run_note = NULL) {
 
-    if (is.null(run_name)) run_name <- make_run_name(marital_group = marital_group, age_group = age_group)
+    if (is.null(run_name)) run_name <- make_run_name(marital_group = marital_group, age_group = age_group, run_note = run_note)
     run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
     if (!dir.exists(run_dir_path)) {

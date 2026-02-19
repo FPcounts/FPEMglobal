@@ -1,4 +1,7 @@
+# FPEMglobal 1.6.0 [Upcoming]
 
+* The arguments specifying run names and output directories of the main user interface functions have been simplified. All now take only `run_name` and `output_dir_path` to indicate, respectively, a unique name for a given model run and the top-level directory in which outputs are saved. Once a run is complete, the directory `output_dir_path` will contain a subdirectory named `run_name`, where `run_name` uniquely identifies  marital-age-group specific run.
+* Auto-generated run names are based only on the date, not the date-time.  
 
 # FPEMglobal 1.5.4
 

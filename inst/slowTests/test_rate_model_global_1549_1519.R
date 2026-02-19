@@ -22,25 +22,25 @@ options(FPEMglobal.verbose = TRUE)
 ###-----------------------------------------------------------------------------
 ### ** Run names
 
-run_name_override_married_1549 <- "test_1549_married"
-run_name_override_unmarried_1549 <- "test_1549_unmarried"
-run_name_override_all_women_1549 <- "test_1549_all_women"
+run_name_married_1549 <- "test_1549_married"
+run_name_unmarried_1549 <- "test_1549_unmarried"
+run_name_all_women_1549 <- "test_1549_all_women"
 
-run_name_override_1519 <- "test2"
-run_name_override_married_1519 <- "test_1519_married"
-run_name_override_unmarried_1519 <- "test_1519_unmarried"
-run_name_override_all_women_1519 <- "test_1519_all_women"
+run_name_1519 <- "test_1519"
+run_name_married_1519 <- "test_1519_married"
+run_name_unmarried_1519 <- "test_1519_unmarried"
+run_name_all_women_1519 <- "test_1519_all_women"
 
 output_dir_path <- file.path(getwd(), "test_run_output")
 output_dir_path_omnibus <- file.path(getwd(), "test_run_output_omnibus")
 
 age_ratios_age_total_run_name_prefix <- "test"
 age_ratios_age_total_married_run_dir_path <-
-    file.path(output_dir_path, paste0(run_name_override_married_1549))
+    file.path(output_dir_path, paste0(run_name_married_1549))
 age_ratios_age_total_unmarried_run_dir_path <-
-    file.path(output_dir_path, paste0(run_name_override_unmarried_1549))
+    file.path(output_dir_path, paste0(run_name_unmarried_1549))
 age_ratios_age_total_all_women_run_dir_path <-
-    file.path(output_dir_path, paste0(run_name_override_all_women_1549))
+    file.path(output_dir_path, paste0(run_name_all_women_1549))
 
 ###-----------------------------------------------------------------------------
 ### ** MCMC parameters
@@ -225,9 +225,9 @@ dir(output_dir_path)
 
 (all_women_1549_runs <-
     do_global_all_women_run(
-        run_name = list(married = "run_name_override_married_1549",
-                        unmarried = "run_name_override_unmarried_1549",
-                        all_women = "run_name_override_all_women_1549"),
+        run_name = list(married = run_name_married_1549,
+                        unmarried = run_name_unmarried_1549,
+                        all_women = run_name_all_women_1549),
         output_dir_path = output_dir_path_omnibus,
         age_group = "15-49",
         ## MCMC parameters
@@ -260,11 +260,11 @@ dir(output_dir_path_omnibus)
 ###-----------------------------------------------------------------------------
 ### *** Omnibus Run
 
-(all_women_1549_runs <-
+(all_women_1519_runs <-
     do_global_all_women_run(
-        run_name = list(married = run_name_override_married_1519,
-                        unmarried = run_name_override_unmarried_1519,
-                        all_women = run_name_override_all_women_1519),
+        run_name = list(married = run_name_married_1519,
+                        unmarried = run_name_unmarried_1519,
+                        all_women = run_name_all_women_1519),
         output_dir_path = output_dir_path_omnibus,
         age_group = "15-19",
         ## MCMC parameters
@@ -287,26 +287,87 @@ dir(output_dir_path_omnibus)
         plot_maps_years = plot_maps_years,
         adjust_medians = adjust_medians,
         age_ratios_age_total_run_name_prefix = age_ratios_age_total_run_name_prefix,
-        age_ratios_age_total_married_run_name = run_name_override_married_1549,
-        age_ratios_age_total_unmarried_run_name = run_name_override_unmarried_1549,
-        age_ratios_age_total_all_women_run_name = run_name_override_all_women_1549
+        age_ratios_age_total_married_run_name = run_name_married_1549,
+        age_ratios_age_total_unmarried_run_name = run_name_unmarried_1549,
+        age_ratios_age_total_all_women_run_name = run_name_all_women_1549
     ))
 
 dir(output_dir_path_omnibus)
 
 ###-----------------------------------------------------------------------------
-### ** TEST RENAME
+### * Validation
+
+###-----------------------------------------------------------------------------
+### ** Base Function
+
+(valid_1549_mcmc <-
+    do_global_validation_mcmc(run_name = NULL,
+                             output_dir_path = mcmc_1549_married[["output_dir_path"]],
+                             run_name_to_validate = mcmc_1549_married[["run_name"]],
+                             run_name_to_validate_output_dir_path = mcmc_1549_married[["output_dir_path"]],
+             exclude_unmet_only = FALSE,
+             exclude_unmet_only_test_prop = 0.2,
+             at_random = FALSE,
+             at_random_min_c = 1,
+             at_random_test_prop = 0.2,
+             at_end = FALSE,
+             at_end_not_1_obs_c = FALSE,
+             at_random_no_data = FALSE,
+             at_random_no_data_strata = NULL,
+             at_random_no_data_test_prop = 0.2,
+             leave_iso_out = FALSE,
+             leave_iso_out_iso_test = NULL,
+             year_cutoff = 2005,
+             seed_validation = 12345,
+             generate_new_set = TRUE,
+             estimation_iterations = estimation_iterations,
+             burn_in_iterations = burn_in_iterations,
+             thinning = thinning,
+             chain_nums = chain_nums,
+             run_in_parallel = run_in_parallel))
+
+dir(output_dir_path)
+
+###-----------------------------------------------------------------------------
+### ** Full validation
+
+(valid_1519_mcmc <-
+    do_global_validation_run(run_name = NULL,
+                              output_dir_path = output_dir_path_omnibus,
+                              run_name_to_validate = test_1519_married,
+             run_name_to_validate_output_dir_path = output_dir_path_omnibus,
+             exclude_unmet_only = FALSE,
+             exclude_unmet_only_test_prop = 0.2,
+             at_random = FALSE,
+             at_random_min_c = 1,
+             at_random_test_prop = 0.2,
+             at_end = FALSE,
+             at_end_not_1_obs_c = FALSE,
+             at_random_no_data = FALSE,
+             at_random_no_data_strata = NULL,
+             at_random_no_data_test_prop = 0.2,
+             leave_iso_out = FALSE,
+             leave_iso_out_iso_test = NULL,
+             year_cutoff = 2005,
+             seed_validation = 12345,
+             generate_new_set = TRUE,
+             estimation_iterations = estimation_iterations,
+             burn_in_iterations = burn_in_iterations,
+             thinning = thinning,
+             chain_nums = chain_nums,
+             run_in_parallel = run_in_parallel))
+
+dir(output_dir_path_omnibus)
+
+###-----------------------------------------------------------------------------
+### * TEST RENAME
 
 new_run_names <-
     mapply(function(y, z) rename_global_run(run_name = y, new_run_name = z, verbose = verbose),
            all_women_1549_runs, lapply(all_women_1549_runs, function(z) paste0(z, "_RENAMED")))
 
-post_process_mcmc(run_dir_path = file.path("output", "test_1549_married"))
-make_results(run_dir_path = file.path("output", "test_1549_married"))
-
-
-
-
+###-----------------------------------------------------------------------------
+### * END
 
 ### RESET DIRECTORY
 setwd(owd)
