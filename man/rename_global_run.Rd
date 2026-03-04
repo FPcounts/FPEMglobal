@@ -10,8 +10,7 @@ rename_global_run(
   output_dir_path = file.path(getwd(), "output"),
   run_dir_path = file.path(output_dir_path, run_name),
   rename_output_folder = missing(run_dir_path),
-  ignore = "^data$",
-  verbose = getOption("FPEMglobal.verbose")
+  ignore = "^data$"
 )
 }
 \arguments{
@@ -33,8 +32,6 @@ output folder? See \dQuote{Details}.}
 
 \item{ignore}{Regular expression. Files and directories with names That
 match will not be renamed.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 Called for side effect only.

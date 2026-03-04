@@ -15,8 +15,7 @@ compare_runs_CI_plots(
   run_dir_path = file.path(run_1_run_dir_path, "fig", "compare_runs_plots"),
   plot_data = NULL,
   all_women = NULL,
-  compare_aggregates = TRUE,
-  verbose = FALSE
+  compare_aggregates = TRUE
 )
 }
 \arguments{

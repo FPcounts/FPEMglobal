@@ -35,14 +35,15 @@ make_run_dir_path <- function(run_name, output_dir_path) {
 }
 
 initialize_paths <- function(run_name, output_dir_path,
-                             marital_group, age_group, run_note = NULL) {
+                             marital_group, age_group, run_note = NULL,
+                             check_exists = TRUE) {
 
     if (is.null(run_name)) run_name <- make_run_name(marital_group = marital_group, age_group = age_group, run_note = run_note)
     run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
     if (!dir.exists(run_dir_path)) {
         dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-    } else {
+    } else if (check_exists) {
         if (any(grepl("^mcmc\\.info(\\.[0-9]+\\.|\\.)rda$", dir(run_dir_path)),
                na.rm = TRUE) ||
            file.exists(file.path(run_dir_path, "mcmc.meta.rda")) ||

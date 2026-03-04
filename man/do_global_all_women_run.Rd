@@ -5,15 +5,12 @@
 \title{Do Complete Run of FPEM}
 \usage{
 do_global_all_women_run(
-  run_desc = "",
+  run_name = list(married = NULL, unmarried = NULL, all_women = NULL),
   output_dir_path = file.path(getwd(), "output"),
-  run_name_override_married = NULL,
-  run_name_override_unmarried = NULL,
-  run_name_override_all_women = NULL,
   age_group = "15-49",
   estimation_iterations = 3,
   burn_in_iterations = 1,
-  steps_before_progress_report = 4,
+  number_incremental_backups = 4,
   thinning = 2,
   chain_nums = 1:3,
   set_seed_chains = 1,
@@ -51,11 +48,15 @@ do_global_all_women_run(
   age_ratios_age_total_unmarried_run_dir_path = NULL,
   age_ratios_age_total_all_women_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
-  age_ratios_age_total_denominator_counts_folder_path = NULL,
-  verbose = FALSE
+  age_ratios_age_total_denominator_counts_folder_path = NULL
 )
 }
 \arguments{
+\item{run_name}{Character. When \code{NULL} (default), this is set
+automatically by concatenating the current date (yyyy-mm-dd),
+\code{age_group} and \code{marital_group}. Alternatively, a user defined
+run name to override default generation.}
+
 \item{output_dir_path}{Path of the top-level directory in which to save
 results. Sub-directories named \code{run_name} will be created inside
 this directory for each run.}
@@ -75,8 +76,9 @@ be \emph{saved}. This is \emph{before} \code{thinning}.}
 \item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
 run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times progress
-should reported during MCMC sampling.}
+\item{number_incremental_backups}{Numeric. The number of times MCMC chains
+should be written to disc during the model run. These can be used to
+restart a run after an interruption.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
@@ -238,8 +240,6 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \code{NULL}, defaults to
 \code{file.path(age_ratios_age_total_run_dir_path,
     "data")}.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A \emph{list} of run names for married, unmarried, and all women

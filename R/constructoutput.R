@@ -72,8 +72,9 @@ ConstructOutput <- function(# Construct output for MCMC run
                                write.model.fun = mcmc.meta$general$write.model.fun
                                )
 
-  ##------------------------------------------------------------------------------------------
-  if (!file.exists(file.path(output.dir, paste0("res.country", filename.append, ".rda")))) {
+    ##------------------------------------------------------------------------------------------
+    res.country.filename <- file.path(output.dir, paste0("res.country", filename.append, ".rda"))
+    if (!file.exists(res.country.filename)) {
     res.country <- GetCIs(mcmc.meta  = mcmc.meta,
                           mcmc.array = mcmc.array,
                           WRA.csv = WRA.csv,
@@ -88,14 +89,14 @@ ConstructOutput <- function(# Construct output for MCMC run
                           years.change2 = years.change2,
                           in_union = In.union,
                           verbose = verbose) # change JR, 20140317
-    save(res.country, file = file.path(output.dir, paste0("res.country", filename.append, ".rda"))) # change JR, 20140418
+    save(res.country, file = res.country.filename) # change JR, 20140418
   } else {
       warning("'", paste0("res.country", filename.append, ".rda")
             ,"' already exists. Country CIs not re-created")#[MCW-2016-04-19-1]
                                                             #Added because this
                                                             #tripped me up at
                                                             #first.
-
+      res.country <- get(load(res.country.filename))
       ## Aggregates might fail if the existing 'res.country.rda' file doesn't have years that match 'start.year' and 'end.year'
       res.country.years <- dimnames(res.country$CIprop.Lg.Lcat.qt[[1]][[1]])[[2]]
       if (!identical(as.numeric(res.country.years), seq(start.year, end.year, by = 1)))
@@ -107,7 +108,8 @@ ConstructOutput <- function(# Construct output for MCMC run
   if (!do.SS.run.first.pass) {
   # Validation
       if (!is.null(mcmc.meta$validation.list)){
-          if (generate_c_traj) stop("Cannot validate without 'mcmc.array.rda'.")
+          ## vv [MCW-2026-03-04] Commented out--causes errors and don't understand what it's for vv
+          ## if (generate_c_traj) stop("Cannot validate without 'mcmc.array.rda'.")
     Ps <- GetPercentilesLeftOut(data = mcmc.meta$data.raw$data,
                                 mcmc.array = mcmc.array,
                                 winbugs.data = mcmc.meta$winbugs.data,

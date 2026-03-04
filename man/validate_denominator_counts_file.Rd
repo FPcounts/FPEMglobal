@@ -10,8 +10,7 @@ validate_denominator_counts_file(
   denominator_counts_csv_filename = paste0("number_of_women_", age_group, ".csv"),
   marital_group = c("married", "unmarried"),
   countries_for_aggregates_csv_filename = "countries_mwra_195.csv",
-  run_dir_path = NULL,
-  verbose = FALSE
+  run_dir_path = NULL
 )
 }
 \arguments{
@@ -39,8 +38,6 @@ run. In that case, you must specify \code{run_dir_path}.}
 
 \item{marital_group}{Character. The marital group for which a run of the
 model is desired.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 The processed denominator counts file is returned \emph{invisibly}

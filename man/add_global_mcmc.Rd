@@ -8,8 +8,7 @@ add_global_mcmc(
   run_name,
   output_dir_path = file.path(getwd(), "output"),
   chain_nums = 2,
-  run_in_parallel = isTRUE(length(chain_nums) > 1),
-  verbose = FALSE
+  run_in_parallel = isTRUE(length(chain_nums) > 1)
 )
 }
 \arguments{
@@ -36,8 +35,6 @@ parallel. Parallel running requires package
 #endif
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run is returned invisibly as a character string. MCMC

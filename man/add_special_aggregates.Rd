@@ -13,13 +13,8 @@ add_special_aggregates(
   years_change = NULL,
   years_change2 = NULL,
   model_diagnostics = FALSE,
-  special_aggregates_name,
-  verbose = FALSE
+  special_aggregates_name
 )
-}
-\arguments{
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
 }
 \description{
 This is a convenience function to add (possibly more) special

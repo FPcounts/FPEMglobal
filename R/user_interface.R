@@ -225,8 +225,9 @@ validate_denominator_counts_file <- function(age_group = "15-49",
 ##'     be \emph{saved}. This is \emph{before} \code{thinning}.
 ##' @param burn_in_iterations Numeric. Number of MCMC iterations that should be
 ##'     run as burn-in before starting to save them.
-##' @param steps_before_progress_report Numeric. The number of times progress
-##'     should reported during MCMC sampling.
+##' @param number_incremental_backups Numeric. The number of times MCMC chains
+##'     should be written to disc during the model run. These can be used to
+##'     restart a run after an interruption.
 ##' @param thinning Numeric. The actual number of iterations saved is
 ##'     \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.
 ##' @param chain_nums Numeric. The number of MCMC chains to run, \emph{as a
@@ -286,7 +287,7 @@ do_global_mcmc <- function(## Description
                            ## MCMC Params
                            estimation_iterations = 3,
                            burn_in_iterations = 1,
-                           steps_before_progress_report = 4,
+                           number_incremental_backups = 4,
                            thinning = 2,
                            chain_nums = 1:3,
                            set_seed_chains = 1,
@@ -404,7 +405,7 @@ do_global_mcmc <- function(## Description
     RunMCMC(
         N.ITER = estimation_iterations,
         N.BURNIN = burn_in_iterations,
-        N.STEPS = steps_before_progress_report,
+        N.STEPS = number_incremental_backups,
         N.THIN = thinning,
         run.on.server = run_in_parallel,
         run.name =  run_name,
@@ -693,15 +694,21 @@ post_process_mcmc <- function(run_name = NULL,
     if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
     run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
-    global_mcmc_args_filepath <- file.path(run_dir_path, "global_mcmc_args.RData")
-    if (file.exists(global_mcmc_args_filepath)) {
-        load(global_mcmc_args_filepath, verbose = verbose)
-    } else stop("Cannot find '", global_mcmc_args_filepath, "'.")
-
-    if (is.null(run_name)) run_name <- get_run_name_from_args(get(load(global_mcmc_args_filepath)))
-
     load(file.path(run_dir_path, "mcmc.meta.rda"), verbose = verbose)
     write_model_function <- mcmc.meta$general$write.model.fun
+
+    ## Validation run?
+    validation_run <- !is.null(mcmc.meta$validation.list)
+
+    if (!validation_run) global_mcmc_args_filepath <- file.path(run_dir_path, "global_mcmc_args.RData")
+    else global_mcmc_args_filepath <- file.path(run_dir_path, "global_validation_mcmc_args.RData")
+    if (file.exists(global_mcmc_args_filepath)) {
+        global_mcmc_args <- get(load(global_mcmc_args_filepath, verbose = verbose))
+    } else {
+        stop("Cannot find '", global_mcmc_args_filepath, "'.")
+    }
+
+    if (is.null(run_name)) run_name <- get_run_name_from_args(get(load(global_mcmc_args_filepath)))
 
     msg <- paste0("Post-processing run '", run_name, "'.")
     message(msg)
@@ -1150,6 +1157,7 @@ make_results <- function(run_name,
 
     ## All women run?
     if(is.null(all_women)) all_women <- isTRUE(mcmc.meta$general$all.women.run.copy)
+    if (isTRUE(validation_run) && isTRUE(all_women)) stop("Validation not implemented for all women runs.")
 
     ## Unmarried women run?
     unmarried <-
@@ -1157,9 +1165,10 @@ make_results <- function(run_name,
 
     ## Extra info
     if (!all_women) {
-        global_mcmc_args_filepath <- file.path(run_dir_path, "global_mcmc_args.RData")
+        if (!validation_run) global_mcmc_args_filepath <- file.path(run_dir_path, "global_mcmc_args.RData")
+        else global_mcmc_args_filepath <- file.path(run_dir_path, "global_validation_mcmc_args.RData")
         if (file.exists(global_mcmc_args_filepath)) {
-            load(global_mcmc_args_filepath, verbose = verbose)
+            global_mcmc_args <- get(load(global_mcmc_args_filepath, verbose = verbose))
         } else stop("Cannot find '", global_mcmc_args_filepath, "'.")
         post_process_args_filepath <- file.path(run_dir_path, "post_process_args.RData")
     } else {
@@ -2243,7 +2252,7 @@ do_global_run <- function(## Description
                           ## MCMC Params
                           estimation_iterations = 3,
                           burn_in_iterations = 1,
-                          steps_before_progress_report = 4,
+                          number_incremental_backups = 4,
                           thinning = 2,
                           chain_nums = 1:3,
                           set_seed_chains = 1,
@@ -2446,7 +2455,7 @@ do_global_run <- function(## Description
                        age_group = age_group,
                        estimation_iterations = estimation_iterations,
                        burn_in_iterations = burn_in_iterations,
-                       steps_before_progress_report = steps_before_progress_report,
+                       number_incremental_backups = number_incremental_backups,
                        thinning = thinning,
                        chain_nums = chain_nums,
                        set_seed_chains = set_seed_chains,
@@ -3223,7 +3232,7 @@ do_global_all_women_run <- function(## Describe the run
                                     age_group = "15-49",
                                     estimation_iterations = 3,
                                     burn_in_iterations = 1,
-                                    steps_before_progress_report = 4,
+                                    number_incremental_backups = 4,
                                     thinning = 2,
                                     chain_nums = 1:3,
                                     set_seed_chains = 1,
@@ -3427,7 +3436,7 @@ do_global_all_women_run <- function(## Describe the run
             ## MCMC parameters
             estimation_iterations = estimation_iterations,
             burn_in_iterations = burn_in_iterations,
-            steps_before_progress_report = steps_before_progress_report,
+            number_incremental_backups = number_incremental_backups,
             thinning = thinning,
             chain_nums = chain_nums,
             set_seed_chains = set_seed_chains,
@@ -3475,7 +3484,7 @@ do_global_all_women_run <- function(## Describe the run
             ## MCMC parameters
             estimation_iterations = estimation_iterations,
             burn_in_iterations = burn_in_iterations,
-            steps_before_progress_report = steps_before_progress_report,
+            number_incremental_backups = number_incremental_backups,
             thinning = thinning,
             chain_nums = chain_nums,
             set_seed_chains = set_seed_chains,
@@ -3732,12 +3741,19 @@ do_global_validation_mcmc <-
              generate_new_set = TRUE,
              estimation_iterations = 3,
              burn_in_iterations = 1,
-             steps_before_progress_report = 4,
+             number_incremental_backups = 4,
              thinning = 2,
              chain_nums = 1:3,
              run_in_parallel = isTRUE(length(chain_nums) > 1)) {
 
         verbose <- getOption("FPEMglobal.verbose")
+
+        ##----------------------------------------------------------------------------
+        ## Must choose a validation exercise
+
+        if(!identical(as.double(sum(at_random, at_end, exclude_unmet_only, at_random_no_data, leave_iso_out)), 1)) {
+            stop("You must choose exactly one validation exercise. Exactly one of 'at_random', 'at_end', 'exclude_unmet_only', 'at_random_no_data', 'leave_iso_out' must be TRUE.")
+        }
 
         ## --------------------------------------------------------------------
         ## Parallelization mechanism
@@ -3761,7 +3777,7 @@ do_global_validation_mcmc <-
 
         init_paths_to_validate <-
             initialize_paths(run_name = run_name_to_validate, output_dir_path = run_name_to_validate_output_dir_path,
-                             marital_group = NULL, age_group = NULL)
+                             marital_group = NULL, age_group = NULL, check_exists = FALSE)
         run_name_to_validate <- init_paths_to_validate$run_name
         run_name_to_validate_output_dir_path <- init_paths_to_validate$output_dir_path
         run_name_to_validate_run_dir_path <- init_paths_to_validate$run_dir_path
@@ -3792,16 +3808,14 @@ do_global_validation_mcmc <-
         ## Run name and output paths
 
         ## Type of validation being done
+
+        ## Type of validation being done
         validation_names <-
             c("at_random", "at_end", "exclude_unmet_only", "at_random_no_data", "leave_iso_out")
         validation_indicator <- unlist(mget(validation_names))
-        if(sum(validation_indicator) > 1) {
-            warning("More than one validation exercise requested but can only do one. Priority order is:\n",
-                    validation_names, ".")
-        }
         validation_doing <- validation_names[validation_indicator]
 
-        ## Make sure the global run saved its input data These will be looked for
+        ## Make sure the global run saved its input data. These will be looked for
         ## in the 'data' subdirectory of the global run output
         ## file. Do it this way so that the validation run depends
         ## only on the saved outputs from the global run, rather than,
@@ -3831,6 +3845,15 @@ do_global_validation_mcmc <-
                         data_dir = file.path(run_name_to_validate_run_dir_path, "data"),
                         data_local = output_data_folder_path)
 
+        ##-----------------------------------------------------------------------------
+        ## Meta Info
+
+        global_validation_mcmc_args <- c(mget(names(formals(do_global_validation_mcmc))),
+                              global_mcmc_args[["marital_group_param_set"]],
+                              list(run_name = run_name, validation_run = TRUE, validation_doing = validation_doing))
+        save(global_validation_mcmc_args,
+             file = file.path(run_dir_path, "global_validation_mcmc_args.RData"))
+
         ## --------------------------------------------------------------------
         ## Make MCMC chains
 
@@ -3841,7 +3864,7 @@ do_global_validation_mcmc <-
         RunMCMC(
             N.ITER = estimation_iterations,
             N.BURNIN = burn_in_iterations,
-            N.STEPS = steps_before_progress_report,
+            N.STEPS = number_incremental_backups,
             N.THIN = thinning,
             run.on.server = run_in_parallel,
             run.name =  run_name,
@@ -3948,7 +3971,7 @@ do_global_validation_run <- function(run_name = NULL,
                                      generate_new_set = TRUE,
                                      estimation_iterations = 3,
                                      burn_in_iterations = 1,
-                                     steps_before_progress_report = 4,
+                                     number_incremental_backups = 4,
                                      thinning = 2,
                                      chain_nums = 1:3,
                                      run_in_parallel = isTRUE(length(chain_nums) > 1)) {
@@ -4056,7 +4079,7 @@ do_global_validation_run <- function(run_name = NULL,
                                   generate_new_set = generate_new_set,
                                   estimation_iterations = estimation_iterations,
                                   burn_in_iterations = burn_in_iterations,
-                                  steps_before_progress_report = steps_before_progress_report,
+                                  number_incremental_backups = number_incremental_backups,
                                   thinning = thinning,
                                   chain_nums = chain_nums,
                                   run_in_parallel = run_in_parallel)

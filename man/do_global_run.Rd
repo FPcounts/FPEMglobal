@@ -5,18 +5,18 @@
 \title{Run the global FPEM model for married or unmarried women}
 \usage{
 do_global_run(
-  run_desc = "",
-  output_dir_path = file.path(getwd(), "output"),
-  run_name_override = NULL,
   marital_group = c("married", "unmarried"),
   age_group = "15-49",
   estimation_iterations = 3,
   burn_in_iterations = 1,
-  steps_before_progress_report = 4,
+  number_incremental_backups = 4,
   thinning = 2,
   chain_nums = 1:3,
   set_seed_chains = 1,
   run_in_parallel = isTRUE(length(chain_nums) > 1),
+  include_AR = TRUE,
+  run_name = NULL,
+  output_dir_path = file.path(getwd(), "output"),
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
   region_information_csv_filename = "country_and_area_classification.csv",
@@ -45,16 +45,10 @@ do_global_run(
   age_ratios_age_total_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
-  model_diagnostics = TRUE,
-  include_AR = TRUE,
-  verbose = FALSE
+  model_diagnostics = TRUE
 )
 }
 \arguments{
-\item{output_dir_path}{Path of the top-level directory in which to save
-results. Sub-directories named \code{run_name} will be created inside
-this directory for each run.}
-
 \item{marital_group}{Character. The marital group for which a run of the
 model is desired.}
 
@@ -73,8 +67,9 @@ be \emph{saved}. This is \emph{before} \code{thinning}.}
 \item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
 run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times progress
-should reported during MCMC sampling.}
+\item{number_incremental_backups}{Numeric. The number of times MCMC chains
+should be written to disc during the model run. These can be used to
+restart a run after an interruption.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
@@ -98,6 +93,18 @@ parallel. Parallel running requires package
 #endif
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
+
+\item{include_AR}{Logical; should the auto-regressive component of the model
+be estimated. Used mainly for testing.}
+
+\item{run_name}{Character. When \code{NULL} (default), this is set
+automatically by concatenating the current date (yyyy-mm-dd),
+\code{age_group} and \code{marital_group}. Alternatively, a user defined
+run name to override default generation.}
+
+\item{output_dir_path}{Path of the top-level directory in which to save
+results. Sub-directories named \code{run_name} will be created inside
+this directory for each run.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
@@ -222,11 +229,6 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \item{model_diagnostics}{Logical; should convergence diagnostics
 and WAIC be computed? These are not re-done if the folder
 \sQuote{\code{run_dir_path}/convergence} exists.}
-
-\item{include_AR}{Logical; should the auto-regressive component of the model
-be estimated. Used mainly for testing.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run, \code{run_name}, returned invisibly as a

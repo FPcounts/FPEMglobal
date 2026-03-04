@@ -5,7 +5,7 @@
 \title{Summarize a post-processed global run of FPEM}
 \usage{
 make_results(
-  run_name = NULL,
+  run_name,
   output_dir_path = file.path(getwd(), "output"),
   input_data_folder_path = NULL,
   countries_in_CI_plots_csv_filename = "countries_mwra_195.csv",
@@ -26,8 +26,7 @@ make_results(
   make_age_ratios = NULL,
   validation_keep_all = TRUE,
   validation_return_res_as_df = FALSE,
-  all_women = NULL,
-  verbose = FALSE
+  all_women = NULL
 )
 }
 \arguments{
@@ -123,9 +122,6 @@ saved? If \code{TRUE}, a list with elements \code{CI.df} and
 results be returned as a data frame? If \code{FALSE} the
 function returns the \code{run_name} invisibly as a character
 string.}
-
-\item{verbose}{Logical; print lots and lots of messages about
-progress?}
 
 \item{married_women_run_name}{Run name of a married women
 run. Relevant if \code{\link{make_results}} is being run on an

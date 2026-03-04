@@ -51,7 +51,7 @@ chain_nums <- 1:2 #1:6
 
 burn_in_iterations <- 1 #2e4
 estimation_iterations <- 2 #ceiling(5e5 / nchains)
-steps_before_progress_report <- 1 #4
+number_incremental_backups <- 1 #4
 thinning <- 1 #30
 run_in_parallel <- TRUE
 
@@ -111,7 +111,7 @@ make_age_ratios <- TRUE
                     ## MCMC Params
                     estimation_iterations = estimation_iterations,
                     burn_in_iterations = burn_in_iterations,
-                    steps_before_progress_report = steps_before_progress_report,
+                    number_incremental_backups = number_incremental_backups,
                     thinning = thinning,
                     chain_nums = chain_nums,
                     run_in_parallel = run_in_parallel,
@@ -174,7 +174,7 @@ dir(output_dir_path)
                ## MCMC parameters
                estimation_iterations = estimation_iterations,
                burn_in_iterations = burn_in_iterations,
-               steps_before_progress_report = steps_before_progress_report,
+               number_incremental_backups = number_incremental_backups,
                thinning = thinning,
                chain_nums = chain_nums + 1,
                run_in_parallel = run_in_parallel,
@@ -233,7 +233,7 @@ dir(output_dir_path)
         ## MCMC parameters
         estimation_iterations = estimation_iterations,
         burn_in_iterations = burn_in_iterations,
-        steps_before_progress_report = steps_before_progress_report,
+        number_incremental_backups = number_incremental_backups,
         thinning = thinning,
         chain_nums = chain_nums,
         run_in_parallel = run_in_parallel,
@@ -270,7 +270,7 @@ dir(output_dir_path_omnibus)
         ## MCMC parameters
         estimation_iterations = estimation_iterations,
         burn_in_iterations = burn_in_iterations,
-        steps_before_progress_report = steps_before_progress_report,
+        number_incremental_backups = number_incremental_backups,
         thinning = thinning,
         chain_nums = chain_nums,
         run_in_parallel = run_in_parallel,
@@ -300,6 +300,9 @@ dir(output_dir_path_omnibus)
 ###-----------------------------------------------------------------------------
 ### ** Base Function
 
+###
+### MCMC
+
 (valid_1549_mcmc <-
     do_global_validation_mcmc(run_name = NULL,
                              output_dir_path = mcmc_1549_married[["output_dir_path"]],
@@ -307,7 +310,7 @@ dir(output_dir_path_omnibus)
                              run_name_to_validate_output_dir_path = mcmc_1549_married[["output_dir_path"]],
              exclude_unmet_only = FALSE,
              exclude_unmet_only_test_prop = 0.2,
-             at_random = FALSE,
+             at_random = TRUE, #<<
              at_random_min_c = 1,
              at_random_test_prop = 0.2,
              at_end = FALSE,
@@ -328,20 +331,51 @@ dir(output_dir_path_omnibus)
 
 dir(output_dir_path)
 
+
+###
+### Post process
+
+(pp_valid_1549_mcmc <-
+     post_process_mcmc(run_name = valid_1549_mcmc[["run_name"]],
+                       output_dir_path = valid_1549_mcmc[["output_dir_path"]],
+                       ## Inputs
+                       denominator_counts_csv_filename = denominator_counts_csv_filename_1549,
+                       ## Results
+                       years_change = years_change,
+                       years_change2 = years_change2,
+                       model_diagnostics = model_diagnostics,
+                       special_aggregates_name = special_aggregates_name))
+
+dir(output_dir_path)
+
+
+###
+### Make results
+
+(res_valid_1549_mcmc <-
+     make_results(run_name = pp_valid_1549_mcmc[["run_name"]],
+                  output_dir_path = pp_valid_1549_mcmc[["output_dir_path"]],
+             plot_maps_shapefile_folder = plot_maps_shapefile_folder,
+             plot_maps_years = plot_maps_years,
+             adjust_medians = adjust_medians,
+             special_aggregates_name = special_aggregates_name))
+
+dir(output_dir_path)
+
 ###-----------------------------------------------------------------------------
 ### ** Full validation
 
 (valid_1519_mcmc <-
-    do_global_validation_run(run_name = NULL,
+     do_global_validation_run(run_name = NULL,
                               output_dir_path = output_dir_path_omnibus,
-                              run_name_to_validate = test_1519_married,
-             run_name_to_validate_output_dir_path = output_dir_path_omnibus,
+                              run_name_to_validate = all_women_1519_runs[["married"]][["run_name"]],
+                              run_name_to_validate_output_dir_path = all_women_1519_runs[["married"]][["output_dir_path"]],
              exclude_unmet_only = FALSE,
              exclude_unmet_only_test_prop = 0.2,
              at_random = FALSE,
              at_random_min_c = 1,
              at_random_test_prop = 0.2,
-             at_end = FALSE,
+             at_end = TRUE, #<<
              at_end_not_1_obs_c = FALSE,
              at_random_no_data = FALSE,
              at_random_no_data_strata = NULL,

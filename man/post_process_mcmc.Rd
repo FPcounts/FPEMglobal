@@ -25,8 +25,7 @@ post_process_mcmc(
   age_ratios_age_total_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
-  overwrite_existing_results = FALSE,
-  verbose = FALSE
+  overwrite_existing_results = FALSE
 )
 }
 \arguments{
@@ -118,8 +117,6 @@ for example, you wish to re-process a completed run with a
 different \code{satrt_year} or \code{end_year}. It is
 \emph{not} necessary to set this to \code{TRUE} to add extra
 aggregates.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 The run name (invisibly). The function is mainly called

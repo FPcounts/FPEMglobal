@@ -2,10 +2,13 @@
 
 * The arguments specifying run names and output directories of the main user interface functions have been simplified. All now take only `run_name` and `output_dir_path` to indicate, respectively, a unique name for a given model run and the top-level directory in which outputs are saved. Once a run is complete, the directory `output_dir_path` will contain a subdirectory named `run_name`, where `run_name` uniquely identifies  marital-age-group specific run.
 * Auto-generated run names are based only on the date, not the date-time.  
+* Argument `steps_before_progress_report` in the `do_...` functions renamed to `number_incremental_backups`, which better describes what it actually does. 
+
 
 # FPEMglobal 1.5.4
 
 * Patch to correct erroneous file paths for results tables when `adjust_medians = TRUE`.
+
 
 # FPEMglobal 1.2.0
 

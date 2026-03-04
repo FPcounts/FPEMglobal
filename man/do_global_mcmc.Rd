@@ -9,7 +9,7 @@ do_global_mcmc(
   age_group = "15-49",
   estimation_iterations = 3,
   burn_in_iterations = 1,
-  steps_before_progress_report = 4,
+  number_incremental_backups = 4,
   thinning = 2,
   chain_nums = 1:3,
   set_seed_chains = 1,
@@ -19,8 +19,7 @@ do_global_mcmc(
   output_dir_path = file.path(getwd(), "output"),
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-  region_information_csv_filename = "country_and_area_classification.csv",
-  verbose = FALSE
+  region_information_csv_filename = "country_and_area_classification.csv"
 )
 }
 \arguments{
@@ -42,8 +41,9 @@ be \emph{saved}. This is \emph{before} \code{thinning}.}
 \item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
 run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times progress
-should reported during MCMC sampling.}
+\item{number_incremental_backups}{Numeric. The number of times MCMC chains
+should be written to disc during the model run. These can be used to
+restart a run after an interruption.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
@@ -94,8 +94,6 @@ country-level prevalence data. See \dQuote{Details}.}
 \item{region_information_csv_filename}{Filename of the \file{.csv} file
 containing classifications of countries in sub-regions, regions, etc.
 See \dQuote{Details}.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run returned invisibly as a character string. MCMC

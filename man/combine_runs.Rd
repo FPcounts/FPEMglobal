@@ -5,13 +5,10 @@
 \title{Make all women results from married and unmarried women FPEM runs}
 \usage{
 combine_runs(
-  run_desc = "",
+  run_name = NULL,
   output_dir_path = file.path(getwd(), "output"),
-  run_name_override = NULL,
   married_women_run_name = NULL,
-  married_women_run_run_dir_path = NULL,
   unmarried_women_run_name = NULL,
-  unmarried_women_run_run_dir_path = NULL,
   unmarried_women_run_data_folder_path = file.path(unmarried_women_run_run_dir_path,
     "data"),
   region_information_csv_filename = NULL,
@@ -35,11 +32,15 @@ combine_runs(
   age_ratios_age_total_married_run_dir_path = NULL,
   age_ratios_age_total_all_women_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
-  age_ratios_age_total_denominator_counts_folder_path = NULL,
-  verbose = FALSE
+  age_ratios_age_total_denominator_counts_folder_path = NULL
 )
 }
 \arguments{
+\item{run_name}{Character. When \code{NULL} (default), this is set
+automatically by concatenating the current date (yyyy-mm-dd),
+\code{age_group} and \code{marital_group}. Alternatively, a user defined
+run name to override default generation.}
+
 \item{output_dir_path}{Path of the top-level directory in which to save
 results. Sub-directories named \code{run_name} will be created inside
 this directory for each run.}
@@ -50,14 +51,8 @@ be combined. Ignored if
 \code{NULL}. Otherwise, the output folder will be assumed to
 be \code{file.path(output_dir_path, married_women_run_name)}.}
 
-\item{married_women_run_run_dir_path}{Path to the folder
-containing results for the married women run to be combined.}
-
 \item{unmarried_women_run_name}{Same as
 \code{married_women_run_name} but for the unmarried women run.}
-
-\item{unmarried_women_run_run_dir_path}{Path to the folder
-containing results for the unmarried women run to be combined.}
 
 \item{unmarried_women_run_data_folder_path}{Path to the folder
 containing results for the unmarried women run to be
@@ -146,7 +141,11 @@ the age group 15--49. Only used if \code{make_age_ratios} is
 \code{file.path(age_ratios_age_total_run_dir_path,
     "data")}.}
 
-\item{verbose}{Logical; print lots and lots of messages about progress?}
+\item{married_women_run_run_dir_path}{Path to the folder
+containing results for the married women run to be combined.}
+
+\item{unmarried_women_run_run_dir_path}{Path to the folder
+containing results for the unmarried women run to be combined.}
 }
 \value{
 A name for the run returned invisibly as a character

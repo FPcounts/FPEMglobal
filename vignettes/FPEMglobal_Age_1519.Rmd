@@ -78,7 +78,7 @@ all_women_runs_1519 <-
         ## MCMC parameters #......................................< CHANGE FOR FULL RUN!
         estimation_iterations = 2,
         burn_in_iterations = 1,
-        steps_before_progress_report = 1,
+        number_incremental_backups = 1,
         thinning = 1,
         chain_nums = 1:2,
         set_seed_chains = 1
@@ -118,7 +118,7 @@ all_women_runs_1519 <-
         ## MCMC parameters #......................................< CHANGE FOR FULL RUN!
         estimation_iterations = 2,
         burn_in_iterations = 1,
-        steps_before_progress_report = 1,
+        number_incremental_backups = 1,
         thinning = 1,
         chain_nums = 1:2,
          set_seed_chains = 1,

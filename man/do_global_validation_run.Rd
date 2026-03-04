@@ -5,11 +5,10 @@
 \title{Perform out-of-sample validation for a completed run of the FPEM global model}
 \usage{
 do_global_validation_run(
-  run_desc = "",
-  run_name_override = NULL,
-  run_name_to_validate = NULL,
+  run_name = NULL,
   output_dir_path = file.path(getwd(), "output"),
-  run_name_to_validate_run_dir_path = file.path(output_dir_path, run_name_to_validate),
+  run_name_to_validate = NULL,
+  run_name_to_validate_output_dir_path = output_dir_path,
   input_data_folder_path = NULL,
   exclude_unmet_only = FALSE,
   exclude_unmet_only_test_prop = 0.2,
@@ -28,20 +27,24 @@ do_global_validation_run(
   generate_new_set = TRUE,
   estimation_iterations = 3,
   burn_in_iterations = 1,
-  steps_before_progress_report = 4,
+  number_incremental_backups = 4,
   thinning = 2,
   chain_nums = 1:3,
-  run_in_parallel = isTRUE(length(chain_nums) > 1),
-  verbose = FALSE
+  run_in_parallel = isTRUE(length(chain_nums) > 1)
 )
 }
 \arguments{
-\item{run_name_to_validate}{Name of completed global run to
-validate.}
+\item{run_name}{Character. When \code{NULL} (default), this is set
+automatically by concatenating the current date (yyyy-mm-dd),
+\code{age_group} and \code{marital_group}. Alternatively, a user defined
+run name to override default generation.}
 
 \item{output_dir_path}{Path of the top-level directory in which to save
 results. Sub-directories named \code{run_name} will be created inside
 this directory for each run.}
+
+\item{run_name_to_validate}{Name of completed global run to
+validate.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
 input data (except any map shapefiles). If \code{NULL} the value of
@@ -110,8 +113,9 @@ be \emph{saved}. This is \emph{before} \code{thinning}.}
 \item{burn_in_iterations}{Numeric. Number of MCMC iterations that should be
 run as burn-in before starting to save them.}
 
-\item{steps_before_progress_report}{Numeric. The number of times progress
-should reported during MCMC sampling.}
+\item{number_incremental_backups}{Numeric. The number of times MCMC chains
+should be written to disc during the model run. These can be used to
+restart a run after an interruption.}
 
 \item{thinning}{Numeric. The actual number of iterations saved is
 \eqn{\frac{\code{estimation_iterations}}{\code{thinning}}}{\code{estimation_iterations}/\code{thinning}}.}
@@ -131,8 +135,6 @@ parallel. Parallel running requires package
 #endif
 Defaults to serial running if \code{run_in_parallel = TRUE} but the package
 is not available.}
-
-\item{verbose}{Logical; print lots and lots of messages about progress?}
 }
 \value{
 A name for the run returned invisibly as a character string.

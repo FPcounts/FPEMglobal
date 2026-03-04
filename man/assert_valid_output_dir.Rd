@@ -10,8 +10,7 @@ assert_valid_output_dir(
   countrytrajectories = post_processed,
   made_results = post_processed,
   adjusted_medians = post_processed,
-  age_ratios = NULL,
-  verbose = FALSE
+  age_ratios = NULL
 )
 }
 \arguments{
