@@ -397,8 +397,12 @@ dir(output_dir_path_omnibus)
 ### * TEST RENAME
 
 new_run_names <-
-    mapply(function(y, z) rename_global_run(run_name = y, new_run_name = z, verbose = verbose),
-           all_women_1549_runs, lapply(all_women_1549_runs, function(z) paste0(z, "_RENAMED")))
+    mapply(function(y, z) rename_global_run(run_name = y[["run_name"]],
+                                            new_run_name = z[["run_name"]],
+                                            output_dir_path = y[["output_dir_path"]]),
+           all_women_1549_runs,
+           rapply(all_women_1549_runs, function(z) paste0(z, "_RENAMED"),
+                  how = "replace"))
 
 ###-----------------------------------------------------------------------------
 ### * END

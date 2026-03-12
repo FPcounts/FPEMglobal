@@ -757,7 +757,7 @@ AddMCMCChain <- function(# Add additional MCMC chain to existing run.
 ){
   ##details<< See \code{\link{RunMCMC}} for initial run.
   ## This function will crash if you specified a run for which mcmc.meta has not yet been constructed
-  output.dir <- file.path(getwd(), "output", run.name) # change JR, 20140418
+  ##output.dir <- file.path(getwd(), "output", run.name) # change JR, 20140418
   filename.append <- ifelse(do.SS.run.first.pass, "_pre", "")
   load(file.path(output.dir, paste0("mcmc.meta", filename.append, ".rda"))) # change JR, 20140418
   if (sum(is.element(ChainNums, mcmc.meta$general$ChainNums))>0){

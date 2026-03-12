@@ -314,8 +314,6 @@ do_global_mcmc <- function(## Description
     output_dir_path <- init_paths$output_dir_path
     run_dir_path <- init_paths$run_dir_path
 
-    message("\nThis run has 'run_name': '", run_name, "'.")
-
     ##---------------------------------------------------------------------
     ## Make paths to input data
 
@@ -378,7 +376,7 @@ do_global_mcmc <- function(## Description
     ##---------------------------------------------------------------------
     ## Log
 
-    msg <- paste0("Starting MCMC sampler for run ", run_name)
+    msg <- paste0("Starting MCMC sampler for run '", run_name, "'.")
     message(msg)
 
     cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
@@ -475,8 +473,15 @@ add_global_mcmc <- function(run_name,
 
     verbose <- getOption("FPEMglobal.verbose")
 
-    if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
-    run_dir_path <- make_run_dir_path(output_dir_path, run_name)
+    ##---------------------------------------------------------------------
+    ## Run name and output paths
+
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         check_overwrite = FALSE, assert_valid = TRUE)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
 
     ##---------------------------------------------------------------------
     ## Meta Info
@@ -525,6 +530,7 @@ add_global_mcmc <- function(run_name,
 
     AddMCMCChain(run.name = run_name,
                  ChainNums = chain_nums,
+                 output.dir = run_dir_path,
                  write.model.fun = mcmc.meta$general$write.model.fun,
                  run.on.server = run_in_parallel
                  )
@@ -569,90 +575,78 @@ add_global_mcmc <- function(run_name,
 ##' included with the package; see \code{system.file("extdata", "WHO_regions.csv", package = "FPEMglobal")}
 ##' for the required format. Assum all columns are required.
 ##'
-##' @references UN DESA Statistics Division, (2017) \emph{Standard
-##'     Country or Area Codes for Statistical Use (M49)}. United
-##'     Nations, Department of Economic and Social Affairs.
+##' @references UN DESA Statistics Division, (2017) \emph{Standard Country or
+##'     Area Codes for Statistical Use (M49)}. United Nations, Department of
+##'     Economic and Social Affairs.
 ##'     \url{https://unstats.un.org/unsd/methodology/m49/}
-##' @param run_name The name of the run to post-process.
-##' @param input_data_folder_path File path to folder containing
-##'     \emph{all} input data (except any map shapefiles). If
-##'     \code{NULL} the value is taken from
-##'     \code{file.path(run_dir_path, "global_mcmc_args.RData")}
-##'     if that file exists, otherwise
-##'     \code{file.path(run_dir_path, "data")}.
-##' @param denominator_counts_csv_filename Name of the \file{.csv}
-##'     file containing estimates and projections of the number of
-##'     women by marital status, age, and year. See \dQuote{Details}.
-##' @param countries_for_aggregates_csv_filename Name of the
-##'     \file{.csv} file listing countries that will be used in
-##'     constructing country aggregates.
-##' @param start_year Estimates and projections are produced for a
-##'     specified time interval. This is the start year of that
-##'     interval.
-##' @param end_year Estimates and projections are produced for a
-##'     specified time interval. This is the end year of that
-##'     interval.
-##' @param years_change A two-column matrix giving the year pairs (as
-##'     rows) between which probabilistic estimates of changes in the
-##'     indicators are desired.
-##' @param years_change2 A three-column matrix giving the year triples
-##'     (as rows) among which to compute probabilistic estimates of
-##'     change-in-changes.
-##' @param model_diagnostics Logical; should convergence diagnostics
-##'     and WAIC be computed? These are not re-done if the folder
+##' @param run_name The name of the run to operate on.
+##' @param output_dir_path Path of the top-level directory in which the run in
+##'     \code{run_name} been saved.
+##' @param input_data_folder_path File path to folder containing \emph{all}
+##'     input data (except any map shapefiles). If \code{NULL} the value is
+##'     taken from \code{file.path(run_dir_path, "global_mcmc_args.RData")} if
+##'     that file exists, otherwise \code{file.path(run_dir_path, "data")}.
+##' @param denominator_counts_csv_filename Name of the \file{.csv} file
+##'     containing estimates and projections of the number of women by marital
+##'     status, age, and year. See \dQuote{Details}.
+##' @param countries_for_aggregates_csv_filename Name of the \file{.csv} file
+##'     listing countries that will be used in constructing country aggregates.
+##' @param start_year Estimates and projections are produced for a specified
+##'     time interval. This is the start year of that interval.
+##' @param end_year Estimates and projections are produced for a specified time
+##'     interval. This is the end year of that interval.
+##' @param years_change A two-column matrix giving the year pairs (as rows)
+##'     between which probabilistic estimates of changes in the indicators are
+##'     desired.
+##' @param years_change2 A three-column matrix giving the year triples (as rows)
+##'     among which to compute probabilistic estimates of change-in-changes.
+##' @param model_diagnostics Logical; should convergence diagnostics and WAIC be
+##'     computed? These are not re-done if the folder
 ##'     \sQuote{\code{run_dir_path}/convergence} exists.
-##' @param make_any_aggregates Logical. Should country aggregates of
-##'     any kind (including default aggregates) be produced?
-##' @param special_aggregates_name Character vector of names
-##'     (\emph{not} filenames) of any speical aggregates
-##'     desired. There must be a corresponding file with name
-##'     \file{\code{special_aggregates_name}.csv} in
-##'     \code{input_data_folder_path} that defines the special
-##'     aggregates. See \dQuote{Details}.
+##' @param make_any_aggregates Logical. Should country aggregates of any kind
+##'     (including default aggregates) be produced?
+##' @param special_aggregates_name Character vector of names (\emph{not}
+##'     filenames) of any speical aggregates desired. There must be a
+##'     corresponding file with name \file{\code{special_aggregates_name}.csv}
+##'     in \code{input_data_folder_path} that defines the special aggregates.
+##'     See \dQuote{Details}.
 ##' @param summarize_global_run Logical; should the model summary for
 ##'     one-country runs be produced?
-##' @param age_ratios_age_total_run_name Run name of the 15--49 run to
-##'     use as the denominator for age ratios. Calculate ratios of
-##'     users in a subset age range (e.g., 15--19) to users in the
-##'     total age range (15--49) from this run. Requires a completed
-##'     15--49 run.
-##' @param age_ratios_age_total_run_dir_path Alternative way of
-##'     specifying the run to use to make age ratios (see
-##'     \code{age_ratios_age_total_run_name}. File path to output
-##'     directory of the 15--49 run to use to make age ratios.
-##' @param age_ratios_age_total_denominator_counts_csv_filename Name
-##'     of the \file{.csv} file containing estimates and projections
-##'     of the number of women by marital status, age, and year, for
-##'     the age group 15--49. Only used if \code{make_age_ratios} is
-##'     \code{TRUE}. Searched for in
+##' @param age_ratios_age_total_run_name Run name of the 15--49 run to use as
+##'     the denominator for age ratios. Calculate ratios of users in a subset
+##'     age range (e.g., 15--19) to users in the total age range (15--49) from
+##'     this run. Requires a completed 15--49 run.
+##' @param age_ratios_age_total_run_dir_path Alternative way of specifying the
+##'     run to use to make age ratios (see \code{age_ratios_age_total_run_name}.
+##'     File path to output directory of the 15--49 run to use to make age
+##'     ratios.
+##' @param age_ratios_age_total_denominator_counts_csv_filename Name of the
+##'     \file{.csv} file containing estimates and projections of the number of
+##'     women by marital status, age, and year, for the age group 15--49. Only
+##'     used if \code{make_age_ratios} is \code{TRUE}. Searched for in
 ##'     \code{age_ratios_age_total_denominator_counts_folder_path}.
 ##' @param age_ratios_age_total_denominator_counts_folder_path Path to
 ##'     \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 ##'     \code{NULL}, defaults to
-##'     \code{file.path(age_ratios_age_total_run_dir_path,
-##'     "data")}.
-##' @param overwrite_existing_results Logical; should post-processed
-##'     results already in the output folder be overwritten? If all of
-##'     the following files are already present,
-##'     \code{post_process_mcmc} will exit unless this argument is
-##'     \code{TRUE} (default is \code{FALSE}): "res.country.rda",
-##'     "res.aggregate.rda", "par.ciq.rda". This might be useful if,
-##'     for example, you wish to re-process a completed run with a
-##'     different \code{satrt_year} or \code{end_year}. It is
-##'     \emph{not} necessary to set this to \code{TRUE} to add extra
-##'     aggregates.
+##'     \code{file.path(age_ratios_age_total_run_dir_path, "data")}.
+##' @param overwrite_existing_results Logical; should post-processed results
+##'     already in the output folder be overwritten? If all of the following
+##'     files are already present, \code{post_process_mcmc} will exit unless
+##'     this argument is \code{TRUE} (default is \code{FALSE}):
+##'     "res.country.rda", "res.aggregate.rda", "par.ciq.rda". This might be
+##'     useful if, for example, you wish to re-process a completed run with a
+##'     different \code{satrt_year} or \code{end_year}. It is \emph{not}
+##'     necessary to set this to \code{TRUE} to add extra aggregates.
 ##' @inheritParams do_global_mcmc
-##' @return The run name (invisibly). The function is mainly called
-##'     for its side effects.
+##' @return The run name (invisibly). The function is mainly called for its side
+##'     effects.
 ##' @author Mark Wheldon, Andrew Tait
-##' @seealso \code{\link{do_global_run}} (which calls this function)
-##'     to generate MCMC results for married or unmarried women,
-##'     post-process, and produce results all in one call;
-##'     \code{\link{combine_runs}} to create all women results from
-##'     married and unmarried women runs;
-##'     \code{\link{do_global_all_women_run}} to do married,
-##'     unmarried, \emph{and all women runs}, and produce results, all
-##'     in one call.
+##' @seealso \code{\link{do_global_run}} (which calls this function) to generate
+##'     MCMC results for married or unmarried women, post-process, and produce
+##'     results all in one call; \code{\link{combine_runs}} to create all women
+##'     results from married and unmarried women runs;
+##'     \code{\link{do_global_all_women_run}} to do married, unmarried,
+##'     \emph{and all women runs}, and produce results, all in one call.
 ##' @examples vignette("FPEMglobal_Intro")
 ##' @export
 post_process_mcmc <- function(run_name = NULL,
@@ -688,11 +682,20 @@ post_process_mcmc <- function(run_name = NULL,
 
     verbose <- getOption("FPEMglobal.verbose")
 
+    ##---------------------------------------------------------------------
+    ## Run name and output paths
+
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         check_overwrite = FALSE, assert_valid = TRUE)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
+
+    message("\nPost-processing run '", run_name, "'.")
+
     ##----------------------------------------------------------------------------
     ## Meta Info
-
-    if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
-    run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
     load(file.path(run_dir_path, "mcmc.meta.rda"), verbose = verbose)
     write_model_function <- mcmc.meta$general$write.model.fun
@@ -1020,87 +1023,72 @@ post_process_mcmc <- function(run_name = NULL,
 ##'     applied to an all women run, an attempt is made to find the
 ##'     corresponding
 ##'
-##' @param countries_in_CI_plots_csv_filename Name of \file{.csv} file
-##'     that lists the countries to be included in the main
-##'     country-level indicator plots. These are the plots saved in
-##'     \file{\code{run_dir_path}/fig/\var{[run
-##'     name]}CIs.pdf}. The format is the same as
-##'     \code{countries_for_aggregates_csv_filename}. The file is
-##'     looked for in \code{input_data_folder_path}. Countries appear
-##'     in the \file{.pdf} in the same order as they are listed in
+##' @param countries_in_CI_plots_csv_filename Name of \file{.csv} file that
+##'     lists the countries to be included in the main country-level indicator
+##'     plots. These are the plots saved in
+##'     \file{\code{run_dir_path}/fig/\var{[run name]}CIs.pdf}. The format is
+##'     the same as \code{countries_for_aggregates_csv_filename}. The file is
+##'     looked for in \code{input_data_folder_path}. Countries appear in the
+##'     \file{.pdf} in the same order as they are listed in
 ##'     \code{countries_in_CI_plots_csv_filename}.
-##' @param plot_diagnostic_CI_plots Logical. Produce diagnostic
-##'     versions of the main country-level indicator plots. These have
-##'     zoomed y-axes.
-##' @param make_all_bar_charts Logical. Produce barcharts? If
-##'     \code{NULL} but \code{plot_barchart_years} is non-\code{NULL},
-##'     is reset to \code{TRUE}.
-##' @param plot_CI_changes_years Vector of length two (if longer, only
-##'     the first and last elements are used). Declares the years to
-##'     be used to make the \dQuote{fish bone} plots, i.e., the plots
-##'     appearing in files
+##' @param plot_diagnostic_CI_plots Logical. Produce diagnostic versions of the
+##'     main country-level indicator plots. These have zoomed y-axes.
+##' @param make_all_bar_charts Logical. Produce barcharts? If \code{NULL} but
+##'     \code{plot_barchart_years} is non-\code{NULL}, is reset to \code{TRUE}.
+##' @param plot_CI_changes_years Vector of length two (if longer, only the first
+##'     and last elements are used). Declares the years to be used to make the
+##'     \dQuote{fish bone} plots, i.e., the plots appearing in files
 ##'     \file{\code{run_dir_path}/fig/\var{[run
-##'     name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
+##'     name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in the range
+##'     of \code{start_year} and \code{end_year} passed to
+##'     \code{\link{post_process_mcmc}}.
+##' @param plot_barchart_years Vector of years for which bar charts should be
+##'     produced. These are saved to \file{\code{run_dir_path}/fig/barchart}.
+##'     These must be in the range of \code{start_year} and \code{end_year}
+##'     passed to \code{\link{post_process_mcmc}}.
+##' @param plot_maps_shapefile_folder Path to directory containing shapefiles
+##'     for maps. Only needed if \code{plot_maps} is \code{TRUE}. This is
+##'     \emph{not} looked for in \code{input_data_folder_path}; it should be a
+##'     full path to the shape files.
+##' @param plot_maps_years Vector of years for which maps are desired; the full
+##'     set of maps are produced for each of the years listed. These must be in
 ##'     the range of \code{start_year} and \code{end_year} passed to
 ##'     \code{\link{post_process_mcmc}}.
-##' @param plot_barchart_years Vector of years for which bar charts
-##'     should be produced. These are saved to
-##'     \file{\code{run_dir_path}/fig/barchart}. These must be
-##'     in the range of \code{start_year} and \code{end_year} passed
-##'     to \code{\link{post_process_mcmc}}.
-##' @param plot_maps_shapefile_folder Path to directory containing
-##'     shapefiles for maps. Only needed if \code{plot_maps} is
-##'     \code{TRUE}. This is \emph{not} looked for in
-##'     \code{input_data_folder_path}; it should be a full path to the
-##'     shape files.
-##' @param plot_maps_years Vector of years for which maps are desired;
-##'     the full set of maps are produced for each of the years
-##'     listed. These must be in the range of \code{start_year} and
-##'     \code{end_year} passed to \code{\link{post_process_mcmc}}.
-##' @param plot_parameters Logical. Should posterior quantiles of
-##'     model parameters be added to the plots in legend boxes?
-##' @param adjust_medians Logical. Should adjusted medians outputs be
-##'     produced in addition to unadjusted outputs?
-##' @param special_aggregates_name \emph{name} for special aggregates,
-##'     if any. The default, \code{NULL}, means no special aggregates
-##'     are produced. Note: this is \emph{not} a filename, although a
-##'     corresponding file named
+##' @param plot_parameters Logical. Should posterior quantiles of model
+##'     parameters be added to the plots in legend boxes?
+##' @param adjust_medians Logical. Should adjusted medians outputs be produced
+##'     in addition to unadjusted outputs?
+##' @param special_aggregates_name \emph{name} for special aggregates, if any.
+##'     The default, \code{NULL}, means no special aggregates are produced.
+##'     Note: this is \emph{not} a filename, although a corresponding file named
 ##'     \file{\code{special_aggregates_name}.csv} must be present in
 ##'     \code{input_data_folder_path}.
-##' @param make_age_ratios Logical. Should results for age-ratios be
-##'     made? If \code{NULL} this is set based on the presence of
-##'     files \dQuote{res.country.age.ratio.rda} or
-##'     \dQuote{res.country.all.women.age.ratio.rda} in
-##'     \code{run_dir_path}.
-##' @param validation_keep_all Logical. Should validation results be
-##'     saved? If \code{TRUE}, a list with elements \code{CI.df} and
-##'     \code{Error.df} is saved to
-##'     \file{\code{run_dir_path}/validn_repts/validation.results.rda}.
-##' @param validation_return_res_as_df Logical; should the validation
-##'     results be returned as a data frame? If \code{FALSE} the
-##'     function returns the \code{run_name} invisibly as a character
-##'     string.
-##' @param married_women_run_name Run name of a married women
-##'     run. Relevant if \code{\link{make_results}} is being run on an
-##'     all women run and age ratios for country aggregates are
-##'     wanted. If this argument is \code{NULL} (default), and
-##'     \code{all_women} is \code{TRUE} (explicitly or implicitly), an
-##'     attempt is made to find this folder by substituting
-##'     \dQuote{all_women} with \dQuote{married} in the
-##'     \code{run_name}.
-##' @param unmarried_women_run_name Run name of a unmarried women
-##'     run. See \code{married_women_run_name}.
-##' @param married_women_run_dir_path Path to directory
-##'     containing outputs for a married women run. See
+##' @param make_age_ratios Logical. Should results for age-ratios be made? If
+##'     \code{NULL} this is set based on the presence of files
+##'     \dQuote{res.country.age.ratio.rda} or
+##'     \dQuote{res.country.all.women.age.ratio.rda} in \code{run_dir_path}.
+##' @param validation_keep_all Logical. Should validation results be saved? If
+##'     \code{TRUE}, a list with elements \code{CI.df} and \code{Error.df} is
+##'     saved to \file{\code{run_dir_path}/validn_repts/validation.results.rda}.
+##' @param validation_return_res_as_df Logical; should the validation results be
+##'     returned as a data frame? If \code{FALSE} the function returns the
+##'     \code{run_name} invisibly as a character string.
+##' @param married_women_run_name Run name of a married women run. Relevant if
+##'     \code{\link{make_results}} is being run on an all women run and age
+##'     ratios for country aggregates are wanted. If this argument is
+##'     \code{NULL} (default), and \code{all_women} is \code{TRUE} (explicitly
+##'     or implicitly), an attempt is made to find this folder by substituting
+##'     \dQuote{all_women} with \dQuote{married} in the \code{run_name}.
+##' @param unmarried_women_run_name Run name of a unmarried women run. See
 ##'     \code{married_women_run_name}.
-##' @param unmarried_women_run_dir_path Path to directory
-##'     containing outputs for a unmarried women run. See
-##'     \code{married_women_run_dir_path}.
-##' @inheritParams do_global_mcmc
+##' @param married_women_run_dir_path Path to directory containing outputs for a
+##'     married women run. See \code{married_women_run_name}.
+##' @param unmarried_women_run_dir_path Path to directory containing outputs for
+##'     a unmarried women run. See \code{married_women_run_dir_path}.
 ##' @inheritParams post_process_mcmc
-##' @return Either \code{run_name} invisibly as a character string or,
-##'     if \code{isTRUE(validation_return_res_as_df)}, a data frame
-##'     (non-invisibly) containing validation results.
+##' @return Either \code{run_name} invisibly as a character string or, if
+##'     \code{isTRUE(validation_return_res_as_df)}, a data frame (non-invisibly)
+##'     containing validation results.
 ##'
 ##' @author Mark Wheldon, Andrew Tait
 ##'
@@ -1140,13 +1128,21 @@ make_results <- function(run_name,
 
     verbose <- getOption("FPEMglobal.verbose")
 
+    ##---------------------------------------------------------------------
+    ## Run name and output paths
+    ##----------------------------------------------------------------------------
+
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         check_overwrite = FALSE, assert_valid = TRUE,
+                         assert_valid_post_processed = TRUE)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
+
     ##----------------------------------------------------------------------------
     ## Meta information
     ##----------------------------------------------------------------------------
-
-    ## Output folder path
-    if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
-    run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
     ## MCMC meta
     load(file.path(run_dir_path, "mcmc.meta.rda"), verbose = verbose)
@@ -2301,7 +2297,7 @@ do_global_run <- function(## Description
                           ## Logging
                           model_diagnostics = TRUE) {
 
-    getOption("FPEMglobal.verbose")
+    verbose <- getOption("FPEMglobal.verbose")
 
     ##-----------------------------------------------------------------------------
     ## Set-up
@@ -2654,7 +2650,7 @@ combine_runs <- function(## Describe the run
                          age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
                          age_ratios_age_total_denominator_counts_folder_path = NULL) {
 
-    getOption("FPEMglobal.verbose")
+    verbose <- getOption("FPEMglobal.verbose")
 
     ##----------------------------------------------------------------------------
     ## Meta information
@@ -3641,12 +3637,7 @@ do_global_all_women_run <- function(## Describe the run
 
     ##---------------------------------------------------------------------
 
-    return(invisible(list(run_name = list(married = init_paths_list[["married"]][["run_name"]],
-                                          unmarried = init_paths_list[["unmarried"]][["run_name"]],
-                                          all_women = init_paths_list[["all_women"]][["run_name"]]),
-                          output_dir_path = list(married = init_paths_list[["married"]][["output_dir_path"]],
-                                                 unmarried = init_paths_list[["unmarried"]][["output_dir_path"]],
-                                                 all_women = init_paths_list[["all_women"]][["output_dir_path"]]))))
+    return(invisible(lapply(init_paths_list, "[", c("run_name", "output_dir_path"))))
 }
 
 
@@ -3777,7 +3768,7 @@ do_global_validation_mcmc <-
 
         init_paths_to_validate <-
             initialize_paths(run_name = run_name_to_validate, output_dir_path = run_name_to_validate_output_dir_path,
-                             marital_group = NULL, age_group = NULL, check_exists = FALSE)
+                             marital_group = NULL, age_group = NULL, check_overwrite = FALSE)
         run_name_to_validate <- init_paths_to_validate$run_name
         run_name_to_validate_output_dir_path <- init_paths_to_validate$output_dir_path
         run_name_to_validate_run_dir_path <- init_paths_to_validate$run_dir_path
@@ -3993,7 +3984,7 @@ do_global_validation_run <- function(run_name = NULL,
 
     init_paths_to_validate <-
         initialize_paths(run_name = run_name_to_validate, output_dir_path = run_name_to_validate_output_dir_path,
-                         marital_group = NULL, age_group = NULL)
+                         marital_group = NULL, age_group = NULL, check_overwrite = FALSE)
     run_name_to_validate <- init_paths_to_validate$run_name
     run_name_to_validate_output_dir_path <- init_paths_to_validate$output_dir_path
     run_name_to_validate_run_dir_path <- init_paths_to_validate$run_dir_path
@@ -4207,11 +4198,25 @@ add_special_aggregates <- function(run_dir_path,
 rename_global_run <- function(run_name = NULL,
                               new_run_name,
                               output_dir_path = file.path(getwd(), "output"),
-                              run_dir_path = file.path(output_dir_path, run_name),
                               rename_output_folder = missing(run_dir_path),
                               ignore = "^data$") {
 
     verbose <- getOption("FPEMglobal.verbose")
+
+    ##---------------------------------------------------------------------
+    ## Run name and output paths
+
+    if (is.list(run_name) || is.list(output_dir_path))
+        stop("'run_name' and 'output_dir_path' cannot be lists; run the function on each directory separately.")
+
+    init_paths <-
+        initialize_paths(run_name = run_name, output_dir_path = output_dir_path,
+                         check_overwrite = FALSE, assert_valid = TRUE)
+    run_name <- init_paths$run_name
+    output_dir_path <- init_paths$output_dir_path
+    run_dir_path <- init_paths$run_dir_path
+
+    message("\nPost-processing run '", run_name, "'.")
 
     ## -----------------------------------------------------------------------------
     ## Set-up
@@ -4451,9 +4456,9 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 }
 
 
-##' Check that a directory is a valid FPEMglobal output directory
+##' Check that a run directory path points to a valid FPEMglobal output directory
 ##'
-##' Checks the content of \code{output_dir} to make sure certain
+##' Checks the content of \code{run_dir_path} to make sure certain
 ##' directories and files are present. If some are missing, an error
 ##' is returned, otherwise \code{run_dir_path} is returned
 ##' invisibly.
@@ -4463,21 +4468,20 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
 ##' means it's unlikely to be used.
 ##'
 ##' @param run_dir_path Path (or paths, if a vector) to directory to validate.
-##' @param post_processed Logical; has \code{\link{post_process_mcmc}}
-##'     been run on the directory?
-##' @param countrytrajectories Logical; check for
-##'     \file{countrytrajectories} or \file{aggregatetrajectories}
-##'     directories?
-##' @param made_results Logical; has \code{\link{make_results}} been
-##'     run on the directory?
-##' @param adjusted_medians Logical; check for adjusted median
-##'     results?
-##' @param age_ratios Logical; check for age ratio results? Defaults
-##'     to \code{FALSE} if \code{run_dir_path} points to a
-##'     \dQuote{15-49} run, otherwise the value of
-##'     \code{post_processed}.
-##' @return If all checks pass, \code{run_dir_path} is returned
-##'     invisibly, otherwise an error is thrown.
+##' @param post_processed Logical; has \code{\link{post_process_mcmc}} been run
+##'     on the directory?
+##' @param countrytrajectories Logical; check for \file{countrytrajectories} or
+##'     \file{aggregatetrajectories} directories?
+##' @param made_results Logical; has \code{\link{make_results}} been run on the
+##'     directory?
+##' @param adjusted_medians Logical; check for adjusted median results?
+##' @param age_ratios Logical; check for age ratio results? Defaults to
+##'     \code{FALSE} if \code{run_dir_path} points to a \dQuote{15-49} run,
+##'     otherwise the value of \code{post_processed}.
+##' @param validation_run Logical; were the results in \code{run_dir_path}
+##'     generated by \code{\link{do_global_validation_mcmc}}?
+##' @return If all checks pass, \code{run_dir_path} is returned invisibly,
+##'     otherwise an error is thrown.
 ##' @author Mark Wheldon
 ##' @export
 assert_valid_output_dir <- function(run_dir_path,
@@ -4485,7 +4489,8 @@ assert_valid_output_dir <- function(run_dir_path,
                                     countrytrajectories = post_processed,
                                     made_results = post_processed,
                                     adjusted_medians = post_processed,
-                                    age_ratios = NULL) {
+                                    age_ratios = NULL,
+                                    validation_run = FALSE) {
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -4519,13 +4524,16 @@ assert_valid_output_dir <- function(run_dir_path,
     ## Meta Info
     checkmate::assert_file_exists(file.path(run_dir_path, c("mcmc.meta.rda")))
     mcmc.meta <- get(load(file.path(run_dir_path, "mcmc.meta.rda"), verbose = verbose))
+    validation_run <- !is.null(mcmc.meta$validation.list)
 
     if (identical(mcmc.meta$general$age.group, "15-49")) age_ratios <- FALSE
     else if (is.null(age_ratios)) age_ratios <- post_processed
 
     checkmate::assert_directory_exists(file.path(run_dir_path, "data"))
     if (post_processed) {
-        checkmate::assert_file_exists(file.path(run_dir_path, c("par.ciq.rda")))
+        if (!validation_run) {
+            checkmate::assert_file_exists(file.path(run_dir_path, c("par.ciq.rda")))
+        }
     }
     if (made_results) {
         checkmate::assert_directory_exists(file.path(run_dir_path, c("fig", "table")))
@@ -4538,12 +4546,19 @@ assert_valid_output_dir <- function(run_dir_path,
 
     if (!isTRUE(mcmc.meta$general$all.women.run.copy)) {
 
+        if (!validation_run) global_mcmc_args_filename <- "global_mcmc_args.RData"
+        else global_mcmc_args_filename <- "global_validation_mcmc_args.RData"
+
         checkmate::assert_file_exists(file.path(run_dir_path,
-                                                c("global_mcmc_args.RData", "model.txt", "iso.Ptp3s.key.csv")))
+                                                c(global_mcmc_args_filename, "model.txt")))
         if (post_processed) {
             checkmate::assert_file_exists(file.path(run_dir_path, c("data.global.rda",
-                                                                          "post_process_args.RData",
-                                                                          "res.country.rda", "res.aggregate.rda")))
+                                                                    "post_process_args.RData",
+                                                                  "iso.Ptp3s.key.csv",
+                                                                  "res.country.rda")))
+            if (!validation_run) {
+                checkmate::assert_file_exists(file.path(run_dir_path, "res.aggregate.rda"))
+            }
             if (!isTRUE(mcmc.meta$general$is.age.calibrated))
                 checkmate::assert_file_exists(file.path(run_dir_path, c("mcmc.array.rda")))
         }

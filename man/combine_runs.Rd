@@ -63,20 +63,18 @@ non-\code{NULL}).}
 containing classifications of countries in sub-regions, regions, etc.
 See \dQuote{Details}.}
 
-\item{special_aggregates_name}{Character vector of names
-(\emph{not} filenames) of any speical aggregates
-desired. There must be a corresponding file with name
-\file{\code{special_aggregates_name}.csv} in
-\code{input_data_folder_path} that defines the special
-aggregates. See \dQuote{Details}.}
+\item{special_aggregates_name}{Character vector of names (\emph{not}
+filenames) of any speical aggregates desired. There must be a
+corresponding file with name \file{\code{special_aggregates_name}.csv}
+in \code{input_data_folder_path} that defines the special aggregates.
+See \dQuote{Details}.}
 
-\item{denominator_counts_csv_filename}{Name of the \file{.csv}
-file containing estimates and projections of the number of
-women by marital status, age, and year. See \dQuote{Details}.}
+\item{denominator_counts_csv_filename}{Name of the \file{.csv} file
+containing estimates and projections of the number of women by marital
+status, age, and year. See \dQuote{Details}.}
 
-\item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in
-constructing country aggregates.}
+\item{countries_for_aggregates_csv_filename}{Name of the \file{.csv} file
+listing countries that will be used in constructing country aggregates.}
 
 \item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
 that lists the countries to be included in the main
@@ -85,27 +83,24 @@ for further details. \code{combine_runs} will copy this file
 to \file{\code{run_dir_path}/data} so it is available
 for \code{make_results}.}
 
-\item{start_year}{Estimates and projections are produced for a
-specified time interval. This is the start year of that
-interval.}
+\item{start_year}{Estimates and projections are produced for a specified
+time interval. This is the start year of that interval.}
 
-\item{end_year}{Estimates and projections are produced for a
-specified time interval. This is the end year of that
-interval.}
+\item{end_year}{Estimates and projections are produced for a specified time
+interval. This is the end year of that interval.}
 
-\item{years_change}{A two-column matrix giving the year pairs (as
-rows) between which probabilistic estimates of changes in the
-indicators are desired.}
+\item{years_change}{A two-column matrix giving the year pairs (as rows)
+between which probabilistic estimates of changes in the indicators are
+desired.}
 
-\item{years_change2}{A three-column matrix giving the year triples
-(as rows) among which to compute probabilistic estimates of
-change-in-changes.}
+\item{years_change2}{A three-column matrix giving the year triples (as rows)
+among which to compute probabilistic estimates of change-in-changes.}
 
-\item{make_any_aggregates}{Logical. Should country aggregates of
-any kind (including default aggregates) be produced?}
+\item{make_any_aggregates}{Logical. Should country aggregates of any kind
+(including default aggregates) be produced?}
 
-\item{adjust_medians}{Logical. Should adjusted medians outputs be
-produced in addition to unadjusted outputs?}
+\item{adjust_medians}{Logical. Should adjusted medians outputs be produced
+in addition to unadjusted outputs?}
 
 \item{age_ratios_age_total_unmarried_run_name}{Run name of the
 unmarried 15--49 run to use as the denominator for age ratios.}
@@ -128,18 +123,16 @@ age ratios.}
 to output directory of the all women 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_denominator_counts_csv_filename}{Name
-of the \file{.csv} file containing estimates and projections
-of the number of women by marital status, age, and year, for
-the age group 15--49. Only used if \code{make_age_ratios} is
-\code{TRUE}. Searched for in
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of the
+\file{.csv} file containing estimates and projections of the number of
+women by marital status, age, and year, for the age group 15--49. Only
+used if \code{make_age_ratios} is \code{TRUE}. Searched for in
 \code{age_ratios_age_total_denominator_counts_folder_path}.}
 
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_run_dir_path,
-    "data")}.}
+\code{file.path(age_ratios_age_total_run_dir_path, "data")}.}
 
 \item{married_women_run_run_dir_path}{Path to the folder
 containing results for the married women run to be combined.}

@@ -30,123 +30,102 @@ make_results(
 )
 }
 \arguments{
-\item{run_name}{Character. When \code{NULL} (default), this is set
-automatically by concatenating the current date (yyyy-mm-dd),
-\code{age_group} and \code{marital_group}. Alternatively, a user defined
-run name to override default generation.}
+\item{run_name}{The name of the run to operate on.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save
-results. Sub-directories named \code{run_name} will be created inside
-this directory for each run.}
+\item{output_dir_path}{Path of the top-level directory in which the run in
+\code{run_name} been saved.}
 
 \item{input_data_folder_path}{File path to folder containing \emph{all}
-input data (except any map shapefiles). If \code{NULL} the value of
-\code{data_csv_filename}, etc., will be passed to
-\code{\link{file.path}} as-is. Otherwise,
-\code{file.path(input_data_folder_path, data_csv_filename)} will be
-passed. The default value points to the data directory supplied with the
-package.}
+input data (except any map shapefiles). If \code{NULL} the value is
+taken from \code{file.path(run_dir_path, "global_mcmc_args.RData")} if
+that file exists, otherwise \code{file.path(run_dir_path, "data")}.}
 
-\item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
-that lists the countries to be included in the main
-country-level indicator plots. These are the plots saved in
-\file{\code{run_dir_path}/fig/\var{[run
-    name]}CIs.pdf}. The format is the same as
-\code{countries_for_aggregates_csv_filename}. The file is
-looked for in \code{input_data_folder_path}. Countries appear
-in the \file{.pdf} in the same order as they are listed in
+\item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file that
+lists the countries to be included in the main country-level indicator
+plots. These are the plots saved in
+\file{\code{run_dir_path}/fig/\var{[run name]}CIs.pdf}. The format is
+the same as \code{countries_for_aggregates_csv_filename}. The file is
+looked for in \code{input_data_folder_path}. Countries appear in the
+\file{.pdf} in the same order as they are listed in
 \code{countries_in_CI_plots_csv_filename}.}
 
-\item{plot_diagnostic_CI_plots}{Logical. Produce diagnostic
-versions of the main country-level indicator plots. These have
-zoomed y-axes.}
+\item{plot_diagnostic_CI_plots}{Logical. Produce diagnostic versions of the
+main country-level indicator plots. These have zoomed y-axes.}
 
-\item{make_all_bar_charts}{Logical. Produce barcharts? If
-\code{NULL} but \code{plot_barchart_years} is non-\code{NULL},
-is reset to \code{TRUE}.}
+\item{make_all_bar_charts}{Logical. Produce barcharts? If \code{NULL} but
+\code{plot_barchart_years} is non-\code{NULL}, is reset to \code{TRUE}.}
 
-\item{plot_barchart_years}{Vector of years for which bar charts
-should be produced. These are saved to
-\file{\code{run_dir_path}/fig/barchart}. These must be
-in the range of \code{start_year} and \code{end_year} passed
-to \code{\link{post_process_mcmc}}.}
+\item{plot_barchart_years}{Vector of years for which bar charts should be
+produced. These are saved to \file{\code{run_dir_path}/fig/barchart}.
+These must be in the range of \code{start_year} and \code{end_year}
+passed to \code{\link{post_process_mcmc}}.}
 
-\item{plot_CI_changes_years}{Vector of length two (if longer, only
-the first and last elements are used). Declares the years to
-be used to make the \dQuote{fish bone} plots, i.e., the plots
-appearing in files
+\item{plot_CI_changes_years}{Vector of length two (if longer, only the first
+and last elements are used). Declares the years to be used to make the
+\dQuote{fish bone} plots, i.e., the plots appearing in files
 \file{\code{run_dir_path}/fig/\var{[run
-    name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
+    name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in the range
+of \code{start_year} and \code{end_year} passed to
+\code{\link{post_process_mcmc}}.}
+
+\item{plot_maps_shapefile_folder}{Path to directory containing shapefiles
+for maps. Only needed if \code{plot_maps} is \code{TRUE}. This is
+\emph{not} looked for in \code{input_data_folder_path}; it should be a
+full path to the shape files.}
+
+\item{plot_maps_years}{Vector of years for which maps are desired; the full
+set of maps are produced for each of the years listed. These must be in
 the range of \code{start_year} and \code{end_year} passed to
 \code{\link{post_process_mcmc}}.}
 
-\item{plot_maps_shapefile_folder}{Path to directory containing
-shapefiles for maps. Only needed if \code{plot_maps} is
-\code{TRUE}. This is \emph{not} looked for in
-\code{input_data_folder_path}; it should be a full path to the
-shape files.}
+\item{plot_parameters}{Logical. Should posterior quantiles of model
+parameters be added to the plots in legend boxes?}
 
-\item{plot_maps_years}{Vector of years for which maps are desired;
-the full set of maps are produced for each of the years
-listed. These must be in the range of \code{start_year} and
-\code{end_year} passed to \code{\link{post_process_mcmc}}.}
+\item{adjust_medians}{Logical. Should adjusted medians outputs be produced
+in addition to unadjusted outputs?}
 
-\item{plot_parameters}{Logical. Should posterior quantiles of
-model parameters be added to the plots in legend boxes?}
+\item{make_any_aggregates}{Logical. Should country aggregates of any kind
+(including default aggregates) be produced?}
 
-\item{adjust_medians}{Logical. Should adjusted medians outputs be
-produced in addition to unadjusted outputs?}
-
-\item{make_any_aggregates}{Logical. Should country aggregates of
-any kind (including default aggregates) be produced?}
-
-\item{special_aggregates_name}{\emph{name} for special aggregates,
-if any. The default, \code{NULL}, means no special aggregates
-are produced. Note: this is \emph{not} a filename, although a
-corresponding file named
+\item{special_aggregates_name}{\emph{name} for special aggregates, if any.
+The default, \code{NULL}, means no special aggregates are produced.
+Note: this is \emph{not} a filename, although a corresponding file named
 \file{\code{special_aggregates_name}.csv} must be present in
 \code{input_data_folder_path}.}
 
-\item{make_age_ratios}{Logical. Should results for age-ratios be
-made? If \code{NULL} this is set based on the presence of
-files \dQuote{res.country.age.ratio.rda} or
-\dQuote{res.country.all.women.age.ratio.rda} in
-\code{run_dir_path}.}
+\item{make_age_ratios}{Logical. Should results for age-ratios be made? If
+\code{NULL} this is set based on the presence of files
+\dQuote{res.country.age.ratio.rda} or
+\dQuote{res.country.all.women.age.ratio.rda} in \code{run_dir_path}.}
 
-\item{validation_keep_all}{Logical. Should validation results be
-saved? If \code{TRUE}, a list with elements \code{CI.df} and
-\code{Error.df} is saved to
-\file{\code{run_dir_path}/validn_repts/validation.results.rda}.}
+\item{validation_keep_all}{Logical. Should validation results be saved? If
+\code{TRUE}, a list with elements \code{CI.df} and \code{Error.df} is
+saved to \file{\code{run_dir_path}/validn_repts/validation.results.rda}.}
 
-\item{validation_return_res_as_df}{Logical; should the validation
-results be returned as a data frame? If \code{FALSE} the
-function returns the \code{run_name} invisibly as a character
-string.}
+\item{validation_return_res_as_df}{Logical; should the validation results be
+returned as a data frame? If \code{FALSE} the function returns the
+\code{run_name} invisibly as a character string.}
 
-\item{married_women_run_name}{Run name of a married women
-run. Relevant if \code{\link{make_results}} is being run on an
-all women run and age ratios for country aggregates are
-wanted. If this argument is \code{NULL} (default), and
-\code{all_women} is \code{TRUE} (explicitly or implicitly), an
-attempt is made to find this folder by substituting
-\dQuote{all_women} with \dQuote{married} in the
-\code{run_name}.}
+\item{married_women_run_name}{Run name of a married women run. Relevant if
+\code{\link{make_results}} is being run on an all women run and age
+ratios for country aggregates are wanted. If this argument is
+\code{NULL} (default), and \code{all_women} is \code{TRUE} (explicitly
+or implicitly), an attempt is made to find this folder by substituting
+\dQuote{all_women} with \dQuote{married} in the \code{run_name}.}
 
-\item{unmarried_women_run_name}{Run name of a unmarried women
-run. See \code{married_women_run_name}.}
-
-\item{married_women_run_dir_path}{Path to directory
-containing outputs for a married women run. See
+\item{unmarried_women_run_name}{Run name of a unmarried women run. See
 \code{married_women_run_name}.}
 
-\item{unmarried_women_run_dir_path}{Path to directory
-containing outputs for a unmarried women run. See
-\code{married_women_run_dir_path}.}
+\item{married_women_run_dir_path}{Path to directory containing outputs for a
+married women run. See \code{married_women_run_name}.}
+
+\item{unmarried_women_run_dir_path}{Path to directory containing outputs for
+a unmarried women run. See \code{married_women_run_dir_path}.}
 }
 \value{
-Either \code{run_name} invisibly as a character string or,
-if \code{isTRUE(validation_return_res_as_df)}, a data frame
-(non-invisibly) containing validation results.
+Either \code{run_name} invisibly as a character string or, if
+\code{isTRUE(validation_return_res_as_df)}, a data frame (non-invisibly)
+containing validation results.
 }
 \description{
 Once post-processed, a global model can be used to generate

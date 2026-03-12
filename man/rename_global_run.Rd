@@ -8,7 +8,6 @@ rename_global_run(
   run_name = NULL,
   new_run_name,
   output_dir_path = file.path(getwd(), "output"),
-  run_dir_path = file.path(output_dir_path, run_name),
   rename_output_folder = missing(run_dir_path),
   ignore = "^data$"
 )
@@ -24,14 +23,14 @@ rename_global_run(
 results. Sub-directories named \code{run_name} will be created inside
 this directory for each run.}
 
-\item{run_dir_path}{Filepath to directory where outputs are saved. If
-\code{NULL}, defaults to \code{file.path(output_dir_path, run_name)}.}
-
 \item{rename_output_folder}{Logical. Should an attempt be made to rename the
 output folder? See \dQuote{Details}.}
 
 \item{ignore}{Regular expression. Files and directories with names That
 match will not be renamed.}
+
+\item{run_dir_path}{Filepath to directory where outputs are saved. If
+\code{NULL}, defaults to \code{file.path(output_dir_path, run_name)}.}
 }
 \value{
 Called for side effect only.

@@ -29,98 +29,85 @@ post_process_mcmc(
 )
 }
 \arguments{
-\item{run_name}{The name of the run to post-process.}
+\item{run_name}{The name of the run to operate on.}
 
-\item{output_dir_path}{Path of the top-level directory in which to save
-results. Sub-directories named \code{run_name} will be created inside
-this directory for each run.}
+\item{output_dir_path}{Path of the top-level directory in which the run in
+\code{run_name} been saved.}
 
-\item{input_data_folder_path}{File path to folder containing
-\emph{all} input data (except any map shapefiles). If
-\code{NULL} the value is taken from
-\code{file.path(run_dir_path, "global_mcmc_args.RData")}
-if that file exists, otherwise
-\code{file.path(run_dir_path, "data")}.}
+\item{input_data_folder_path}{File path to folder containing \emph{all}
+input data (except any map shapefiles). If \code{NULL} the value is
+taken from \code{file.path(run_dir_path, "global_mcmc_args.RData")} if
+that file exists, otherwise \code{file.path(run_dir_path, "data")}.}
 
-\item{denominator_counts_csv_filename}{Name of the \file{.csv}
-file containing estimates and projections of the number of
-women by marital status, age, and year. See \dQuote{Details}.}
+\item{denominator_counts_csv_filename}{Name of the \file{.csv} file
+containing estimates and projections of the number of women by marital
+status, age, and year. See \dQuote{Details}.}
 
-\item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in
-constructing country aggregates.}
+\item{countries_for_aggregates_csv_filename}{Name of the \file{.csv} file
+listing countries that will be used in constructing country aggregates.}
 
-\item{start_year}{Estimates and projections are produced for a
-specified time interval. This is the start year of that
-interval.}
+\item{start_year}{Estimates and projections are produced for a specified
+time interval. This is the start year of that interval.}
 
-\item{end_year}{Estimates and projections are produced for a
-specified time interval. This is the end year of that
-interval.}
+\item{end_year}{Estimates and projections are produced for a specified time
+interval. This is the end year of that interval.}
 
-\item{years_change}{A two-column matrix giving the year pairs (as
-rows) between which probabilistic estimates of changes in the
-indicators are desired.}
+\item{years_change}{A two-column matrix giving the year pairs (as rows)
+between which probabilistic estimates of changes in the indicators are
+desired.}
 
-\item{years_change2}{A three-column matrix giving the year triples
-(as rows) among which to compute probabilistic estimates of
-change-in-changes.}
+\item{years_change2}{A three-column matrix giving the year triples (as rows)
+among which to compute probabilistic estimates of change-in-changes.}
 
-\item{model_diagnostics}{Logical; should convergence diagnostics
-and WAIC be computed? These are not re-done if the folder
+\item{model_diagnostics}{Logical; should convergence diagnostics and WAIC be
+computed? These are not re-done if the folder
 \sQuote{\code{run_dir_path}/convergence} exists.}
 
-\item{make_any_aggregates}{Logical. Should country aggregates of
-any kind (including default aggregates) be produced?}
+\item{make_any_aggregates}{Logical. Should country aggregates of any kind
+(including default aggregates) be produced?}
 
-\item{special_aggregates_name}{Character vector of names
-(\emph{not} filenames) of any speical aggregates
-desired. There must be a corresponding file with name
-\file{\code{special_aggregates_name}.csv} in
-\code{input_data_folder_path} that defines the special
-aggregates. See \dQuote{Details}.}
+\item{special_aggregates_name}{Character vector of names (\emph{not}
+filenames) of any speical aggregates desired. There must be a
+corresponding file with name \file{\code{special_aggregates_name}.csv}
+in \code{input_data_folder_path} that defines the special aggregates.
+See \dQuote{Details}.}
 
 \item{summarize_global_run}{Logical; should the model summary for
 one-country runs be produced?}
 
-\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to
-use as the denominator for age ratios. Calculate ratios of
-users in a subset age range (e.g., 15--19) to users in the
-total age range (15--49) from this run. Requires a completed
-15--49 run.}
+\item{age_ratios_age_total_run_name}{Run name of the 15--49 run to use as
+the denominator for age ratios. Calculate ratios of users in a subset
+age range (e.g., 15--19) to users in the total age range (15--49) from
+this run. Requires a completed 15--49 run.}
 
-\item{age_ratios_age_total_run_dir_path}{Alternative way of
-specifying the run to use to make age ratios (see
-\code{age_ratios_age_total_run_name}. File path to output
-directory of the 15--49 run to use to make age ratios.}
+\item{age_ratios_age_total_run_dir_path}{Alternative way of specifying the
+run to use to make age ratios (see \code{age_ratios_age_total_run_name}.
+File path to output directory of the 15--49 run to use to make age
+ratios.}
 
-\item{age_ratios_age_total_denominator_counts_csv_filename}{Name
-of the \file{.csv} file containing estimates and projections
-of the number of women by marital status, age, and year, for
-the age group 15--49. Only used if \code{make_age_ratios} is
-\code{TRUE}. Searched for in
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of the
+\file{.csv} file containing estimates and projections of the number of
+women by marital status, age, and year, for the age group 15--49. Only
+used if \code{make_age_ratios} is \code{TRUE}. Searched for in
 \code{age_ratios_age_total_denominator_counts_folder_path}.}
 
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_run_dir_path,
-    "data")}.}
+\code{file.path(age_ratios_age_total_run_dir_path, "data")}.}
 
-\item{overwrite_existing_results}{Logical; should post-processed
-results already in the output folder be overwritten? If all of
-the following files are already present,
-\code{post_process_mcmc} will exit unless this argument is
-\code{TRUE} (default is \code{FALSE}): "res.country.rda",
-"res.aggregate.rda", "par.ciq.rda". This might be useful if,
-for example, you wish to re-process a completed run with a
-different \code{satrt_year} or \code{end_year}. It is
-\emph{not} necessary to set this to \code{TRUE} to add extra
-aggregates.}
+\item{overwrite_existing_results}{Logical; should post-processed results
+already in the output folder be overwritten? If all of the following
+files are already present, \code{post_process_mcmc} will exit unless
+this argument is \code{TRUE} (default is \code{FALSE}):
+"res.country.rda", "res.aggregate.rda", "par.ciq.rda". This might be
+useful if, for example, you wish to re-process a completed run with a
+different \code{satrt_year} or \code{end_year}. It is \emph{not}
+necessary to set this to \code{TRUE} to add extra aggregates.}
 }
 \value{
-The run name (invisibly). The function is mainly called
-for its side effects.
+The run name (invisibly). The function is mainly called for its side
+effects.
 }
 \description{
 MCMC chains from a global run of FPEM for either married or
@@ -154,20 +141,18 @@ for the required format. Assum all columns are required.
 vignette("FPEMglobal_Intro")
 }
 \references{
-UN DESA Statistics Division, (2017) \emph{Standard
-Country or Area Codes for Statistical Use (M49)}. United
-Nations, Department of Economic and Social Affairs.
+UN DESA Statistics Division, (2017) \emph{Standard Country or
+Area Codes for Statistical Use (M49)}. United Nations, Department of
+Economic and Social Affairs.
 \url{https://unstats.un.org/unsd/methodology/m49/}
 }
 \seealso{
-\code{\link{do_global_run}} (which calls this function)
-to generate MCMC results for married or unmarried women,
-post-process, and produce results all in one call;
-\code{\link{combine_runs}} to create all women results from
-married and unmarried women runs;
-\code{\link{do_global_all_women_run}} to do married,
-unmarried, \emph{and all women runs}, and produce results, all
-in one call.
+\code{\link{do_global_run}} (which calls this function) to generate
+MCMC results for married or unmarried women, post-process, and produce
+results all in one call; \code{\link{combine_runs}} to create all women
+results from married and unmarried women runs;
+\code{\link{do_global_all_women_run}} to do married, unmarried,
+\emph{and all women runs}, and produce results, all in one call.
 }
 \author{
 Mark Wheldon, Andrew Tait

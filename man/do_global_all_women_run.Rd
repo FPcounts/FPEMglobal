@@ -123,81 +123,71 @@ file with denominator counts (married and unmarried) for this
 \code{age_group}. If \code{NULL}, defaults to \code{paste0("women_",
     \code{age_group}, ".csv")}.}
 
-\item{countries_for_aggregates_csv_filename}{Name of the
-\file{.csv} file listing countries that will be used in
-constructing country aggregates.}
+\item{countries_for_aggregates_csv_filename}{Name of the \file{.csv} file
+listing countries that will be used in constructing country aggregates.}
 
-\item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file
-that lists the countries to be included in the main
-country-level indicator plots. These are the plots saved in
-\file{\code{run_dir_path}/fig/\var{[run
-    name]}CIs.pdf}. The format is the same as
-\code{countries_for_aggregates_csv_filename}. The file is
-looked for in \code{input_data_folder_path}. Countries appear
-in the \file{.pdf} in the same order as they are listed in
+\item{countries_in_CI_plots_csv_filename}{Name of \file{.csv} file that
+lists the countries to be included in the main country-level indicator
+plots. These are the plots saved in
+\file{\code{run_dir_path}/fig/\var{[run name]}CIs.pdf}. The format is
+the same as \code{countries_for_aggregates_csv_filename}. The file is
+looked for in \code{input_data_folder_path}. Countries appear in the
+\file{.pdf} in the same order as they are listed in
 \code{countries_in_CI_plots_csv_filename}.}
 
-\item{special_aggregates_name}{Character vector of names
-(\emph{not} filenames) of any speical aggregates
-desired. There must be a corresponding file with name
-\file{\code{special_aggregates_name}.csv} in
-\code{input_data_folder_path} that defines the special
-aggregates. See \dQuote{Details}.}
+\item{special_aggregates_name}{Character vector of names (\emph{not}
+filenames) of any speical aggregates desired. There must be a
+corresponding file with name \file{\code{special_aggregates_name}.csv}
+in \code{input_data_folder_path} that defines the special aggregates.
+See \dQuote{Details}.}
 
-\item{start_year}{Estimates and projections are produced for a
-specified time interval. This is the start year of that
-interval.}
+\item{start_year}{Estimates and projections are produced for a specified
+time interval. This is the start year of that interval.}
 
-\item{end_year}{Estimates and projections are produced for a
-specified time interval. This is the end year of that
-interval.}
+\item{end_year}{Estimates and projections are produced for a specified time
+interval. This is the end year of that interval.}
 
-\item{years_change}{A two-column matrix giving the year pairs (as
-rows) between which probabilistic estimates of changes in the
-indicators are desired.}
+\item{years_change}{A two-column matrix giving the year pairs (as rows)
+between which probabilistic estimates of changes in the indicators are
+desired.}
 
-\item{years_change2}{A three-column matrix giving the year triples
-(as rows) among which to compute probabilistic estimates of
-change-in-changes.}
+\item{years_change2}{A three-column matrix giving the year triples (as rows)
+among which to compute probabilistic estimates of change-in-changes.}
 
-\item{plot_barchart_years}{Vector of years for which bar charts
-should be produced. These are saved to
-\file{\code{run_dir_path}/fig/barchart}. These must be
-in the range of \code{start_year} and \code{end_year} passed
-to \code{\link{post_process_mcmc}}.}
+\item{plot_barchart_years}{Vector of years for which bar charts should be
+produced. These are saved to \file{\code{run_dir_path}/fig/barchart}.
+These must be in the range of \code{start_year} and \code{end_year}
+passed to \code{\link{post_process_mcmc}}.}
 
-\item{plot_CI_changes_years}{Vector of length two (if longer, only
-the first and last elements are used). Declares the years to
-be used to make the \dQuote{fish bone} plots, i.e., the plots
-appearing in files
+\item{plot_CI_changes_years}{Vector of length two (if longer, only the first
+and last elements are used). Declares the years to be used to make the
+\dQuote{fish bone} plots, i.e., the plots appearing in files
 \file{\code{run_dir_path}/fig/\var{[run
-    name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in
+    name]}_CIspropsubregional_modern_UNPD.pdf}. These must be in the range
+of \code{start_year} and \code{end_year} passed to
+\code{\link{post_process_mcmc}}.}
+
+\item{make_any_aggregates}{Logical. Should country aggregates of any kind
+(including default aggregates) be produced?}
+
+\item{make_all_bar_charts}{Logical. Produce barcharts? If \code{NULL} but
+\code{plot_barchart_years} is non-\code{NULL}, is reset to \code{TRUE}.}
+
+\item{plot_maps_shapefile_folder}{Path to directory containing shapefiles
+for maps. Only needed if \code{plot_maps} is \code{TRUE}. This is
+\emph{not} looked for in \code{input_data_folder_path}; it should be a
+full path to the shape files.}
+
+\item{plot_maps_years}{Vector of years for which maps are desired; the full
+set of maps are produced for each of the years listed. These must be in
 the range of \code{start_year} and \code{end_year} passed to
 \code{\link{post_process_mcmc}}.}
 
-\item{make_any_aggregates}{Logical. Should country aggregates of
-any kind (including default aggregates) be produced?}
+\item{adjust_medians}{Logical. Should adjusted medians outputs be produced
+in addition to unadjusted outputs?}
 
-\item{make_all_bar_charts}{Logical. Produce barcharts? If
-\code{NULL} but \code{plot_barchart_years} is non-\code{NULL},
-is reset to \code{TRUE}.}
-
-\item{plot_maps_shapefile_folder}{Path to directory containing
-shapefiles for maps. Only needed if \code{plot_maps} is
-\code{TRUE}. This is \emph{not} looked for in
-\code{input_data_folder_path}; it should be a full path to the
-shape files.}
-
-\item{plot_maps_years}{Vector of years for which maps are desired;
-the full set of maps are produced for each of the years
-listed. These must be in the range of \code{start_year} and
-\code{end_year} passed to \code{\link{post_process_mcmc}}.}
-
-\item{adjust_medians}{Logical. Should adjusted medians outputs be
-produced in addition to unadjusted outputs?}
-
-\item{model_diagnostics}{Logical; should convergence diagnostics
-and WAIC be computed? These are not re-done if the folder
+\item{model_diagnostics}{Logical; should convergence diagnostics and WAIC be
+computed? These are not re-done if the folder
 \sQuote{\code{run_dir_path}/convergence} exists.}
 
 \item{include_AR}{Logical; should the auto-regressive component of the model
@@ -228,18 +218,16 @@ age ratios.}
 to output directory of the all women 15--49 run to use to make
 age ratios.}
 
-\item{age_ratios_age_total_denominator_counts_csv_filename}{Name
-of the \file{.csv} file containing estimates and projections
-of the number of women by marital status, age, and year, for
-the age group 15--49. Only used if \code{make_age_ratios} is
-\code{TRUE}. Searched for in
+\item{age_ratios_age_total_denominator_counts_csv_filename}{Name of the
+\file{.csv} file containing estimates and projections of the number of
+women by marital status, age, and year, for the age group 15--49. Only
+used if \code{make_age_ratios} is \code{TRUE}. Searched for in
 \code{age_ratios_age_total_denominator_counts_folder_path}.}
 
 \item{age_ratios_age_total_denominator_counts_folder_path}{Path to
 \code{age_ratios_age_total_denominator_counts_csv_filename}. If
 \code{NULL}, defaults to
-\code{file.path(age_ratios_age_total_run_dir_path,
-    "data")}.}
+\code{file.path(age_ratios_age_total_run_dir_path, "data")}.}
 }
 \value{
 A \emph{list} of run names for married, unmarried, and all women

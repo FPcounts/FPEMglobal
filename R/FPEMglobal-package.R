@@ -6,6 +6,10 @@ source("R/user_interface.R", local = TRUE)
 source("R/F_plotextra.R", local = TRUE)
 ######################################################################
 
+
+#' @section Package options:
+#' \describe{
+#' \item{FPEMglobal.verbose}{(Default = \code{FALSE}) Print lots of messages during model runs?}
 #' @keywords internal
 "_PACKAGE"
 

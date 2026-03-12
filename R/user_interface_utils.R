@@ -7,7 +7,7 @@
 ################################################################################
 
 ###-----------------------------------------------------------------------------
-### * Make Run Name
+### * Run Names and File Paths
 
 make_run_name <- function(marital_group, age_group, run_note = NULL,
                           run_name_override = NULL) {
@@ -35,24 +35,46 @@ make_run_dir_path <- function(run_name, output_dir_path) {
 }
 
 initialize_paths <- function(run_name, output_dir_path,
-                             marital_group, age_group, run_note = NULL,
-                             check_exists = TRUE) {
+                             marital_group = NULL, age_group = NULL, run_note = NULL,
+                             check_overwrite = TRUE,
+                             assert_valid = !check_overwrite,
+                             assert_valid_post_processed = FALSE,
+                             assert_valid_countrytrajectories = FALSE,
+                             assert_valid_made_results = FALSE,
+                             assert_valid_adjusted_medians = FALSE,
+                             assert_valid_age_ratios = FALSE) {
 
-    if (is.null(run_name)) run_name <- make_run_name(marital_group = marital_group, age_group = age_group, run_note = run_note)
+    if (is.list(run_name)) stop("'run_name' is a list; choose a single run to add to.")
+
+    if (is.null(run_name)) {
+        if (is.null(marital_group) || is.null(age_group))
+            stop("'run_name' is 'NULL'; 'marital_group' and 'age_group' must be supplied.")
+        run_name <- make_run_name(marital_group = marital_group, age_group = age_group, run_note = run_note)
+    }
     run_dir_path <- make_run_dir_path(run_name = run_name, output_dir_path = output_dir_path)
 
     if (!dir.exists(run_dir_path)) {
         dir.create(run_dir_path, recursive = TRUE, showWarnings = FALSE)
-    } else if (check_exists) {
-        if (any(grepl("^mcmc\\.info(\\.[0-9]+\\.|\\.)rda$", dir(run_dir_path)),
-               na.rm = TRUE) ||
-           file.exists(file.path(run_dir_path, "mcmc.meta.rda")) ||
-           file.exists(file.path(run_dir_path, "mcmc.array.rda"))) {
-            stop("Directory '", run_dir_path, "' already exists with some MCMC output files. Change the run name, output folder path, or delete the existing run and start again.")
-        } else {
-            if (file.exists(file.path(run_dir_path, "combine_runs_args.RData"))) {
-                stop("Directory '", run_dir_path, "' already exists with 'combine_runs_args.RData'. Change the run name, output folder path, or delete the existing run and start again.")
+    } else {
+        if (check_overwrite) {
+            if (any(grepl("^mcmc\\.info(\\.[0-9]+\\.|\\.)rda$", dir(run_dir_path)),
+                    na.rm = TRUE) ||
+                file.exists(file.path(run_dir_path, "mcmc.meta.rda")) ||
+                file.exists(file.path(run_dir_path, "mcmc.array.rda"))) {
+                stop("Directory '", run_dir_path, "' already exists with some MCMC output files. Change the run name, output folder path, or delete the existing run and start again.")
+            } else {
+                if (file.exists(file.path(run_dir_path, "combine_runs_args.RData"))) {
+                    stop("Directory '", run_dir_path, "' already exists with 'combine_runs_args.RData'. Change the run name, output folder path, or delete the existing run and start again.")
+                }
             }
+        }
+        if (assert_valid) {
+            run_dir_path <- assert_valid_output_dir(run_dir_path,
+                                                    post_processed = assert_valid_post_processed,
+                                                    countrytrajectories = assert_valid_countrytrajectories,
+                                                    made_results = assert_valid_made_results,
+                                                    adjusted_medians = assert_valid_adjusted_medians,
+                                                    age_ratios = assert_valid_age_ratios)
         }
     }
     return(list(run_name = run_name,
@@ -264,4 +286,89 @@ get_all_spec_agg_csv <- function(pattern = "^aggregates_special_.+\\.csv$") {
 
 get_all_spec_agg_names <- function(pattern = "^aggregates_special_.+\\.csv$") {
     gsub(pattern = "\\.csv", replacement = "", x = get_all_spec_agg_csv(pattern = pattern))
+}
+
+###-----------------------------------------------------------------------------
+### * Messaging
+
+### (WIP) Replace calls to 'cat()' and 'message()' with these alternatives so
+### that the voluminous output currently produced can be redirected to the
+### log.txt file.
+
+cat2 <- function(..., file = "", sep = " ", fill = FALSE, labels = NULL,
+                 append = FALSE) {
+
+    log_verb <- getOption("FPEMglobal.verbose_to_log")
+
+    if (log_verb) {
+        ## Check 'run_dir_path' is defined. If not, revert to normal behaviour.
+        ## Means that this function must be evaluated inside a context in which
+        ## 'run_dir_path' is defined. Do this because don't want to feed
+        ## 'run_dir_path' through long sequences of function calls.
+
+        rdp <- try(force(run_dir_path), silent = TRUE)
+        if (identical(class(rdp, "try-error")) || is.null(run_dir_path)) {
+            log_verb <- FALSE
+            warning("'cat2' cannot redirect to \"log.txt\", because 'run_dir_path' is not defined in this context.")
+        } else if (!dir.exists(run_dir_path)) {
+            log_verb <- FALSE
+            warning("'cat2' cannot redirect to \"log.txt\", because 'run_dir_path' ('",
+                    run_dir_path,
+                    "') does not exist.")
+        }
+    }
+
+    if (log_verb) {
+        ## If 'verbose' is '"_LOG"', redirect to the 'log.txt' file. Can use the
+        ## 'file' argument to 'cat()'.
+        cat("\n", format(Sys.time(), "%y%m%d_%H%M%S"), ": ",
+            file = file.path(run_dir_path, "log.txt"),
+            sep = sep, fill = fill, labels = labels,
+            append = TRUE)
+        cat(..., file = file.path(run_dir_path, "log.txt"),
+            sep = sep, fill = fill, labels = labels,
+            append = TRUE)
+
+    } else {
+        cat(..., file = file, sep = sep, fill = fill, labels = labels,
+            append = append)
+    }
+    return(invisible())
+}
+
+message2 <- function(...) {
+    log <- getOption("FPEMglobal.verbose_to_log")
+    ## If 'verbose' is '"_LOG"', redirect to the 'log.txt' file. Might have to
+    ## use 'sink()' because 'message()' doesn't have a 'file' argument like
+    ## 'cat()'.
+
+    if (log_verb) {
+        ## Check 'run_dir_path' is defined. If not, revert to normal behaviour.
+        ## Means that this function must be evaluated inside a context in which
+        ## 'run_dir_path' is defined. Do this because don't want to feed
+        ## 'run_dir_path' through long sequences of function calls.
+
+        rdp <- try(force(run_dir_path), silent = TRUE)
+        if (identical(class(rdp, "try-error")) || is.null(run_dir_path)) {
+            log_verb <- FALSE
+            warning("'message2' cannot redirect to \"log.txt\", because 'run_dir_path' is not defined in this context.")
+        } else if (!dir.exists(run_dir_path)) {
+            log_verb <- FALSE
+            warning("'message2' cannot redirect to \"log.txt\", because 'run_dir_path' ('",
+                    run_dir_path,
+                    "') does not exist.")
+        }
+    }
+
+    if (log_verb) {
+        dots <- as.list(...) # Should reveal any errors before output diverted
+                             # via 'sink()'.
+        zz <- file(file.path(run_dir_path, "log.txt"), open = "wt")
+        sink(file = zz, type = "message", append = TRUE)
+        do.call("message", args = dots)
+        sink()
+    } else {
+        message(...)
+    }
+    return(invisible())
 }
