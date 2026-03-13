@@ -7,7 +7,6 @@
 compare_runs_CI_plots(
   run_name_1,
   run_name_2,
-  output_dir_path = file.path(getwd(), "output"),
   run_1_run_dir_path = file.path(output_dir_path, run_name_1),
   run_1_plot_label = run_name_1,
   run_2_run_dir_path = file.path(output_dir_path, run_name_2),
@@ -15,7 +14,11 @@ compare_runs_CI_plots(
   run_dir_path = file.path(run_1_run_dir_path, "fig", "compare_runs_plots"),
   plot_data = NULL,
   all_women = NULL,
-  compare_aggregates = TRUE
+  compare_aggregates = TRUE,
+  verbose = deprecated(),
+  run_1_output_folder_path = deprecated(),
+  run_2_output_folder_path = deprecated(),
+  output_folder_path = deprecated()
 )
 }
 \arguments{

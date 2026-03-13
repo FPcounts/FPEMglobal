@@ -26,7 +26,9 @@ make_results(
   make_age_ratios = NULL,
   validation_keep_all = TRUE,
   validation_return_res_as_df = FALSE,
-  all_women = NULL
+  all_women = NULL,
+  verbose = deprecated(),
+  output_folder_path = deprecated()
 )
 }
 \arguments{

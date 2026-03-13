@@ -38,7 +38,8 @@ Imports:
     rjags,
     R2jags,
     xtable,
-    lifecycle
+    lifecycle,
+    rlang
 Suggests:
     doParallel,
     sp,

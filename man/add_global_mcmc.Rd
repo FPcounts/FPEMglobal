@@ -8,7 +8,9 @@ add_global_mcmc(
   run_name,
   output_dir_path = file.path(getwd(), "output"),
   chain_nums = 2,
-  run_in_parallel = isTRUE(length(chain_nums) > 1)
+  run_in_parallel = isTRUE(length(chain_nums) > 1),
+  verbose = deprecated(),
+  output_folder_path = deprecated()
 )
 }
 \arguments{

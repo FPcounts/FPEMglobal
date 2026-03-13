@@ -45,7 +45,12 @@ do_global_run(
   age_ratios_age_total_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
-  model_diagnostics = TRUE
+  model_diagnostics = TRUE,
+  verbose = deprecated(),
+  run_desc = deprecated(),
+  run_name_override = deprecated(),
+  output_folder_path = deprecated(),
+  age_ratios_age_total_output_folder_path = NULL
 )
 }
 \arguments{

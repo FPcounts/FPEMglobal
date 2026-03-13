@@ -8,6 +8,12 @@
 \description{
 Implements the FPEMglobal model for producing estimates and projections of contraceptive use and unmet need for family planning among married, unmarried, and all women.
 }
+\section{Package options}{
+
+\describe{
+\item{FPEMglobal.verbose}{(Default = \code{FALSE}) Print lots of messages during model runs?}
+}
+
 \seealso{
 Useful links:
 \itemize{

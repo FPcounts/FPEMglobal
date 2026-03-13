@@ -9,7 +9,9 @@ rename_global_run(
   new_run_name,
   output_dir_path = file.path(getwd(), "output"),
   rename_output_folder = missing(run_dir_path),
-  ignore = "^data$"
+  ignore = "^data$",
+  verbose = deprecated(),
+  output_folder_path = deprecated()
 )
 }
 \arguments{

@@ -19,5 +19,6 @@ source("R/F_plotextra.R", local = TRUE)
 #' @import rjags
 
 ## usethis namespace: start
+#' @importFrom lifecycle deprecated
 ## usethis namespace: end
 NULL

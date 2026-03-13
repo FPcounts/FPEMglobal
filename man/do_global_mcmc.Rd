@@ -19,7 +19,11 @@ do_global_mcmc(
   output_dir_path = file.path(getwd(), "output"),
   input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
   data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-  region_information_csv_filename = "country_and_area_classification.csv"
+  region_information_csv_filename = "country_and_area_classification.csv",
+  verbose = deprecated(),
+  run_desc = deprecated(),
+  run_name_override = deprecated(),
+  output_folder_path = deprecated()
 )
 }
 \arguments{

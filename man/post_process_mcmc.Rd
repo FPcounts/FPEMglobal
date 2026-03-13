@@ -25,7 +25,10 @@ post_process_mcmc(
   age_ratios_age_total_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
   age_ratios_age_total_denominator_counts_folder_path = NULL,
-  overwrite_existing_results = FALSE
+  overwrite_existing_results = FALSE,
+  verbose = deprecated(),
+  output_folder_path = deprecated(),
+  age_ratios_age_total_output_folder_path = NULL
 )
 }
 \arguments{

@@ -29,7 +29,12 @@ do_global_validation_mcmc(
   number_incremental_backups = 4,
   thinning = 2,
   chain_nums = 1:3,
-  run_in_parallel = isTRUE(length(chain_nums) > 1)
+  run_in_parallel = isTRUE(length(chain_nums) > 1),
+  verbose = deprecated(),
+  run_desc = deprecated(),
+  run_name_override = deprecated(),
+  output_folder_path = deprecated(),
+  run_name_to_validate_output_folder_path = deprecated()
 )
 }
 \arguments{

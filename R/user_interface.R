@@ -298,7 +298,17 @@ do_global_mcmc <- function(## Description
                            output_dir_path = file.path(getwd(), "output"),
                            input_data_folder_path = system.file("extdata", package = "FPEMglobal"),
                            data_csv_filename = paste0("data_cp_model_all_women_", age_group, ".csv"),
-                           region_information_csv_filename = "country_and_area_classification.csv") {
+                           region_information_csv_filename = "country_and_area_classification.csv",
+                           ## Deprecated
+                           verbose = deprecated(),
+                           run_desc = deprecated(),
+                           run_name_override = deprecated(),
+                           output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+    warn_for_run_desc(run_desc)
+    warn_for_run_name_override(run_name_override)
+    warn_for_output_folder_path(output_folder_path)
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -469,7 +479,13 @@ do_global_mcmc <- function(## Description
 add_global_mcmc <- function(run_name,
                             output_dir_path = file.path(getwd(), "output"),
                             chain_nums = 2,
-                            run_in_parallel = isTRUE(length(chain_nums) > 1)) {
+                            run_in_parallel = isTRUE(length(chain_nums) > 1),
+                            ## Deprecated
+                            verbose = deprecated(),
+                            output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+    warn_for_output_folder_path(output_folder_path)
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -678,7 +694,19 @@ post_process_mcmc <- function(run_name = NULL,
                               age_ratios_age_total_run_dir_path = NULL,
                               age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                               age_ratios_age_total_denominator_counts_folder_path = NULL,
-                              overwrite_existing_results = FALSE) {
+                              overwrite_existing_results = FALSE,
+                              ## Deprecated
+                              verbose = deprecated(),
+                              output_folder_path = deprecated(),
+                              age_ratios_age_total_output_folder_path = NULL) {
+
+    warn_for_verbose(verbose)
+    warn_for_output_folder_path(output_folder_path)
+
+    if (lifecycle::is_present(age_ratios_age_total_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "post_process_mcmc(age_ratios_age_total_output_folder_path)", "post_process_mcmc(age_ratios_age_total_run_dir_path)")
+        if (missing(age_ratios_age_total_run_dir_path)) age_ratios_age_total_run_dir_path <- age_ratios_age_total_output_folder_path
+    }
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -1124,7 +1152,13 @@ make_results <- function(run_name,
                          make_age_ratios = NULL,
                          validation_keep_all = TRUE,
                          validation_return_res_as_df = FALSE,
-                         all_women = NULL) {
+                         all_women = NULL,
+                         ## Deprecated
+                         verbose = deprecated(),
+                         output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+    warn_for_output_folder_path(output_folder_path)
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -2295,7 +2329,23 @@ do_global_run <- function(## Description
                           age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
                           age_ratios_age_total_denominator_counts_folder_path = NULL,
                           ## Logging
-                          model_diagnostics = TRUE) {
+                          model_diagnostics = TRUE,
+                          ## Deprecated
+                          verbose = deprecated(),
+                          run_desc = deprecated(),
+                          run_name_override = deprecated(),
+                          output_folder_path = deprecated(),
+                          age_ratios_age_total_output_folder_path = NULL) {
+
+    warn_for_verbose(verbose)
+    warn_for_run_desc(run_desc)
+    warn_for_run_name_override(run_name_override)
+    warn_for_output_folder_path(output_folder_path)
+
+    if (lifecycle::is_present(age_ratios_age_total_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "do_global_run(age_ratios_age_total_output_folder_path)", "do_global_run(age_ratios_age_total_run_dir_path)")
+        if (missing(age_ratios_age_total_run_dir_path)) age_ratios_age_total_run_dir_path <- age_ratios_age_total_output_folder_path
+    }
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -2611,11 +2661,10 @@ do_global_run <- function(## Description
 ##' vignette("FPEMglobal_Intro").
 ##'
 ##' @export
-combine_runs <- function(## Describe the run
-                         run_name = NULL,
-                         output_dir_path = file.path(getwd(), "output"),
+combine_runs <- function(run_name = NULL,
                          married_women_run_name = NULL,
                          unmarried_women_run_name = NULL,
+                         output_dir_path = file.path(getwd(), "output"),
                          unmarried_women_run_data_folder_path = file.path(unmarried_women_run_run_dir_path, "data"),
                          region_information_csv_filename = NULL,
                          special_aggregates_name = NULL,
@@ -2648,7 +2697,33 @@ combine_runs <- function(## Describe the run
                          age_ratios_age_total_married_run_dir_path = NULL,
                          age_ratios_age_total_all_women_run_dir_path = NULL,
                          age_ratios_age_total_denominator_counts_csv_filename = denominator_counts_csv_filename,
-                         age_ratios_age_total_denominator_counts_folder_path = NULL) {
+                         age_ratios_age_total_denominator_counts_folder_path = NULL,
+                         ## Deprecated
+                         verbose = deprecated(),
+                         run_desc = deprecated(),
+                         run_name_override = deprecated(),
+                         output_folder_path = deprecated(),
+                         age_ratios_age_total_married_output_folder_path = deprecated(),
+                         age_ratios_age_total_unmarried_output_folder_path = deprecated(),
+                         age_ratios_age_total_all_women_output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+    warn_for_run_desc(run_desc)
+    warn_for_run_name_override(run_name_override)
+    warn_for_output_folder_path(output_folder_path)
+
+    if (lifecycle::is_present(age_ratios_age_total_married_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "combine_runs(age_ratios_age_total_married_output_folder_path)", "combine_runs(age_ratios_age_total_married_run_dir_path)")
+        if (missing(age_ratios_age_total_married_run_dir_path)) age_ratios_age_total_married_run_dir_path <- age_ratios_age_total_married_output_folder_path
+    }
+    if (lifecycle::is_present(age_ratios_age_total_unmarried_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "combine_runs(age_ratios_age_total_unmarried_output_folder_path)", "combine_runs(age_ratios_age_total_unmarried_run_dir_path)")
+        if (missing(age_ratios_age_total_unmarried_run_dir_path)) age_ratios_age_total_unmarried_run_dir_path <- age_ratios_age_total_unmarried_output_folder_path
+    }
+    if (lifecycle::is_present(age_ratios_age_total_all_women_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "combine_runs(age_ratios_age_total_all_women_output_folder_path)", "combine_runs(age_ratios_age_total_all_women_run_dir_path)")
+        if (missing(age_ratios_age_total_all_women_run_dir_path)) age_ratios_age_total_all_women_run_dir_path <- age_ratios_age_total_all_women_output_folder_path
+    }
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -3273,8 +3348,38 @@ do_global_all_women_run <- function(## Describe the run
                                     age_ratios_age_total_unmarried_run_dir_path = NULL,
                                     age_ratios_age_total_all_women_run_dir_path = NULL,
                                     age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
-                                    age_ratios_age_total_denominator_counts_folder_path = NULL) {
+                                    age_ratios_age_total_denominator_counts_folder_path = NULL,
+                                    ## Deprecated
+                                    verbose = deprecated(),
+                                    run_desc = deprecated(),
+                                    run_name_override_married = deprecated(),
+                                    run_name_override_unmarried = deprecated(),
+                                    run_name_override_all_women = deprecated(),
+                                    output_folder_path = deprecated(),
+                                    age_ratios_age_total_married_output_folder_path = deprecated(),
+                                    age_ratios_age_total_unmarried_output_folder_path = deprecated(),
+                                    age_ratios_age_total_all_women_output_folder_path = deprecated()) {
 
+    warn_for_verbose(verbose)
+    warn_for_run_desc(run_desc)
+    warn_for_run_name_override_married(run_name_override_married)
+    warn_for_run_name_override_unmarried(run_name_override_unmarried)
+    warn_for_run_name_override_all_women(run_name_override_all_women)
+
+    warn_for_output_folder_path(output_folder_path)
+
+    if (lifecycle::is_present(age_ratios_age_total_married_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "do_global_all_women_run(age_ratios_age_total_married_output_folder_path)", "do_global_all_women_run(age_ratios_age_total_married_run_dir_path)")
+        if (missing(age_ratios_age_total_married_run_dir_path)) age_ratios_age_total_married_run_dir_path <- age_ratios_age_total_married_output_folder_path
+    }
+    if (lifecycle::is_present(age_ratios_age_total_unmarried_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "do_global_all_women_run(age_ratios_age_total_unmarried_output_folder_path)", "do_global_all_women_run(age_ratios_age_total_unmarried_run_dir_path)")
+        if (missing(age_ratios_age_total_unmarried_run_dir_path)) age_ratios_age_total_unmarried_run_dir_path <- age_ratios_age_total_unmarried_output_folder_path
+    }
+    if (lifecycle::is_present(age_ratios_age_total_all_women_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "do_global_all_women_run(age_ratios_age_total_all_women_output_folder_path)", "do_global_all_women_run(age_ratios_age_total_all_women_run_dir_path)")
+        if (missing(age_ratios_age_total_all_women_run_dir_path)) age_ratios_age_total_all_women_run_dir_path <- age_ratios_age_total_all_women_output_folder_path
+    }
     verbose <- getOption("FPEMglobal.verbose")
 
     ##---------------------------------------------------------------------
@@ -3735,9 +3840,25 @@ do_global_validation_mcmc <-
              number_incremental_backups = 4,
              thinning = 2,
              chain_nums = 1:3,
-             run_in_parallel = isTRUE(length(chain_nums) > 1)) {
+             run_in_parallel = isTRUE(length(chain_nums) > 1),
+             ## Deprecated
+             verbose = deprecated(),
+             run_desc = deprecated(),
+             run_name_override = deprecated(),
+             output_folder_path = deprecated(),
+             run_name_to_validate_output_folder_path = deprecated()) {
 
-        verbose <- getOption("FPEMglobal.verbose")
+        warn_for_verbose(verbose)
+        warn_for_run_desc(run_desc)
+        warn_for_run_name_override(run_name_override)
+        warn_for_output_folder_path(output_folder_path)
+
+        if (lifecycle::is_present(run_name_to_validate_output_folder_path)) {
+            lifecycle::deprecate_warn("1.6.0", "do_global_validation_mcmc(run_name_to_validate_output_folder_path)", "do_global_validation_mcmc(run_name_to_validate_output_folder_path)")
+            if (missing(run_name_to_validate_output_dir_path)) run_name_to_validate_output_dir_path <- run_name_to_validate_output_folder_path
+        }
+
+    verbose <- getOption("FPEMglobal.verbose")
 
         ##----------------------------------------------------------------------------
         ## Must choose a validation exercise
@@ -3965,7 +4086,23 @@ do_global_validation_run <- function(run_name = NULL,
                                      number_incremental_backups = 4,
                                      thinning = 2,
                                      chain_nums = 1:3,
-                                     run_in_parallel = isTRUE(length(chain_nums) > 1)) {
+                                     run_in_parallel = isTRUE(length(chain_nums) > 1),
+                                     ## Deprecated
+                                     verbose = deprecated(),
+                                     run_desc = deprecated(),
+                                     run_name_override = deprecated(),
+                                     output_folder_path = deprecated(),
+                                     run_name_to_validate_output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+    warn_for_run_desc(run_desc)
+    warn_for_run_name_override(run_name_override)
+    warn_for_output_folder_path(output_folder_path)
+
+    if (lifecycle::is_present(run_name_to_validate_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "do_global_validation_run(run_name_to_validate_output_folder_path)", "do_global_validation_run(run_name_to_validate_output_folder_path)")
+        if (missing(run_name_to_validate_output_dir_path)) run_name_to_validate_output_dir_path <- run_name_to_validate_output_folder_path
+    }
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -4144,7 +4281,10 @@ add_special_aggregates <- function(run_dir_path,
                                    years_change = NULL,
                                    years_change2 = NULL,
                                    model_diagnostics = FALSE,
-                                   special_aggregates_name) {
+                                   special_aggregates_name,
+                                   ## Deprecated
+                           verbose = deprecated()) {
+    warn_for_verbose(verbose)
     verbose <- getOption("FPEMglobal.verbose")
     stop("TO BE COMPLETED")
 }
@@ -4199,7 +4339,13 @@ rename_global_run <- function(run_name = NULL,
                               new_run_name,
                               output_dir_path = file.path(getwd(), "output"),
                               rename_output_folder = missing(run_dir_path),
-                              ignore = "^data$") {
+                              ignore = "^data$",
+                              ## Deprecated
+                              verbose = deprecated(),
+                              output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+    warn_for_output_folder_path(output_folder_path)
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -4388,7 +4534,6 @@ rename_global_run <- function(run_name = NULL,
 ##' @author Jin Rou New, Leontine Alkema, Mark Wheldon
 ##' @export
 compare_runs_CI_plots <- function(run_name_1, run_name_2,
-                                  output_dir_path = file.path(getwd(), "output"),
                                   run_1_run_dir_path = file.path(output_dir_path, run_name_1),
                                   run_1_plot_label = run_name_1,
                                   run_2_run_dir_path = file.path(output_dir_path, run_name_2),
@@ -4396,7 +4541,27 @@ compare_runs_CI_plots <- function(run_name_1, run_name_2,
                                   run_dir_path = file.path(run_1_run_dir_path, "fig", "compare_runs_plots"),
                                   plot_data = NULL,
                                   all_women = NULL,
-                                  compare_aggregates = TRUE) {
+                                  compare_aggregates = TRUE,
+                                  ## Deprecated
+                                  verbose = deprecated(),
+                                  run_1_output_folder_path = deprecated(),
+                                  run_2_output_folder_path = deprecated(),
+                                  output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+
+    if (lifecycle::is_present(run_1_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "compare_runs_CI_plots(run_1_output_folder_path)", "compare_runs_CI_plots(run_1_run_dir_path)")
+        if (missing(run_1_run_dir_path)) run_1_run_dir_path <- run_1_output_folder_path
+    }
+    if (lifecycle::is_present(run_2_output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "compare_runs_CI_plots(run_2_output_folder_path)", "compare_runs_CI_plots(run_2_run_dir_path)")
+        if (missing(run_2_run_dir_path)) run_2_run_dir_path <- run_2_output_folder_path
+    }
+    if (lifecycle::is_present(output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "compare_runs_CI_plots(output_folder_path)", "compare_runs_CI_plots(run_dir_path)")
+        if (missing(run_dir_path)) run_dir_path <- output_folder_path
+    }
 
     verbose <- getOption("FPEMglobal.verbose")
 
@@ -4490,7 +4655,17 @@ assert_valid_output_dir <- function(run_dir_path,
                                     made_results = post_processed,
                                     adjusted_medians = post_processed,
                                     age_ratios = NULL,
-                                    validation_run = FALSE) {
+                                    validation_run = FALSE,
+                                    ## Deprecated
+                                    verbose = deprecated(),
+                                    output_folder_path = deprecated()) {
+
+    warn_for_verbose(verbose)
+
+    if (lifecycle::is_present(output_folder_path)) {
+        lifecycle::deprecate_warn("1.6.0", "assert_valid_output_dir(output_folder_path)", "assert_valid_output_dir(run_dir_path)")
+        if (missing(run_dir_path)) run_dir_path <- output_folder_path
+    }
 
     verbose <- getOption("FPEMglobal.verbose")
 

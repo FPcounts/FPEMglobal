@@ -48,7 +48,16 @@ do_global_all_women_run(
   age_ratios_age_total_unmarried_run_dir_path = NULL,
   age_ratios_age_total_all_women_run_dir_path = NULL,
   age_ratios_age_total_denominator_counts_csv_filename = "number_of_women_15-49.csv",
-  age_ratios_age_total_denominator_counts_folder_path = NULL
+  age_ratios_age_total_denominator_counts_folder_path = NULL,
+  verbose = deprecated(),
+  run_desc = deprecated(),
+  run_name_override_married = deprecated(),
+  run_name_override_unmarried = deprecated(),
+  run_name_override_all_women = deprecated(),
+  output_folder_path = deprecated(),
+  age_ratios_age_total_married_output_folder_path = deprecated(),
+  age_ratios_age_total_unmarried_output_folder_path = deprecated(),
+  age_ratios_age_total_all_women_output_folder_path = deprecated()
 )
 }
 \arguments{

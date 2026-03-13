@@ -11,7 +11,9 @@ assert_valid_output_dir(
   made_results = post_processed,
   adjusted_medians = post_processed,
   age_ratios = NULL,
-  validation_run = FALSE
+  validation_run = FALSE,
+  verbose = deprecated(),
+  output_folder_path = deprecated()
 )
 }
 \arguments{

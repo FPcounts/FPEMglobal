@@ -195,7 +195,6 @@ dir(output_dir_path)
 (combine_1549 <-
     combine_runs(married_women_run_name = res_1549_married[["run_name"]],
              unmarried_women_run_name = res_1549_unmarried[["run_name"]],
-             run_name = NULL,
              output_dir_path = output_dir_path,
              ## Inputs
              denominator_counts_csv_filename = denominator_counts_csv_filename_1549,
